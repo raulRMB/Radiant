@@ -8,7 +8,15 @@ public class Radiant : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"EnhancedInput", 
+			"PlayFab", 
+			"PlayFabCpp", 
+			"PlayFabCommon" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
