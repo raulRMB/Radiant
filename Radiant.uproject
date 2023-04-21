@@ -22,13 +22,13 @@
 			]
 		},
 		{
-			"Name": "PlayFabGSDK",
-			"Enabled": true
+			"Name": "PlayFab",
+			"Enabled": false,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/217fdf581b784571af03d3fb6580368f"
 		},
 		{
-			"Name": "PlayFab",
-			"Enabled": true,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/217fdf581b784571af03d3fb6580368f"
+			"Name": "PlayFabGSDK",
+			"Enabled": false
 		}
 	]
 }

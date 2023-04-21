@@ -13,10 +13,8 @@ public class Radiant : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore", 
-			"EnhancedInput", 
-			"PlayFab", 
-			"PlayFabCpp", 
-			"PlayFabCommon" });
+			"EnhancedInput"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
