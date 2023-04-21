@@ -14,7 +14,8 @@ public class Radiant : ModuleRules
 			"Engine", 
 			"InputCore", 
 			"EnhancedInput",
-			"PlayFabGSDK"
+			"PlayFabGSDK",
+			"UMG"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
