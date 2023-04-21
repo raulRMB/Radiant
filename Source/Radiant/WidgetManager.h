@@ -19,7 +19,6 @@ class RADIANT_API AWidgetManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AWidgetManager();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

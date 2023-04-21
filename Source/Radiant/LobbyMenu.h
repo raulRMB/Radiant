@@ -17,9 +17,18 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 	// create a find match button and bind it to the function
 	UPROPERTY(meta = (BindWidget))
 	class UButton* FindMatchButton;
-private:
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* CancelMatchmakingButton;
+	
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION()
 	void OnFindMatchButtonClicked();
+
+	UFUNCTION()
+	void OnCancelMatchmakingButtonClicked();
+
+	UFUNCTION()
+	void OnButtonToggle(bool bIsMatchmaking);
 };

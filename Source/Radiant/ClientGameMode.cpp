@@ -9,6 +9,7 @@
 #include "PlayFabRuntimeSettings.h"
 #include "WidgetManager.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Core/PlayFabClientAPI.h"
 #include "Core/PlayFabMultiplayerAPI.h"
 #include "Kismet/GameplayStatics.h"
@@ -29,7 +30,6 @@ void AClientGameMode::BeginPlay()
 	
 	clientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
 	multiplayerAPI = IPlayFabModuleInterface::Get().GetMultiplayerAPI();
-	matchmakerAPI = IPlayFabModuleInterface::Get().GetMatchmakerAPI();
 }
 
 void AClientGameMode::LoginUser(const FString& Username, const FString& Password)
@@ -86,7 +86,21 @@ void AClientGameMode::StartMatchmaking()
 		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &AClientGameMode::OnError)
 	);
 
-	UE_LOG(LogTemp, Warning, TEXT("You are now match making for %s"), *Request.QueueName)
+	UE_LOG(LogTemp, Warning, TEXT("User has started matchmaking %s"), *Request.QueueName)
+}
+
+void AClientGameMode::CancelMatchmaking()
+{
+	PlayFab::MultiplayerModels::FCancelAllMatchmakingTicketsForPlayerRequest Request;
+	Request.QueueName = QueueName;
+	Request.Entity = MakeShareable(new PlayFab::MultiplayerModels::FEntityKey());
+	Request.Entity->Id = EntityId;
+	Request.Entity->Type = EntityType;
+	
+	multiplayerAPI->CancelAllMatchmakingTicketsForPlayer(Request,
+		PlayFab::UPlayFabMultiplayerAPI::FCancelAllMatchmakingTicketsForPlayerDelegate::CreateUObject(this, &AClientGameMode::OnCancelAllMatchmakingTicketsForPlayerSuccess),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &AClientGameMode::OnError)
+	);
 }
 
 void AClientGameMode::GetMatchmakingTicketResult()
@@ -108,14 +122,14 @@ void AClientGameMode::OnLoginSuccess(const PlayFab::ClientModels::FLoginResult& 
 
 	WidgetManager->SwitchTo(FString("LobbyMenu"));
 	
-	UE_LOG(LogTemp, Log, TEXT("Congratulations, you are now logged into PlayFab"));
+	UE_LOG(LogTemp, Log, TEXT("User logged into PlayFab"));
 }
 
 void AClientGameMode::OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result)
 {
 	WidgetManager->SwitchTo(FString("LoginMenu"));
 	
-	UE_LOG(LogTemp, Log, TEXT("Congratulations, you are now registered with PlayFab"));
+	UE_LOG(LogTemp, Log, TEXT("User registered with PlayFab"));
 }
 
 void AClientGameMode::OnCreateMatchmakingTicketSuccess(
@@ -127,13 +141,16 @@ void AClientGameMode::OnCreateMatchmakingTicketSuccess(
 	
 	GetWorld()->GetTimerManager().SetTimer(HGetTicketResult, this, &AClientGameMode::GetMatchmakingTicketResult, 6.2f, true, -1);
 
+	bIsMatchmaking = true;
+
+	OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking);
+	
 	UE_LOG(LogTemp, Warning, TEXT("On Create Matchmaking Ticket success"));
 }
 
 void AClientGameMode::OnGetMatchmakingTicketSuccess(
 	const PlayFab::MultiplayerModels::FGetMatchmakingTicketResult& Result)
 {
-	UE_LOG(LogTemp, Warning, TEXT("On Get Matchmaking Ticket success"));
 	
 	if(Result.Status == "Matched")
 	{
@@ -146,19 +163,35 @@ void AClientGameMode::OnGetMatchmakingTicketSuccess(
 		multiplayerAPI->GetMatch(Request, PlayFab::UPlayFabMultiplayerAPI::FGetMatchDelegate::CreateUObject(this, &AClientGameMode::OnGetMatchSuccess),
 			PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &AClientGameMode::OnError)
 			);
+
+		UE_LOG(LogTemp, Warning, TEXT("User has found a match!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("User is in queue"));
 	}
 }
 
 void AClientGameMode::OnGetMatchSuccess(const PlayFab::MultiplayerModels::FGetMatchResult& Result)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Found Match!"));
-
 	FString Address = Result.pfServerDetails->IPV4Address ;
 	Address.Append(":");
 	Address.AppendInt(Result.pfServerDetails->Ports[0].Num);
 	UE_LOG(LogTemp, Warning, TEXT("Address: %s"), *Address);
 	UGameplayStatics::OpenLevel(GetWorld(), FName(Address));
+	UE_LOG(LogTemp, Warning, TEXT("User found Match!"));
+}
+
+void AClientGameMode::OnCancelAllMatchmakingTicketsForPlayerSuccess(
+	const PlayFab::MultiplayerModels::FCancelAllMatchmakingTicketsForPlayerResult& Result)
+{
+	bIsMatchmaking = false;
+
+	OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking);
+
+	GetWorld()->GetTimerManager().ClearTimer(HGetTicketResult);
 	
+	UE_LOG(LogTemp, Warning, TEXT("User has cancelled all matchmaking tickets"));
 }
 
 void AClientGameMode::OnError(const PlayFab::FPlayFabCppError& ErrorResult)
