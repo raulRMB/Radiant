@@ -15,6 +15,9 @@ public class Radiant : ModuleRules
 			"InputCore", 
 			"EnhancedInput",
 			"PlayFabGSDK",
+			"PlayFab",
+			"PlayFabCpp",
+			"PlayFabCommon",
 			"UMG"
 		});
 

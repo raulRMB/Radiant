@@ -28,6 +28,7 @@ void URadiantGameInstance::Init()
 #if UE_SERVER
 	UGSDKUtils::SetDefaultServerHostPort();
 #endif
+
 }
 
 void URadiantGameInstance::OnStart()

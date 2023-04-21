@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "RegisterMenu.generated.h"
 
+DECLARE_DELEGATE(FRegisterSuccessSignature)
+
 /**
  * 
  */
@@ -36,4 +38,9 @@ class RADIANT_API URegisterMenu : public UUserWidget
 
 	UFUNCTION()
 	void OnBackButtonClicked();
+public:
+	FRegisterSuccessSignature OnRegisterSuccess;
+private:
+	UFUNCTION()
+		void OnRegisterSuccessCallback();
 };

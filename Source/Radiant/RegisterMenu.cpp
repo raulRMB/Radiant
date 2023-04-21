@@ -2,7 +2,12 @@
 
 
 #include "RegisterMenu.h"
+
+#include "ClientGameMode.h"
+#include "WidgetManager.h"
 #include "Components/Button.h"
+#include "Components/EditableTextBox.h"
+#include "Kismet/GameplayStatics.h"
 
 void URegisterMenu::NativeConstruct()
 {
@@ -10,14 +15,24 @@ void URegisterMenu::NativeConstruct()
 
 	RegisterButton->OnClicked.AddDynamic(this, &URegisterMenu::OnRegisterButtonClicked);
 	BackButton->OnClicked.AddDynamic(this, &URegisterMenu::OnBackButtonClicked);
+	OnRegisterSuccess.BindUObject(this, &URegisterMenu::OnRegisterSuccessCallback);
 }
 
 void URegisterMenu::OnRegisterButtonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Register Button Clicked!"));
+	AClientGameMode* GameMode = Cast<AClientGameMode>(GetWorld()->GetAuthGameMode());
+	GameMode->RegisterUser(EmailTextBox->GetText().ToString(), UserNameTextBox->GetText().ToString(), PasswordTextBox->GetText().ToString());
 }
 
 void URegisterMenu::OnBackButtonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Back Button Clicked!"));
+	if(auto WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass())))
+	{
+		WidgetManager->SwitchTo(FString("LoginMenu"));
+	}
+}
+
+void URegisterMenu::OnRegisterSuccessCallback()
+{
+	RemoveFromParent();
 }
