@@ -18,7 +18,9 @@ public class Radiant : ModuleRules
 			"PlayFab",
 			"PlayFabCpp",
 			"PlayFabCommon",
-			"UMG"
+			"UMG",
+			"Json",
+			"JsonUtilities"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
