@@ -2,6 +2,8 @@
 
 
 #include "LobbyMenu.h"
+
+#include "ClientGameMode.h"
 #include "Components/Button.h"
 
 void ULobbyMenu::NativeConstruct()
@@ -13,5 +15,6 @@ void ULobbyMenu::NativeConstruct()
 
 void ULobbyMenu::OnFindMatchButtonClicked()
 {
-	
+	if(auto Gamemode = Cast<AClientGameMode>(GetWorld()->GetAuthGameMode()))
+		Gamemode->StartMatchmaking();
 }
