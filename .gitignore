@@ -2,6 +2,7 @@
 .vs/
 .idea/
 .vsconfig
+Platforms/HoloLens/Config/HoloLensEngine.ini
 # Compiled Object files
 *.slo
 *.lo
