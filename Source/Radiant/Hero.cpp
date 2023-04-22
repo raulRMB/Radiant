@@ -20,6 +20,8 @@ void AHero::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Destination = GetActorLocation();
+	
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		PlayerController->bShowMouseCursor = true;
