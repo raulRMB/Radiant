@@ -14,13 +14,13 @@ AEndBox::AEndBox()
 	Box = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Box"));
 	check(Box);
 	SetRootComponent(Box);
+	Box->OnComponentBeginOverlap.AddDynamic(this, &AEndBox::OnOverlapBegin);
 }
 
 // Called when the game starts or when spawned
 void AEndBox::BeginPlay()
 {
 	Super::BeginPlay();
-	Box->OnComponentBeginOverlap.AddDynamic(this, &AEndBox::OnOverlapBegin);
 }
 
 // Called every frame

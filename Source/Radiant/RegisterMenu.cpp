@@ -4,6 +4,7 @@
 #include "RegisterMenu.h"
 
 #include "ClientGameMode.h"
+#include "ClientSubsystem.h"
 #include "WidgetManager.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
@@ -20,8 +21,7 @@ void URegisterMenu::NativeConstruct()
 
 void URegisterMenu::OnRegisterButtonClicked()
 {
-	AClientGameMode* GameMode = Cast<AClientGameMode>(GetWorld()->GetAuthGameMode());
-	GameMode->RegisterUser(EmailTextBox->GetText().ToString(), UserNameTextBox->GetText().ToString(), PasswordTextBox->GetText().ToString());
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->RegisterUser(EmailTextBox->GetText().ToString(), UserNameTextBox->GetText().ToString(), PasswordTextBox->GetText().ToString());
 }
 
 void URegisterMenu::OnBackButtonClicked()

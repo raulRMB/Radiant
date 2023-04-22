@@ -4,6 +4,7 @@
 #include "LoginMenu.h"
 
 #include "ClientGameMode.h"
+#include "ClientSubsystem.h"
 #include "WidgetManager.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
@@ -19,8 +20,7 @@ void ULoginMenu::NativeConstruct()
 
 void ULoginMenu::OnLoginButtonClicked()
 {
-	AClientGameMode* GameMode = Cast<AClientGameMode>(GetWorld()->GetAuthGameMode());
-	GameMode->LoginUser(UserNameTextBox->GetText().ToString(), PasswordTextBox->GetText().ToString());
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->LoginUser(UserNameTextBox->GetText().ToString(), PasswordTextBox->GetText().ToString());
 }
 
 void ULoginMenu::OnRegisterButtonClicked()

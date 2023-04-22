@@ -4,6 +4,7 @@
 #include "LobbyMenu.h"
 
 #include "ClientGameMode.h"
+#include "ClientSubsystem.h"
 #include "Components/Button.h"
 
 void ULobbyMenu::NativeConstruct()
@@ -12,26 +13,19 @@ void ULobbyMenu::NativeConstruct()
 
 	FindMatchButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnFindMatchButtonClicked);
 	CancelMatchmakingButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnCancelMatchmakingButtonClicked);
-	if(auto Gamemode = Cast<AClientGameMode>(GetWorld()->GetAuthGameMode()))
-	{
-		Gamemode->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
-	}
+	
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
+	
 }
 
 void ULobbyMenu::OnFindMatchButtonClicked()
 {
-	if(auto Gamemode = Cast<AClientGameMode>(GetWorld()->GetAuthGameMode()))
-	{
-		Gamemode->StartMatchmaking();
-	}
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->StartMatchmaking();
 }
 
 void ULobbyMenu::OnCancelMatchmakingButtonClicked()
 {
-	if(auto Gamemode = Cast<AClientGameMode>(GetWorld()->GetAuthGameMode()))
-	{
-		Gamemode->CancelMatchmaking();
-	}
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->CancelMatchmaking();
 }
 
 void ULobbyMenu::OnButtonToggle(bool bIsMatchmaking)

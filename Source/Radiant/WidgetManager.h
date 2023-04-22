@@ -26,7 +26,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void SwitchTo(const FString& Key);
+	void SwitchTo(const FString& Name);
+	void SwitchTo(const char* Name);
 	void SwitchTo(const FName& Name);
 };
 

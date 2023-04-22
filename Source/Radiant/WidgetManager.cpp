@@ -3,6 +3,7 @@
 
 #include "WidgetManager.h"
 
+#include "ClientSubsystem.h"
 #include "Components/SlateWrapperTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
@@ -27,7 +28,10 @@ void AWidgetManager::BeginPlay()
 		WidgetInstance->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	SwitchTo(DefaultWidget);
+	if(GetGameInstance()->GetSubsystem<UClientSubsystem>()->GetIsLoggedIn())
+		SwitchTo("LobbyMenu");
+	else
+		SwitchTo(DefaultWidget);
 }
 
 // Called every frame
@@ -53,6 +57,11 @@ void AWidgetManager::SwitchTo(const FString& Name)
 			Widget->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+}
+
+void AWidgetManager::SwitchTo(const char* Name)
+{
+	SwitchTo(FString(Name));
 }
 
 void AWidgetManager::SwitchTo(const FName& Name)
