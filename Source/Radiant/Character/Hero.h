@@ -16,20 +16,41 @@ public:
 	// Sets default values for this character's properties
 	AHero();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero")
+	UPROPERTY(EditAnywhere)
+		float TurnSpeed = 200.f;
+
+	UPROPERTY(EditAnywhere)
+	uint8 bCanRotate : 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 		FVector Destination;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+		class AHero* Target;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+		uint8 bIsAttacking : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+		float AttackRange;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+		class UCapsuleComponent* HitBox;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 		class UInputAction* ClickAction;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 		class UInputMappingContext* MappingContext;
 	
+	UPROPERTY(EditAnywhere)
+		class UNiagaraSystem* SystemTemplate;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void Click(const FInputActionValue& Value);
-
+	void OnUpdateTarget(const FInputActionValue& Value);
+	void CheckShouldAttack();
+	void TurnToDestination(float DeltaTime);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -4,6 +4,8 @@
 #include "Hero.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Components/CapsuleComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -11,6 +13,11 @@ AHero::AHero()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	HitBox = CreateDefaultSubobject<UCapsuleComponent>(FName("HitBox"));
+	check(HitBox);
+	HitBox->SetupAttachment(RootComponent);
+	HitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 // Called when the game starts or when spawned
@@ -30,7 +37,7 @@ void AHero::BeginPlay()
 	}
 }
 
-void AHero::Click(const FInputActionValue& Value)
+void AHero::OnUpdateTarget(const FInputActionValue& Value)
 {
 	// Get the mouse position
 	FVector2D MousePosition;
@@ -46,10 +53,48 @@ void AHero::Click(const FInputActionValue& Value)
 
 	// Get the hit result
 	FHitResult HitResult;
-	GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 10000, ECC_Visibility);
+	GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel1);
+	
+	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
+	{
+		Target = Hero;
+		UE_LOG(LogTemp, Warning, TEXT("Target: %s"), *Target->GetName());
+	}
+	else
+	{
+		Target = nullptr;
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
+	}
 
+	bCanRotate = true;
+	
 	// Set the destination
-	Destination = HitResult.Location;	
+	Destination = HitResult.Location;
+}
+
+void AHero::CheckShouldAttack()
+{
+	if(!Target)
+	{
+		bIsAttacking = false;
+		return;
+	}
+	
+	FVector dir = Target->GetActorLocation() - GetActorLocation();
+	bIsAttacking = dir.Size() < AttackRange;
+}
+
+void AHero::TurnToDestination(float DeltaTime)
+{
+	if (!bCanRotate)
+		return;
+
+	FVector Dir = (Destination - GetActorLocation()).GetSafeNormal();
+	float Angle = FMath::RadiansToDegrees(FMath::Atan2(Dir.Y, Dir.X));
+
+	FRotator NewRotation = FRotator(0, Angle, 0);
+	
+	SetActorRotation(NewRotation);
 }
 
 // Called every frame
@@ -57,10 +102,17 @@ void AHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Move towards the destination
-	FVector dir = Destination - GetActorLocation();
-	dir.Normalize();
-	AddMovementInput(dir, 1);
+	CheckShouldAttack();
+
+	TurnToDestination(DeltaTime);
+	
+	if(!bIsAttacking)
+	{
+		if((Destination - GetActorLocation()).Size() < 10)
+			return;
+		FVector dir = Destination - GetActorLocation();
+		AddMovementInput(dir, 1);
+	}
 }
 
 // Called to bind functionality to input
@@ -70,7 +122,7 @@ void AHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AHero::Click);
+		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AHero::OnUpdateTarget);
 	}
 }
 

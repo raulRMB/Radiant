@@ -20,7 +20,9 @@ public class Radiant : ModuleRules
 			"PlayFabCommon",
 			"UMG",
 			"Json",
-			"JsonUtilities"
+			"JsonUtilities",
+			"NiagaraCore",
+			"Niagara"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
