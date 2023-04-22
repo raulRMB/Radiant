@@ -2,10 +2,8 @@
 
 
 #include "LoginMenu.h"
-
-#include "ClientGameMode.h"
-#include "ClientSubsystem.h"
-#include "WidgetManager.h"
+#include "../ClientSubsystem.h"
+#include "../../Util/WidgetManager.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 #include "Kismet/GameplayStatics.h"

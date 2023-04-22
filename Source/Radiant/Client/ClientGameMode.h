@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RadiantGameModeBase.h"
+#include "../RadiantGameModeBase.h"
 #include "ClientGameMode.generated.h"
 
 /**

@@ -3,8 +3,7 @@
 
 #include "LobbyMenu.h"
 
-#include "ClientGameMode.h"
-#include "ClientSubsystem.h"
+#include "../ClientSubsystem.h"
 #include "Components/Button.h"
 
 void ULobbyMenu::NativeConstruct()

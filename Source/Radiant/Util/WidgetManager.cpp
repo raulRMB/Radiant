@@ -3,7 +3,7 @@
 
 #include "WidgetManager.h"
 
-#include "ClientSubsystem.h"
+#include "../Client/ClientSubsystem.h"
 #include "Components/SlateWrapperTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"

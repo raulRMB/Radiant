@@ -2,8 +2,6 @@
 
 
 #include "Hero.h"
-
-#include "RadiantGameModeBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
