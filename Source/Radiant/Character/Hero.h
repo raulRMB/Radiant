@@ -19,7 +19,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		float TurnSpeed = 200.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(Replicated, EditAnywhere)
 	uint8 bCanRotate : 1;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
@@ -55,6 +55,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

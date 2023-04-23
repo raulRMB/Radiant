@@ -7,12 +7,15 @@
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AHero::AHero()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	bReplicates = true;
 
 	HitBox = CreateDefaultSubobject<UCapsuleComponent>(FName("HitBox"));
 	check(HitBox);
@@ -51,10 +54,14 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	FVector WorldDirection;
 	UGameplayStatics::DeprojectScreenToWorld(GetWorld()->GetFirstPlayerController(), MousePosition, WorldPosition, WorldDirection);
 
+	
 	// Get the hit result
 	FHitResult HitResult;
-	GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel1);
+	FCollisionQueryParams CollisionQueryParams;
+	CollisionQueryParams.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel1, CollisionQueryParams);
 	
+
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
@@ -65,8 +72,6 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 		Target = nullptr;
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
-
-	bCanRotate = true;
 	
 	// Set the destination
 	Destination = HitResult.Location;
@@ -86,15 +91,25 @@ void AHero::CheckShouldAttack()
 
 void AHero::TurnToDestination(float DeltaTime)
 {
-	if (!bCanRotate)
-		return;
-
-	FVector Dir = (Destination - GetActorLocation()).GetSafeNormal();
-	float Angle = FMath::RadiansToDegrees(FMath::Atan2(Dir.Y, Dir.X));
-
-	FRotator NewRotation = FRotator(0, Angle, 0);
-	
-	SetActorRotation(NewRotation);
+	// if (!bCanRotate)
+	// 	return;
+	//
+	// FVector Dir = Destination - GetActorLocation();
+	// float TargetAngle = FMath::RadiansToDegrees(FMath::Atan2(Dir.Y, Dir.X));
+	//
+	// FRotator NewRotation = FRotator(0, TargetAngle - 90.f, 0);
+	//
+	// FRotator InterpRot = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, TurnSpeed);
+	//
+	// float a = GetActorRotation().Euler().Z;
+	// float b = Dir.Rotation().Euler().Z;
+	//
+	// float angle = FMath::FindDeltaAngleDegrees(a, b);
+	//
+	// if (FMath::Abs(angle) < 1.0f)
+	// 	bCanRotate = false;
+	//
+	// AddControllerYawInput(2.f);
 }
 
 // Called every frame
@@ -108,11 +123,18 @@ void AHero::Tick(float DeltaTime)
 	
 	if(!bIsAttacking)
 	{
-		if((Destination - GetActorLocation()).Size() < 10)
+		if((Destination - GetActorLocation()).Size() < 200.f)
 			return;
 		FVector dir = Destination - GetActorLocation();
 		AddMovementInput(dir, 1);
 	}
+}
+
+void AHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AHero, bCanRotate);
 }
 
 // Called to bind functionality to input
