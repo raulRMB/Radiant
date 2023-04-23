@@ -16,12 +16,6 @@ public:
 	// Sets default values for this character's properties
 	AHero();
 
-	UPROPERTY(EditAnywhere)
-		float TurnSpeed = 200.f;
-
-	UPROPERTY(Replicated, EditAnywhere)
-	uint8 bCanRotate : 1;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 		FVector Destination;
 
@@ -50,7 +44,6 @@ protected:
 	virtual void BeginPlay() override;
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void CheckShouldAttack();
-	void TurnToDestination(float DeltaTime);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

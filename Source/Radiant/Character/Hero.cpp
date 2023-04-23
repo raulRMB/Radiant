@@ -89,29 +89,6 @@ void AHero::CheckShouldAttack()
 	bIsAttacking = dir.Size() < AttackRange;
 }
 
-void AHero::TurnToDestination(float DeltaTime)
-{
-	// if (!bCanRotate)
-	// 	return;
-	//
-	// FVector Dir = Destination - GetActorLocation();
-	// float TargetAngle = FMath::RadiansToDegrees(FMath::Atan2(Dir.Y, Dir.X));
-	//
-	// FRotator NewRotation = FRotator(0, TargetAngle - 90.f, 0);
-	//
-	// FRotator InterpRot = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, TurnSpeed);
-	//
-	// float a = GetActorRotation().Euler().Z;
-	// float b = Dir.Rotation().Euler().Z;
-	//
-	// float angle = FMath::FindDeltaAngleDegrees(a, b);
-	//
-	// if (FMath::Abs(angle) < 1.0f)
-	// 	bCanRotate = false;
-	//
-	// AddControllerYawInput(2.f);
-}
-
 // Called every frame
 void AHero::Tick(float DeltaTime)
 {
@@ -119,7 +96,6 @@ void AHero::Tick(float DeltaTime)
 
 	CheckShouldAttack();
 
-	TurnToDestination(DeltaTime);
 	
 	if(!bIsAttacking)
 	{
@@ -133,8 +109,6 @@ void AHero::Tick(float DeltaTime)
 void AHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AHero, bCanRotate);
 }
 
 // Called to bind functionality to input
