@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{415D4D89-4180-EF2E-CE59-ABA5677D9672}",
+	"EngineAssociation": "{1E925516-4E8B-0BED-8E14-CAA078CDB022}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -21,6 +21,10 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "PlayFabGSDK",
+			"Enabled": true
 		},
 		{
 			"Name": "PlayFab",
