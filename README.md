@@ -24,3 +24,7 @@
         - Right click Radiant.uproject -> Generate Visual Studio Project Files
         - Open Radiant.sln and build the project
         - Right click Radiant.uproject -> Switch to unreal engine version and select the source code build
+
+- Common Errors
+    - Cant Login
+        - Make sure you are running the client as the standalone build
