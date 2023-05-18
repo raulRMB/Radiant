@@ -4,6 +4,7 @@
 #include "RadiantGameInstance.h"
 #include "PlayFabGSDK.h"
 #include "GSDKUtils.h"
+#include "AbilitySystemGlobals.h"
 
 void URadiantGameInstance::Init()
 {
@@ -28,7 +29,8 @@ void URadiantGameInstance::Init()
 #if UE_SERVER
 	UGSDKUtils::SetDefaultServerHostPort();
 #endif
-
+	
+	UAbilitySystemGlobals::Get().InitGlobalData();
 }
 
 void URadiantGameInstance::OnStart()

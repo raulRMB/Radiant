@@ -25,7 +25,9 @@ public class Radiant : ModuleRules
 			"Niagara"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] {  "GameplayAbilities", "GameplayTags", "GameplayTasks" });
+		
+		PublicIncludePaths.Add("Radiant/");
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

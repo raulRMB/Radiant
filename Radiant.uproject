@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{1E925516-4E8B-0BED-8E14-CAA078CDB022}",
+	"EngineAssociation": "{415D4D89-4180-EF2E-CE59-ABA5677D9672}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -10,7 +10,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"UMG"
+				"UMG",
+				"GameplayAbilities"
 			]
 		}
 	],
@@ -30,6 +31,10 @@
 			"Name": "PlayFab",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/217fdf581b784571af03d3fb6580368f"
+		},
+		{
+			"Name": "GameplayAbilities",
+			"Enabled": true
 		}
 	]
 }
