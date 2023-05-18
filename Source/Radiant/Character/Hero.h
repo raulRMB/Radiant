@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "Hero.generated.h"
 
 UCLASS()
@@ -91,6 +92,13 @@ protected:
 	
 	class URTAbilitySystemComponent* AbilitySystemComponent;
 	class URTHeroAttributeSetBase* AttributeSetBase;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
+	class UWidgetComponent* OverHeadInfoBarWidgetComponent;
+	
+	class UHeroInfoBar* OverHeadInfoBar;
+
+	void OnHealthChanged(const FOnAttributeChangeData& Data);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -99,5 +107,4 @@ public:
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };

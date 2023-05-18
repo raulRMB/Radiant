@@ -6,11 +6,13 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Components/WidgetComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
+#include "UI/HeroInfoBar.h"
 
 // Sets default values
 AHero::AHero()
@@ -24,6 +26,9 @@ AHero::AHero()
 	check(HitBox);
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	OverHeadInfoBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("InfoBar");
+	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -41,6 +46,8 @@ void AHero::BeginPlay()
 			Subsystem->AddMappingContext(MappingContext, 0);
 		}
 	}
+	
+	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
 }
 
 void AHero::OnUpdateTarget(const FInputActionValue& Value)
@@ -96,20 +103,7 @@ void AHero::OnAbilityOne(const FInputActionValue& Value)
 {
 	FGameplayTagContainer TagContainer;
 	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Heal")));
-	if(AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer))
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Ability One Activated"));
-	}
-
-	if(HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server One Activated"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client One Activated"));			
-	}
-	
+	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);	
 }
 
 void AHero::OnAbilityTwo(const FInputActionValue& Value)
@@ -164,6 +158,7 @@ void AHero::OnRep_PlayerState()
 		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
 		
 		AttributeSetBase = PS->GetAttributeSetBase();
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AHero::OnHealthChanged);
 	}
 }
 
@@ -172,6 +167,15 @@ void AHero::GiveInitialAbilities()
 	for(auto Ability : Abilities)
 	{
 		AbilitySystemComponent->GiveAbility(Ability);
+	}
+}
+
+void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
+{
+	if(Data.Attribute == AttributeSetBase->GetHealthAttribute())
+	{
+		float Percent = AttributeSetBase->GetHealth() / 100;
+		OverHeadInfoBar->SetHealthPercent(Percent);
 	}
 }
 

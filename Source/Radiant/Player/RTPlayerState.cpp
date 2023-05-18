@@ -2,6 +2,8 @@
 
 
 #include "Player/RTPlayerState.h"
+
+#include "Character/Hero.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 
@@ -13,7 +15,7 @@ ARTPlayerState::ARTPlayerState()
 
 	// Mixed mode means we only are replicated the GEs to ourself, not the GEs to simulated proxies. If another GDPlayerState (Hero) receives a GE,
 	// we won't be told about it by the Server. Attributes, GameplayTags, and GameplayCues will still replicate to us.
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);	
 
 	AttributeSetBase = CreateDefaultSubobject<URTHeroAttributeSetBase>(TEXT("AttributeSetBase"));
 
