@@ -33,9 +33,30 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 		class UInputAction* ClickAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* AbilityOneAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* AbilityTwoAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* AbilityThreeAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* AbilityFourAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* AbilityFiveAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* AbilitySixAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 		class UInputMappingContext* MappingContext;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
+		TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 	
 	UPROPERTY(EditAnywhere)
 		class UNiagaraSystem* SystemTemplate;
@@ -44,6 +65,32 @@ protected:
 	virtual void BeginPlay() override;
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void CheckShouldAttack();
+
+	UFUNCTION()
+	void OnAbilityOne(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void OnAbilityTwo(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void OnAbilityThree(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void OnAbilityFour(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void OnAbilityFive(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void OnAbilitySix(const FInputActionValue& Value);
+
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
+	void GiveInitialAbilities();
+	
+	class URTAbilitySystemComponent* AbilitySystemComponent;
+	class URTHeroAttributeSetBase* AttributeSetBase;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

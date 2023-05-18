@@ -6,8 +6,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/RTPlayerState.h"
 
 // Sets default values
 AHero::AHero()
@@ -89,13 +92,95 @@ void AHero::CheckShouldAttack()
 	bIsAttacking = dir.Size() < AttackRange;
 }
 
+void AHero::OnAbilityOne(const FInputActionValue& Value)
+{
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Heal")));
+	if(AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Ability One Activated"));
+	}
+
+	if(HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server One Activated"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client One Activated"));			
+	}
+	
+}
+
+void AHero::OnAbilityTwo(const FInputActionValue& Value)
+{
+	
+}
+
+void AHero::OnAbilityThree(const FInputActionValue& Value)
+{
+	
+}
+
+void AHero::OnAbilityFour(const FInputActionValue& Value)
+{
+	
+}
+
+void AHero::OnAbilityFive(const FInputActionValue& Value)
+{
+	
+}
+
+void AHero::OnAbilitySix(const FInputActionValue& Value)
+{
+	
+}
+
+void AHero::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
+	if(PS)
+	{
+		AbilitySystemComponent = Cast<URTAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
+		
+		AttributeSetBase = PS->GetAttributeSetBase();
+	}
+
+	GiveInitialAbilities();
+}
+
+void AHero::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
+	if(PS)
+	{
+		AbilitySystemComponent = Cast<URTAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
+		
+		AttributeSetBase = PS->GetAttributeSetBase();
+	}
+}
+
+void AHero::GiveInitialAbilities()
+{
+	for(auto Ability : Abilities)
+	{
+		AbilitySystemComponent->GiveAbility(Ability);
+	}
+}
+
 // Called every frame
 void AHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	CheckShouldAttack();
-
 	
 	if(!bIsAttacking)
 	{
@@ -119,6 +204,12 @@ void AHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AHero::OnUpdateTarget);
+		EnhancedInputComponent->BindAction(AbilityOneAction, ETriggerEvent::Started, this, &AHero::OnAbilityOne);
+		EnhancedInputComponent->BindAction(AbilityTwoAction, ETriggerEvent::Started, this, &AHero::OnAbilityTwo);
+		EnhancedInputComponent->BindAction(AbilityThreeAction, ETriggerEvent::Started, this, &AHero::OnAbilityThree);
+		EnhancedInputComponent->BindAction(AbilityFourAction, ETriggerEvent::Started, this, &AHero::OnAbilityFour);
+		EnhancedInputComponent->BindAction(AbilityFiveAction, ETriggerEvent::Started, this, &AHero::OnAbilityFive);
+		EnhancedInputComponent->BindAction(AbilitySixAction, ETriggerEvent::Started, this, &AHero::OnAbilitySix);
 	}
 }
 
