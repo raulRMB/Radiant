@@ -123,7 +123,9 @@ void AHero::OnAbilityTwo(const FInputActionValue& Value)
 
 void AHero::OnAbilityThree(const FInputActionValue& Value)
 {
-	
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Movement.Sprint")));
+	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
 }
 
 void AHero::OnAbilityFour(const FInputActionValue& Value)
@@ -187,6 +189,16 @@ void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
 		float Percent = AttributeSetBase->GetHealth() / 100;
 		OverHeadInfoBar->SetHealthPercent(Percent);
 	}
+}
+
+void AHero::StopMovement()
+{
+	Destination = GetActorLocation();
+}
+
+void AHero::TurnTowards(const FVector& TargetDirection, float TurnSpeed)
+{
+	AddControllerYawInput(TargetDirection.Rotation().Yaw * TurnSpeed * GetWorld()->GetDeltaSeconds());
 }
 
 // Called every frame

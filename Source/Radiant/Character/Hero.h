@@ -99,6 +99,7 @@ protected:
 	class UHeroInfoBar* OverHeadInfoBar;
 
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -107,4 +108,9 @@ public:
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	UFUNCTION(BlueprintCallable)
+	void StopMovement();
+	UFUNCTION(BlueprintCallable)
+	void TurnTowards(const FVector& TargetDirection, float TurnSpeed);
 };
