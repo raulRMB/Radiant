@@ -114,7 +114,7 @@ void AHero::OnAbilityTwo(const FInputActionValue& Value)
 	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
 	FGameplayEventData EventData;
 	const UMouseVec* dir = NewObject<UMouseVec>();
-	dir->MouseVec = UUtil::ProjectileDirection(MousePos, GetActorLocation());
+	dir->MouseVec = UUtil::ProjectileDirection(GetActorLocation(), MousePos);
 	EventData.OptionalObject = dir;
 	EventData.Instigator = this;
 	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Combat.Fireball"));
