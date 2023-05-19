@@ -13,6 +13,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
 #include "UI/HeroInfoBar.h"
+#include "Util/Util.h"
+#include "Util/MouseVec.h"
 
 // Sets default values
 AHero::AHero()
@@ -108,7 +110,15 @@ void AHero::OnAbilityOne(const FInputActionValue& Value)
 
 void AHero::OnAbilityTwo(const FInputActionValue& Value)
 {
-	
+	TArray<AActor*> Actors;
+	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
+	FGameplayEventData EventData;
+	const UMouseVec* dir = NewObject<UMouseVec>();
+	dir->MouseVec = UUtil::ProjectileDirection(MousePos, GetActorLocation());
+	EventData.OptionalObject = dir;
+	EventData.Instigator = this;
+	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Combat.Fireball"));
+	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
 void AHero::OnAbilityThree(const FInputActionValue& Value)
