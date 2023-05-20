@@ -19,4 +19,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FVector ProjectileDirection(FVector A, FVector B);
+
+	UFUNCTION(BlueprintCallable)
+	static FVector GetMouseVecFromTargetData(const FGameplayAbilityTargetDataHandle& TargetData);
 };

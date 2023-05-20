@@ -2,8 +2,12 @@
 
 
 #include "Util/Util.h"
+
+#include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+
+struct FGameplayAbilityTargetDataHandle;
 
 FVector UUtil::GetMousePosition(class UObject* WorldContext, TArray<AActor*> IgnoredActors)
 {
@@ -33,4 +37,19 @@ FVector UUtil::GetMousePosition(class UObject* WorldContext, TArray<AActor*> Ign
 FVector UUtil::ProjectileDirection(FVector A, FVector B)
 {
 	return FVector(B.X - A.X, B.Y - A.Y, 0).GetSafeNormal();
+}
+
+FVector UUtil::GetMouseVecFromTargetData(const FGameplayAbilityTargetDataHandle& TargetData)
+{
+		if(TargetData.Data.Num() > 0)
+		{
+			FGameplayAbilityTargetData* Data = TargetData.Data[0].Get();
+			if (Data)
+			{
+				const FVector Mouse = Data->GetEndPointTransform().GetTranslation();
+				return Mouse;
+			}
+		}
+	
+	return FVector::ZeroVector;
 }
