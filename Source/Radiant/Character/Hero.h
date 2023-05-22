@@ -18,22 +18,31 @@ public:
 	AHero();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-		FVector Destination;
+	FVector Destination;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-		class AHero* Target;
+	class AHero* Target;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-		uint8 bIsAttacking : 1;
+	uint8 bIsAttacking : 1;
 
+	UPROPERTY(EditAnywhere)
+	float RotationSpeed = 20.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	uint8 bRotationLocked : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	FVector TargetDirection;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-		float AttackRange;
+	float AttackRange;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
-		class UCapsuleComponent* HitBox;
+	class UCapsuleComponent* HitBox;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-		class UInputAction* ClickAction;
+	class UInputAction* ClickAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	class UInputAction* AbilityOneAction;
@@ -54,13 +63,13 @@ public:
 	class UInputAction* AbilitySixAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-		class UInputMappingContext* MappingContext;
+	class UInputMappingContext* MappingContext;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
-		TArray<TSubclassOf<class UGameplayAbility>> Abilities;
+	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 	
 	UPROPERTY(EditAnywhere)
-		class UNiagaraSystem* SystemTemplate;
+	class UNiagaraSystem* SystemTemplate;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -112,5 +121,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopMovement();
 	UFUNCTION(BlueprintCallable)
-	void TurnTowards(const FVector& TargetDirection, float TurnSpeed);
+	void SetRotationLock(bool RotationLocked, FVector TargetDir);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void S_SetRotationLock(bool RotationLocked, FVector TargetDir);
 };

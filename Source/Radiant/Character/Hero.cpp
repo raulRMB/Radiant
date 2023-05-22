@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/WidgetComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -196,9 +197,21 @@ void AHero::StopMovement()
 	Destination = GetActorLocation();
 }
 
-void AHero::TurnTowards(const FVector& TargetDirection, float TurnSpeed)
+void AHero::SetRotationLock(bool RotationLocked, FVector TargetDir)
 {
-	AddControllerYawInput(TargetDirection.Rotation().Yaw * TurnSpeed * GetWorld()->GetDeltaSeconds());
+	bRotationLocked = RotationLocked;
+	TargetDirection = TargetDir;
+	GetCharacterMovement()->bOrientRotationToMovement = !RotationLocked;
+	bUseControllerRotationYaw = RotationLocked;
+	S_SetRotationLock(RotationLocked, TargetDir);
+}
+
+void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
+{
+	bRotationLocked = RotationLocked;
+	TargetDirection = TargetDir;
+	GetCharacterMovement()->bOrientRotationToMovement = !RotationLocked;
+	bUseControllerRotationYaw = RotationLocked;
 }
 
 // Called every frame
@@ -210,10 +223,19 @@ void AHero::Tick(float DeltaTime)
 	
 	if(!bIsAttacking)
 	{
-		if((Destination - GetActorLocation()).Size() < 200.f)
-			return;
-		FVector dir = Destination - GetActorLocation();
-		AddMovementInput(dir, 1);
+		if((Destination - GetActorLocation()).Size() >= 200.f)
+		{
+			FVector dir = Destination - GetActorLocation();
+			AddMovementInput(dir, 1);
+		}
+	}
+	if(IsLocallyControlled() && bRotationLocked)
+	{
+		FRotator CurrentRotation = GetCapsuleComponent()->GetComponentRotation();
+		FRotator Rotation = FMath::Lerp(CurrentRotation, TargetDirection.Rotation(), RotationSpeed * DeltaTime);
+		Rotation.Pitch = CurrentRotation.Pitch;
+		Rotation.Roll = CurrentRotation.Roll;
+		GetController()->SetControlRotation(Rotation);
 	}
 }
 
