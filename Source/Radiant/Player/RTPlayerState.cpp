@@ -20,7 +20,9 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSetBase = CreateDefaultSubobject<URTHeroAttributeSetBase>(TEXT("AttributeSetBase"));
 
 	NetUpdateFrequency = 30.f;
-	
+
+	AttributeSetBase->InitMaxHealth(100.f);
+	AttributeSetBase->InitHealth(AttributeSetBase->GetMaxHealth());
 }
 
 UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const

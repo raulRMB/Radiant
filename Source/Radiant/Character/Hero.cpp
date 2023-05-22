@@ -51,6 +51,8 @@ void AHero::BeginPlay()
 	}
 	
 	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
+	if(OverHeadInfoBar)
+		OverHeadInfoBar->SetHealthPercent(1.f);
 }
 
 void AHero::OnUpdateTarget(const FInputActionValue& Value)
