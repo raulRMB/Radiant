@@ -85,9 +85,14 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 		Target = nullptr;
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
+
+	FGameplayTagContainer TagContainer;
+	AbilitySystemComponent->GetOwnedGameplayTags(TagContainer);
+	if(TagContainer.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Movement.Stopped"))))
+		Destination = GetActorLocation();
+	else
+		Destination = HitResult.Location;
 	
-	// Set the destination
-	Destination = HitResult.Location;
 }
 
 void AHero::CheckShouldAttack()
