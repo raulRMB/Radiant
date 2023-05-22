@@ -14,7 +14,7 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		// SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
+		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
 	}
 	else if(Data.EvaluatedData.Attribute == GetMovementSpeedAttribute())
 	{

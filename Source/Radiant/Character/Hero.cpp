@@ -105,9 +105,15 @@ void AHero::CheckShouldAttack()
 
 void AHero::OnAbilityOne(const FInputActionValue& Value)
 {
-	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Heal")));
-	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);	
+	TArray<AActor*> Actors;
+	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
+	FGameplayEventData EventData;
+	const UMouseVec* MouseData = NewObject<UMouseVec>();
+	MouseData->MouseVec = MousePos;
+	EventData.OptionalObject = MouseData;
+	EventData.Instigator = this;
+	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Movement.Dash"));
+	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
 void AHero::OnAbilityTwo(const FInputActionValue& Value)
@@ -202,6 +208,11 @@ void AHero::SetRotationLock(bool RotationLocked, FVector TargetDir)
 	GetCharacterMovement()->bOrientRotationToMovement = !RotationLocked;
 	bUseControllerRotationYaw = RotationLocked;
 	S_SetRotationLock(RotationLocked, TargetDir);
+}
+
+void AHero::ResetDestination()
+{
+	Destination = GetActorLocation();
 }
 
 bool AHero::HasTag(FString Tag)
