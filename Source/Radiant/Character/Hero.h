@@ -125,6 +125,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ResetDestination();
+	UFUNCTION(BlueprintCallable)
+	void SetDestination(FVector NewDestination);
 private:
 	bool HasTag(FString Tag);
 };

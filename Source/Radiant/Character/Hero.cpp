@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AI/NavigationSystemBase.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -213,6 +214,11 @@ void AHero::SetRotationLock(bool RotationLocked, FVector TargetDir)
 void AHero::ResetDestination()
 {
 	Destination = GetActorLocation();
+}
+
+void AHero::SetDestination(FVector NewDestination)
+{
+	Destination = NewDestination;
 }
 
 bool AHero::HasTag(FString Tag)

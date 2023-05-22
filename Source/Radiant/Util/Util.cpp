@@ -53,3 +53,16 @@ FVector UUtil::GetMouseVecFromTargetData(const FGameplayAbilityTargetDataHandle&
 	
 	return FVector::ZeroVector;
 }
+
+FVector UUtil::ClampVectorMaxDist(FVector A, FVector B, float MaxDist)
+{
+	FVector Vector = B - A;
+	if(Vector.Size() > MaxDist)
+	{
+		Vector = Vector.GetSafeNormal() * MaxDist;
+		Vector += A;
+		return Vector;
+	}
+
+	return B;
+}

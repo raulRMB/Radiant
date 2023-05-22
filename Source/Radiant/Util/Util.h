@@ -22,4 +22,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FVector GetMouseVecFromTargetData(const FGameplayAbilityTargetDataHandle& TargetData);
+
+	UFUNCTION(BlueprintCallable)
+	static FVector ClampVectorMaxDist(FVector A, FVector B, float MaxDist);
 };
