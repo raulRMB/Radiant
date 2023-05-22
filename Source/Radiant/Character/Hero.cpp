@@ -109,19 +109,6 @@ void AHero::OnAbilityOne(const FInputActionValue& Value)
 	TArray<AActor*> Actors;
 	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
 	FGameplayEventData EventData;
-	const UMouseVec* MouseData = NewObject<UMouseVec>();
-	MouseData->MouseVec = MousePos;
-	EventData.OptionalObject = MouseData;
-	EventData.Instigator = this;
-	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Movement.Dash"));
-	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
-}
-
-void AHero::OnAbilityTwo(const FInputActionValue& Value)
-{
-	TArray<AActor*> Actors;
-	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
-	FGameplayEventData EventData;
 	const UMouseVec* dir = NewObject<UMouseVec>();
 	FVector Loc = GetActorLocation();
 	Loc.Z = 0;
@@ -132,11 +119,24 @@ void AHero::OnAbilityTwo(const FInputActionValue& Value)
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
-void AHero::OnAbilityThree(const FInputActionValue& Value)
+void AHero::OnAbilityTwo(const FInputActionValue& Value)
 {
 	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Movement.Sprint")));
+	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Status.Buff.Damage")));
 	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+}
+
+void AHero::OnAbilityThree(const FInputActionValue& Value)
+{
+	TArray<AActor*> Actors;
+	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
+	FGameplayEventData EventData;
+	const UMouseVec* MouseData = NewObject<UMouseVec>();
+	MouseData->MouseVec = MousePos;
+	EventData.OptionalObject = MouseData;
+	EventData.Instigator = this;
+	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Movement.Dash"));
+	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
 void AHero::OnAbilityFour(const FInputActionValue& Value)
@@ -151,7 +151,9 @@ void AHero::OnAbilityFive(const FInputActionValue& Value)
 
 void AHero::OnAbilitySix(const FInputActionValue& Value)
 {
-	
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Heal")));
+	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
 }
 
 void AHero::PossessedBy(AController* NewController)

@@ -42,10 +42,16 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MaxMovementSpeed)
 	FGameplayAttributeData MaxMovementSpeed;
 	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxMovementSpeed)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Damage", ReplicatedUsing = OnRep_AttackDamage)
+	FGameplayAttributeData Damage;
+	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Damage)
 	
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 	
 protected:
 	UFUNCTION()
@@ -59,7 +65,10 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MaxMovementSpeed(const FGameplayAttributeData& OldMaxMovementSpeed);
-
+	
+	UFUNCTION()
+	virtual void OnRep_AttackDamage(const FGameplayAttributeData& OldDamage);
+	
 	UFUNCTION()
 	void UpdateMovementSpeed();
 };

@@ -5,6 +5,7 @@
 #include "GameplayEffectExtension.h"
 #include "Character/Hero.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
 
@@ -19,7 +20,7 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 	else if(Data.EvaluatedData.Attribute == GetMovementSpeedAttribute())
 	{
 		UpdateMovementSpeed();
-	}
+	}		
 }
 
 void URTHeroAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -30,6 +31,17 @@ void URTHeroAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MovementSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MaxMovementSpeed, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, Damage, COND_None, REPNOTIFY_Always);
+}
+
+void URTHeroAttributeSetBase::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+
+	if(Attribute == GetMovementSpeedAttribute())
+	{
+		UpdateMovementSpeed();
+	}
 }
 
 void URTHeroAttributeSetBase::OnRep_Health(const FGameplayAttributeData& OldHealth)
@@ -51,6 +63,11 @@ void URTHeroAttributeSetBase::OnRep_MovementSpeed(const FGameplayAttributeData& 
 void URTHeroAttributeSetBase::OnRep_MaxMovementSpeed(const FGameplayAttributeData& OldMaxMovementSpeed)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, MaxMovementSpeed, OldMaxMovementSpeed);
+}
+
+void URTHeroAttributeSetBase::OnRep_AttackDamage(const FGameplayAttributeData& OldDamage)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, Damage, OldDamage);
 }
 
 void URTHeroAttributeSetBase::UpdateMovementSpeed()
