@@ -119,9 +119,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	UFUNCTION(BlueprintCallable)
-	void StopMovement();
-	UFUNCTION(BlueprintCallable)
 	void SetRotationLock(bool RotationLocked, FVector TargetDir);
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void S_SetRotationLock(bool RotationLocked, FVector TargetDir);
+private:
+	bool HasTag(FString Tag);
 };

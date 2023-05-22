@@ -29,7 +29,7 @@ FVector UUtil::GetMousePosition(class UObject* WorldContext, TArray<AActor*> Ign
 	{
 		CollisionQueryParams.AddIgnoredActor(Actor);
 	}
-	WorldContext->GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel1, CollisionQueryParams);
+	WorldContext->GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel2, CollisionQueryParams);
 
 	return HitResult.Location;
 }

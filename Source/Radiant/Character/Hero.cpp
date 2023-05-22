@@ -88,13 +88,7 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
 
-	FGameplayTagContainer TagContainer;
-	AbilitySystemComponent->GetOwnedGameplayTags(TagContainer);
-	if(TagContainer.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Movement.Stopped"))))
-		Destination = GetActorLocation();
-	else
-		Destination = HitResult.Location;
-	
+	Destination = HitResult.Location;
 }
 
 void AHero::CheckShouldAttack()
@@ -122,7 +116,9 @@ void AHero::OnAbilityTwo(const FInputActionValue& Value)
 	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
 	FGameplayEventData EventData;
 	const UMouseVec* dir = NewObject<UMouseVec>();
-	dir->MouseVec = UUtil::ProjectileDirection(GetActorLocation(), MousePos);
+	FVector Loc = GetActorLocation();
+	Loc.Z = 0;
+	dir->MouseVec = UUtil::ProjectileDirection(Loc, MousePos);
 	EventData.OptionalObject = dir;
 	EventData.Instigator = this;
 	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Combat.Fireball"));
@@ -199,11 +195,6 @@ void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
 	}
 }
 
-void AHero::StopMovement()
-{
-	Destination = GetActorLocation();
-}
-
 void AHero::SetRotationLock(bool RotationLocked, FVector TargetDir)
 {
 	bRotationLocked = RotationLocked;
@@ -211,6 +202,17 @@ void AHero::SetRotationLock(bool RotationLocked, FVector TargetDir)
 	GetCharacterMovement()->bOrientRotationToMovement = !RotationLocked;
 	bUseControllerRotationYaw = RotationLocked;
 	S_SetRotationLock(RotationLocked, TargetDir);
+}
+
+bool AHero::HasTag(FString Tag)
+{
+	FGameplayTagContainer TagContainer;
+	if(AbilitySystemComponent)
+	{
+		AbilitySystemComponent->GetOwnedGameplayTags(TagContainer);
+		return TagContainer.HasTag(FGameplayTag::RequestGameplayTag(FName(Tag)));
+	}
+	return false;
 }
 
 void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
@@ -228,7 +230,7 @@ void AHero::Tick(float DeltaTime)
 
 	CheckShouldAttack();
 	
-	if(!bIsAttacking)
+	if(!HasTag("States.Movement.Stopped") && !bIsAttacking)
 	{
 		if((Destination - GetActorLocation()).Size() >= 200.f)
 		{
