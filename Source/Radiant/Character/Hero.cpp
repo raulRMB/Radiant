@@ -153,7 +153,15 @@ void AHero::OnAbilityThree(const FInputActionValue& Value)
 
 void AHero::OnAbilityFour(const FInputActionValue& Value)
 {
-	
+	TArray<AActor*> Actors;
+	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
+	FGameplayEventData EventData;
+	const UMouseVec* MouseData = NewObject<UMouseVec>();
+	MouseData->MouseVec = MousePos;
+	EventData.OptionalObject = MouseData;
+	EventData.Instigator = this;
+	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Cast.VoidImplosion"));
+	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
 void AHero::OnAbilityFive(const FInputActionValue& Value)
