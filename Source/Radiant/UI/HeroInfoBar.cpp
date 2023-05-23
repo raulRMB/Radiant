@@ -9,3 +9,8 @@ void UHeroInfoBar::SetHealthPercent(float Percent)
 {
 	HealthBar->SetPercent(Percent);
 }
+
+void UHeroInfoBar::SetManaPercent(float Percent)
+{
+	ManaBar->SetPercent(Percent);
+}

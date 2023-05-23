@@ -65,7 +65,10 @@ void AHero::BeginPlay()
 	
 	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
 	if(OverHeadInfoBar)
+	{
 		OverHeadInfoBar->SetHealthPercent(1.f);
+		OverHeadInfoBar->SetManaPercent(1.f);
+	}
 }
 
 FVector2D AHero::GetMousePosition()
@@ -211,6 +214,7 @@ void AHero::OnRep_PlayerState()
 		
 		AttributeSetBase = PS->GetAttributeSetBase();
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AHero::OnHealthChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AHero::OnManaChanged);
 	}
 }
 
@@ -226,8 +230,17 @@ void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	if(Data.Attribute == AttributeSetBase->GetHealthAttribute())
 	{
-		float Percent = AttributeSetBase->GetHealth() / 100;
+		float Percent = AttributeSetBase->GetHealth() / AttributeSetBase->GetMaxHealth();
 		OverHeadInfoBar->SetHealthPercent(Percent);
+	}
+}
+
+void AHero::OnManaChanged(const FOnAttributeChangeData& Data)
+{
+	if(Data.Attribute == AttributeSetBase->GetManaAttribute())
+	{
+		float Percent = AttributeSetBase->GetMana() / AttributeSetBase->GetMaxMana();
+		OverHeadInfoBar->SetManaPercent(Percent);
 	}
 }
 

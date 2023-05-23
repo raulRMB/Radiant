@@ -23,6 +23,8 @@ ARTPlayerState::ARTPlayerState()
 
 	AttributeSetBase->InitMaxHealth(100.f);
 	AttributeSetBase->InitHealth(AttributeSetBase->GetMaxHealth());
+	AttributeSetBase->InitMaxMana(100.f);
+	AttributeSetBase->InitMana(AttributeSetBase->GetMaxMana());
 	AttributeSetBase->InitMovementSpeed(600.f);
 	AttributeSetBase->InitDamage(15.f);
 }

@@ -155,6 +155,7 @@ protected:
 	class UHeroInfoBar* OverHeadInfoBar;
 
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
+	void OnManaChanged(const FOnAttributeChangeData& Data);
 
 public:	
 	// Called every frame
