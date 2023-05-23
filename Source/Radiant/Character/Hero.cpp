@@ -200,6 +200,16 @@ void AHero::PossessedBy(AController* NewController)
 	}
 
 	GiveInitialAbilities();
+	ApplyInitialEffects();
+}
+
+void AHero::ApplyInitialEffects()
+{
+	for(auto Effect : InitialEffects)
+	{
+		UGameplayEffect *EffectInstance = NewObject<UGameplayEffect>(GetTransientPackage(), Effect);
+		AbilitySystemComponent->ApplyGameplayEffectToSelf(EffectInstance, 1, AbilitySystemComponent->MakeEffectContext());
+	}
 }
 
 void AHero::OnRep_PlayerState()

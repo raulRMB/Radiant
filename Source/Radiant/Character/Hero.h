@@ -91,6 +91,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
+	TArray<TSubclassOf<class UGameplayEffect>> InitialEffects;
 	
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* SystemTemplate;
@@ -136,6 +139,7 @@ protected:
 	void AttackMove(const FInputActionValue& Value);
 	
 	virtual void PossessedBy(AController* NewController) override;
+	void ApplyInitialEffects();
 	virtual void OnRep_PlayerState() override;
 
 	void GiveInitialAbilities();
