@@ -32,6 +32,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	uint8 bRotationLocked : 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	uint8 bCameraLocked : 1;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector TargetDirection;
 	
@@ -40,10 +43,23 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	class UCapsuleComponent* HitBox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+	class UCameraComponent* UnlockedCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
+	class UCameraComponent* MainCamera;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	class USpringArmComponent* SpringArm;
+	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	class UInputAction* ClickAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* CameraToggleAction;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	class UInputAction* AbilityOneAction;
 	
@@ -94,6 +110,9 @@ protected:
 	UFUNCTION()
 	void OnAbilitySix(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void ToggleCameraBool(const FInputActionValue& Value);
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
@@ -104,6 +123,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
 	class UWidgetComponent* OverHeadInfoBarWidgetComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float CameraMovementThreshold;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float CameraMovementSpeed;
 	
 	class UHeroInfoBar* OverHeadInfoBar;
 
@@ -129,4 +154,5 @@ public:
 	void SetDestination(FVector NewDestination);
 private:
 	bool HasTag(FString Tag);
+	void HandleCamera();
 };

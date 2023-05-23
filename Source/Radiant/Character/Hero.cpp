@@ -4,11 +4,14 @@
 #include "Hero.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InterchangeResult.h"
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "AI/NavigationSystemBase.h"
+#include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -25,7 +28,16 @@ AHero::AHero()
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
+	bCameraLocked = true;
 
+	MainCamera = CreateDefaultSubobject<UCameraComponent>(FName("MainCamera"));
+	UnlockedCamera = CreateDefaultSubobject<UCameraComponent>(FName("UnlockedCamera"));
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(FName("SpringArm"));
+
+	SpringArm->SetupAttachment(RootComponent);
+	MainCamera->SetupAttachment(SpringArm);
+	UnlockedCamera->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+	
 	HitBox = CreateDefaultSubobject<UCapsuleComponent>(FName("HitBox"));
 	check(HitBox);
 	HitBox->SetupAttachment(RootComponent);
@@ -41,7 +53,7 @@ void AHero::BeginPlay()
 	Super::BeginPlay();
 
 	Destination = GetActorLocation();
-	
+	UnlockedCamera->SetWorldRotation(MainCamera->GetComponentRotation());
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		PlayerController->bShowMouseCursor = true;
@@ -234,6 +246,54 @@ bool AHero::HasTag(FString Tag)
 	return false;
 }
 
+void AHero::ToggleCameraBool(const FInputActionValue& Value)
+{
+	bCameraLocked = !bCameraLocked;
+	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
+	InputMode.SetLockMouseToViewportBehavior(bCameraLocked ? EMouseLockMode::DoNotLock : EMouseLockMode::LockAlways);
+	GetController<APlayerController>()->SetInputMode(InputMode);
+	UnlockedCamera->SetWorldLocation(MainCamera->GetComponentLocation());
+	UnlockedCamera->SetActive(!bCameraLocked);
+	MainCamera->SetActive(bCameraLocked);
+}
+
+void AHero::HandleCamera()
+{
+	if(!bCameraLocked)
+	{
+		FVector2D MousePosition;
+		if (GEngine && GEngine->GameViewport)
+		{
+			GEngine->GameViewport->GetMousePosition(MousePosition);
+		}
+		FVector2D ViewportSize;
+		if (GEngine && GEngine->GameViewport)
+		{
+			GEngine->GameViewport->GetViewportSize(ViewportSize);
+		}
+
+		FVector CameraMove = FVector::ZeroVector;
+		if(MousePosition.X <= CameraMovementThreshold)
+		{
+			CameraMove += FVector::ForwardVector * -CameraMovementSpeed;
+		} else if(MousePosition.X >= ViewportSize.X - CameraMovementThreshold)
+		{
+			CameraMove += FVector::ForwardVector * CameraMovementSpeed;
+		}
+
+		if(MousePosition.Y <= CameraMovementThreshold)
+		{
+			CameraMove += FVector::RightVector * -CameraMovementSpeed;
+		} else if(MousePosition.Y >= ViewportSize.Y - CameraMovementThreshold)
+		{
+			CameraMove += FVector::RightVector * CameraMovementSpeed;
+		}
+		CameraMove = CameraMove.RotateAngleAxis(45, FVector::UpVector);
+		UnlockedCamera->SetWorldLocation(UnlockedCamera->GetComponentLocation() + CameraMove);
+	}
+}
+
 void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
 {
 	bRotationLocked = RotationLocked;
@@ -246,7 +306,7 @@ void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector Target
 void AHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	HandleCamera();
 	CheckShouldAttack();
 	
 	if(!HasTag("States.Movement.Stopped") && !bIsAttacking)
@@ -286,6 +346,7 @@ void AHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(AbilityFourAction, ETriggerEvent::Started, this, &AHero::OnAbilityFour);
 		EnhancedInputComponent->BindAction(AbilityFiveAction, ETriggerEvent::Started, this, &AHero::OnAbilityFive);
 		EnhancedInputComponent->BindAction(AbilitySixAction, ETriggerEvent::Started, this, &AHero::OnAbilitySix);
+		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this, &AHero::ToggleCameraBool);
 	}
 }
 
