@@ -291,7 +291,6 @@ void AHero::ToggleCameraBool(const FInputActionValue& Value)
 	InputMode.SetHideCursorDuringCapture(false);
 	InputMode.SetLockMouseToViewportBehavior(bCameraLocked ? EMouseLockMode::DoNotLock : EMouseLockMode::LockAlways);
 	GetController<APlayerController>()->SetInputMode(InputMode);
-	GetController<APlayerController>()->SetInputMode(InputMode);
 	UnlockedCamera->SetWorldLocation(MainCamera->GetComponentLocation());
 	UnlockedCamera->SetActive(!bCameraLocked);
 	MainCamera->SetActive(bCameraLocked);
