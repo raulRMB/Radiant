@@ -68,28 +68,32 @@ void AHero::BeginPlay()
 		OverHeadInfoBar->SetHealthPercent(1.f);
 }
 
-void AHero::OnUpdateTarget(const FInputActionValue& Value)
+FVector2D AHero::GetMousePosition()
 {
-	// Get the mouse position
 	FVector2D MousePosition;
 	if (GEngine && GEngine->GameViewport)
 	{
 		GEngine->GameViewport->GetMousePosition(MousePosition);
 	}
+	return MousePosition;
+}
 
-	// Get the world position
+FHitResult AHero::GetMousePositionInWorld() const
+{
+	FVector2D MousePosition = GetMousePosition();
 	FVector WorldPosition;
 	FVector WorldDirection;
 	UGameplayStatics::DeprojectScreenToWorld(GetWorld()->GetFirstPlayerController(), MousePosition, WorldPosition, WorldDirection);
-
-	
-	// Get the hit result
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParams;
 	CollisionQueryParams.AddIgnoredActor(this);
 	GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel1, CollisionQueryParams);
-	
+	return HitResult;
+}
 
+void AHero::OnUpdateTarget(const FInputActionValue& Value)
+{
+	FHitResult HitResult = GetMousePositionInWorld();
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
@@ -104,7 +108,6 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 		Target = nullptr;
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
-
 	Destination = HitResult.Location;
 }
 
@@ -265,6 +268,7 @@ void AHero::ToggleCameraBool(const FInputActionValue& Value)
 	InputMode.SetHideCursorDuringCapture(false);
 	InputMode.SetLockMouseToViewportBehavior(bCameraLocked ? EMouseLockMode::DoNotLock : EMouseLockMode::LockAlways);
 	GetController<APlayerController>()->SetInputMode(InputMode);
+	GetController<APlayerController>()->SetInputMode(InputMode);
 	UnlockedCamera->SetWorldLocation(MainCamera->GetComponentLocation());
 	UnlockedCamera->SetActive(!bCameraLocked);
 	MainCamera->SetActive(bCameraLocked);
@@ -291,15 +295,18 @@ void AHero::ReleaseHoldCamera(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AHero::AttackMove(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attack Move"));
+	const FHitResult HitResult = GetMousePositionInWorld();
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackMoveSystemTemplate, HitResult.Location);
+}
+
 void AHero::HandleCamera()
 {
 	if(!bCameraLocked)
 	{
-		FVector2D MousePosition;
-		if (GEngine && GEngine->GameViewport)
-		{
-			GEngine->GameViewport->GetMousePosition(MousePosition);
-		}
+		FVector2D MousePosition = GetMousePosition();
 		FVector2D ViewportSize;
 		if (GEngine && GEngine->GameViewport)
 		{
@@ -382,6 +389,7 @@ void AHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this, &AHero::ToggleCameraBool);
 		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this, &AHero::HoldCamera);
 		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &AHero::ReleaseHoldCamera);
+		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &AHero::AttackMove);
 	}
 }
 

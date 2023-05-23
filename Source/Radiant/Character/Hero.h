@@ -60,6 +60,9 @@ public:
 	class UInputAction* ClickAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* AttackMoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	class UInputAction* CameraToggleAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
@@ -91,9 +94,14 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* SystemTemplate;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* AttackMoveSystemTemplate;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	static FVector2D GetMousePosition();
+	FHitResult GetMousePositionInWorld() const;
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void CheckShouldAttack();
 
@@ -123,6 +131,9 @@ protected:
 
 	UFUNCTION()	
 	void ReleaseHoldCamera(const FInputActionValue& InputActionValue);
+
+	UFUNCTION()
+	void AttackMove(const FInputActionValue& Value);
 	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
