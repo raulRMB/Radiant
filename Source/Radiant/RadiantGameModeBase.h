@@ -13,5 +13,13 @@ UCLASS()
 class RADIANT_API ARadiantGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode")
+	int PlayerCount;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode")
+	TArray<class ARadiantPlayerController*> PlayerControllers;
 	
+protected:
+	virtual void OnPostLogin(AController* NewPlayer) override;
 };

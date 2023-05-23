@@ -34,7 +34,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	uint8 bCameraLocked : 1;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	uint8 bCameraHeld : 1;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector TargetDirection;
 	
@@ -53,12 +56,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class USpringArmComponent* SpringArm;
 	
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	class UInputAction* ClickAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	class UInputAction* CameraToggleAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
+	class UInputAction* CameraHoldAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	class UInputAction* AbilityOneAction;
@@ -113,6 +118,12 @@ protected:
 	UFUNCTION()
 	void ToggleCameraBool(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void HoldCamera(const FInputActionValue& Value);
+
+	UFUNCTION()	
+	void ReleaseHoldCamera(const FInputActionValue& InputActionValue);
+	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
@@ -139,6 +150,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

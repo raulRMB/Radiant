@@ -13,8 +13,14 @@
 UCLASS()
 class RADIANT_API ARadiantPlayerController : public APlayerController
 {
-	GENERATED_BODY()	
+	GENERATED_BODY()
+private:
+	UPROPERTY(VisibleAnywhere)
+	int PlayerID;
+
+	
 public:
 	virtual void SetupInputComponent() override;
 
+	void SetPlayerID(int ID) { PlayerID = ID; }
 };

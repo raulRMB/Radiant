@@ -3,3 +3,9 @@
 
 #include "RadiantGameModeBase.h"
 
+void ARadiantGameModeBase::OnPostLogin(AController* NewPlayer)
+{
+	Super::OnPostLogin(NewPlayer);
+
+	
+}

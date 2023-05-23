@@ -93,7 +93,11 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
-		UE_LOG(LogTemp, Warning, TEXT("Target: %s"), *Target->GetName());
+		FGameplayEventData EventData;
+		EventData.OptionalObject = Target;
+		EventData.Instigator = this;
+		const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack.Ranged"));
+		AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 	}
 	else
 	{
@@ -266,6 +270,27 @@ void AHero::ToggleCameraBool(const FInputActionValue& Value)
 	MainCamera->SetActive(bCameraLocked);
 }
 
+void AHero::HoldCamera(const FInputActionValue& Value)
+{
+	if(!bCameraLocked)
+	{
+		MainCamera->SetActive(true);
+		UnlockedCamera->SetActive(false);
+		bCameraHeld = true;
+	}
+}
+
+void AHero::ReleaseHoldCamera(const FInputActionValue& InputActionValue)
+{
+	if(!bCameraLocked)
+	{
+		MainCamera->SetActive(false);
+		UnlockedCamera->SetActive(true);
+		UnlockedCamera->SetWorldLocation(MainCamera->GetComponentLocation());
+		bCameraHeld = false;
+	}
+}
+
 void AHero::HandleCamera()
 {
 	if(!bCameraLocked)
@@ -355,6 +380,8 @@ void AHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(AbilityFiveAction, ETriggerEvent::Started, this, &AHero::OnAbilityFive);
 		EnhancedInputComponent->BindAction(AbilitySixAction, ETriggerEvent::Started, this, &AHero::OnAbilitySix);
 		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this, &AHero::ToggleCameraBool);
+		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this, &AHero::HoldCamera);
+		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &AHero::ReleaseHoldCamera);
 	}
 }
 
