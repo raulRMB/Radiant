@@ -66,34 +66,42 @@ void AHero::BeginPlay()
 	
 	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
 	if(OverHeadInfoBar)
-		OverHeadInfoBar->SetHealthPercent(1.f);
-
+	{
+		OverHeadInfoBar->SetHealthPercent(1.f);		
+		OverHeadInfoBar->SetManaPercent(1.f);
+	}
 
 	if(auto PC = GetController<ARadiantPlayerController>())
 		PlayerID = PC->GetPlayerID();
 }
 
-void AHero::OnUpdateTarget(const FInputActionValue& Value)
+FVector2D AHero::GetMousePosition()
 {
-	// Get the mouse position
 	FVector2D MousePosition;
 	if (GEngine && GEngine->GameViewport)
 	{
 		GEngine->GameViewport->GetMousePosition(MousePosition);
 	}
+	return MousePosition;
+}
 
-	// Get the world position
+FHitResult AHero::GetMousePositionInWorld() const
+{
+	FVector2D MousePosition = GetMousePosition();
 	FVector WorldPosition;
 	FVector WorldDirection;
 	UGameplayStatics::DeprojectScreenToWorld(GetWorld()->GetFirstPlayerController(), MousePosition, WorldPosition, WorldDirection);
-	
-	// Get the hit result
+
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParams;
 	CollisionQueryParams.AddIgnoredActor(this);
 	GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel1, CollisionQueryParams);
-	
+	return HitResult;
+}
 
+void AHero::OnUpdateTarget(const FInputActionValue& Value)
+{
+	FHitResult HitResult = GetMousePositionInWorld();
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
@@ -105,7 +113,6 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 		Target = nullptr;
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
-
 	Destination = HitResult.Location;
 }
 
@@ -204,6 +211,16 @@ void AHero::PossessedBy(AController* NewController)
 	}
 
 	GiveInitialAbilities();
+	ApplyInitialEffects();
+}
+
+void AHero::ApplyInitialEffects()
+{
+	for(auto Effect : InitialEffects)
+	{
+		UGameplayEffect *EffectInstance = NewObject<UGameplayEffect>(GetTransientPackage(), Effect);
+		AbilitySystemComponent->ApplyGameplayEffectToSelf(EffectInstance, 1, AbilitySystemComponent->MakeEffectContext());
+	}
 }
 
 void AHero::OnRep_PlayerState()
@@ -218,6 +235,7 @@ void AHero::OnRep_PlayerState()
 		
 		AttributeSetBase = PS->GetAttributeSetBase();
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AHero::OnHealthChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AHero::OnManaChanged);
 	}
 }
 
@@ -238,8 +256,17 @@ void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	if(Data.Attribute == AttributeSetBase->GetHealthAttribute())
 	{
-		float Percent = AttributeSetBase->GetHealth() / 100;
+		float Percent = AttributeSetBase->GetHealth() / AttributeSetBase->GetMaxHealth();
 		OverHeadInfoBar->SetHealthPercent(Percent);
+	}
+}
+
+void AHero::OnManaChanged(const FOnAttributeChangeData& Data)
+{
+	if(Data.Attribute == AttributeSetBase->GetManaAttribute())
+	{
+		float Percent = AttributeSetBase->GetMana() / AttributeSetBase->GetMaxMana();
+		OverHeadInfoBar->SetManaPercent(Percent);
 	}
 }
 
@@ -306,15 +333,18 @@ void AHero::ReleaseHoldCamera(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AHero::AttackMove(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attack Move"));
+	const FHitResult HitResult = GetMousePositionInWorld();
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackMoveSystemTemplate, HitResult.Location);
+}
+
 void AHero::HandleCamera()
 {
 	if(!bCameraLocked)
 	{
-		FVector2D MousePosition;
-		if (GEngine && GEngine->GameViewport)
-		{
-			GEngine->GameViewport->GetMousePosition(MousePosition);
-		}
+		FVector2D MousePosition = GetMousePosition();
 		FVector2D ViewportSize;
 		if (GEngine && GEngine->GameViewport)
 		{
@@ -409,6 +439,7 @@ void AHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this, &AHero::ToggleCameraBool);
 		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this, &AHero::HoldCamera);
 		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &AHero::ReleaseHoldCamera);
+		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &AHero::AttackMove);
 	}
 }
 

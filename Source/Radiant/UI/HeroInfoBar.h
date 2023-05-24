@@ -16,6 +16,9 @@ class RADIANT_API UHeroInfoBar : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HealthBar;
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* ManaBar;
 public:
 	void SetHealthPercent(float Percent);
+	void SetManaPercent(float Percent);
 };
