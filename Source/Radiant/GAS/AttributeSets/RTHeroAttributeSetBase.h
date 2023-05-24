@@ -69,6 +69,7 @@ protected:
 	UFUNCTION()
 	virtual void OnRep_AttackDamage(const FGameplayAttributeData& OldDamage);
 	
+	
 	UFUNCTION()
 	void UpdateMovementSpeed();
 };

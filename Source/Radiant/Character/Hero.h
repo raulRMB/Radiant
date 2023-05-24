@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	uint8 bIsAttacking : 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	uint8 bCanAttack : 1;
+
 	UPROPERTY(EditAnywhere)
 	float RotationSpeed = 20.f;
 	
@@ -88,6 +91,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Networking")
+	int PlayerID;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Networking")
+	int TargetID;
 	
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* SystemTemplate;
@@ -150,7 +159,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -164,7 +172,20 @@ public:
 	void ResetDestination();
 	UFUNCTION(BlueprintCallable)
 	void SetDestination(FVector NewDestination);
+
+	UFUNCTION(BlueprintCallable)
+	int GetPlayerID() const { return PlayerID; }
+
+	UFUNCTION(BlueprintCallable)
+	int GetTargetID() const { return TargetID; }
+	
 private:
 	bool HasTag(FString Tag);
 	void HandleCamera();
+
+	friend class ARadiantPlayerController;
+	UFUNCTION(Server, Reliable)
+	void S_SetPlayerID(const int ID);
+	UFUNCTION(Server, Reliable)
+	void S_SetTargetID(const int ID);
 };

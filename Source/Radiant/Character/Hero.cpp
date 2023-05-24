@@ -7,6 +7,7 @@
 #include "InterchangeResult.h"
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "RadiantPlayerController.h"
 #include "AI/NavigationSystemBase.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
@@ -66,6 +67,10 @@ void AHero::BeginPlay()
 	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
 	if(OverHeadInfoBar)
 		OverHeadInfoBar->SetHealthPercent(1.f);
+
+
+	if(auto PC = GetController<ARadiantPlayerController>())
+		PlayerID = PC->GetPlayerID();
 }
 
 void AHero::OnUpdateTarget(const FInputActionValue& Value)
@@ -81,7 +86,6 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	FVector WorldPosition;
 	FVector WorldDirection;
 	UGameplayStatics::DeprojectScreenToWorld(GetWorld()->GetFirstPlayerController(), MousePosition, WorldPosition, WorldDirection);
-
 	
 	// Get the hit result
 	FHitResult HitResult;
@@ -93,11 +97,8 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
-		FGameplayEventData EventData;
-		EventData.OptionalObject = Target;
-		EventData.Instigator = this;
-		const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack.Ranged"));
-		AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
+		TargetID = Hero->GetPlayerID();
+		S_SetTargetID(Hero->GetPlayerID());
 	}
 	else
 	{
@@ -118,6 +119,13 @@ void AHero::CheckShouldAttack()
 	
 	FVector dir = Target->GetActorLocation() - GetActorLocation();
 	bIsAttacking = dir.Size() < AttackRange;
+	
+	if(IsLocallyControlled() && bIsAttacking)
+	{
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack")));
+		AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+	}
 }
 
 void AHero::OnAbilityOne(const FInputActionValue& Value)
@@ -133,6 +141,8 @@ void AHero::OnAbilityOne(const FInputActionValue& Value)
 	EventData.Instigator = this;
 	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Combat.Fireball"));
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
+
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), PlayerID));
 }
 
 void AHero::OnAbilityTwo(const FInputActionValue& Value)
@@ -217,6 +227,11 @@ void AHero::GiveInitialAbilities()
 	{
 		AbilitySystemComponent->GiveAbility(Ability);
 	}
+}
+
+void AHero::S_SetPlayerID_Implementation(const int ID)
+{
+	PlayerID = ID;
 }
 
 void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -327,6 +342,11 @@ void AHero::HandleCamera()
 	}
 }
 
+void AHero::S_SetTargetID_Implementation(const int ID)
+{
+	TargetID = ID;
+}
+
 void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
 {
 	bRotationLocked = RotationLocked;
@@ -344,6 +364,10 @@ void AHero::Tick(float DeltaTime)
 	
 	if(!HasTag("States.Movement.Stopped") && !bIsAttacking)
 	{
+		if(Target)
+		{
+			Destination = Target->GetActorLocation();
+		}
 		if((Destination - GetActorLocation()).Size() >= 200.f)
 		{
 			FVector dir = Destination - GetActorLocation();
@@ -363,6 +387,9 @@ void AHero::Tick(float DeltaTime)
 void AHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AHero, PlayerID);
+	DOREPLIFETIME(AHero, TargetID);
 }
 
 // Called to bind functionality to input

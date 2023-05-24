@@ -14,13 +14,15 @@ UCLASS()
 class RADIANT_API ARadiantPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-private:
-	UPROPERTY(VisibleAnywhere)
+
+	UPROPERTY(ReplicatedUsing=OnRep_PlayerID, VisibleAnywhere)
 	int PlayerID;
 
-	
+	UFUNCTION()
+	virtual void OnRep_PlayerID();	
 public:
-	virtual void SetupInputComponent() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	void SetPlayerID(int ID) { PlayerID = ID; }
-};
+	int GetPlayerID() const { return PlayerID; }
+	void SetPlayerID(const int ID) { PlayerID = ID; }
+}; 
