@@ -18,6 +18,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
+#include "Modes/RTGameState.h"
 #include "UI/HeroInfoBar.h"
 #include "Util/Util.h"
 #include "Util/MouseVec.h"
@@ -69,6 +70,7 @@ void AHero::BeginPlay()
 	{
 		OverHeadInfoBar->SetHealthPercent(1.f);		
 		OverHeadInfoBar->SetManaPercent(1.f);
+		SetAllHealthBarColors();
 	}
 
 	if(auto PC = GetController<ARadiantPlayerController>())
@@ -105,8 +107,8 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
-		TargetID = Hero->GetPlayerID();
-		M_SetTargetID(Hero->GetPlayerID());
+		S_SetTargetID(Hero->GetPlayerID());
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("Target ID: %d"), TargetID));
 	}
 	else
 	{
@@ -149,7 +151,15 @@ void AHero::OnAbilityOne(const FInputActionValue& Value)
 	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Combat.Fireball"));
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), PlayerID));
+	// Get game state
+	if(ARTGameState* GameState = GetWorld()->GetGameState<ARTGameState>())
+	{
+		bool MatchStated = GameState->HasMatchStarted();
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), MatchStated));
+	}
+	
+	
+	// GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), PlayerID));
 }
 
 void AHero::OnAbilityTwo(const FInputActionValue& Value)

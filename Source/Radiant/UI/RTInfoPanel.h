@@ -42,7 +42,7 @@ struct FUIAbility
 			AbilityImage->SetColorAndOpacity(FLinearColor::Gray);
 		else
 			AbilityImage->SetColorAndOpacity(FLinearColor::White);
-		MaskImage->SetIsEnabled(On);
+		MaskImage->SetVisibility(static_cast<ESlateVisibility>(!bOn));
 	}
 };
 

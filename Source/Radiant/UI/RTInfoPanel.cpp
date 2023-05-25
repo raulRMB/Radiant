@@ -42,12 +42,16 @@ void URTInfoPanel::AbilityCooldowns()
 
 void URTInfoPanel::UpdateProperties(float DeltaTime)
 {
-	URTHeroAttributeSetBase* Attributes = GetOwningPlayerState<ARTPlayerState>()->GetAttributeSetBase();
+	if(auto State = GetOwningPlayerState<ARTPlayerState>())
+	{
+		if(URTHeroAttributeSetBase* Attributes = State->GetAttributeSetBase())
+		{
+			AbilityCooldowns();
 
-	AbilityCooldowns();
-
-	HealthBar->SetPercent(Attributes->GetHealth() / Attributes->GetMaxHealth());
-	ManaBar->SetPercent(Attributes->GetMana() / Attributes->GetMaxMana());
+			HealthBar->SetPercent(Attributes->GetHealth() / Attributes->GetMaxHealth());
+			ManaBar->SetPercent(Attributes->GetMana() / Attributes->GetMaxMana());
+		}
+	}
 }
 
 void URTInfoPanel::Init()

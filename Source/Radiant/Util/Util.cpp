@@ -3,7 +3,7 @@
 
 #include "Util/Util.h"
 
-#include "RadiantGameModeBase.h"
+#include "Modes/RTGameMode.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
@@ -70,7 +70,7 @@ FVector UUtil::ClampVectorMaxDist(FVector A, FVector B, float MaxDist)
 
 AHero* UUtil::GetHeroFromPlayerID(UObject* WorldContext, int PlayerID)
 {
-	if(ARadiantGameModeBase* GM = Cast<ARadiantGameModeBase>(UGameplayStatics::GetGameMode(WorldContext)))
+	if(ARTGameMode* GM = Cast<ARTGameMode>(UGameplayStatics::GetGameMode(WorldContext)))
 	{
 		return GM->GetHeroFromPlayerID(PlayerID);
 	}

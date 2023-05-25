@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../RadiantGameModeBase.h"
+#include "Modes/RTGameMode.h"
 #include "ClientGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RADIANT_API AClientGameMode : public ARadiantGameModeBase
+class RADIANT_API AClientGameMode : public ARTGameMode
 {
 	GENERATED_BODY()
 
