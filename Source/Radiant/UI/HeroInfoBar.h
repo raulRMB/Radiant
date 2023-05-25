@@ -21,4 +21,5 @@ class RADIANT_API UHeroInfoBar : public UUserWidget
 public:
 	void SetHealthPercent(float Percent);
 	void SetManaPercent(float Percent);
+	void SetHealthColor(const FLinearColor& Color);
 };

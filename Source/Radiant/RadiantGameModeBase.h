@@ -6,6 +6,16 @@
 #include "GameFramework/GameModeBase.h"
 #include "RadiantGameModeBase.generated.h"
 
+USTRUCT()
+struct FTeam
+{
+	GENERATED_BODY()
+	
+	uint8 TeamID : 1;
+	int Score;
+	TArray<class AHero*> Heroes;
+};
+
 /**
  * 
  */
@@ -19,7 +29,11 @@ class RADIANT_API ARadiantGameModeBase : public AGameModeBase
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode", meta = (AllowPrivateAccess = "true"))
 	TArray<class ARadiantPlayerController*> PlayerControllers;
-	
+
+	UPROPERTY(VisibleAnywhere)
+	FTeam RedTeam;
+	UPROPERTY(VisibleAnywhere)
+	FTeam BlueTeam;
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
 

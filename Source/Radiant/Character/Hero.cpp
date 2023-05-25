@@ -106,7 +106,7 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	{
 		Target = Hero;
 		TargetID = Hero->GetPlayerID();
-		S_SetTargetID(Hero->GetPlayerID());
+		M_SetTargetID(Hero->GetPlayerID());
 	}
 	else
 	{
@@ -187,7 +187,9 @@ void AHero::OnAbilityFour(const FInputActionValue& Value)
 
 void AHero::OnAbilityFive(const FInputActionValue& Value)
 {
-	
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.State.Revive")));
+	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
 }
 
 void AHero::OnAbilitySix(const FInputActionValue& Value)
@@ -247,7 +249,7 @@ void AHero::GiveInitialAbilities()
 	}
 }
 
-void AHero::S_SetPlayerID_Implementation(const int ID)
+void AHero::M_SetPlayerID_Implementation(const int ID)
 {
 	PlayerID = ID;
 }
@@ -287,6 +289,40 @@ void AHero::ResetDestination()
 void AHero::SetDestination(FVector NewDestination)
 {
 	Destination = NewDestination;
+}
+
+void AHero::M_SetInfoBarVisibility_Implementation(bool bVisible)
+{
+	OverHeadInfoBarWidgetComponent->SetVisibility(bVisible);
+}
+
+void AHero::SetHealthColor(const FLinearColor Color)
+{
+	OverHeadInfoBar->SetHealthColor(Color);
+}
+
+void AHero::SetAllHealthBarColors()
+{
+	if(GetLocalRole() == ROLE_AutonomousProxy)
+	{
+		TArray<AActor*> Actors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHero::StaticClass(), Actors);
+		for(auto Actor : Actors)
+		{
+			AHero* Hero = Cast<AHero>(Actor);
+			if(Hero)
+			{
+				if(Hero->GetTeamID() == GetTeamID())
+				{
+					Hero->SetHealthColor(FLinearColor::Green);
+				}
+				else
+				{
+					Hero->SetHealthColor(FLinearColor::Red);
+				}
+			}
+		}
+	}
 }
 
 bool AHero::HasTag(FString Tag)
@@ -372,7 +408,35 @@ void AHero::HandleCamera()
 	}
 }
 
+uint8 AHero::GetTeamID()
+{
+	return TeamID;
+}
+
+void AHero::S_SetTeamID_Implementation(const int ID)
+{
+	TeamID = ID;
+	M_SetTeamID(ID);
+}
+
 void AHero::S_SetTargetID_Implementation(const int ID)
+{
+	TargetID = ID;
+	M_SetTargetID(ID);
+}
+
+void AHero::S_SetPlayerID_Implementation(const int ID)
+{
+	PlayerID = ID;
+	M_SetPlayerID(ID);	
+}
+
+void AHero::M_SetTeamID_Implementation(const int ID)
+{
+	TeamID = ID;
+}
+
+void AHero::M_SetTargetID_Implementation(const int ID)
 {
 	TargetID = ID;
 }
@@ -420,6 +484,7 @@ void AHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 
 	DOREPLIFETIME(AHero, PlayerID);
 	DOREPLIFETIME(AHero, TargetID);
+	DOREPLIFETIME(AHero, TeamID);
 }
 
 // Called to bind functionality to input

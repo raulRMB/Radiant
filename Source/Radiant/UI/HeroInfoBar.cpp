@@ -14,3 +14,8 @@ void UHeroInfoBar::SetManaPercent(float Percent)
 {
 	ManaBar->SetPercent(Percent);
 }
+
+void UHeroInfoBar::SetHealthColor(const FLinearColor& Color)
+{
+	HealthBar->SetFillColorAndOpacity(Color);
+}

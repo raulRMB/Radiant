@@ -15,6 +15,15 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
+		if(GetHealth() <= 0)
+		{
+			AHero* Hero = Cast<AHero>(GetActorInfo()->AvatarActor);
+			Hero->M_SetInfoBarVisibility(false);
+			
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.State.Death")));
+			GetOwningAbilitySystemComponentChecked()->TryActivateAbilitiesByTag(TagContainer);
+		}
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
 	}
 	else if (Data.EvaluatedData.Attribute == GetManaAttribute())
@@ -24,7 +33,7 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 	else if(Data.EvaluatedData.Attribute == GetMovementSpeedAttribute())
 	{
 		UpdateMovementSpeed();
-	}		
+	}
 }
 
 void URTHeroAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

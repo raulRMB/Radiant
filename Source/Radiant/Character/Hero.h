@@ -101,6 +101,9 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Networking")
 	int TargetID;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Networking")
+	int TeamID;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayEffect>> InitialEffects;
 	
@@ -194,7 +197,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int GetTargetID() const { return TargetID; }
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void M_SetInfoBarVisibility(bool bVisible);
 	
+	void SetHealthColor(const FLinearColor Color);
+
+	void SetAllHealthBarColors();
 private:
 	bool HasTag(FString Tag);
 	void HandleCamera();
@@ -204,4 +213,15 @@ private:
 	void S_SetPlayerID(const int ID);
 	UFUNCTION(Server, Reliable)
 	void S_SetTargetID(const int ID);
+	UFUNCTION(Server, Reliable)
+	void S_SetTeamID(const int ID);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void M_SetPlayerID(const int ID);
+	UFUNCTION(NetMulticast, Reliable)
+	void M_SetTargetID(const int ID);
+	UFUNCTION(NetMulticast, Reliable)
+	void M_SetTeamID(const int ID);
+
+	uint8 GetTeamID();
 };
