@@ -47,6 +47,15 @@ AHero::AHero()
 
 	OverHeadInfoBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("InfoBar");
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
+	
+}
+
+void AHero::OnMatchStarting()
+{
+	// Delay this to allow the player to load in
+	// FTimerHandle Handle;
+	// GetWorld()->GetTimerManager().SetTimer(Handle, this, &AHero::SetAllHealthBarColors, .05f);
+	// SetAllHealthBarColors();
 }
 
 // Called when the game starts or when spawned
@@ -64,17 +73,8 @@ void AHero::BeginPlay()
 			Subsystem->AddMappingContext(MappingContext, 0);
 		}
 	}
-	
-	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
-	if(OverHeadInfoBar)
-	{
-		OverHeadInfoBar->SetHealthPercent(1.f);		
-		OverHeadInfoBar->SetManaPercent(1.f);
-		SetAllHealthBarColors();
-	}
 
-	if(auto PC = GetController<ARadiantPlayerController>())
-		PlayerID = PC->GetPlayerID();
+	GetWorld()->OnWorldMatchStarting.AddUObject(this, &AHero::OnMatchStarting);	
 }
 
 FVector2D AHero::GetMousePosition()
@@ -107,7 +107,6 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
-		S_SetTargetID(Hero->GetPlayerID());
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("Target ID: %d"), TargetID));
 	}
 	else
@@ -259,11 +258,6 @@ void AHero::GiveInitialAbilities()
 	}
 }
 
-void AHero::M_SetPlayerID_Implementation(const int ID)
-{
-	PlayerID = ID;
-}
-
 void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	if(Data.Attribute == AttributeSetBase->GetHealthAttribute())
@@ -306,8 +300,32 @@ void AHero::M_SetInfoBarVisibility_Implementation(bool bVisible)
 	OverHeadInfoBarWidgetComponent->SetVisibility(bVisible);
 }
 
+void AHero::SetOwnHealthBarColor()
+{
+	AHero* LocalPlayer = Cast<AHero>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if(LocalPlayer)
+	{
+		if(GetPlayerState<ARTPlayerState>())
+		{
+			int Id = GetPlayerState<ARTPlayerState>()->TeamId;
+			if(LocalPlayer->GetPlayerState<ARTPlayerState>())
+			{
+				if(Id == LocalPlayer->GetPlayerState<ARTPlayerState>()->TeamId)
+				{
+					SetHealthColor(FLinearColor::Green);
+				}
+				else
+				{
+					SetHealthColor(FLinearColor::Red);
+				}
+			}
+		}
+	}
+}
+
 void AHero::SetHealthColor(const FLinearColor Color)
 {
+	//check(OverHeadInfoBar);
 	OverHeadInfoBar->SetHealthColor(Color);
 }
 
@@ -315,20 +333,26 @@ void AHero::SetAllHealthBarColors()
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{
-		TArray<AActor*> Actors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHero::StaticClass(), Actors);
-		for(auto Actor : Actors)
+		if(GetPlayerState<ARTPlayerState>())
 		{
-			AHero* Hero = Cast<AHero>(Actor);
-			if(Hero)
+			int Id = GetPlayerState<ARTPlayerState>()->TeamId;
+			TArray<APlayerState*> States = GetWorld()->GetGameState<ARTGameState>()->PlayerArray;
+			if(States.Num() > 0)
 			{
-				if(Hero->GetTeamID() == GetTeamID())
+				for(auto State : States)
 				{
-					Hero->SetHealthColor(FLinearColor::Green);
-				}
-				else
-				{
-					Hero->SetHealthColor(FLinearColor::Red);
+					if(auto s = Cast<ARTPlayerState>(State))
+					{
+						int OtherId = s->TeamId;
+						if(Id == OtherId)
+						{
+							State->GetPawn<AHero>()->SetHealthColor(FLinearColor::Green);
+						}
+						else
+						{
+							State->GetPawn<AHero>()->SetHealthColor(FLinearColor::Red);
+						}
+					}
 				}
 			}
 		}
@@ -418,37 +442,28 @@ void AHero::HandleCamera()
 	}
 }
 
-uint8 AHero::GetTeamID()
+void AHero::Restart()
 {
-	return TeamID;
+	Super::Restart();
 }
 
-void AHero::S_SetTeamID_Implementation(const int ID)
+void AHero::PostInitializeComponents()
 {
-	TeamID = ID;
-	M_SetTeamID(ID);
+	Super::PostInitializeComponents();
 }
 
-void AHero::S_SetTargetID_Implementation(const int ID)
+void AHero::PostLoad()
 {
-	TargetID = ID;
-	M_SetTargetID(ID);
-}
-
-void AHero::S_SetPlayerID_Implementation(const int ID)
-{
-	PlayerID = ID;
-	M_SetPlayerID(ID);	
-}
-
-void AHero::M_SetTeamID_Implementation(const int ID)
-{
-	TeamID = ID;
-}
-
-void AHero::M_SetTargetID_Implementation(const int ID)
-{
-	TargetID = ID;
+	Super::PostLoad();
+	
+	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
+	if(OverHeadInfoBar)
+	{
+		OverHeadInfoBar->SetHealthPercent(1.f);		
+		OverHeadInfoBar->SetManaPercent(1.f);
+	}
+		
+	SetOwnHealthBarColor();
 }
 
 void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
@@ -491,10 +506,6 @@ void AHero::Tick(float DeltaTime)
 void AHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AHero, PlayerID);
-	DOREPLIFETIME(AHero, TargetID);
-	DOREPLIFETIME(AHero, TeamID);
 }
 
 // Called to bind functionality to input

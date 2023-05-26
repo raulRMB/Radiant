@@ -14,16 +14,14 @@ class RADIANT_API ARTGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode", meta = (AllowPrivateAccess = "true"))
-	TArray<class ARadiantPlayerController*> PlayerControllers;
-
-	UPROPERTY(EditAnywhere, Category="GameMode")
-	int TeamSize = 1;
+public:
+	UPROPERTY(EditAnywhere)
+	uint32 TeamSize = 2;
+	
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
 private:
-	friend class UUtil;
-	class AHero* GetHeroFromPlayerID(int PlayerID);
+	virtual bool ReadyToStartMatch_Implementation() override;
 
 	virtual void HandleMatchHasStarted() override;
 };

@@ -7,6 +7,8 @@
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+#include "Modes/RTGameState.h"
+#include "Player/RTPlayerState.h"
 
 struct FGameplayAbilityTargetDataHandle;
 
@@ -68,12 +70,18 @@ FVector UUtil::ClampVectorMaxDist(FVector A, FVector B, float MaxDist)
 	return B;
 }
 
-AHero* UUtil::GetHeroFromPlayerID(UObject* WorldContext, int PlayerID)
+AHero* UUtil::GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID)
 {
-	if(ARTGameMode* GM = Cast<ARTGameMode>(UGameplayStatics::GetGameMode(WorldContext)))
-	{
-		return GM->GetHeroFromPlayerID(PlayerID);
-	}
+	auto GameState = WorldContext->GetWorld()->GetGameState<ARTGameState>();
+
+	// for(auto PlayerState : GameState->PlayerArray)
+	// {
+	// 	auto RTPlayerState = Cast<ARTPlayerState>(PlayerState);
+	// 	if(RTPlayerState->PlayerID == PlayerID)
+	// 	{
+	// 		return RTPlayerState->GetPawn<AHero>();
+	// 	}
+	// }
 	
 	return nullptr;
 }

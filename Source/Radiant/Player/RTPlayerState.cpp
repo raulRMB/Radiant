@@ -6,6 +6,15 @@
 #include "Character/Hero.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Net/UnrealNetwork.h"
+
+void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ARTPlayerState, TargetId);
+	DOREPLIFETIME(ARTPlayerState, TeamId);
+}
 
 ARTPlayerState::ARTPlayerState()
 {
@@ -19,7 +28,7 @@ ARTPlayerState::ARTPlayerState()
 
 	AttributeSetBase = CreateDefaultSubobject<URTHeroAttributeSetBase>(TEXT("AttributeSetBase"));
 
-	NetUpdateFrequency = 30.f;
+	NetUpdateFrequency = 100.f;
 
 	AttributeSetBase->InitMaxHealth(100.f);
 	AttributeSetBase->InitHealth(AttributeSetBase->GetMaxHealth());

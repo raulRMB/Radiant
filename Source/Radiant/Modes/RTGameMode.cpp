@@ -4,6 +4,8 @@
 #include "RTGameMode.h"
 #include "Character/Hero.h"
 #include "Character/RadiantPlayerController.h"
+#include "GameFramework/GameSession.h"
+#include "Player/RTPlayerState.h"
 
 void ARTGameMode::OnPostLogin(AController* NewPlayer)
 {
@@ -11,18 +13,37 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 	
 	if(ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(NewPlayer))
 	{
-		PC->SetPlayerID(NumPlayers);
-		PlayerControllers.Add(PC);
+		PC->GetPlayerState<ARTPlayerState>()->TeamId = NumPlayers % 2;
 	}
 }
 
-AHero* ARTGameMode::GetHeroFromPlayerID(int PlayerID)
+bool ARTGameMode::ReadyToStartMatch_Implementation()
 {
-	return PlayerControllers[PlayerID]->GetPawn<AHero>();
+	return NumPlayers == TeamSize * 2;
 }
 
 void ARTGameMode::HandleMatchHasStarted()
 {
-	Super::HandleMatchHasStarted();
+	// Super::HandleMatchHasStarted();
 
+	GameSession->HandleMatchHasStarted();
+
+	// start human players first
+	for( FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator )
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		if (PlayerController && (PlayerController->GetPawn() == nullptr) && PlayerCanRestart(PlayerController))
+		{
+			RestartPlayer(PlayerController);
+		}
+	}
+
+	// Make sure level streaming is up to date before triggering NotifyMatchStarted
+	GEngine->BlockTillLevelStreamingCompleted(GetWorld());
+
+	// First fire BeginPlay, if we haven't already in waiting to start match
+	GetWorldSettings()->NotifyBeginPlay();
+
+	// Then fire off match started
+	GetWorldSettings()->NotifyMatchStarted();
 }

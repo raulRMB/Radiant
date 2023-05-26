@@ -21,6 +21,8 @@ protected:
 
 	UPROPERTY()
 	class URTHeroAttributeSetBase* AttributeSetBase;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 public:
 	ARTPlayerState();
@@ -28,4 +30,9 @@ public:
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	class URTHeroAttributeSetBase* GetAttributeSetBase() const;
+	
+	UPROPERTY(Replicated, VisibleAnywhere)
+	int TargetId;
+	UPROPERTY(Replicated, VisibleAnywhere)
+	int TeamId;
 };
