@@ -30,14 +30,13 @@ class RADIANT_API ARTGameState : public AGameState
 	FTeam RedTeam;
 	UPROPERTY(VisibleAnywhere)
 	FTeam BlueTeam;
+
+public:
 	UPROPERTY(Replicated, VisibleInstanceOnly)
 	uint32 RedScore;
 	UPROPERTY(Replicated, VisibleInstanceOnly)
 	uint32 BlueScore;
-
 	
-
-public:
 	UFUNCTION(Server, Reliable)
 	void OnHeroDeath(AHero* Hero);
 

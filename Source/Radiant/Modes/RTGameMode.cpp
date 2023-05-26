@@ -2,6 +2,8 @@
 
 
 #include "RTGameMode.h"
+
+#include "RTGameState.h"
 #include "Character/Hero.h"
 #include "Character/RadiantPlayerController.h"
 #include "GameFramework/GameSession.h"
@@ -15,6 +17,19 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 	{
 		PC->GetPlayerState<ARTPlayerState>()->TeamId = NumPlayers % 2;
 	}
+}
+
+void ARTGameMode::HandleMatchHasEnded()
+{
+	Super::HandleMatchHasEnded();
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &ARTGameMode::EndGame, 5.f, false);
+	
+}
+
+void ARTGameMode::EndGame()
+{
+	FGenericPlatformMisc::RequestExit(false);
 }
 
 void ARTGameMode::PlayerLoaded()
@@ -44,6 +59,12 @@ void ARTGameMode::PlayersAreLoaded() const
 bool ARTGameMode::ReadyToStartMatch_Implementation()
 {
 	return NumPlayers == TeamSize * 2;
+}
+
+bool ARTGameMode::ReadyToEndMatch_Implementation()
+{
+	ARTGameState* State = Cast<ARTGameState>(GetWorld()->GetGameState());
+	return State->RedScore >= KillsToWin || State->BlueScore >= KillsToWin;
 }
 
 void ARTGameMode::HandleMatchHasStarted()
