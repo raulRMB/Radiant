@@ -47,15 +47,6 @@ AHero::AHero()
 
 	OverHeadInfoBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("InfoBar");
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
-	
-}
-
-void AHero::OnMatchStarting()
-{
-	// Delay this to allow the player to load in
-	// FTimerHandle Handle;
-	// GetWorld()->GetTimerManager().SetTimer(Handle, this, &AHero::SetAllHealthBarColors, .05f);
-	// SetAllHealthBarColors();
 }
 
 // Called when the game starts or when spawned
@@ -73,8 +64,23 @@ void AHero::BeginPlay()
 			Subsystem->AddMappingContext(MappingContext, 0);
 		}
 	}
+	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
+	if(OverHeadInfoBar)
+	{
+		
+		OverHeadInfoBar->SetHealthPercent(1.f);		
+		OverHeadInfoBar->SetManaPercent(1.f);
+	}
+	if(!HasAuthority())
+	{
+		auto PC = Cast<ARadiantPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		PC->PlayerLoaded();
+	}
+}
 
-	GetWorld()->OnWorldMatchStarting.AddUObject(this, &AHero::OnMatchStarting);	
+void AHero::GameReady_Implementation()
+{
+	SetOwnHealthBarColor();
 }
 
 FVector2D AHero::GetMousePosition()
@@ -237,7 +243,6 @@ void AHero::ApplyInitialEffects()
 void AHero::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-
 	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
 	if(PS)
 	{
@@ -302,31 +307,30 @@ void AHero::M_SetInfoBarVisibility_Implementation(bool bVisible)
 
 void AHero::SetOwnHealthBarColor()
 {
-	AHero* LocalPlayer = Cast<AHero>(UGameplayStatics::GetPlayerCharacter(this, 0));
-	if(LocalPlayer)
+	if(GetPlayerState<ARTPlayerState>())
 	{
-		if(GetPlayerState<ARTPlayerState>())
+		APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		ARTPlayerState* LocalPS = Cast<ARTPlayerState>(PC->GetPlayerState<ARTPlayerState>());
+		int Id = GetPlayerState<ARTPlayerState>()->TeamId;
+		FLinearColor Color;
+		if(Id == LocalPS->TeamId)
 		{
-			int Id = GetPlayerState<ARTPlayerState>()->TeamId;
-			if(LocalPlayer->GetPlayerState<ARTPlayerState>())
-			{
-				if(Id == LocalPlayer->GetPlayerState<ARTPlayerState>()->TeamId)
-				{
-					SetHealthColor(FLinearColor::Green);
-				}
-				else
-				{
-					SetHealthColor(FLinearColor::Red);
-				}
-			}
+			Color = FLinearColor::Green;
 		}
+		else
+		{
+			Color = FLinearColor::Red;
+		}
+		SetHealthColor(Color);
 	}
 }
 
 void AHero::SetHealthColor(const FLinearColor Color)
 {
-	//check(OverHeadInfoBar);
-	OverHeadInfoBar->SetHealthColor(Color);
+	if(OverHeadInfoBar)
+	{
+		OverHeadInfoBar->SetHealthColor(Color);
+	}
 }
 
 void AHero::SetAllHealthBarColors()
@@ -455,15 +459,6 @@ void AHero::PostInitializeComponents()
 void AHero::PostLoad()
 {
 	Super::PostLoad();
-	
-	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
-	if(OverHeadInfoBar)
-	{
-		OverHeadInfoBar->SetHealthPercent(1.f);		
-		OverHeadInfoBar->SetManaPercent(1.f);
-	}
-		
-	SetOwnHealthBarColor();
 }
 
 void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)

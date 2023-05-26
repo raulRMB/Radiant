@@ -17,6 +17,30 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 	}
 }
 
+void ARTGameMode::PlayerLoaded()
+{
+	PlayersLoaded++;
+	uint32 players = (TeamSize * TeamCount);
+	if(PlayersLoaded >= players * players)
+	{
+		FTimerHandle Handle;
+		GetWorldTimerManager().SetTimer(Handle, this, &ARTGameMode::PlayersAreLoaded, 1.f, false);
+	}
+}
+
+void ARTGameMode::PlayersAreLoaded() const
+{
+	for( FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator )
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		if (PlayerController && (PlayerController->GetPawn() != nullptr))
+		{
+			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
+			Hero->GameReady();
+		}
+	}
+}
+
 bool ARTGameMode::ReadyToStartMatch_Implementation()
 {
 	return NumPlayers == TeamSize * 2;

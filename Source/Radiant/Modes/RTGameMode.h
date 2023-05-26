@@ -17,9 +17,14 @@ class RADIANT_API ARTGameMode : public AGameMode
 public:
 	UPROPERTY(EditAnywhere)
 	uint32 TeamSize = 2;
+	uint32 TeamCount = 2;
+	uint32 PlayersLoaded = 0;
+	void PlayerLoaded();
 	
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
+	void PlayersAreLoaded() const;
+
 private:
 	virtual bool ReadyToStartMatch_Implementation() override;
 

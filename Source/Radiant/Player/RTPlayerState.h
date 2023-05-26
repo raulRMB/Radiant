@@ -34,5 +34,5 @@ public:
 	UPROPERTY(Replicated, VisibleAnywhere)
 	int TargetId;
 	UPROPERTY(Replicated, VisibleAnywhere)
-	int TeamId;
+	int TeamId = -1;
 };

@@ -17,6 +17,9 @@ public:
 	// Sets default values for this character's properties
 	AHero();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void GameReady();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;
 
@@ -106,9 +109,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* AttackMoveSystemTemplate;
-
-	UFUNCTION()
-	void OnMatchStarting();
 
 protected:
 	// Called when the game starts or when spawned
