@@ -74,7 +74,15 @@ void AHero::BeginPlay()
 		}
 	}
 
-	GetWorld()->OnWorldMatchStarting.AddUObject(this, &AHero::OnMatchStarting);	
+	GetWorld()->OnWorldMatchStarting.AddUObject(this, &AHero::OnMatchStarting);
+
+	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
+	if(OverHeadInfoBar)
+	{
+		OverHeadInfoBar->SetHealthPercent(1.f);		
+		OverHeadInfoBar->SetManaPercent(1.f);
+		GetWorld()->GetTimerManager().SetTimer(HealthSetColorHandle, this, &AHero::SetOwnHealthBarColor, .001f, true);
+	}
 }
 
 FVector2D AHero::GetMousePosition()
@@ -156,9 +164,6 @@ void AHero::OnAbilityOne(const FInputActionValue& Value)
 		bool MatchStated = GameState->HasMatchStarted();
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), MatchStated));
 	}
-	
-	
-	// GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), PlayerID));
 }
 
 void AHero::OnAbilityTwo(const FInputActionValue& Value)
@@ -321,12 +326,17 @@ void AHero::SetOwnHealthBarColor()
 			}
 		}
 	}
+	UE_LOG(LogTemp, Warning, TEXT("SetOwnHealthBarColor"))
 }
 
 void AHero::SetHealthColor(const FLinearColor Color)
 {
-	//check(OverHeadInfoBar);
-	OverHeadInfoBar->SetHealthColor(Color);
+	if(OverHeadInfoBar)
+	{
+		OverHeadInfoBar->SetHealthColor(Color);
+		GetWorld()->GetTimerManager().ClearTimer(HealthSetColorHandle);
+		// Get first playercontroller
+	}	
 }
 
 void AHero::SetAllHealthBarColors()
@@ -456,14 +466,7 @@ void AHero::PostLoad()
 {
 	Super::PostLoad();
 	
-	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
-	if(OverHeadInfoBar)
-	{
-		OverHeadInfoBar->SetHealthPercent(1.f);		
-		OverHeadInfoBar->SetManaPercent(1.f);
-	}
-		
-	SetOwnHealthBarColor();
+	
 }
 
 void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
