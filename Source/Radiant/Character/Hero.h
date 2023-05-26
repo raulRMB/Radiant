@@ -171,9 +171,6 @@ protected:
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 	void OnManaChanged(const FOnAttributeChangeData& Data);
 
-	
-	FTimerHandle HealthSetColorHandle;
-	bool bHealthColorSet = false;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
