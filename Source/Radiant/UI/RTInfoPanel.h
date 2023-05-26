@@ -84,6 +84,12 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UImage* Ability6CDMask;
 
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* RedTeam;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* BlueTeam;
+
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* Mat;
 	
@@ -104,6 +110,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Init();
+
+	UFUNCTION()
+	void OnHeroDeath(uint32 RedScore, uint32 BlueScore);
 
 	bool GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining, float& CooldownDuration);
 

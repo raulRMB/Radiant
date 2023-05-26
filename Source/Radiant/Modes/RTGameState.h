@@ -6,6 +6,8 @@
 #include "GameFramework/GameState.h"
 #include "RTGameState.generated.h"
 
+DECLARE_DELEGATE_TwoParams(FOnHeroDeath, uint32, uint32);
+
 USTRUCT()
 struct FTeam
 {
@@ -28,4 +30,21 @@ class RADIANT_API ARTGameState : public AGameState
 	FTeam RedTeam;
 	UPROPERTY(VisibleAnywhere)
 	FTeam BlueTeam;
+	UPROPERTY(Replicated, VisibleInstanceOnly)
+	uint32 RedScore;
+	UPROPERTY(Replicated, VisibleInstanceOnly)
+	uint32 BlueScore;
+
+	
+
+public:
+	UFUNCTION(Server, Reliable)
+	void OnHeroDeath(AHero* Hero);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NotifyHeroDeath(uint32 Score1, uint32 Score2);
+	
+	FOnHeroDeath OnHeroDeathDelegate;
+	
+	virtual void GetLifetimeReplicatedProps (TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 };

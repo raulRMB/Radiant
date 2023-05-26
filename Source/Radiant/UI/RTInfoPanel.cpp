@@ -7,6 +7,9 @@
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
+#include "Modes/RTGameState.h"
 #include "Player/RTPlayerState.h"
 
 
@@ -69,8 +72,14 @@ void URTInfoPanel::Init()
 	Ability4CDMask->SetBrushResourceObject(Abilities[static_cast<int>(EAbilityID::Ability4)].MaterialInstance);
 	Ability5CDMask->SetBrushResourceObject(Abilities[static_cast<int>(EAbilityID::Ability5)].MaterialInstance);
 	Ability6CDMask->SetBrushResourceObject(Abilities[static_cast<int>(EAbilityID::Ability6)].MaterialInstance);
+	Cast<ARTGameState>(UGameplayStatics::GetGameState(this))->OnHeroDeathDelegate.BindUObject(this, &URTInfoPanel::OnHeroDeath);
 }
 
+void URTInfoPanel::OnHeroDeath(uint32 RedScore, uint32 BlueScore)
+{
+	RedTeam->SetText(FText::FromString(FString::FromInt(RedScore)));
+	BlueTeam->SetText(FText::FromString(FString::FromInt(BlueScore)));
+}
 bool URTInfoPanel::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining,
 	float& CooldownDuration)
 {

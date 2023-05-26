@@ -6,6 +6,7 @@
 #include "Character/Hero.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Modes/RTGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
 
@@ -19,6 +20,11 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 		{
 			AHero* Hero = Cast<AHero>(GetActorInfo()->AvatarActor);
 			Hero->M_SetInfoBarVisibility(false);
+
+			if(Hero->HasAuthority())
+			{
+				Cast<ARTGameState>(GetWorld()->GetGameState())->OnHeroDeath(Hero);
+			}
 			
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.State.Death")));
