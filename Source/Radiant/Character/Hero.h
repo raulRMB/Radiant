@@ -110,6 +110,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* AttackMoveSystemTemplate;
 
+	UPROPERTY(EditAnywhere)
+	TArray<FGameplayTag> AbilityTags;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -118,6 +120,8 @@ protected:
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void CheckShouldAttack();
 
+	void CastAbility(const FGameplayTag& AbilityTag);
+	
 	UFUNCTION()
 	void OnAbilityOne(const FInputActionValue& Value);
 

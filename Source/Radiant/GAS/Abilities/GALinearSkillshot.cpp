@@ -26,27 +26,5 @@ void UGALinearSkillshot::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 	AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo());
 	ARTPlayerState* Owner = Cast<ARTPlayerState>(GetOwningActorFromActorInfo());
-	
-	Owner->GetAbilitySystemComponent()->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("States.Movement.Stopped"), 1);
-	
-	UAbilityTask_WaitTargetData* Task = UAbilityTask_WaitTargetData::WaitTargetData(this, FName("ConfirmTargeting"), EGameplayTargetingConfirmation::Instant, AMouseTargetActor::StaticClass());
-	AGameplayAbilityTargetActor* TargetActor; 
-	Task->BeginSpawningActor(this, AMouseTargetActor::StaticClass(), TargetActor);
-	
-	if(!HasAuthority(&ActivationInfo))
-	{
-		Instigator = Avatar;
-		const UMouseVec* Dir = Cast<UMouseVec>(TriggerEventData->OptionalObject.Get());
-		AMouseTargetActor* MouseTargetActor = GetWorld()->SpawnActor<AMouseTargetActor>(AMouseTargetActor::StaticClass(), Avatar->GetActorLocation(), FRotator::ZeroRotator);
-		MouseTargetActor->MouseVec = Dir->MouseVec;
-		TargetActor->SourceActor = MouseTargetActor;
-	}
-	Task->ValidData.AddDynamic(this, &UGALinearSkillshot::OnTargetValidData);
-	Task->FinishSpawningActor(this, TargetActor);
-}
 
-void UGALinearSkillshot::OnTargetValidData(const FGameplayAbilityTargetDataHandle& Data)
-{
-	FVector Vec = UUtil::GetMouseVecFromTargetData(Data);
-	UE_LOG(LogTemp, Warning, TEXT("Vec: %s"), *Vec.ToString());
 }
