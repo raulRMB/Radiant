@@ -441,7 +441,7 @@ void AHero::HandleCamera()
 		{
 			CameraMove += FVector::RightVector * CameraMovementSpeed;
 		}
-		CameraMove = CameraMove.RotateAngleAxis(45, FVector::UpVector);
+		CameraMove = CameraMove.RotateAngleAxis(UnlockedCamera->GetComponentRotation().Yaw + 90, FVector::UpVector);
 		UnlockedCamera->SetWorldLocation(UnlockedCamera->GetComponentLocation() + CameraMove);
 	}
 }
