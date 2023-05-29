@@ -4,7 +4,6 @@
 #include "Hero.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "InterchangeResult.h"
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "RadiantPlayerController.h"
@@ -113,7 +112,7 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("Target ID: %d"), TargetID));
+		S_SetTargetId(Hero->GetPlayerState<ARTPlayerState>()->GetPlayerId());
 	}
 	else
 	{
@@ -331,6 +330,11 @@ void AHero::SetHealthColor(const FLinearColor Color)
 	{
 		OverHeadInfoBar->SetHealthColor(Color);
 	}
+}
+
+void AHero::S_SetTargetId_Implementation(int NewTargetID)
+{
+	TargetID = NewTargetID;
 }
 
 void AHero::SetAllHealthBarColors()

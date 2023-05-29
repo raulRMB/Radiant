@@ -56,6 +56,11 @@ void ARTGameMode::PlayersAreLoaded() const
 	}
 }
 
+void ARTGameMode::StartGame()
+{
+	StartMatch();
+}
+
 bool ARTGameMode::ReadyToStartMatch_Implementation()
 {
 	return NumPlayers == TeamSize * 2;

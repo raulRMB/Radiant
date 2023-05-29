@@ -32,7 +32,7 @@ public:
 	class URTHeroAttributeSetBase* GetAttributeSetBase() const;
 	
 	UPROPERTY(Replicated, VisibleAnywhere)
-	int TargetId;
+	int32 TargetId = -1;
 	UPROPERTY(Replicated, VisibleAnywhere)
-	int TeamId = -1;
+	int32 TeamId = -1;
 };

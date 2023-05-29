@@ -28,6 +28,9 @@ protected:
 	void EndGame();
 	void PlayersAreLoaded() const;
 
+	UFUNCTION(Exec)
+	void StartGame();
+
 private:
 	virtual bool ReadyToStartMatch_Implementation() override;
 	bool ReadyToEndMatch_Implementation();

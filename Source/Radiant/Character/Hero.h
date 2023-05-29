@@ -199,6 +199,9 @@ public:
 	void SetOwnHealthBarColor();
 	void SetHealthColor(const FLinearColor Color);
 
+	UFUNCTION(Server, Reliable)
+	void S_SetTargetId(int NewTargetID);
+
 	void SetAllHealthBarColors();
 private:
 	bool HasTag(FString Tag);
