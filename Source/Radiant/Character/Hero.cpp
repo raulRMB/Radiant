@@ -99,11 +99,13 @@ FHitResult AHero::GetMousePositionInWorld() const
 	FVector WorldDirection;
 	UGameplayStatics::DeprojectScreenToWorld(GetWorld()->GetFirstPlayerController(), MousePosition, WorldPosition, WorldDirection);
 
-	FHitResult HitResult;
+	FHitResult PlayerHitResult;
+	FHitResult GroundHitResult;
 	FCollisionQueryParams CollisionQueryParams;
-	CollisionQueryParams.AddIgnoredActor(this);
-	GetWorld()->LineTraceSingleByChannel(HitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel1, CollisionQueryParams);
-	return HitResult;
+	GetWorld()->LineTraceSingleByChannel(PlayerHitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel1, CollisionQueryParams);
+	GetWorld()->LineTraceSingleByChannel(GroundHitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel2, CollisionQueryParams);
+	
+	return FHitResult(PlayerHitResult.GetActor(), PlayerHitResult.GetComponent(), GroundHitResult.Location, GroundHitResult.ImpactNormal);
 }
 
 void AHero::OnUpdateTarget(const FInputActionValue& Value)
@@ -141,76 +143,53 @@ void AHero::CheckShouldAttack()
 	}
 }
 
-void AHero::OnAbilityOne(const FInputActionValue& Value)
+void AHero::CastAbility(const FGameplayTag& AbilityTag)
 {
 	TArray<AActor*> Actors;
 	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
 	FGameplayEventData EventData;
-	const UMouseVec* dir = NewObject<UMouseVec>();
-	FVector Loc = GetActorLocation();
-	Loc.Z = 0;
-	dir->MouseVec = UUtil::ProjectileDirection(Loc, MousePos);
-	EventData.OptionalObject = dir;
-	EventData.Instigator = this;
-	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Combat.Fireball"));
-	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
+	// EventData.Instigator = this;
+	FGameplayAbilityTargetData_SingleTargetHit* MousePosData = new FGameplayAbilityTargetData_SingleTargetHit();
 
-	// Get game state
-	if(ARTGameState* GameState = GetWorld()->GetGameState<ARTGameState>())
-	{
-		bool MatchStated = GameState->HasMatchStarted();
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), MatchStated));
-	}
+	FHitResult HitResult = GetMousePositionInWorld();
+	MousePosData->HitResult = HitResult;
 	
+	FGameplayAbilityTargetDataHandle TargetData;
+	TargetData.Add(MousePosData);
 	
-	// GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), PlayerID));
+	EventData.TargetData = TargetData;
+	const FGameplayTag EventTag = AbilityTag;
+	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
+}
+
+void AHero::OnAbilityOne(const FInputActionValue& Value)
+{
+	CastAbility(AbilityTags[0]);
 }
 
 void AHero::OnAbilityTwo(const FInputActionValue& Value)
 {
-	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Status.Buff.Damage")));
-	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+	CastAbility(AbilityTags[1]);
 }
 
 void AHero::OnAbilityThree(const FInputActionValue& Value)
 {
-	TArray<AActor*> Actors;
-	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
-	FGameplayEventData EventData;
-	const UMouseVec* MouseData = NewObject<UMouseVec>();
-	MouseData->MouseVec = MousePos;
-	EventData.OptionalObject = MouseData;
-	EventData.Instigator = this;
-	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Movement.Dash"));
-	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
+	CastAbility(AbilityTags[2]);
 }
 
 void AHero::OnAbilityFour(const FInputActionValue& Value)
 {
-	TArray<AActor*> Actors;
-	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
-	FGameplayEventData EventData;
-	const UMouseVec* MouseData = NewObject<UMouseVec>();
-	MouseData->MouseVec = MousePos;
-	EventData.OptionalObject = MouseData;
-	EventData.Instigator = this;
-	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Cast.VoidImplosion"));
-	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
+	CastAbility(AbilityTags[3]);
 }
 
 void AHero::OnAbilityFive(const FInputActionValue& Value)
 {
-	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.State.Revive")));
-	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+	CastAbility(AbilityTags[4]);
 }
 
 void AHero::OnAbilitySix(const FInputActionValue& Value)
 {
-	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.Heal")));
-	AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+	CastAbility(AbilityTags[5]);
 }
 
 void AHero::PossessedBy(AController* NewController)
