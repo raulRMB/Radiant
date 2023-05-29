@@ -146,24 +146,21 @@ void AHero::OnAbilityOne(const FInputActionValue& Value)
 	TArray<AActor*> Actors;
 	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
 	FGameplayEventData EventData;
-	const UMouseVec* dir = NewObject<UMouseVec>();
 	FVector Loc = GetActorLocation();
 	Loc.Z = 0;
-	dir->MouseVec = UUtil::ProjectileDirection(Loc, MousePos);
-	EventData.OptionalObject = dir;
 	EventData.Instigator = this;
+	
+	FGameplayAbilityTargetData_LocationInfo* MousePosData = new FGameplayAbilityTargetData_LocationInfo();
+	FGameplayAbilityTargetingLocationInfo Info;
+	Info.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
+	Info.LiteralTransform = FTransform(UUtil::ProjectileDirection(Loc, MousePos));
+	MousePosData->TargetLocation = Info;
+	FGameplayAbilityTargetDataHandle TargetData;
+	TargetData.Add(MousePosData);
+	
+	EventData.TargetData = TargetData;
 	const FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.Combat.Fireball"));
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
-
-	// Get game state
-	if(ARTGameState* GameState = GetWorld()->GetGameState<ARTGameState>())
-	{
-		bool MatchStated = GameState->HasMatchStarted();
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), MatchStated));
-	}
-	
-	
-	// GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString::Printf(TEXT("ID: %d"), PlayerID));
 }
 
 void AHero::OnAbilityTwo(const FInputActionValue& Value)
