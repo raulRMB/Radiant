@@ -13,12 +13,26 @@ void ULoginMenu::NativeConstruct()
 	Super::NativeConstruct();
 
 	LoginButton->OnClicked.AddDynamic(this, &ULoginMenu::OnLoginButtonClicked);
+	LoginButton->OnHovered.AddDynamic(this, &ULoginMenu::OnLoginButtonHovered);
 	RegisterButton->OnClicked.AddDynamic(this, &ULoginMenu::OnRegisterButtonClicked);
+	RegisterButton->OnHovered.AddDynamic(this, &ULoginMenu::OnRegisterButtonHovered);
+	UserNameTextBox->OnTextCommitted.AddDynamic(this, &ULoginMenu::OnEnterPressed);
+	PasswordTextBox->OnTextCommitted.AddDynamic(this, &ULoginMenu::OnEnterPressed);
+	UserNameTextBox->SetFocus();
+}
+
+void ULoginMenu::OnEnterPressed(const FText& Text, ETextCommit::Type CommitMethod)
+{
+	if(CommitMethod == ETextCommit::OnEnter)
+	{
+		OnLoginButtonClicked();
+	}
 }
 
 void ULoginMenu::OnLoginButtonClicked()
 {
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->LoginUser(UserNameTextBox->GetText().ToString(), PasswordTextBox->GetText().ToString());
+	OnLoginButtonClicked_BP();
 }
 
 void ULoginMenu::OnRegisterButtonClicked()
@@ -27,5 +41,15 @@ void ULoginMenu::OnRegisterButtonClicked()
 	{
 		WidgetManager->SwitchTo(FString("RegisterMenu"));
 	}
+}
+
+void ULoginMenu::OnLoginButtonHovered()
+{
+	OnLoginButtonHovered_BP();
+}
+
+void ULoginMenu::OnRegisterButtonHovered()
+{
+	OnRegisterButtonHovered_BP();
 }
 

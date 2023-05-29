@@ -115,7 +115,8 @@ void UClientSubsystem::OnLoginSuccess(const PlayFab::ClientModels::FLoginResult&
 {
 	EntityId = Result.EntityToken.Get()->Entity.Get()->Id;
 	EntityType = Result.EntityToken.Get()->Entity.Get()->Type;
-
+	if(!WidgetManager)
+		WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
 	if(WidgetManager)
 		WidgetManager->SwitchTo(FString("LobbyMenu"));
 

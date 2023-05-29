@@ -20,7 +20,11 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CancelMatchmakingButton;
-	
+
+	UFUNCTION()
+	void OnFindMatchButtonHovered();
+	UFUNCTION()
+	void OnCancelMatchmakingButtonHovered();
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION()
@@ -31,4 +35,14 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 
 	UFUNCTION()
 	void OnButtonToggle(bool bIsMatchmaking);
+
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnFindMatchButtonClicked_BP();
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnFindMatchButtonHovered_BP();
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCancelMatchmakingButtonClicked_BP();
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCancelMatchmakingButtonHovered_BP();
 };

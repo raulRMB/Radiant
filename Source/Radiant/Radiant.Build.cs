@@ -22,7 +22,9 @@ public class Radiant : ModuleRules
 			"Json",
 			"JsonUtilities",
 			"NiagaraCore",
-			"Niagara"
+			"Niagara",
+			"Slate",
+			"SlateCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  "GameplayAbilities", "GameplayTags", "GameplayTasks" });
