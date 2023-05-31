@@ -1,8 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Combat/TargetedProjectile.h"
-
+#include "TargetedProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void ATargetedProjectile::MulticastSetTarget_Implementation(AActor* NewTarget)
@@ -17,7 +16,6 @@ ATargetedProjectile::ATargetedProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
-	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +24,12 @@ void ATargetedProjectile::BeginPlay()
 	Super::BeginPlay();
 	if(HasAuthority())
 		MulticastSetTarget(Target);
+}
+
+void ATargetedProjectile::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	SetReplicateMovement(true);
 }
 
 // Called every frame

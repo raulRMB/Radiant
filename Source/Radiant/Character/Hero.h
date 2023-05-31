@@ -185,7 +185,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	UFUNCTION(BlueprintCallable)
-	void SetRotationLock(bool RotationLocked, FVector TargetDir);
+	void SetRotationLock(bool RotationLocked, FVector TargetDir = FVector::ZeroVector);
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void S_SetRotationLock(bool RotationLocked, FVector TargetDir);
 
@@ -207,6 +207,8 @@ public:
 	void S_SetTargetId(int NewTargetID);
 
 	void SetAllHealthBarColors();
+
+	URTAbilitySystemComponent* GetAbilitySystemComponent() { return AbilitySystemComponent; }
 private:
 	bool HasTag(FString Tag);
 	void HandleCamera();

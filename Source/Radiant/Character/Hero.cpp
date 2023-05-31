@@ -148,7 +148,6 @@ void AHero::CastAbility(const FGameplayTag& AbilityTag)
 	TArray<AActor*> Actors;
 	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
 	FGameplayEventData EventData;
-	// EventData.Instigator = this;
 	FGameplayAbilityTargetData_SingleTargetHit* MousePosData = new FGameplayAbilityTargetData_SingleTargetHit();
 
 	FHitResult HitResult = GetMousePositionInWorld();

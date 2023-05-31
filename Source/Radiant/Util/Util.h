@@ -8,6 +8,8 @@
 
 #define PRINTP(f, x) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f), x));
 #define PRINT(f) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f)));
+#define LOG(x) UE_LOG(LogTemp, Warning, TEXT(x));
+#define LOGP(x, a) UE_LOG(LogTemp, Warning, TEXT(x), a);
 
 /**
  * 
