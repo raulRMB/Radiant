@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "TargetedProjectile.generated.h"
+#include "HeatSeeking.generated.h"
 
 UCLASS()
-class RADIANT_API ATargetedProjectile : public AActor
+class RADIANT_API AHeatSeeking : public AActor
 {
 	GENERATED_BODY()
 
@@ -22,7 +22,7 @@ class RADIANT_API ATargetedProjectile : public AActor
 public:
 	
 	// Sets default values for this actor's properties
-	ATargetedProjectile();
+	AHeatSeeking();
 
 protected:
 	// Called when the game starts or when spawned

@@ -51,6 +51,21 @@ void AAreaOfEffect::ApplyGameplayEffects()
 	}
 }
 
+void AAreaOfEffect::ApplyInstantEffects()
+{
+	TArray<AActor*> OverlappingActors;
+	Mesh->GetOverlappingActors(OverlappingActors, AHero::StaticClass());
+	for(auto Actor : OverlappingActors)
+	{
+		if(AHero* Hero = Cast<AHero>(Actor))
+		{
+			EffectTargets.AddUnique(Hero);
+		}
+	}
+	
+	ApplyGameplayEffects();
+}
+
 // Called when the game starts or when spawned
 void AAreaOfEffect::BeginPlay()
 {
@@ -61,8 +76,16 @@ void AAreaOfEffect::BeginPlay()
 		Mesh->OnComponentBeginOverlap.AddDynamic(this, &AAreaOfEffect::OnOverlapBegin);
 		Mesh->OnComponentEndOverlap.AddDynamic(this, &AAreaOfEffect::OnOverlapEnd);
 	}
-	if(LifeSpan <= 0.f)
-		ApplyGameplayEffects();
+	
+	if(LifeSpan == 0.f)
+	{
+		ApplyInstantEffects();
+	}
+	else
+	{
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAreaOfEffect::ApplyInstantEffects, LifeSpan, false);
+	}
 }
 
 // Called every frame
@@ -79,7 +102,6 @@ void AAreaOfEffect::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AAc
 	{
 		EffectTargets.AddUnique(Hero);
 	}
-	ApplyGameplayEffects();
 }
 
 void AAreaOfEffect::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

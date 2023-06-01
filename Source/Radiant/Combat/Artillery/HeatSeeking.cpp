@@ -1,16 +1,16 @@
 // Copyright Radiant Studios
 
 
-#include "TargetedProjectile.h"
+#include "HeatSeeking.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-void ATargetedProjectile::MulticastSetTarget_Implementation(AActor* NewTarget)
+void AHeatSeeking::MulticastSetTarget_Implementation(AActor* NewTarget)
 {
 	Target = NewTarget;
 }
 
 // Sets default values
-ATargetedProjectile::ATargetedProjectile()
+AHeatSeeking::AHeatSeeking()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -19,21 +19,21 @@ ATargetedProjectile::ATargetedProjectile()
 }
 
 // Called when the game starts or when spawned
-void ATargetedProjectile::BeginPlay()
+void AHeatSeeking::BeginPlay()
 {
 	Super::BeginPlay();
 	if(HasAuthority())
 		MulticastSetTarget(Target);
 }
 
-void ATargetedProjectile::OnConstruction(const FTransform& Transform)
+void AHeatSeeking::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	SetReplicateMovement(true);
 }
 
 // Called every frame
-void ATargetedProjectile::Tick(float DeltaTime)
+void AHeatSeeking::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
