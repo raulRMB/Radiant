@@ -5,8 +5,6 @@
 
 #include "Character/Hero.h"
 #include "Combat/Artillery/AreaOfEffect.h"
-#include "Player/RTPlayerState.h"
-#include "Util/Util.h"
 
 UGAAreaOfEffect::UGAAreaOfEffect()
 {

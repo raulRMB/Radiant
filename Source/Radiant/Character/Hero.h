@@ -189,8 +189,11 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void S_SetRotationLock(bool RotationLocked, FVector TargetDir);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void C_ResetDestination();
+
 	void ResetDestination();
+
 	UFUNCTION(BlueprintCallable)
 	void SetDestination(FVector NewDestination);
 

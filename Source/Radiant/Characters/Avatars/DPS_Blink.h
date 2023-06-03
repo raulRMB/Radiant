@@ -3,31 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTAbility.h"
-#include "GAInstant.generated.h"
-
-UENUM(BlueprintType)
-enum class EInstantAbilityTarget : uint8
-{
-	Self,
-	Target,
-	SelfAndTarget
-};
+#include "GAS/Abilities/GADash.h"
+#include "DPS_Blink.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RADIANT_API UGAInstant : public URTAbility
+class RADIANT_API UDPS_Blink : public UGADash
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
-	TArray<TSubclassOf<class UGameplayEffect>> GameplayEffects;
-
+	FGameplayTag BlinkStartCue;
+	
 	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
-	EInstantAbilityTarget AbilityTarget;
-
-protected:
+	FGameplayTag BlinkEndCue;
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

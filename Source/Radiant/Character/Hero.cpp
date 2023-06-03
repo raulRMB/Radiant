@@ -272,6 +272,11 @@ void AHero::ResetDestination()
 	Destination = GetActorLocation();
 }
 
+void AHero::C_ResetDestination_Implementation()
+{
+	ResetDestination();
+}
+
 void AHero::SetDestination(FVector NewDestination)
 {
 	Destination = NewDestination;

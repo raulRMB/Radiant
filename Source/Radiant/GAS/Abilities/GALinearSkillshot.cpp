@@ -6,13 +6,39 @@
 #include "Character/Hero.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Combat/Artillery/LinearSkillshot.h"
-#include "Player/RTPlayerState.h"
 #include "Util/PlayMontageAndWaitForEvent.h"
-#include "Util/Util.h"
 
 UGALinearSkillshot::UGALinearSkillshot() : UGAAnimated()
 {
 	
+}
+
+void UGALinearSkillshot::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	Super::OnAnimCompleted(EventTag, EventData);
+	if(HasAuthority(&CurrentActivationInfo))
+		ReturnToDefaultAndEndAbility(false);
+}
+
+void UGALinearSkillshot::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	Super::OnAnimCancelled(EventTag, EventData);
+	if(HasAuthority(&CurrentActivationInfo))
+		ReturnToDefaultAndEndAbility(false);
+}
+
+void UGALinearSkillshot::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	Super::OnAnimInterrupted(EventTag, EventData);
+	if(HasAuthority(&CurrentActivationInfo))
+		ReturnToDefaultAndEndAbility(false);
+}
+
+void UGALinearSkillshot::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	Super::OnAnimBlendOut(EventTag, EventData);
+	if(HasAuthority(&CurrentActivationInfo))
+		ReturnToDefaultAndEndAbility(false);
 }
 
 void UGALinearSkillshot::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -47,4 +73,6 @@ void UGALinearSkillshot::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEve
 		Projectile->SetOwner(Avatar);
 		Projectile->FinishSpawning(SpawnTransform);
 	}
+
+	ReturnToDefaultAndEndAbility(false);
 }

@@ -10,25 +10,51 @@
 #include "Util/PlayMontageAndWaitForEvent.h"
 #include "Util/Util.h"
 
-
 UGAAnimated::UGAAnimated()
 {
+}
+
+void UGAAnimated::SetSelfTags(const bool bApply) const
+{
+	if(GetAvatarActorFromActorInfo()->GetLocalRole() == ROLE_AutonomousProxy)
+	{
+		if(bApply)
+		{
+			FGameplayTagContainer Tags;
+			GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
+			for(auto SelfTag : SelfTags)
+			{
+				if(!Tags.HasTag(SelfTag))
+				{
+					GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(SelfTag);
+					GetAbilitySystemComponentFromActorInfo()->AddReplicatedLooseGameplayTag(SelfTag);
+				}
+			}
+		}
+		else
+		{
+			FGameplayTagContainer Tags;
+			GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
+			for(auto SelfTag : SelfTags)
+			{
+				if(Tags.HasTag(SelfTag))
+				{
+					GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(SelfTag);
+					GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(SelfTag);
+				}
+			}
+		}
+	}
 }
 
 void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                   const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                   const FGameplayEventData* TriggerEventData)
 {
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
 	AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo());
 	ARTPlayerState* Owner = Cast<ARTPlayerState>(GetOwningActorFromActorInfo());
 	
-	if(Avatar->GetLocalRole() == ROLE_AutonomousProxy)
-	{
-		GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTags(SelfTags);
-		GetAbilitySystemComponentFromActorInfo()->AddReplicatedLooseGameplayTags(SelfTags);
-	}
+	SetSelfTags(true);
 	
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
 
@@ -37,9 +63,9 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	FVector Direction = (HitResult.Location - Loc).GetSafeNormal();
 	Avatar->SetRotationLock(true, Direction);
 
-	MouseWorldLocation = HitResult.Location;
+	SetMouseWorldLocation(HitResult.Location);
 	
-	UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage,SpawnTags, 1.0f, NAME_None, false, 1.0f);
+	UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage,SpawnTags, MontagePlayRate, NAME_None, false, 1.0f);
 	Task->OnCompleted.AddDynamic(this, &UGAAnimated::OnCompleted);
 	Task->OnCancelled.AddDynamic(this, &UGAAnimated::OnCancelled);
 	Task->OnInterrupted.AddDynamic(this, &UGAAnimated::OnInterrupted);
@@ -48,51 +74,43 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Task->ReadyForActivation();
 }
 
-void UGAAnimated::ReturnToDefaultAndEndAbility(bool bWasCancelled)
+void UGAAnimated::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo());
-	Avatar->SetRotationLock(false);
-
-	FGameplayTagContainer Tags;
-	GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
-
-	if(Avatar->GetLocalRole() == ROLE_AutonomousProxy)
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	
+	if(GetAvatarActorFromActorInfo()->GetLocalRole() == ROLE_AutonomousProxy)
 	{
-		for(auto SelfTag : SelfTags)
+		if(AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo()))
 		{
-			if(Tags.HasTag(SelfTag))
-			{
-				GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(SelfTag);
-				GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(SelfTag);
-			}
+			Avatar->SetRotationLock(false);
+			SetSelfTags(false);
 		}
 	}
-	
+}
+void UGAAnimated::ReturnToDefaultAndEndAbility(bool bWasCancelled)
+{
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, bWasCancelled);
 }
 
 void UGAAnimated::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	OnAnimCompleted(EventTag, EventData);
-	ReturnToDefaultAndEndAbility();
 }
 
 void UGAAnimated::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	OnAnimCancelled(EventTag, EventData);
-	ReturnToDefaultAndEndAbility(true);
 }
 
 void UGAAnimated::OnInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	OnAnimInterrupted(EventTag, EventData);
-	ReturnToDefaultAndEndAbility(true);
 }
 
 void UGAAnimated::OnBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	OnAnimBlendOut(EventTag, EventData);
-	ReturnToDefaultAndEndAbility();
 }
 
 void UGAAnimated::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
