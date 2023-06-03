@@ -350,6 +350,11 @@ void AHero::SetAllHealthBarColors()
 	}
 }
 
+FVector AHero::GetHalfHeightVector()
+{
+	return FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+}
+
 bool AHero::HasTag(FString Tag)
 {
 	FGameplayTagContainer TagContainer;

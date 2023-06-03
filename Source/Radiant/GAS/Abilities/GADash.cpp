@@ -15,7 +15,7 @@ void UGADash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 	
 	if(AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo()))
 	{
-		Avatar->SetDestination(GetRangeBasedMouseLocation());
+		Avatar->SetDestination(GetRangedBaseMouseLocationWithHeroHalfHeight());
 	}
 	
 	switch (DashType)
@@ -35,11 +35,11 @@ void UGADash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 }
 
 void UGADash::LinearDash()
-{
+{	
 	UAbilityTask_MoveToLocation* MoveTask = UAbilityTask_MoveToLocation::MoveToLocation(
 		this,
 		FName("MoveTask"),
-		GetRangeBasedMouseLocation(),
+		GetRangedBaseMouseLocationWithHeroHalfHeight(),
 		DashTime,
 		nullptr,
 		nullptr
@@ -54,7 +54,7 @@ void UGADash::ParabolicDash()
 	UMoveToLocationParabolic* MoveTask = UMoveToLocationParabolic::MoveToLocationParabolic(
 		this,
 		FName("MoveTask"),
-		GetRangeBasedMouseLocation(),
+		GetRangedBaseMouseLocationWithHeroHalfHeight(),
 		DashTime,
 		nullptr,
 		nullptr,
@@ -68,7 +68,6 @@ void UGADash::ParabolicDash()
 void UGADash::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnAnimEventReceived(EventTag, EventData);
-	LOG("Recived")
 	if(DashType == EDashType::TeleportTimed)
 		TeleportInstant();
 }
@@ -82,7 +81,7 @@ void UGADash::TeleportInstant()
 {
 	if(HasAuthority(&CurrentActivationInfo))
 	{
-		GetAvatarActorFromActorInfo()->SetActorLocation(GetRangeBasedMouseLocation());
+		GetAvatarActorFromActorInfo()->SetActorLocation(GetRangedBaseMouseLocationWithHeroHalfHeight());
 		OnTargetLocationReached();
 	}
 }

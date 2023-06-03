@@ -14,12 +14,15 @@ class RADIANT_API URTAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
-	float Range;
-
 	FVector MouseWorldLocation;
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	UPROPERTY(EditAnywhere, Category="Ability")
+	float MaxRange;
 public:
 	const FVector& GetMouseWorldLocation() const { return MouseWorldLocation; }
 	FVector GetRangeBasedMouseLocation();
 	void SetMouseWorldLocation(const FVector& Location) { MouseWorldLocation = Location; }
+	FVector GetRangedBaseMouseLocationWithHeroHalfHeight();
 };

@@ -211,6 +211,8 @@ public:
 
 	void SetAllHealthBarColors();
 
+	FVector GetHalfHeightVector();
+
 	URTAbilitySystemComponent* GetAbilitySystemComponent() { return AbilitySystemComponent; }
 private:
 	bool HasTag(FString Tag);

@@ -28,9 +28,6 @@ class RADIANT_API UGADash : public UGAAnimated
 	
 	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true", EditCondition="DashType == EDashType::Linear || DashType == EDashType::Parabolic", EditConditionHides))
 	float DashTime;
-	
-	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
-	float MaxRange = 1000.f;
 
 	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UCurveVector> ParabolicCurve;
