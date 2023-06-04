@@ -53,7 +53,7 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo());
 	ARTPlayerState* Owner = Cast<ARTPlayerState>(GetOwningActorFromActorInfo());
-	
+
 	SetSelfTags(true);
 	
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);

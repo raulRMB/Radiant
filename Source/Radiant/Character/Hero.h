@@ -22,6 +22,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;
+	
+	uint8 bAtDestination : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	class AHero* Target;

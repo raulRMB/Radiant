@@ -25,4 +25,5 @@ public:
 	FVector GetRangeBasedMouseLocation();
 	void SetMouseWorldLocation(const FVector& Location) { MouseWorldLocation = Location; }
 	FVector GetRangedBaseMouseLocationWithHeroHalfHeight();
+	FVector GetAvatarToMouseDirection();
 };

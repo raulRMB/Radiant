@@ -3,20 +3,15 @@
 
 #include "GAS/Abilities/GADash.h"
 
-#include "Abilities/Tasks/AbilityTask_MoveToLocation.h"
+#include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
+#include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 #include "Character/Hero.h"
 #include "GAS/Tasks/MoveToLocationParabolic.h"
-#include "Util/Util.h"
 
 void UGADash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                               const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	
-	if(AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo()))
-	{
-		Avatar->SetDestination(GetRangedBaseMouseLocationWithHeroHalfHeight());
-	}
 	
 	switch (DashType)
 	{
@@ -35,17 +30,22 @@ void UGADash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 }
 
 void UGADash::LinearDash()
-{	
-	UAbilityTask_MoveToLocation* MoveTask = UAbilityTask_MoveToLocation::MoveToLocation(
+{
+	UAbilityTask_ApplyRootMotionMoveToForce* MoveTask = UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
 		this,
 		FName("MoveTask"),
 		GetRangedBaseMouseLocationWithHeroHalfHeight(),
 		DashTime,
+		false,
+		EMovementMode::MOVE_Custom,
+		false,
 		nullptr,
-		nullptr
-		);
+		ERootMotionFinishVelocityMode::SetVelocity,
+		FVector::ZeroVector,
+		false);
 
-	MoveTask->OnTargetLocationReached.AddDynamic(this, &UGADash::OnTargetLocationReached);
+	MoveTask->OnTimedOut.AddDynamic(this, &UGADash::OnTargetLocationReached);
+	MoveTask->OnTimedOutAndDestinationReached.AddDynamic(this, &UGADash::OnTargetLocationReached);
 	MoveTask->ReadyForActivation();
 }
 
@@ -71,6 +71,7 @@ void UGADash::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData Even
 	if(DashType == EDashType::TeleportTimed)
 		TeleportInstant();
 }
+
 
 void UGADash::OnTargetLocationReached()
 {

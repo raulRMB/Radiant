@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "RadiantPlayerController.h"
+#include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 #include "AI/NavigationSystemBase.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
@@ -122,6 +123,10 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
 	Destination = HitResult.Location;
+	if((Destination - GetActorLocation()).Size() >= 200)
+	{
+		bAtDestination = false;
+	}
 }
 
 void AHero::CheckShouldAttack()
@@ -474,10 +479,14 @@ void AHero::Tick(float DeltaTime)
 		{
 			Destination = Target->GetActorLocation();
 		}
-		if((Destination - GetActorLocation()).Size() >= 200.f)
+		if(!bAtDestination && (Destination - GetActorLocation()).Size() >= 200.f)
 		{
 			FVector dir = Destination - GetActorLocation();
 			AddMovementInput(dir, 1);
+		}
+		else
+		{
+			bAtDestination = true;
 		}
 	}
 	if(IsLocallyControlled() && bRotationLocked)
