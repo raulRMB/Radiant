@@ -18,5 +18,6 @@ class RADIANT_API UDPS_Skillshot : public UGALinearSkillshot
 	FGameplayTag CastStartCue;
 	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	
+
+	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;	
 };
