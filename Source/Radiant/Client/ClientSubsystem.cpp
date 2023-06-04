@@ -125,6 +125,16 @@ void UClientSubsystem::OnLoginSuccess(const PlayFab::ClientModels::FLoginResult&
 	UE_LOG(LogTemp, Warning, TEXT("Login Success"));
 }
 
+void UClientSubsystem::Logout()
+{
+	bIsLoggedIn = false;
+	EntityId = "";
+	EntityType = "";
+	if(WidgetManager)
+		WidgetManager->SwitchTo(FString("LoginMenu"));
+
+}
+
 void UClientSubsystem::OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result)
 {
 	if(WidgetManager)

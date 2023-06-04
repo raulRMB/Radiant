@@ -20,7 +20,10 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CancelMatchmakingButton;
-
+	
+	UPROPERTY(meta = (BindWidget))
+	class UButton* LogoutButton;
+	
 	UFUNCTION()
 	void OnFindMatchButtonHovered();
 	UFUNCTION()
@@ -45,4 +48,6 @@ public:
 	void OnCancelMatchmakingButtonClicked_BP();
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnCancelMatchmakingButtonHovered_BP();
+	UFUNCTION()
+	void OnLogoutButtonClicked();
 };

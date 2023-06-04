@@ -58,6 +58,9 @@ public:
 	UFUNCTION()
 		void GetMatchmakingTicketResult();
 
+	UFUNCTION()
+		void Logout();
+
 	bool GetIsMatchMaking() const { return bIsMatchmaking; }
 	void SetIsMatchMaking(bool IsMatchmaking) { bIsMatchmaking = IsMatchmaking; }
 
@@ -65,6 +68,7 @@ public:
 	void SetIsLoggedIn(bool IsLoggedIn) { bIsLoggedIn = IsLoggedIn; }
 private:
 	void OnLoginSuccess(const PlayFab::ClientModels::FLoginResult& Result);
+
 	void OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result);
 
 	void OnCreateMatchmakingTicketSuccess(const PlayFab::MultiplayerModels::FCreateMatchmakingTicketResult& Result);
