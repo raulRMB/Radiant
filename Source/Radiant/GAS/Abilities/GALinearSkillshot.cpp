@@ -69,8 +69,6 @@ void UGALinearSkillshot::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEve
 			GetOwningActorFromActorInfo(),
 			Cast<APawn>(Avatar)
 			);
-
-		Projectile->SetOwner(Avatar);
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 

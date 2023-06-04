@@ -78,7 +78,10 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 			if(!AffectedActors.Contains(OtherActor))
 			{
 				UGameplayEffect* NewEffect = NewObject<UGameplayEffect>(GetTransientPackage(), Effect);
-				Hero->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(NewEffect, 1.f, Hero->GetAbilitySystemComponent()->MakeEffectContext());
+				if(AHero* Instigator = Cast<AHero>(GetInstigator()))
+				{
+					Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(NewEffect, Hero->GetAbilitySystemComponent(),1.f);
+				}
 				AffectedActors.AddUnique(OtherActor);
 			}
 		}
