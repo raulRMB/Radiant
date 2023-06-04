@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "LinearSkillshot.generated.h"
 
@@ -20,6 +21,9 @@ class RADIANT_API ALinearSkillshot : public AActor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<class UGameplayEffect>> GameplayEffects;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
+	FGameplayTag HitCueTag;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Ability", meta = (AllowPrivateAccess = "true"))
 	uint8 bConsumeOnHit : 1;
 

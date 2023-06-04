@@ -82,6 +82,11 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 				AffectedActors.AddUnique(OtherActor);
 			}
 		}
+		FGameplayCueParameters CueParameters;
+		CueParameters.Location = Hero->GetActorLocation();
+		CueParameters.TargetAttachComponent = Hero->GetMesh();
+		CueParameters.Instigator = this;
+		Hero->GetAbilitySystemComponent()->ExecuteGameplayCue(HitCueTag, CueParameters);
 	}
 
 	OverlapStart(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);

@@ -12,8 +12,6 @@ void UGAInstant::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
-
 	if(HasAuthority(&CurrentActivationInfo))
 	{
 		FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
@@ -25,9 +23,15 @@ void UGAInstant::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 			FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 			ContextHandle.AddSourceObject(this);
 			if(AbilityTarget == EInstantAbilityTarget::Self || AbilityTarget == EInstantAbilityTarget::SelfAndTarget)
+			{
 				ASC->ApplyGameplayEffectToSelf(Effect->GetDefaultObject<UGameplayEffect>(), 1.0f, ContextHandle);
+				CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
+			}
 			else if (AbilityTarget == EInstantAbilityTarget::Target || AbilityTarget == EInstantAbilityTarget::SelfAndTarget)
+			{
 				ASC->ApplyGameplayEffectToTarget(Effect->GetDefaultObject<UGameplayEffect>(), TargetASC, 1.0f, ContextHandle);
+				CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
+			}
 		}
 	}
 }
