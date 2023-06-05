@@ -88,6 +88,7 @@ void UGAAnimated::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 		}
 	}
 }
+
 void UGAAnimated::ReturnToDefaultAndEndAbility(bool bWasCancelled)
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, bWasCancelled);

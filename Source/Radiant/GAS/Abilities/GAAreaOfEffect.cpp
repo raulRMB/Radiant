@@ -51,7 +51,8 @@ void UGAAreaOfEffect::SpawnAreaOfEffect()
 
 		AreaOfEffect->SetAvatar(Cast<AHero>(Avatar));
 		AreaOfEffect->FinishSpawning(SpawnTransform);
-	}	
+	}
+	CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
 }
 
 void UGAAreaOfEffect::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -69,5 +70,9 @@ void UGAAreaOfEffect::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventD
 	Super::OnAnimEventReceived(EventTag, EventData);
 
 	if(!bInstantCast)
+	{
 		SpawnAreaOfEffect();
+	}
+	
+	ReturnToDefaultAndEndAbility(false);
 }

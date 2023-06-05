@@ -5,7 +5,6 @@
 
 #include "Character/Hero.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
-#include "Util/Util.h"
 
 // Sets default values
 AAreaOfEffect::AAreaOfEffect()
@@ -20,6 +19,10 @@ AAreaOfEffect::AAreaOfEffect()
 	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	SetRootComponent(Mesh);
+
+	TimerDisplay = CreateDefaultSubobject<UStaticMeshComponent>(FName("TimerDisplay"));
+	TimerDisplay->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	TimerDisplay->SetupAttachment(Mesh);
 }
 
 void AAreaOfEffect::OnConstruction(const FTransform& Transform)
@@ -43,7 +46,7 @@ void AAreaOfEffect::ApplyGameplayEffects()
 					FGameplayEffectSpecHandle NewHandle = Avatar->GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
 					if(NewHandle.IsValid())
 					{
-						AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
+						Avatar->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
 					}
 				}
 			}
@@ -62,14 +65,27 @@ void AAreaOfEffect::ApplyInstantEffects()
 			EffectTargets.AddUnique(Hero);
 		}
 	}
+
+	if(Avatar)
+	{
+		FGameplayCueParameters CueParameters;
+		CueParameters.Location = GetActorLocation();		
+		Avatar->GetAbilitySystemComponent()->ExecuteGameplayCue(CueTag, CueParameters);
+	}
 	
 	ApplyGameplayEffects();
+	Destroy();
 }
 
 // Called when the game starts or when spawned
 void AAreaOfEffect::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if(TimerDisplay)
+	{
+		TimerDisplay->SetRelativeScale3D(FVector::ZeroVector);
+	}
 	
 	if(Mesh)
 	{
@@ -83,7 +99,6 @@ void AAreaOfEffect::BeginPlay()
 	}
 	else
 	{
-		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAreaOfEffect::ApplyInstantEffects, LifeSpan, false);
 	}
 }
@@ -93,6 +108,10 @@ void AAreaOfEffect::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(TimerDisplay)
+	{
+		TimerDisplay->SetRelativeScale3D(FVector(1.f, 1.f, 1.f) * (GetWorld()->GetTimerManager().GetTimerElapsed(TimerHandle) / LifeSpan) * 1.3f);
+	}
 }
 
 void AAreaOfEffect::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

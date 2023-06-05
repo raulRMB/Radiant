@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "AreaOfEffect.generated.h"
 
@@ -13,12 +14,20 @@ class RADIANT_API AAreaOfEffect : public AActor
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	float LifeSpan = 1.f;
+
+	FTimerHandle TimerHandle;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<class UGameplayEffect>> GameplayEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* TimerDisplay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	FGameplayTag CueTag;
 public:	
 	// Sets default values for this actor's properties
 	AAreaOfEffect();
