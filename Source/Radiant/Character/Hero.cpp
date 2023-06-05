@@ -13,6 +13,7 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GAS/Abilities/RTAbility.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -49,6 +50,25 @@ AHero::AHero()
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
 }
 
+void AHero::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags)
+{
+	FGameplayTagContainer OwnedTags;
+	AbilitySystemComponent->GetOwnedGameplayTags(OwnedTags);
+	if (OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Casting"))))
+	{
+		bShouldActivateBuffer = true;
+	}
+}
+
+void AHero::CastingTagChanged(FGameplayTag GameplayTag, int I)
+{
+	if(bShouldActivateBuffer && I == 0)
+	{
+		AbilitySystemComponent->HandleGameplayEvent(BufferAbility.EventTag, &BufferAbility);
+		bShouldActivateBuffer = false;
+	}
+}
+
 // Called when the game starts or when spawned
 void AHero::BeginPlay()
 {
@@ -81,6 +101,8 @@ void AHero::BeginPlay()
 void AHero::GameReady_Implementation()
 {
 	SetOwnHealthBarColor();
+	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AHero::OnAbilityFailed);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AHero::CastingTagChanged);
 }
 
 FVector2D AHero::GetMousePosition()
@@ -148,7 +170,7 @@ void AHero::CheckShouldAttack()
 	}
 }
 
-void AHero::CastAbility(const FGameplayTag& AbilityTag)
+void AHero::CastAbility(FGameplayTag& AbilityTag)
 {
 	TArray<AActor*> Actors;
 	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
@@ -162,7 +184,11 @@ void AHero::CastAbility(const FGameplayTag& AbilityTag)
 	TargetData.Add(MousePosData);
 	
 	EventData.TargetData = TargetData;
+	EventData.EventTag = AbilityTag;
 	const FGameplayTag EventTag = AbilityTag;
+
+	BufferAbility = EventData;
+	
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 

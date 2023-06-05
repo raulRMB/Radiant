@@ -16,6 +16,7 @@ UGAAnimated::UGAAnimated()
 
 void UGAAnimated::SetSelfTags(const bool bApply) const
 {
+	FGameplayTag Casting = FGameplayTag::RequestGameplayTag("States.Casting");
 	if(GetAvatarActorFromActorInfo()->GetLocalRole() == ROLE_AutonomousProxy)
 	{
 		if(bApply)
@@ -37,11 +38,20 @@ void UGAAnimated::SetSelfTags(const bool bApply) const
 			GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
 			for(auto SelfTag : SelfTags)
 			{
+				if(SelfTag == Casting)
+				{
+					continue;
+				}
 				if(Tags.HasTag(SelfTag))
 				{
 					GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(SelfTag);
 					GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(SelfTag);
 				}
+			}
+			if(Tags.HasTag(Casting))
+			{
+				GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(Casting);
+				GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(Casting);
 			}
 		}
 	}

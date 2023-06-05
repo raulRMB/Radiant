@@ -19,7 +19,9 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void GameReady();
-	
+	void OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags);
+	void CastingTagChanged(FGameplayTag GameplayTag, int I);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;
 	
@@ -99,7 +101,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
-
+	
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Networking")
 	int TargetID;
 
@@ -121,8 +123,8 @@ protected:
 	FHitResult GetMousePositionInWorld() const;
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void CheckShouldAttack();
-
-	void CastAbility(const FGameplayTag& AbilityTag);
+	
+	void CastAbility(FGameplayTag& AbilityTag);
 	
 	UFUNCTION()
 	void OnAbilityOne(const FInputActionValue& Value);
@@ -177,7 +179,9 @@ protected:
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 	void OnManaChanged(const FOnAttributeChangeData& Data);
 
-public:	
+public:
+	FGameplayEventData BufferAbility;
+	bool bShouldActivateBuffer = false;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -217,6 +221,7 @@ public:
 
 	URTAbilitySystemComponent* GetAbilitySystemComponent() { return AbilitySystemComponent; }
 private:
+	
 	bool HasTag(FString Tag);
 	void HandleCamera();
 
