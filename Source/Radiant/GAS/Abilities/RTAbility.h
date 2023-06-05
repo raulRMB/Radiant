@@ -26,4 +26,9 @@ public:
 	void SetMouseWorldLocation(const FVector& Location) { MouseWorldLocation = Location; }
 	FVector GetRangedBaseMouseLocationWithHeroHalfHeight();
 	FVector GetAvatarToMouseDirection();
+	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
+	static void GetMatchingTags(const FGameplayTagContainer& Tags1, const FGameplayTagContainer& Tags2,
+	                            FGameplayTagContainer* OptionalRelevantTags);
+	static void GetMissingTags(const FGameplayTagContainer& Tags1, const FGameplayTagContainer& Tags2,
+	                           FGameplayTagContainer* OptionalRelevantTags);
 };
