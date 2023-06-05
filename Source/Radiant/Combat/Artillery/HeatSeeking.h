@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Combat/Artillery/Artillery.h"
 #include "HeatSeeking.generated.h"
 
 UCLASS()
-class RADIANT_API AHeatSeeking : public AActor
+class RADIANT_API AHeatSeeking : public AArtillery
 {
 	GENERATED_BODY()
 

@@ -8,6 +8,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Player/RTPlayerState.h"
 
 // Sets default values
 ALinearSkillshot::ALinearSkillshot()

@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "GameFramework/Actor.h"
+#include "Combat/Artillery/Artillery.h"
 #include "AreaOfEffect.generated.h"
 
 UCLASS()
-class RADIANT_API AAreaOfEffect : public AActor
+class RADIANT_API AAreaOfEffect : public AArtillery
 {
 	GENERATED_BODY()
 
@@ -49,11 +49,4 @@ public:
 	void SetEffectTargets(TArray<AHero*> NewEffectTargets) const { NewEffectTargets = EffectTargets; }
 
 	void ApplyInstantEffects();
-	
-	UFUNCTION()
-	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
-	                    int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
-	                  int32 OtherBodyIndex);
 };

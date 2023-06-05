@@ -28,8 +28,6 @@ AAreaOfEffect::AAreaOfEffect()
 void AAreaOfEffect::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-
-	
 }
 
 void AAreaOfEffect::ApplyGameplayEffects()
@@ -60,9 +58,12 @@ void AAreaOfEffect::ApplyInstantEffects()
 	Mesh->GetOverlappingActors(OverlappingActors, AHero::StaticClass());
 	for(auto Actor : OverlappingActors)
 	{
-		if(AHero* Hero = Cast<AHero>(Actor))
+		if(ShouldHit(Actor))
 		{
-			EffectTargets.AddUnique(Hero);
+			if(AHero* Hero = Cast<AHero>(Actor))
+			{
+				EffectTargets.AddUnique(Hero);
+			}
 		}
 	}
 
@@ -87,12 +88,6 @@ void AAreaOfEffect::BeginPlay()
 		TimerDisplay->SetRelativeScale3D(FVector::ZeroVector);
 	}
 	
-	if(Mesh)
-	{
-		Mesh->OnComponentBeginOverlap.AddDynamic(this, &AAreaOfEffect::OnOverlapBegin);
-		Mesh->OnComponentEndOverlap.AddDynamic(this, &AAreaOfEffect::OnOverlapEnd);
-	}
-	
 	if(LifeSpan == 0.f)
 	{
 		ApplyInstantEffects();
@@ -111,24 +106,6 @@ void AAreaOfEffect::Tick(float DeltaTime)
 	if(TimerDisplay)
 	{
 		TimerDisplay->SetRelativeScale3D(FVector(1.f, 1.f, 1.f) * (GetWorld()->GetTimerManager().GetTimerElapsed(TimerHandle) / LifeSpan) * 1.3f);
-	}
-}
-
-void AAreaOfEffect::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{	
-	if(AHero* Hero = Cast<AHero>(OtherActor))
-	{
-		EffectTargets.AddUnique(Hero);
-	}
-}
-
-void AAreaOfEffect::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if(AHero* Hero = Cast<AHero>(OtherActor))
-	{
-		EffectTargets.Remove(Hero);
 	}
 }
 

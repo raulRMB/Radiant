@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
+#include "Combat/Artillery/Artillery.h"
 #include "LinearSkillshot.generated.h"
 
 UCLASS()
-class RADIANT_API ALinearSkillshot : public AActor
+class RADIANT_API ALinearSkillshot : public AArtillery
 {
 	GENERATED_BODY()
 
