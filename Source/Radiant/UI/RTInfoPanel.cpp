@@ -50,11 +50,18 @@ void URTInfoPanel::UpdateProperties(float DeltaTime)
 		if(URTHeroAttributeSetBase* Attributes = State->GetAttributeSetBase())
 		{
 			AbilityCooldowns();
-
+			
 			HealthBar->SetPercent(Attributes->GetHealth() / Attributes->GetMaxHealth());
 			ManaBar->SetPercent(Attributes->GetMana() / Attributes->GetMaxMana());
+			HealthAmount->SetText(FormatText(Attributes->GetHealth(), Attributes->GetMaxHealth()));
+			ManaAmount->SetText(FormatText(Attributes->GetMana(), Attributes->GetMaxMana()));
 		}
 	}
+}
+
+FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
+{
+	return FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHealth, MaxHealth));
 }
 
 void URTInfoPanel::Init()

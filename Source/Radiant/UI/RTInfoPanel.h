@@ -95,8 +95,15 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	
 	UPROPERTY(meta=(BindWidget))
 	class UProgressBar* HealthBar;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* HealthAmount;
+	
 	UPROPERTY(meta=(BindWidget))
 	class UProgressBar* ManaBar;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* ManaAmount;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 	
@@ -107,6 +114,7 @@ public:
 	void SetAbilityCoolDown(EAbilityID Abilty, const float Percent);
 	void AbilityCooldowns();
 	void UpdateProperties(float DeltaTime);
+	FText FormatText(float CurrentHealth, float MaxHealth) const;
 
 	UFUNCTION(BlueprintCallable)
 	void Init();
