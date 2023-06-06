@@ -45,12 +45,15 @@ ARTGameMode::ARTGameMode()
 
 void ARTGameMode::PlayerLoaded()
 {
-	PlayersLoaded++;
-	uint32 players = (TeamSize * TeamCount);
-	if(PlayersLoaded >= players * players)
+	if(!bInitialPlayerLoad)
 	{
-		FTimerHandle Handle;
-		GetWorldTimerManager().SetTimer(Handle, this, &ARTGameMode::PlayersAreLoaded, 1.f, false);
+		PlayersLoaded++;
+		uint32 players = (TeamSize * TeamCount);
+		if(PlayersLoaded >= players * players)
+		{
+			FTimerHandle Handle;
+			GetWorldTimerManager().SetTimer(Handle, this, &ARTGameMode::PlayersAreLoaded, 1.f, false);
+		}
 	}
 }
 
@@ -74,6 +77,7 @@ void ARTGameMode::SpawnAvatar(ARadiantPlayerController* PlayerController)
 
 void ARTGameMode::PlayersAreLoaded() const
 {
+	bInitialPlayerLoad = true;
 	for( FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator )
 	{
 		APlayerController* PlayerController = Iterator->Get();

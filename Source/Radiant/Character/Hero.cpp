@@ -102,6 +102,13 @@ void AHero::BeginPlay()
 		auto PC = Cast<ARadiantPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		PC->PlayerLoaded();
 	}
+	SetOwnHealthBarColor();
+	if(AbilitySystemComponent)
+	{
+		AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AHero::OnAbilityFailed);
+		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AHero::CastingTagChanged);
+	}
+
 }
 
 void AHero::GameReady_Implementation()

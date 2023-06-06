@@ -42,6 +42,7 @@ protected:
 private:
 	virtual bool ReadyToStartMatch_Implementation() override;
 	bool ReadyToEndMatch_Implementation();
+	mutable bool bInitialPlayerLoad = false;
 
 	virtual void HandleMatchHasStarted() override;
 
