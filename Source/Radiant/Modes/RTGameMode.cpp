@@ -56,6 +56,19 @@ void ARTGameMode::PlayersAreLoaded() const
 	}
 }
 
+void ARTGameMode::NotifyMatchEnd(int32 WinningTeam)
+{
+	for( FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator )
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		if (PlayerController && (PlayerController->GetPawn() != nullptr))
+		{
+			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
+			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->TeamId == WinningTeam);
+		}
+	}
+}
+
 void ARTGameMode::StartGame()
 {
 	StartMatch();
@@ -69,7 +82,17 @@ bool ARTGameMode::ReadyToStartMatch_Implementation()
 bool ARTGameMode::ReadyToEndMatch_Implementation()
 {
 	ARTGameState* State = Cast<ARTGameState>(GetWorld()->GetGameState());
-	return State->RedScore >= KillsToWin || State->BlueScore >= KillsToWin;
+	if(State->RedScore >= KillsToWin)
+	{
+		NotifyMatchEnd(1);
+		return true;
+	}
+	if(State->BlueScore >= KillsToWin)
+	{
+		NotifyMatchEnd(0);
+		return true;
+	}
+	return false;
 }
 
 void ARTGameMode::HandleMatchHasStarted()

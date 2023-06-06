@@ -126,3 +126,14 @@ float URTInfoPanel::GetCooldownPercent(const float TimeRemaining, const float Co
 {
 	return (CooldownDuration - TimeRemaining) / CooldownDuration;
 }
+
+void URTInfoPanel::ShowEndScreen(bool bWon)
+{
+	if(bWon)
+	{
+		Victory->SetVisibility(ESlateVisibility::Visible);
+	} else
+	{
+		Defeat->SetVisibility(ESlateVisibility::Visible);
+	}
+}

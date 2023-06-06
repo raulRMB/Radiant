@@ -27,6 +27,7 @@ protected:
 	void HandleMatchHasEnded() override;
 	void EndGame();
 	void PlayersAreLoaded() const;
+	void NotifyMatchEnd(int32 WinningTeam);
 
 	UFUNCTION(Exec)
 	void StartGame();

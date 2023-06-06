@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
+#include "Player/RTPlayerState.h"
 #include "Hero.generated.h"
 
 UCLASS()
@@ -21,6 +22,9 @@ public:
 	void GameReady();
 	void OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags);
 	void CastingTagChanged(FGameplayTag GameplayTag, int I);
+
+	UFUNCTION(Client, Reliable)
+	void GameEnding(bool Won);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;

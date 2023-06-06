@@ -105,6 +105,12 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* ManaAmount;
 
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* Victory;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* Defeat;
+
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 	
 	TArray<FUIAbility> Abilities;
@@ -125,5 +131,5 @@ public:
 	bool GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining, float& CooldownDuration);
 
 	float GetCooldownPercent(const float TimeRemaining, const float CooldownDuration);
-
+	void ShowEndScreen(bool bWon);
 };

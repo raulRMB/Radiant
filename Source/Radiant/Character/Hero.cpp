@@ -21,6 +21,7 @@
 #include "Player/RTPlayerState.h"
 #include "Modes/RTGameState.h"
 #include "UI/HeroInfoBar.h"
+#include "UI/RTHUD.h"
 #include "Util/Util.h"
 #include "Util/MouseVec.h"
 
@@ -67,6 +68,11 @@ void AHero::CastingTagChanged(FGameplayTag GameplayTag, int I)
 		AbilitySystemComponent->HandleGameplayEvent(BufferAbility.EventTag, &BufferAbility);
 		bShouldActivateBuffer = false;
 	}
+}
+
+void AHero::GameEnding_Implementation(bool Won)
+{
+	GetController<ARadiantPlayerController>()->GetHUD<ARTHUD>()->ShowEndScreen(Won);
 }
 
 // Called when the game starts or when spawned
