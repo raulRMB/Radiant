@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "Character/RadiantPlayerController.h"
 #include "RTGameMode.generated.h"
 
 /**
@@ -15,13 +16,19 @@ class RADIANT_API ARTGameMode : public AGameMode
 	GENERATED_BODY()
 
 public:
+	ARTGameMode();
+	
 	UPROPERTY(EditAnywhere)
 	uint32 TeamSize = 1;
 	uint32 TeamCount = 2;
 	uint32 PlayersLoaded = 0;
-	uint32 KillsToWin = 1;
+	UPROPERTY(EditAnywhere)
+	uint32 KillsToWin = 3;
 	void PlayerLoaded();
-	
+
+	void SpawnAvatar(class ARadiantPlayerController* PlayerController);
+
+	TSubclassOf<class AHero> HeroClass;	
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
 	void HandleMatchHasEnded() override;
@@ -37,4 +44,8 @@ private:
 	bool ReadyToEndMatch_Implementation();
 
 	virtual void HandleMatchHasStarted() override;
+
+	class ARTPlayerStart* FindTeamStartTransform(uint8 TeamId);
+public:
+	void Respawn(class ARadiantPlayerController* PlayerController);
 };

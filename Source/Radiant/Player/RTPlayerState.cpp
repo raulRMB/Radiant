@@ -36,6 +36,8 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSetBase->InitMana(AttributeSetBase->GetMaxMana());
 	AttributeSetBase->InitMovementSpeed(600.f);
 	AttributeSetBase->InitDamage(15.f);
+	AttributeSetBase->InitMaxRespawnTime(10.f);
+	AttributeSetBase->InitCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
 }
 
 UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const

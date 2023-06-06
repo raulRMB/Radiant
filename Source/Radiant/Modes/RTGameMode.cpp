@@ -4,9 +4,10 @@
 #include "RTGameMode.h"
 
 #include "RTGameState.h"
+#include "RTPlayerStart.h"
 #include "Character/Hero.h"
-#include "Character/RadiantPlayerController.h"
 #include "GameFramework/GameSession.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerState.h"
 
 void ARTGameMode::OnPostLogin(AController* NewPlayer)
@@ -16,6 +17,7 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 	if(ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(NewPlayer))
 	{
 		PC->GetPlayerState<ARTPlayerState>()->TeamId = NumPlayers % TeamCount;
+		SpawnAvatar(PC);
 	}
 }
 
@@ -32,6 +34,15 @@ void ARTGameMode::EndGame()
 	FGenericPlatformMisc::RequestExit(false);
 }
 
+ARTGameMode::ARTGameMode()
+{
+	static ConstructorHelpers::FClassFinder<AHero> PlayerControllerBPClass(TEXT("/Game/Blueprints/BP_Hero"));
+	if (PlayerControllerBPClass.Class != NULL)
+	{
+		HeroClass = PlayerControllerBPClass.Class;
+	}
+}
+
 void ARTGameMode::PlayerLoaded()
 {
 	PlayersLoaded++;
@@ -41,6 +52,24 @@ void ARTGameMode::PlayerLoaded()
 		FTimerHandle Handle;
 		GetWorldTimerManager().SetTimer(Handle, this, &ARTGameMode::PlayersAreLoaded, 1.f, false);
 	}
+}
+
+void ARTGameMode::SpawnAvatar(ARadiantPlayerController* PlayerController)
+{
+	if(!PlayerController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Valid Player Controller For Spawn Avatar"))
+		return;
+	}
+	if( PlayerController->GetPawn() != nullptr)
+	{
+		PlayerController->GetPawn()->Destroy();
+	}
+
+	ARTPlayerStart* PlayerStart = FindTeamStartTransform(PlayerController->GetPlayerState<ARTPlayerState>()->TeamId);
+	AHero* Hero = GetWorld()->SpawnActor<AHero>(HeroClass, PlayerStart->GetActorTransform());
+	PlayerController->Possess(Hero);
+	PlayerController->S_SetPlayerStart(PlayerStart);
 }
 
 void ARTGameMode::PlayersAreLoaded() const
@@ -119,4 +148,34 @@ void ARTGameMode::HandleMatchHasStarted()
 
 	// Then fire off match started
 	GetWorldSettings()->NotifyMatchStarted();
+}
+
+ARTPlayerStart* ARTGameMode::FindTeamStartTransform(uint8 TeamId)
+{
+	TArray<AActor*> Starts;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARTPlayerStart::StaticClass(), Starts);
+	for(AActor* Start : Starts)
+	{
+		ARTPlayerStart* PlayerStart = Cast<ARTPlayerStart>(Start);
+		if(PlayerStart->TeamId == TeamId)
+		{
+			if(PlayerStart->bOccupied)
+			{
+				continue;
+			}
+			PlayerStart->bOccupied = true;
+			return PlayerStart;
+		}
+	}
+	return nullptr;
+}
+
+void ARTGameMode::Respawn(ARadiantPlayerController* PlayerController)
+{
+	if(PlayerController->GetPawn() != nullptr)
+	{
+		PlayerController->GetPawn()->Destroy();
+	}
+	AHero* Hero = GetWorld()->SpawnActor<AHero>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
+	PlayerController->Possess(Hero);
 }

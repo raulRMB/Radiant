@@ -534,6 +534,8 @@ void AHero::Tick(float DeltaTime)
 void AHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AHero, TargetID)
 }
 
 // Called to bind functionality to input

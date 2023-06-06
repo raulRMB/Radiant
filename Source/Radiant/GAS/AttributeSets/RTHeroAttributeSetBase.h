@@ -54,6 +54,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage", ReplicatedUsing = OnRep_AttackDamage)
 	FGameplayAttributeData Damage;
 	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Damage)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Repsawn", ReplicatedUsing = OnRep_CurrentRespawnTime)
+	FGameplayAttributeData CurrentRespawnTime;
+	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, CurrentRespawnTime)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Repsawn", ReplicatedUsing = OnRep_MaxRespawnTime)
+	FGameplayAttributeData MaxRespawnTime;
+	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxRespawnTime)
 	
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
@@ -82,7 +90,12 @@ protected:
 	
 	UFUNCTION()
 	virtual void OnRep_AttackDamage(const FGameplayAttributeData& OldDamage);
-	
+
+	UFUNCTION()
+	virtual void OnRep_CurrentRespawnTime(const FGameplayAttributeData& OldCurrentRespawnTime);
+
+	UFUNCTION()
+	virtual void OnRep_MaxRespawnTime(const FGameplayAttributeData& OldMaxRespawnTime);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

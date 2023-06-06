@@ -9,6 +9,7 @@
 #include "Modes/RTGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
+#include "Util/Util.h"
 
 void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
@@ -40,6 +41,15 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 	{
 		UpdateMovementSpeed();
 	}
+	else if(Data.EvaluatedData.Attribute == GetCurrentRespawnTimeAttribute())
+	{
+		if(GetCurrentRespawnTime() == 0.0f)
+		{
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Event.Respawn")));
+			GetOwningAbilitySystemComponentChecked()->TryActivateAbilitiesByTag(TagContainer);
+		}
+	}
 }
 
 void URTHeroAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -53,6 +63,8 @@ void URTHeroAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MovementSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MaxMovementSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, Damage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, CurrentRespawnTime, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MaxRespawnTime, COND_None, REPNOTIFY_Always);
 }
 
 void URTHeroAttributeSetBase::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
@@ -99,6 +111,16 @@ void URTHeroAttributeSetBase::OnRep_MaxMovementSpeed(const FGameplayAttributeDat
 void URTHeroAttributeSetBase::OnRep_AttackDamage(const FGameplayAttributeData& OldDamage)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, Damage, OldDamage);
+}
+
+void URTHeroAttributeSetBase::OnRep_CurrentRespawnTime(const FGameplayAttributeData& OldCurrentRespawnTime)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, CurrentRespawnTime, OldCurrentRespawnTime);
+}
+
+void URTHeroAttributeSetBase::OnRep_MaxRespawnTime(const FGameplayAttributeData& OldMaxRespawnTime)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, MaxRespawnTime, OldMaxRespawnTime);
 }
 
 void URTHeroAttributeSetBase::UpdateMovementSpeed()

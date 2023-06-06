@@ -127,9 +127,9 @@ protected:
 	FHitResult GetMousePositionInWorld() const;
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void CheckShouldAttack();
-	
+public:
 	void CastAbility(FGameplayTag& AbilityTag);
-	
+protected:
 	UFUNCTION()
 	void OnAbilityOne(const FInputActionValue& Value);
 
