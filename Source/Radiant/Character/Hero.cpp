@@ -78,6 +78,7 @@ void AHero::CastingTagChanged(FGameplayTag GameplayTag, int I)
 void AHero::GameEnding_Implementation(bool Won)
 {
 	GetController<ARadiantPlayerController>()->GetHUD<ARTHUD>()->ShowEndScreen(Won);
+	UGameplayStatics::PlaySound2D(GetWorld(), Won ? WinSound : LoseSound); 
 }
 
 // Called when the game starts or when spawned

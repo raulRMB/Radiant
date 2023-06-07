@@ -35,6 +35,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	class AHero* Target;
+	
+	UPROPERTY(EditAnywhere)
+	class USoundBase* WinSound;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* LoseSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	uint8 bIsAttacking : 1;
