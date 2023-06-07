@@ -25,9 +25,10 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 void ARTGameMode::HandleMatchHasEnded()
 {
 	Super::HandleMatchHasEnded();
-	FTimerHandle Handle;
-	GetWorldTimerManager().SetTimer(Handle, this, &ARTGameMode::EndGame, 5.f, false);
-	
+	FTimerHandle Handle1;
+	GetWorldTimerManager().SetTimer(Handle1, this, &ARTGameMode::DisableAllAbilities, 4.f, false);
+	FTimerHandle Handle2;
+	GetWorldTimerManager().SetTimer(Handle2, this, &ARTGameMode::EndGame, 5.f, false);
 }
 
 void ARTGameMode::EndGame()
@@ -99,6 +100,18 @@ void ARTGameMode::NotifyMatchEnd(int32 WinningTeam)
 		{
 			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
 			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->TeamId == WinningTeam);
+		}
+	}
+}
+
+void ARTGameMode::DisableAllAbilities()
+{
+	for( FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator )
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		if (PlayerController && (PlayerController->GetPawn() != nullptr))
+		{
+			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
 			Hero->GetAbilitySystemComponent()->CancelAllAbilities();
 			Hero->GetAbilitySystemComponent()->ClearAllAbilities();
 		}

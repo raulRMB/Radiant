@@ -35,6 +35,7 @@ protected:
 	void EndGame();
 	void PlayersAreLoaded() const;
 	void NotifyMatchEnd(int32 WinningTeam);
+	void DisableAllAbilities();
 
 	UFUNCTION(Exec)
 	void StartGame();
