@@ -337,6 +337,10 @@ void AHero::SetOwnHealthBarColor()
 	{
 		APlayerController *PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		ARTPlayerState* LocalPS = Cast<ARTPlayerState>(PC->GetPlayerState<ARTPlayerState>());
+		if(!LocalPS)
+		{
+			return;
+		}
 		int Id = GetPlayerState<ARTPlayerState>()->TeamId;
 		FLinearColor Color;
 		if(Id == LocalPS->TeamId)
