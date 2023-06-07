@@ -112,7 +112,7 @@ void ARTGameMode::StartGame()
 
 bool ARTGameMode::ReadyToStartMatch_Implementation()
 {
-	return NumPlayers == TeamSize * 2;
+	return NumPlayers == TeamSize * TeamCount;
 }
 
 bool ARTGameMode::ReadyToEndMatch_Implementation()
