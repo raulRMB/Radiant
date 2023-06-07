@@ -34,4 +34,5 @@ void UGARespawn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	{
 		GetAbilitySystemComponentFromActorInfo()->UpdateTagMap(Tag, -INT_MAX);
 	}
+	EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
 }
