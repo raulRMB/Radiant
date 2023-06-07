@@ -48,6 +48,7 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Event.Respawn")));
 			GetOwningAbilitySystemComponentChecked()->TryActivateAbilitiesByTag(TagContainer);
+			SetCurrentRespawnTime(10.f);
 		}
 	}
 }
