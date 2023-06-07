@@ -80,6 +80,7 @@ void AHeatSeeking::Tick(float DeltaTime)
 	if(Target)
 	{
 		FVector Direction = Target->GetActorLocation() - GetActorLocation();
+		SetActorRotation(Direction.Rotation());
 		SetActorLocation(GetActorLocation() + (Direction.GetSafeNormal() * Speed * DeltaTime));
 	}
 }
