@@ -7,6 +7,7 @@
 #include "RTPlayerStart.h"
 #include "Character/Hero.h"
 #include "GameFramework/GameSession.h"
+#include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerState.h"
 
@@ -98,6 +99,8 @@ void ARTGameMode::NotifyMatchEnd(int32 WinningTeam)
 		{
 			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
 			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->TeamId == WinningTeam);
+			Hero->GetAbilitySystemComponent()->CancelAllAbilities();
+			Hero->GetAbilitySystemComponent()->ClearAllAbilities();
 		}
 	}
 }
