@@ -113,6 +113,7 @@ void AHero::BeginPlay()
 
 void AHero::GameReady_Implementation()
 {
+	ApplyInitialEffects();
 	SetOwnHealthBarColor();
 	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AHero::OnAbilityFailed);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AHero::CastingTagChanged);
@@ -249,7 +250,6 @@ void AHero::PossessedBy(AController* NewController)
 	}
 
 	GiveInitialAbilities();
-	ApplyInitialEffects();
 }
 
 void AHero::ApplyInitialEffects()
