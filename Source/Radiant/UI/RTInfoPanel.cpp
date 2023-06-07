@@ -137,3 +137,11 @@ void URTInfoPanel::ShowEndScreen(bool bWon)
 		Defeat->SetVisibility(ESlateVisibility::Visible);
 	}
 }
+
+void URTInfoPanel::HideLoadScreen()
+{
+	if(LoadingScreen)
+	{
+		LoadingScreen->SetVisibility(ESlateVisibility::Hidden);
+	}
+}

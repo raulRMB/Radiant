@@ -17,3 +17,8 @@ void ARTHUD::ShowEndScreen(bool won)
 {
 	InfoPanel->ShowEndScreen(won);
 }
+
+void ARTHUD::HideLoadScreen()
+{
+	InfoPanel->HideLoadScreen();
+}

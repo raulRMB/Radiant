@@ -85,6 +85,9 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	class UImage* Ability6CDMask;
 
 	UPROPERTY(meta=(BindWidget))
+	class UImage* LoadingScreen;
+	
+	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* RedTeam;
 
 	UPROPERTY(meta=(BindWidget))
@@ -132,4 +135,5 @@ public:
 
 	float GetCooldownPercent(const float TimeRemaining, const float CooldownDuration);
 	void ShowEndScreen(bool bWon);
+	void HideLoadScreen();
 };

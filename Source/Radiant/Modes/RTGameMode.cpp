@@ -87,6 +87,7 @@ void ARTGameMode::PlayersAreLoaded() const
 		{
 			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
 			Hero->GameReady();
+			Hero->GameReadyUnicast();
 		}
 	}
 }

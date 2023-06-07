@@ -51,6 +51,11 @@ AHero::AHero()
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
 }
 
+void AHero::GameReadyUnicast_Implementation()
+{
+	GetController<ARadiantPlayerController>()->GetHUD<ARTHUD>()->HideLoadScreen();
+}
+
 void AHero::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags)
 {
 	FGameplayTagContainer OwnedTags;

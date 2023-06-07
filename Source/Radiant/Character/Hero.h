@@ -20,6 +20,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void GameReady();
+	UFUNCTION(Client, Reliable)
+	void GameReadyUnicast();
 	void OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags);
 	void CastingTagChanged(FGameplayTag GameplayTag, int I);
 
