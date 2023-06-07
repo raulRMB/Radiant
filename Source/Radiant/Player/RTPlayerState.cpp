@@ -40,6 +40,18 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSetBase->InitCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
 }
 
+void ARTPlayerState::SetPlayerStats()
+{
+	AttributeSetBase->SetMaxHealth(100.f);
+	AttributeSetBase->SetHealth(AttributeSetBase->GetMaxHealth());
+	AttributeSetBase->SetMaxMana(100.f);
+	AttributeSetBase->SetMana(AttributeSetBase->GetMaxMana());
+	AttributeSetBase->SetMovementSpeed(600.f);
+	AttributeSetBase->SetDamage(15.f);
+	AttributeSetBase->SetMaxRespawnTime(10.f);
+	AttributeSetBase->SetCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
+}
+
 UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;	

@@ -26,7 +26,7 @@ FVector URTAbility::GetRangedBaseMouseLocationWithHeroHalfHeight()
 		return GetRangeBasedMouseLocation() + Hero->GetHalfHeightVector();
 	}
 	LOG("Avatar is not a hero")
-	PRINT("Avatar is not a hero")
+	RTPRINT("Avatar is not a hero")
 	return FVector::ZeroVector;
 }
 

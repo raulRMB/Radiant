@@ -26,7 +26,10 @@ protected:
 	
 public:
 	ARTPlayerState();
-	
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerStats();
+
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	class URTHeroAttributeSetBase* GetAttributeSetBase() const;
