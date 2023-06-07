@@ -11,6 +11,15 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerState.h"
 
+ARTGameMode::ARTGameMode()
+{
+	static ConstructorHelpers::FClassFinder<AHero> PlayerControllerBPClass(TEXT("/Game/Blueprints/BP_Hero"));
+	if (PlayerControllerBPClass.Class != NULL)
+	{
+		HeroClass = PlayerControllerBPClass.Class;
+	}
+}
+
 void ARTGameMode::OnPostLogin(AController* NewPlayer)
 {
 	Super::OnPostLogin(NewPlayer);
@@ -36,14 +45,7 @@ void ARTGameMode::EndGame()
 	FGenericPlatformMisc::RequestExit(false);
 }
 
-ARTGameMode::ARTGameMode()
-{
-	static ConstructorHelpers::FClassFinder<AHero> PlayerControllerBPClass(TEXT("/Game/Blueprints/BP_Hero"));
-	if (PlayerControllerBPClass.Class != NULL)
-	{
-		HeroClass = PlayerControllerBPClass.Class;
-	}
-}
+
 
 void ARTGameMode::PlayerLoaded()
 {

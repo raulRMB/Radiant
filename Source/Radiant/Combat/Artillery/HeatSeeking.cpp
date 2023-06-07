@@ -2,12 +2,12 @@
 
 
 #include "HeatSeeking.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
-void AHeatSeeking::MulticastSetTarget_Implementation(AActor* NewTarget)
-{
-	Target = NewTarget;
-}
+#include "Character/Hero.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AHeatSeeking::AHeatSeeking()
@@ -16,6 +16,19 @@ AHeatSeeking::AHeatSeeking()
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
+    AActor::SetReplicateMovement(true);
+
+	HitBox = CreateDefaultSubobject<USphereComponent>(TEXT("HitBox"));
+	HitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	HitBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+	HitBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	HitBox->OnComponentBeginOverlap.AddDynamic(this, &AHeatSeeking::OnOvelapBegin);
+	SetRootComponent(HitBox);
+}
+
+void AHeatSeeking::MulticastSetTarget_Implementation(AActor* NewTarget)
+{
+	Target = NewTarget;
 }
 
 // Called when the game starts or when spawned
@@ -30,6 +43,33 @@ void AHeatSeeking::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	SetReplicateMovement(true);
+}
+
+void AHeatSeeking::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AHeatSeeking, Target);
+}
+
+void AHeatSeeking::OnOvelapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AHero* Hero = Cast<AHero>(GetInstigator());
+	AHero* OtherHero = Cast<AHero>(OtherActor);
+
+	if(HasAuthority())
+	{
+		if(ShouldHit(OtherActor))
+		{
+			for(TSubclassOf<UGameplayEffect> GameplayEffect : GameplayEffects)
+			{
+				UGameplayEffect* Effect = GameplayEffect.GetDefaultObject();
+				Hero->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(Effect, OtherHero->GetAbilitySystemComponent());
+			}
+			Destroy();
+		}
+	}
 }
 
 // Called every frame

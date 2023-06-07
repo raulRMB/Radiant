@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "GameFramework/Actor.h"
 #include "Artillery.generated.h"
 
@@ -22,10 +23,12 @@ UCLASS()
 class AArtillery : public AActor
 {
 	GENERATED_BODY()
-	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<UGameplayEffect>> GameplayEffects;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = EArtilleryBehavior))
-	int32 Behavior = 0;
-
+	int32 Behavior = 1;
+	
 	bool ShouldHit(AActor* OtherActor);
 };

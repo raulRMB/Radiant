@@ -16,9 +16,6 @@ class RADIANT_API AAreaOfEffect : public AArtillery
 	float LifeSpan = 1.f;
 
 	FTimerHandle TimerHandle;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<class UGameplayEffect>> GameplayEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* Mesh;

@@ -32,7 +32,7 @@ ARTPlayerState::ARTPlayerState()
 
 	AttributeSetBase->InitMaxHealth(100.f);
 	AttributeSetBase->InitHealth(AttributeSetBase->GetMaxHealth());
-	AttributeSetBase->InitMaxMana(100.f);
+	AttributeSetBase->InitMaxMana(150.f);
 	AttributeSetBase->InitMana(AttributeSetBase->GetMaxMana());
 	AttributeSetBase->InitMovementSpeed(600.f);
 	AttributeSetBase->InitDamage(15.f);
@@ -42,14 +42,15 @@ ARTPlayerState::ARTPlayerState()
 
 void ARTPlayerState::SetPlayerStats()
 {
-	AttributeSetBase->SetMaxHealth(100.f);
 	AttributeSetBase->SetHealth(AttributeSetBase->GetMaxHealth());
-	AttributeSetBase->SetMaxMana(100.f);
 	AttributeSetBase->SetMana(AttributeSetBase->GetMaxMana());
 	AttributeSetBase->SetMovementSpeed(600.f);
-	AttributeSetBase->SetDamage(15.f);
-	AttributeSetBase->SetMaxRespawnTime(10.f);
 	AttributeSetBase->SetCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
+}
+
+void ARTPlayerState::S_SetTargetId_Implementation(const int32 NewTargetId)
+{
+	TargetId = NewTargetId;
 }
 
 UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const

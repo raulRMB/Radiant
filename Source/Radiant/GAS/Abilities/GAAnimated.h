@@ -44,7 +44,8 @@ protected:
 	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) {}
 	void ReturnToDefaultAndEndAbility(bool bWasCancelled = false);
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-
+	void ReturnToDefault() const;
+	void BindAnimations();
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 private:
 	UFUNCTION()

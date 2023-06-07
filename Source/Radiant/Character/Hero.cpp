@@ -157,7 +157,7 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	if(auto Hero = Cast<AHero>(HitResult.GetActor()))
 	{
 		Target = Hero;
-		S_SetTargetId(Hero->GetPlayerState<ARTPlayerState>()->GetPlayerId());
+		GetPlayerState<ARTPlayerState>()->S_SetTargetId(Hero->GetPlayerState<ARTPlayerState>()->GetPlayerId());
 	}
 	else
 	{
@@ -184,16 +184,14 @@ void AHero::CheckShouldAttack()
 	
 	if(IsLocallyControlled() && bIsAttacking)
 	{
-		FGameplayTagContainer TagContainer;
-		TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack")));
-		AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+		FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack"));
+		CastAbility(Tag);
 	}
 }
 
 void AHero::CastAbility(FGameplayTag& AbilityTag)
 {
 	TArray<AActor*> Actors;
-	const FVector MousePos = UUtil::GetMousePosition(GetWorld(), Actors);
 	FGameplayEventData EventData;
 	FGameplayAbilityTargetData_SingleTargetHit* MousePosData = new FGameplayAbilityTargetData_SingleTargetHit();
 
@@ -349,13 +347,16 @@ void AHero::SetOwnHealthBarColor()
 		}
 		int Id = GetPlayerState<ARTPlayerState>()->TeamId;
 		FLinearColor Color;
-		if(Id == LocalPS->TeamId)
+		if(LocalPS)
 		{
-			Color = FLinearColor::Green;
-		}
-		else
-		{
-			Color = FLinearColor::Red;
+			if(Id == LocalPS->TeamId)
+			{
+				Color = FLinearColor::Green;
+			}
+			else
+			{
+				Color = FLinearColor::Red;
+			}
 		}
 		SetHealthColor(Color);
 	}
@@ -367,11 +368,6 @@ void AHero::SetHealthColor(const FLinearColor Color)
 	{
 		OverHeadInfoBar->SetHealthColor(Color);
 	}
-}
-
-void AHero::S_SetTargetId_Implementation(int NewTargetID)
-{
-	TargetID = NewTargetID;
 }
 
 void AHero::SetAllHealthBarColors()
@@ -551,8 +547,6 @@ void AHero::Tick(float DeltaTime)
 void AHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AHero, TargetID)
 }
 
 // Called to bind functionality to input

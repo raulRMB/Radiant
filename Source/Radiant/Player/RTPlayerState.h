@@ -30,6 +30,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerStats();
 
+	UFUNCTION(Server, Reliable)
+	void S_SetTargetId(const int32 NewTargetId);
+
+	int32 GetTargetId() const { return TargetId; }
+	
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	class URTHeroAttributeSetBase* GetAttributeSetBase() const;

@@ -18,9 +18,6 @@ class RADIANT_API ALinearSkillshot : public AArtillery
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
-	TArray<TSubclassOf<class UGameplayEffect>> GameplayEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag HitCueTag;

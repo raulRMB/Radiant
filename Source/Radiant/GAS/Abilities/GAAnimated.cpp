@@ -75,20 +75,11 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	SetMouseWorldLocation(HitResult.Location);
 	
-	UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage,SpawnTags, MontagePlayRate, NAME_None, false, 1.0f);
-	Task->OnCompleted.AddDynamic(this, &UGAAnimated::OnCompleted);
-	Task->OnCancelled.AddDynamic(this, &UGAAnimated::OnCancelled);
-	Task->OnInterrupted.AddDynamic(this, &UGAAnimated::OnInterrupted);
-	Task->OnBlendOut.AddDynamic(this, &UGAAnimated::OnBlendOut);
-	Task->EventReceived.AddDynamic(this, &UGAAnimated::OnEventReceived);
-	Task->ReadyForActivation();
+	BindAnimations();
 }
 
-void UGAAnimated::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+void UGAAnimated::ReturnToDefault() const
 {
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-	
 	if(GetAvatarActorFromActorInfo()->GetLocalRole() == ROLE_AutonomousProxy)
 	{
 		if(AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo()))
@@ -99,8 +90,26 @@ void UGAAnimated::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 	}
 }
 
+void UGAAnimated::BindAnimations()
+{
+	UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage,SpawnTags, MontagePlayRate, NAME_None, false, 1.0f);
+	Task->OnCompleted.AddDynamic(this, &UGAAnimated::OnCompleted);
+	Task->OnCancelled.AddDynamic(this, &UGAAnimated::OnCancelled);
+	Task->OnInterrupted.AddDynamic(this, &UGAAnimated::OnInterrupted);
+	Task->OnBlendOut.AddDynamic(this, &UGAAnimated::OnBlendOut);
+	Task->EventReceived.AddDynamic(this, &UGAAnimated::OnEventReceived);
+	Task->ReadyForActivation();
+}
+
+void UGAAnimated::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+                             const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
 void UGAAnimated::ReturnToDefaultAndEndAbility(bool bWasCancelled)
 {
+	ReturnToDefault();
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, bWasCancelled);
 }
 

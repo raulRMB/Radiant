@@ -12,9 +12,12 @@ class RADIANT_API AHeatSeeking : public AArtillery
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true, AllowPrivateAccess = true), Category = "Targeting")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true, AllowPrivateAccess = true), Category = "Targeting")
 	AActor* Target;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true), Category = "Collision")
+	class USphereComponent* HitBox;
+	
 	UPROPERTY(EditAnywhere)
 	float Speed = 10.f;
 
@@ -31,8 +34,15 @@ protected:
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION()
+	void OnOvelapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SetTarget(AActor* NewTarget) { Target = NewTarget; }
 };

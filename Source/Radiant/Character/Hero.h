@@ -113,9 +113,6 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
-	
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Networking")
-	int TargetID;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayEffect>> InitialEffects;
@@ -215,17 +212,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetDestination(FVector NewDestination);
 
-	UFUNCTION(BlueprintCallable)
-	int GetTargetID() const { return TargetID; }
-
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void M_SetInfoBarVisibility(bool bVisible);
 
 	void SetOwnHealthBarColor();
 	void SetHealthColor(const FLinearColor Color);
-
-	UFUNCTION(Server, Reliable)
-	void S_SetTargetId(int NewTargetID);
 
 	void SetAllHealthBarColors();
 
