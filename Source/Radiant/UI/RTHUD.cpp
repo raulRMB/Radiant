@@ -22,3 +22,8 @@ void ARTHUD::HideLoadScreen()
 {
 	InfoPanel->HideLoadScreen();
 }
+
+void ARTHUD::SetFPS(float FPS)
+{
+	InfoPanel->SetFPS(FPS);
+}

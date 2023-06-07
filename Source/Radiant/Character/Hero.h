@@ -191,6 +191,7 @@ protected:
 public:
 	FGameplayEventData BufferAbility;
 	bool bShouldActivateBuffer = false;
+	void SetFPS();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -233,4 +234,5 @@ private:
 	virtual void PostInitializeComponents() override;
 
 	virtual void PostLoad() override;
+	float FPS;
 };

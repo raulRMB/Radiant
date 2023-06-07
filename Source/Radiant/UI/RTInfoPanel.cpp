@@ -145,3 +145,8 @@ void URTInfoPanel::HideLoadScreen()
 		LoadingScreen->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
+
+void URTInfoPanel::SetFPS(float FPS)
+{
+	FPSCounter->SetText(FText::FromString(FString::Printf(TEXT("FPS: %.0f"), FPS)));
+}

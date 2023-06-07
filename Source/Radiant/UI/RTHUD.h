@@ -23,4 +23,5 @@ class RADIANT_API ARTHUD : public AHUD
 public:
 	void ShowEndScreen(bool won);
 	void HideLoadScreen();
+	void SetFPS(float FPS);
 };

@@ -114,7 +114,8 @@ void AHero::BeginPlay()
 		AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AHero::OnAbilityFailed);
 		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AHero::CastingTagChanged);
 	}
-
+	FTimerHandle Handle;
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AHero::SetFPS, 0.3f, true);
 }
 
 void AHero::GameReady_Implementation()
@@ -244,7 +245,6 @@ void AHero::OnAbilitySix(const FInputActionValue& Value)
 void AHero::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
 	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
 	if(PS)
 	{
@@ -512,10 +512,23 @@ void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector Target
 	bUseControllerRotationYaw = RotationLocked;
 }
 
+void AHero::SetFPS()
+{
+	if(GetLocalRole() == ROLE_AutonomousProxy)
+	{
+		ARadiantPlayerController* PC = GetController<ARadiantPlayerController>();
+		if(PC)
+		{
+			PC->GetHUD<ARTHUD>()->SetFPS(FPS);
+		}
+	}
+}
+
 // Called every frame
 void AHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	FPS = 1.0/DeltaTime;
 	HandleCamera();
 	CheckShouldAttack();
 	
