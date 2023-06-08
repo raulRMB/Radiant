@@ -24,5 +24,8 @@ void UDPS_Skillshot::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventDa
 		CueParameters.TargetAttachComponent = Hero->GetMesh();
 		CueParameters.Instigator = Hero;
 	}
-	GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(CastStartCue, CueParameters);
+	if(HasAuthority(&CurrentActivationInfo))
+	{
+		GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(CastStartCue, CueParameters);
+	}
 }

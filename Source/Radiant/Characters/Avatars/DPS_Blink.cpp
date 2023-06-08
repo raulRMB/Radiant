@@ -16,5 +16,8 @@ void UDPS_Blink::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(BlinkStartCue, CueParameters);
 
 	CueParameters.Location = GetRangeBasedMouseLocation();
-	GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(BlinkEndCue, CueParameters);
+	if(HasAuthority(&CurrentActivationInfo))
+	{
+		GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(BlinkEndCue, CueParameters);
+	}
 }
