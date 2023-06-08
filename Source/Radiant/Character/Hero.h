@@ -133,6 +133,7 @@ protected:
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void CheckShouldAttack();
 public:
+	void ApplyInitialEffects();
 	void CastAbility(FGameplayTag& AbilityTag);
 protected:
 	UFUNCTION()
@@ -166,7 +167,6 @@ protected:
 	void AttackMove(const FInputActionValue& Value);
 	
 	virtual void PossessedBy(AController* NewController) override;
-	void ApplyInitialEffects();
 	virtual void OnRep_PlayerState() override;
 
 	void GiveInitialAbilities();
