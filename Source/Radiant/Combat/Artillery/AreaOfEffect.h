@@ -18,7 +18,7 @@ class RADIANT_API AAreaOfEffect : public AArtillery
 	FTimerHandle TimerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* Mesh;
+	class USphereComponent* HitBox;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TimerDisplay;

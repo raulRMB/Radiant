@@ -4,7 +4,10 @@
 #include "Combat/Artillery/AreaOfEffect.h"
 
 #include "Character/Hero.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAreaOfEffect::AAreaOfEffect()
@@ -14,15 +17,12 @@ AAreaOfEffect::AAreaOfEffect()
 
 	bReplicates = true;
 	
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Mesh"));
-	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	SetRootComponent(Mesh);
+	HitBox = CreateDefaultSubobject<USphereComponent>(FName("Mesh"));
+	SetRootComponent(HitBox);
 
 	TimerDisplay = CreateDefaultSubobject<UStaticMeshComponent>(FName("TimerDisplay"));
 	TimerDisplay->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	TimerDisplay->SetupAttachment(Mesh);
+	TimerDisplay->SetupAttachment(HitBox);
 }
 
 void AAreaOfEffect::OnConstruction(const FTransform& Transform)
@@ -54,10 +54,13 @@ void AAreaOfEffect::ApplyGameplayEffects()
 
 void AAreaOfEffect::ApplyInstantEffects()
 {
-	TArray<AActor*> OverlappingActors;
-	Mesh->GetOverlappingActors(OverlappingActors, AHero::StaticClass());
-	for(auto Actor : OverlappingActors)
+	TArray<UPrimitiveComponent*> OverlappingActors;
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+	UKismetSystemLibrary::SphereOverlapComponents(this, HitBox->GetComponentLocation(), HitBox->GetScaledSphereRadius(), ObjectTypes, UCapsuleComponent::StaticClass(), TArray<AActor*>(), OverlappingActors);
+	for(auto Component : OverlappingActors)
 	{
+		auto Actor = Component->GetAttachmentRootActor();
 		if(ShouldHit(Actor))
 		{
 			if(AHero* Hero = Cast<AHero>(Actor))
