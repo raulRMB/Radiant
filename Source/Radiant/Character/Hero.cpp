@@ -53,6 +53,8 @@ AHero::AHero()
 
 void AHero::GameReadyUnicast_Implementation()
 {
+	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AHero::OnAbilityFailed);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AHero::CastingTagChanged);
 	GetController<ARadiantPlayerController>()->GetHUD<ARTHUD>()->HideLoadScreen();
 }
 
@@ -63,6 +65,9 @@ void AHero::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGame
 	if (OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Casting"))))
 	{
 		bShouldActivateBuffer = true;
+	} else
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), FailedSound, 0.5, 1.5); 
 	}
 }
 
@@ -121,8 +126,6 @@ void AHero::BeginPlay()
 void AHero::GameReady_Implementation()
 {
 	SetOwnHealthBarColor();
-	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AHero::OnAbilityFailed);
-	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AHero::CastingTagChanged);
 }
 
 FVector2D AHero::GetMousePosition()

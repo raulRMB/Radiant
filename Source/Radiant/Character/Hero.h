@@ -125,6 +125,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<FGameplayTag> AbilityTags;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase* FailedSound;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
