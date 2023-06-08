@@ -8,31 +8,6 @@
 #include "Util/PlayMontageAndWaitForEvent.h"
 #include "Util/Util.h"
 
-void UBasicAttack::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	Super::OnAnimCompleted(EventTag, EventData);
-
-	ReturnToDefaultAndEndAbility();
-}
-
-void UBasicAttack::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	Super::OnAnimCancelled(EventTag, EventData);
-	ReturnToDefaultAndEndAbility(true);
-}
-
-void UBasicAttack::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	Super::OnAnimBlendOut(EventTag, EventData);
-	ReturnToDefaultAndEndAbility();
-}
-
-void UBasicAttack::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	Super::OnAnimInterrupted(EventTag, EventData);
-	ReturnToDefaultAndEndAbility(true);
-}
-
 void UBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnAnimEventReceived(EventTag, EventData);

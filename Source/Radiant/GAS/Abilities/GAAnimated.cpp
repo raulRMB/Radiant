@@ -57,6 +57,26 @@ void UGAAnimated::SetSelfTags(const bool bApply) const
 	}
 }
 
+void UGAAnimated::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	ReturnToDefaultAndEndAbility();
+}
+
+void UGAAnimated::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	ReturnToDefaultAndEndAbility(true);
+}
+
+void UGAAnimated::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	ReturnToDefaultAndEndAbility(true);
+}
+
+void UGAAnimated::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	ReturnToDefaultAndEndAbility();	
+}
+
 void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                   const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                   const FGameplayEventData* TriggerEventData)

@@ -37,10 +37,10 @@ public:
 	UGAAnimated();
 protected:
 	void SetSelfTags(const bool bApply) const;
-	virtual void OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData) {}
-	virtual void OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData) {}
-	virtual void OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) {}
-	virtual void OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData) {}
+	virtual void OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData);
+	virtual void OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
+	virtual void OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData);
+	virtual void OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData);
 	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) {}
 	void ReturnToDefaultAndEndAbility(bool bWasCancelled = false);
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

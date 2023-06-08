@@ -183,6 +183,16 @@ void AHero::CheckShouldAttack()
 	
 	FVector dir = Target->GetActorLocation() - GetActorLocation();
 	bIsAttacking = dir.Size() < AttackRange;
+
+	FGameplayTagContainer OwnedTags;			
+	Target->GetAbilitySystemComponent()->GetOwnedGameplayTags(OwnedTags);
+	if(OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Dead"))))
+	{
+		Target = nullptr;
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack")));
+		GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
+	}
 	
 	if(IsLocallyControlled() && bIsAttacking)
 	{

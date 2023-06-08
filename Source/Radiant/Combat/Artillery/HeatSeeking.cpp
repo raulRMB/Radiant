@@ -82,6 +82,13 @@ void AHeatSeeking::Tick(float DeltaTime)
 		FVector Direction = Target->GetActorLocation() - GetActorLocation();
 		SetActorRotation(Direction.Rotation());
 		SetActorLocation(GetActorLocation() + (Direction.GetSafeNormal() * Speed * DeltaTime));
+		if(UAbilitySystemComponent* ASC = Cast<AHero>(Target)->GetAbilitySystemComponent())
+		{
+			FGameplayTagContainer OwnedTags;			
+			ASC->GetOwnedGameplayTags(OwnedTags);
+			if(OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Dead"))))
+				Destroy();
+		}
 	}
 }
 
