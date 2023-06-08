@@ -7,6 +7,7 @@
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Character/Hero.h"
 #include "Engine/World.h"
+#include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "Modes/RTGameState.h"
 #include "Player/RTPlayerState.h"
@@ -85,4 +86,34 @@ AHero* UUtil::GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID)
 	}
 	
 	return nullptr;
+}
+
+void UUtil::ChangeQualitySetting(FString Name)
+{
+	int32 Setting = 0;
+	if(Name == "Low")
+	{
+		Setting = 0;
+	}
+	else if(Name == "Medium")
+	{
+		Setting = 1;
+	}
+	else if(Name == "High")
+	{
+		Setting = 2;
+	}
+	else if(Name == "Ultra")
+	{
+		Setting = 3;
+	}
+	else if(Name == "Max")
+	{
+		Setting = 4;
+	}
+	if(GEngine->GetGameUserSettings()->GetOverallScalabilityLevel() != Setting)
+	{
+		GEngine->GetGameUserSettings()->SetOverallScalabilityLevel(Setting);
+		GEngine->GetGameUserSettings()->ApplySettings(false);
+	}
 }

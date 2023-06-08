@@ -33,4 +33,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static AHero* GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID);
+
+	UFUNCTION(BlueprintCallable)
+	static void ChangeQualitySetting(FString Name); 
 };

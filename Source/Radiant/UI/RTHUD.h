@@ -18,10 +18,16 @@ class RADIANT_API ARTHUD : public AHUD
 	UPROPERTY(EditAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class URTInfoPanel> InfoPanelClass;
 
+	UPROPERTY(EditAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UUserWidget> SettingsPanelClass;
+
 	URTInfoPanel* InfoPanel;
+	UUserWidget* SettingsPanel;
 
 public:
 	void ShowEndScreen(bool won);
+	UFUNCTION(BlueprintCallable, Exec)
+	void ToggleSettings(bool on);
 	void HideLoadScreen();
 	void SetFPS(float FPS);
 };
