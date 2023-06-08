@@ -17,6 +17,7 @@ void ULobbyMenu::NativeConstruct()
 	CancelMatchmakingButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnCancelMatchmakingButtonClicked);
 	CancelMatchmakingButton->OnHovered.AddDynamic(this, &ULobbyMenu::OnCancelMatchmakingButtonHovered);
 	LogoutButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnLogoutButtonClicked);
+	ExitButton->OnClicked.AddDynamic(this, &ULobbyMenu::QuitGame);
 	
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
 	
@@ -36,6 +37,11 @@ void ULobbyMenu::OnFindMatchButtonHovered()
 void ULobbyMenu::OnCancelMatchmakingButtonHovered()
 {
 	OnCancelMatchmakingButtonHovered_BP();
+}
+
+void ULobbyMenu::QuitGame()
+{
+	FGenericPlatformMisc::RequestExit(false);
 }
 
 void ULobbyMenu::OnCancelMatchmakingButtonClicked()

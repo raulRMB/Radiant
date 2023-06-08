@@ -18,6 +18,7 @@ void ULoginMenu::NativeConstruct()
 	RegisterButton->OnHovered.AddDynamic(this, &ULoginMenu::OnRegisterButtonHovered);
 	UserNameTextBox->OnTextCommitted.AddDynamic(this, &ULoginMenu::OnEnterPressed);
 	PasswordTextBox->OnTextCommitted.AddDynamic(this, &ULoginMenu::OnEnterPressed);
+	ExitButton->OnClicked.AddDynamic(this, &ULoginMenu::QuitGame);
 	UserNameTextBox->SetFocus();
 }
 
@@ -51,5 +52,10 @@ void ULoginMenu::OnLoginButtonHovered()
 void ULoginMenu::OnRegisterButtonHovered()
 {
 	OnRegisterButtonHovered_BP();
+}
+
+void ULoginMenu::QuitGame()
+{
+	FGenericPlatformMisc::RequestExit(false);
 }
 

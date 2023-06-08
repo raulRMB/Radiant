@@ -23,11 +23,16 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 	
 	UPROPERTY(meta = (BindWidget))
 	class UButton* LogoutButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ExitButton;
 	
 	UFUNCTION()
 	void OnFindMatchButtonHovered();
 	UFUNCTION()
 	void OnCancelMatchmakingButtonHovered();
+	UFUNCTION()
+	void QuitGame();
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION()

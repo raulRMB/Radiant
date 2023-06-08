@@ -27,6 +27,9 @@ class RADIANT_API ULoginMenu : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	class UButton* RegisterButton;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ExitButton;
+
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnLoginButtonClicked_BP();
@@ -45,6 +48,8 @@ private:
 	void OnLoginButtonHovered();
 	UFUNCTION()
 	void OnRegisterButtonHovered();
+	UFUNCTION()
+	void QuitGame();
 	UFUNCTION()
 	virtual void NativeConstruct() override;
 
