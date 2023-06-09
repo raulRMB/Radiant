@@ -13,6 +13,36 @@
 
 ARTGameMode::ARTGameMode()
 {
+	const TCHAR* CmdLine = FCommandLine::Get();
+	if(FParse::Param(CmdLine, TEXT("-1v1")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Mode 1v1"))
+		TeamSize = 1;
+	}
+	else if(FParse::Param(CmdLine, TEXT("-2v2")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Mode 2v2"))
+		TeamSize = 2;
+	}
+	else if(FParse::Param(CmdLine, TEXT("-3v3")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Mode 3v3"))
+		TeamSize = 3;
+	}
+	else if(FParse::Param(CmdLine, TEXT("-4v4")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Mode 4v4"))
+		TeamSize = 4;
+	}
+	else if(FParse::Param(CmdLine, TEXT("-5v5")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Mode 5v5"))
+		TeamSize = 5;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Team Size Argument Passed!"))
+	}
 	static ConstructorHelpers::FClassFinder<AHero> PlayerControllerBPClass(TEXT("/Game/Blueprints/BP_Hero"));
 	if (PlayerControllerBPClass.Class != NULL)
 	{
@@ -27,7 +57,6 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 	if(ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(NewPlayer))
 	{
 		PC->GetPlayerState<ARTPlayerState>()->TeamId = NumPlayers % TeamCount;
-		SpawnAvatar(PC);
 	}
 }
 
@@ -135,12 +164,12 @@ bool ARTGameMode::ReadyToStartMatch_Implementation()
 bool ARTGameMode::ReadyToEndMatch_Implementation()
 {
 	ARTGameState* State = Cast<ARTGameState>(GetWorld()->GetGameState());
-	if(State->RedScore >= KillsToWin)
+	if(State->RedScore >= KillsToWin * TeamSize)
 	{
 		NotifyMatchEnd(1);
 		return true;
 	}
-	if(State->BlueScore >= KillsToWin)
+	if(State->BlueScore >= KillsToWin * TeamSize)
 	{
 		NotifyMatchEnd(0);
 		return true;
@@ -160,7 +189,8 @@ void ARTGameMode::HandleMatchHasStarted()
 		APlayerController* PlayerController = Iterator->Get();
 		if (PlayerController && (PlayerController->GetPawn() == nullptr) && PlayerCanRestart(PlayerController))
 		{
-			RestartPlayer(PlayerController);
+			ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(PlayerController);
+			SpawnAvatar(PC);
 		}
 	}
 

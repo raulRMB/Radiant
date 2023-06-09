@@ -42,7 +42,8 @@ protected:
 
 public:
 	void Setup();
-	
+	UFUNCTION(BlueprintCallable)
+		void SetQueueName(const FString& QueueName);
 	UFUNCTION()
 		void LoginUser(const FString& Username, const FString& Password);
 

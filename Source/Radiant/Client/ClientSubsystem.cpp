@@ -2,6 +2,7 @@
 
 
 #include "ClientSubsystem.h"
+
 #include "PlayFab.h"
 #include "PlayFabClientDataModels.h"
 #include "PlayFabMultiplayerDataModels.h"
@@ -55,7 +56,7 @@ void UClientSubsystem::StartMatchmaking()
 {
 	PlayFab::MultiplayerModels::FCreateMatchmakingTicketRequest Request;
 	Request.GiveUpAfterSeconds = 120;
-	Request.QueueName = TEXT("1v1Test");
+	Request.QueueName = QueueName;
 	Request.Creator = PlayFab::MultiplayerModels::FMatchmakingPlayer();
 	Request.Creator.Entity.Id = EntityId;
 	Request.Creator.Entity.Type = EntityType;
@@ -83,6 +84,11 @@ void UClientSubsystem::StartMatchmaking()
 	);
 
 	UE_LOG(LogTemp, Warning, TEXT("User has started matchmaking %s"), *Request.QueueName)
+}
+
+void UClientSubsystem::SetQueueName(const FString& Name)
+{
+	QueueName = Name;
 }
 
 void UClientSubsystem::CancelMatchmaking()
@@ -147,7 +153,6 @@ void UClientSubsystem::OnCreateMatchmakingTicketSuccess(
 	const PlayFab::MultiplayerModels::FCreateMatchmakingTicketResult& Result)
 {
 	PlayFab::MultiplayerModels::FGetMatchmakingTicketRequest Request;
-	QueueName = "1v1Test";
 	TicketId = Result.TicketId;
 	
 	GetWorld()->GetTimerManager().SetTimer(HGetTicketResult, this, &UClientSubsystem::GetMatchmakingTicketResult, 6.2f, true, -1);
