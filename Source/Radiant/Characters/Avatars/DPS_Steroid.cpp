@@ -16,8 +16,5 @@ void UDPS_Steroid::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		CueParameters.TargetAttachComponent = Hero->GetMesh();
 		CueParameters.Instigator = Hero;
 	}
-	if(HasAuthority(&CurrentActivationInfo))
-	{
-		GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(EffectCueTag, CueParameters);
-	}
+	GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(EffectCueTag, CueParameters);
 }
