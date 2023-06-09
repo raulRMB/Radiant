@@ -65,7 +65,7 @@ void AHero::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGame
 	if (OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Casting"))))
 	{
 		bShouldActivateBuffer = true;
-	} else
+	} else if(!GameplayAbility->GetName().Contains("BasicAttack"))
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), FailedSound, 0.5, 1.5); 
 	}
