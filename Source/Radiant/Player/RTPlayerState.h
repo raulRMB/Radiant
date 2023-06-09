@@ -34,6 +34,7 @@ public:
 	void S_SetTargetId(const int32 NewTargetId);
 
 	int32 GetTargetId() const { return TargetId; }
+	int32 GetTeamId() const { return TeamId; }
 	
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	

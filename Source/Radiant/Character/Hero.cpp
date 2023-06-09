@@ -158,7 +158,7 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 {
 	FHitResult HitResult = GetMousePositionInWorld();
 	auto Hero = Cast<AHero>(HitResult.GetActor());
-	if(Hero && Hero != this)
+	if(Hero && Hero->GetPlayerState<ARTPlayerState>()->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId())
 	{
 		Target = Hero;
 		GetPlayerState<ARTPlayerState>()->S_SetTargetId(Hero->GetPlayerState<ARTPlayerState>()->GetPlayerId());
