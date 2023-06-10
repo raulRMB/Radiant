@@ -27,7 +27,10 @@ class RADIANT_API UGAInstant : public URTAbility
 
 	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
 	EInstantAbilityTarget AbilityTarget;
-
+	
 protected:
+	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
+	float EffectDuration;
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

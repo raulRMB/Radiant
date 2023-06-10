@@ -22,14 +22,20 @@ void UGAInstant::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 			UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
 			FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 			ContextHandle.AddSourceObject(this);
+
 			if(AbilityTarget == EInstantAbilityTarget::Self || AbilityTarget == EInstantAbilityTarget::SelfAndTarget)
 			{
-				ASC->ApplyGameplayEffectToSelf(Effect->GetDefaultObject<UGameplayEffect>(), 1.0f, ContextHandle);
+				FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(Effect, 1.0f, ContextHandle);
+				SpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("SetByCaller.Duration")), EffectDuration);
+				ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+				
 				CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
 			}
 			else if (AbilityTarget == EInstantAbilityTarget::Target || AbilityTarget == EInstantAbilityTarget::SelfAndTarget)
 			{
-				ASC->ApplyGameplayEffectToTarget(Effect->GetDefaultObject<UGameplayEffect>(), TargetASC, 1.0f, ContextHandle);
+				FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(Effect, 1.0f, ContextHandle);
+				SpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("SetByCaller.Duration")), EffectDuration);
+				ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 				CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
 			}
 		}

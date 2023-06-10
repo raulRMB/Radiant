@@ -16,6 +16,8 @@ class RADIANT_API UDPS_Steroid : public UGAInstant
 
 	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
 	FGameplayTag EffectCueTag;
+
+	void RemoveCue();
 	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };
