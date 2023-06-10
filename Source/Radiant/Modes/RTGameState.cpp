@@ -3,8 +3,7 @@
 
 #include "RTGameState.h"
 
-#include "RTGameMode.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
 

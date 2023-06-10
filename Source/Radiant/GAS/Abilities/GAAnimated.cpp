@@ -4,11 +4,10 @@
 #include "GAS/Abilities/GAAnimated.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Combat/Artillery/LinearSkillshot.h"
 #include "Player/RTPlayerState.h"
 #include "Util/PlayMontageAndWaitForEvent.h"
-#include "Util/Util.h"
 
 UGAAnimated::UGAAnimated()
 {

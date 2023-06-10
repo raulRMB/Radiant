@@ -3,7 +3,7 @@
 
 #include "GAS/Abilities/GAAreaOfEffect.h"
 
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Combat/Artillery/AreaOfEffect.h"
 
 UGAAreaOfEffect::UGAAreaOfEffect()

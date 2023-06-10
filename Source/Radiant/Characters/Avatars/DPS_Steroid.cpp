@@ -3,7 +3,7 @@
 
 #include "Characters/Avatars/DPS_Steroid.h"
 
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 
 void UDPS_Steroid::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

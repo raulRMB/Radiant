@@ -3,7 +3,7 @@
 
 #include "Combat/Artillery/AreaOfEffect.h"
 
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"

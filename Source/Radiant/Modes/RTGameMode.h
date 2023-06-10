@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "Character/RadiantPlayerController.h"
+#include "Player/RadiantPlayerController.h"
 #include "RTGameMode.generated.h"
 
 /**

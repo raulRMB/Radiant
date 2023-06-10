@@ -3,7 +3,7 @@
 
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "GameplayEffectExtension.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Modes/RTGameState.h"

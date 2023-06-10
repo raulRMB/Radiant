@@ -3,7 +3,7 @@
 
 #include "GAS/Abilities/RTAbility.h"
 
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Util/Util.h"
 
 void URTAbility::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

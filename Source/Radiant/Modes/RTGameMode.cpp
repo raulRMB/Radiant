@@ -5,7 +5,7 @@
 
 #include "RTGameState.h"
 #include "RTPlayerStart.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "GameFramework/GameSession.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"

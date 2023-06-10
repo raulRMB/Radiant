@@ -3,7 +3,7 @@
 
 #include "HeatSeeking.h"
 
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"

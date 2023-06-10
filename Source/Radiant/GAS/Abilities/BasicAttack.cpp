@@ -4,7 +4,7 @@
 #include "GAS/Abilities/BasicAttack.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Util/PlayMontageAndWaitForEvent.h"
 #include "Util/Util.h"
 

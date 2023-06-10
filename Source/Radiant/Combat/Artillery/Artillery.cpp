@@ -2,7 +2,7 @@
 
 
 #include "Combat/Artillery/Artillery.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Player/RTPlayerState.h"
 
 // Add default functionality here for any IArtillery functions that are not pure virtual.

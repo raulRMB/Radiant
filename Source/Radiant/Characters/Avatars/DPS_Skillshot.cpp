@@ -4,7 +4,7 @@
 #include "Characters/Avatars/DPS_Skillshot.h"
 
 #include "AbilitySystemComponent.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 
 void UDPS_Skillshot::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                      const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,

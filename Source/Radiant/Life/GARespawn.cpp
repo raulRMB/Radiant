@@ -4,8 +4,7 @@
 #include "Life/GARespawn.h"
 
 #include "AbilitySystemComponent.h"
-#include "Character/RadiantPlayerController.h"
-#include "Embree/Embree270/src/common/sys/platform.h"
+#include "Player/RadiantPlayerController.h"
 #include "Modes/RTGameMode.h"
 #include "Player/RTPlayerState.h"
 

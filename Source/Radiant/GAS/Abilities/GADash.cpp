@@ -3,9 +3,8 @@
 
 #include "GAS/Abilities/GADash.h"
 
-#include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "GAS/Tasks/MoveToLocationParabolic.h"
 
 void UGADash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,

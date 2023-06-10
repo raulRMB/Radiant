@@ -3,7 +3,7 @@
 
 #include "Player/RTPlayerState.h"
 
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"

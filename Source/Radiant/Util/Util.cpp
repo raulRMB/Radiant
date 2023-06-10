@@ -5,7 +5,7 @@
 
 #include "Modes/RTGameMode.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"

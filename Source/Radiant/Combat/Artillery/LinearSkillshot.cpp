@@ -4,7 +4,7 @@
 #include "Combat/Artillery/LinearSkillshot.h"
 
 #include "GameplayEffect.h"
-#include "Character/Avatar.h"
+#include "Player/Avatar.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
