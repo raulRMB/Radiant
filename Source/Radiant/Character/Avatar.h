@@ -7,16 +7,16 @@
 #include "InputActionValue.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "Player/RTPlayerState.h"
-#include "Hero.generated.h"
+#include "Avatar.generated.h"
 
 UCLASS()
-class RADIANT_API AHero : public ACharacter
+class RADIANT_API AAvatar : public ACharacter
 {
 	GENERATED_BODY()
 	
 public:
 	// Sets default values for this character's properties
-	AHero();
+	AAvatar();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void GameReady();
@@ -34,7 +34,7 @@ public:
 	uint8 bAtDestination : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-	class AHero* Target;
+	class AAvatar* Target;
 	
 	UPROPERTY(EditAnywhere)
 	class USoundBase* WinSound;

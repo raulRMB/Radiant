@@ -4,7 +4,7 @@
 #include "GAS/Abilities/GAAnimated.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Combat/Artillery/LinearSkillshot.h"
 #include "Player/RTPlayerState.h"
 #include "Util/PlayMontageAndWaitForEvent.h"
@@ -81,7 +81,7 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                   const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                   const FGameplayEventData* TriggerEventData)
 {
-	AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo());
+	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
 	ARTPlayerState* Owner = Cast<ARTPlayerState>(GetOwningActorFromActorInfo());
 
 	SetSelfTags(true);
@@ -102,7 +102,7 @@ void UGAAnimated::ReturnToDefault() const
 {
 	if(GetAvatarActorFromActorInfo()->GetLocalRole() == ROLE_AutonomousProxy)
 	{
-		if(AHero* Avatar = Cast<AHero>(GetAvatarActorFromActorInfo()))
+		if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
 		{
 			Avatar->SetRotationLock(false);
 			SetSelfTags(false);

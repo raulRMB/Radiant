@@ -3,7 +3,7 @@
 
 #include "Characters/Avatars/DPS_Steroid.h"
 
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 
 void UDPS_Steroid::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -11,7 +11,7 @@ void UDPS_Steroid::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	FGameplayCueParameters CueParameters;
-	if(AHero* Hero = Cast<AHero>(GetAvatarActorFromActorInfo()))
+	if(AAvatar* Hero = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
 	{
 		CueParameters.TargetAttachComponent = Hero->GetMesh();
 		CueParameters.Instigator = Hero;

@@ -32,7 +32,7 @@ public:
 	static FVector ClampVectorMaxDist(FVector A, FVector B, float MaxDist);
 
 	UFUNCTION(BlueprintCallable)
-	static AHero* GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID);
+	static AAvatar* GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID);
 
 	UFUNCTION(BlueprintCallable)
 	static void ChangeQualitySetting(FString Name); 

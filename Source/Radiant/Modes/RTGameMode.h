@@ -27,7 +27,7 @@ public:
 
 	void SpawnAvatar(class ARadiantPlayerController* PlayerController);
 
-	TSubclassOf<class AHero> HeroClass;	
+	TSubclassOf<class AAvatar> HeroClass;	
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
 	void HandleMatchHasEnded() override;

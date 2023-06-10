@@ -3,7 +3,7 @@
 
 #include "GAS/Abilities/GALinearSkillshot.h"
 
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Combat/Artillery/LinearSkillshot.h"
 #include "Util/PlayMontageAndWaitForEvent.h"

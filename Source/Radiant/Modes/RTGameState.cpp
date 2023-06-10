@@ -4,11 +4,11 @@
 #include "RTGameState.h"
 
 #include "RTGameMode.h"
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
 
-void ARTGameState::OnHeroDeath_Implementation(AHero* Hero)
+void ARTGameState::OnHeroDeath_Implementation(AAvatar* Hero)
 {
 	uint32 TeamID = Cast<ARTPlayerState>(Hero->GetPlayerState())->TeamId;
 	TeamID == 0 ? RedScore++ : BlueScore++;

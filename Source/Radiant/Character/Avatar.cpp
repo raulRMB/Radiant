@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Hero.h"
+#include "Avatar.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
@@ -26,7 +26,7 @@
 #include "Util/MouseVec.h"
 
 // Sets default values
-AHero::AHero()
+AAvatar::AAvatar()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -51,14 +51,14 @@ AHero::AHero()
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
 }
 
-void AHero::GameReadyUnicast_Implementation()
+void AAvatar::GameReadyUnicast_Implementation()
 {
-	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AHero::OnAbilityFailed);
-	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AHero::CastingTagChanged);
+	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AAvatar::OnAbilityFailed);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAvatar::CastingTagChanged);
 	GetController<ARadiantPlayerController>()->GetHUD<ARTHUD>()->HideLoadScreen();
 }
 
-void AHero::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags)
+void AAvatar::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags)
 {
 	FGameplayTagContainer OwnedTags;
 	AbilitySystemComponent->GetOwnedGameplayTags(OwnedTags);
@@ -71,7 +71,7 @@ void AHero::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGame
 	}
 }
 
-void AHero::CastingTagChanged(FGameplayTag GameplayTag, int I)
+void AAvatar::CastingTagChanged(FGameplayTag GameplayTag, int I)
 {
 	if(bShouldActivateBuffer && I == 0)
 	{
@@ -80,14 +80,14 @@ void AHero::CastingTagChanged(FGameplayTag GameplayTag, int I)
 	}
 }
 
-void AHero::GameEnding_Implementation(bool Won)
+void AAvatar::GameEnding_Implementation(bool Won)
 {
 	GetController<ARadiantPlayerController>()->GetHUD<ARTHUD>()->ShowEndScreen(Won);
 	UGameplayStatics::PlaySound2D(GetWorld(), Won ? WinSound : LoseSound); 
 }
 
 // Called when the game starts or when spawned
-void AHero::BeginPlay()
+void AAvatar::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -116,19 +116,19 @@ void AHero::BeginPlay()
 	SetOwnHealthBarColor();
 	if(AbilitySystemComponent)
 	{
-		AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AHero::OnAbilityFailed);
-		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AHero::CastingTagChanged);
+		AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AAvatar::OnAbilityFailed);
+		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAvatar::CastingTagChanged);
 	}
 	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AHero::SetFPS, 0.3f, true);
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::SetFPS, 0.3f, true);
 }
 
-void AHero::GameReady_Implementation()
+void AAvatar::GameReady_Implementation()
 {
 	SetOwnHealthBarColor();
 }
 
-FVector2D AHero::GetMousePosition()
+FVector2D AAvatar::GetMousePosition()
 {
 	FVector2D MousePosition;
 	if (GEngine && GEngine->GameViewport)
@@ -138,7 +138,7 @@ FVector2D AHero::GetMousePosition()
 	return MousePosition;
 }
 
-FHitResult AHero::GetMousePositionInWorld() const
+FHitResult AAvatar::GetMousePositionInWorld() const
 {
 	FVector2D MousePosition = GetMousePosition();
 	FVector WorldPosition;
@@ -154,10 +154,10 @@ FHitResult AHero::GetMousePositionInWorld() const
 	return FHitResult(PlayerHitResult.GetActor(), PlayerHitResult.GetComponent(), GroundHitResult.Location, GroundHitResult.ImpactNormal);
 }
 
-void AHero::OnUpdateTarget(const FInputActionValue& Value)
+void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 {
 	FHitResult HitResult = GetMousePositionInWorld();
-	auto Hero = Cast<AHero>(HitResult.GetActor());
+	auto Hero = Cast<AAvatar>(HitResult.GetActor());
 	if(Hero && Hero->GetPlayerState<ARTPlayerState>()->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId())
 	{
 		Target = Hero;
@@ -175,7 +175,7 @@ void AHero::OnUpdateTarget(const FInputActionValue& Value)
 	}
 }
 
-void AHero::CheckShouldAttack()
+void AAvatar::CheckShouldAttack()
 {
 	if(!Target)
 	{
@@ -203,7 +203,7 @@ void AHero::CheckShouldAttack()
 	}
 }
 
-void AHero::CastAbility(FGameplayTag& AbilityTag)
+void AAvatar::CastAbility(FGameplayTag& AbilityTag)
 {
 	TArray<AActor*> Actors;
 	FGameplayEventData EventData;
@@ -224,37 +224,37 @@ void AHero::CastAbility(FGameplayTag& AbilityTag)
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
-void AHero::OnAbilityOne(const FInputActionValue& Value)
+void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
 	CastAbility(AbilityTags[0]);
 }
 
-void AHero::OnAbilityTwo(const FInputActionValue& Value)
+void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
 	CastAbility(AbilityTags[1]);
 }
 
-void AHero::OnAbilityThree(const FInputActionValue& Value)
+void AAvatar::OnAbilityThree(const FInputActionValue& Value)
 {
 	CastAbility(AbilityTags[2]);
 }
 
-void AHero::OnAbilityFour(const FInputActionValue& Value)
+void AAvatar::OnAbilityFour(const FInputActionValue& Value)
 {
 	CastAbility(AbilityTags[3]);
 }
 
-void AHero::OnAbilityFive(const FInputActionValue& Value)
+void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 {
 	CastAbility(AbilityTags[4]);
 }
 
-void AHero::OnAbilitySix(const FInputActionValue& Value)
+void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
 	CastAbility(AbilityTags[5]);
 }
 
-void AHero::PossessedBy(AController* NewController)
+void AAvatar::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
@@ -269,7 +269,7 @@ void AHero::PossessedBy(AController* NewController)
 	GiveInitialAbilities();
 }
 
-void AHero::ApplyInitialEffects()
+void AAvatar::ApplyInitialEffects()
 {
 	for(auto Effect : InitialEffects)
 	{
@@ -278,7 +278,7 @@ void AHero::ApplyInitialEffects()
 	}
 }
 
-void AHero::OnRep_PlayerState()
+void AAvatar::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
@@ -288,12 +288,12 @@ void AHero::OnRep_PlayerState()
 		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
 		
 		AttributeSetBase = PS->GetAttributeSetBase();
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AHero::OnHealthChanged);
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AHero::OnManaChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AAvatar::OnHealthChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AAvatar::OnManaChanged);
 	}
 }
 
-void AHero::GiveInitialAbilities()
+void AAvatar::GiveInitialAbilities()
 {
 	for(auto Ability : Abilities)
 	{
@@ -301,7 +301,7 @@ void AHero::GiveInitialAbilities()
 	}
 }
 
-void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
+void AAvatar::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	if(Data.Attribute == AttributeSetBase->GetHealthAttribute())
 	{
@@ -310,7 +310,7 @@ void AHero::OnHealthChanged(const FOnAttributeChangeData& Data)
 	}
 }
 
-void AHero::OnManaChanged(const FOnAttributeChangeData& Data)
+void AAvatar::OnManaChanged(const FOnAttributeChangeData& Data)
 {
 	if(Data.Attribute == AttributeSetBase->GetManaAttribute())
 	{
@@ -319,7 +319,7 @@ void AHero::OnManaChanged(const FOnAttributeChangeData& Data)
 	}
 }
 
-void AHero::SetRotationLock(bool RotationLocked, FVector TargetDir)
+void AAvatar::SetRotationLock(bool RotationLocked, FVector TargetDir)
 {
 	bRotationLocked = RotationLocked;
 	TargetDirection = TargetDir;
@@ -328,27 +328,27 @@ void AHero::SetRotationLock(bool RotationLocked, FVector TargetDir)
 	S_SetRotationLock(RotationLocked, TargetDir);
 }
 
-void AHero::ResetDestination()
+void AAvatar::ResetDestination()
 {
 	Destination = GetActorLocation();
 }
 
-void AHero::C_ResetDestination_Implementation()
+void AAvatar::C_ResetDestination_Implementation()
 {
 	ResetDestination();
 }
 
-void AHero::SetDestination(FVector NewDestination)
+void AAvatar::SetDestination(FVector NewDestination)
 {
 	Destination = NewDestination;
 }
 
-void AHero::M_SetInfoBarVisibility_Implementation(bool bVisible)
+void AAvatar::M_SetInfoBarVisibility_Implementation(bool bVisible)
 {
 	OverHeadInfoBarWidgetComponent->SetVisibility(bVisible);
 }
 
-void AHero::SetOwnHealthBarColor()
+void AAvatar::SetOwnHealthBarColor()
 {
 	if(GetPlayerState<ARTPlayerState>())
 	{
@@ -375,7 +375,7 @@ void AHero::SetOwnHealthBarColor()
 	}
 }
 
-void AHero::SetHealthColor(const FLinearColor Color)
+void AAvatar::SetHealthColor(const FLinearColor Color)
 {
 	if(OverHeadInfoBar)
 	{
@@ -383,7 +383,7 @@ void AHero::SetHealthColor(const FLinearColor Color)
 	}
 }
 
-void AHero::SetAllHealthBarColors()
+void AAvatar::SetAllHealthBarColors()
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{
@@ -400,11 +400,11 @@ void AHero::SetAllHealthBarColors()
 						int OtherId = s->TeamId;
 						if(Id == OtherId)
 						{
-							State->GetPawn<AHero>()->SetHealthColor(FLinearColor::Green);
+							State->GetPawn<AAvatar>()->SetHealthColor(FLinearColor::Green);
 						}
 						else
 						{
-							State->GetPawn<AHero>()->SetHealthColor(FLinearColor::Red);
+							State->GetPawn<AAvatar>()->SetHealthColor(FLinearColor::Red);
 						}
 					}
 				}
@@ -413,12 +413,12 @@ void AHero::SetAllHealthBarColors()
 	}
 }
 
-FVector AHero::GetHalfHeightVector()
+FVector AAvatar::GetHalfHeightVector()
 {
 	return FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 }
 
-bool AHero::HasTag(FString Tag)
+bool AAvatar::HasTag(FString Tag)
 {
 	FGameplayTagContainer TagContainer;
 	if(AbilitySystemComponent)
@@ -429,7 +429,7 @@ bool AHero::HasTag(FString Tag)
 	return false;
 }
 
-void AHero::ToggleCameraBool(const FInputActionValue& Value)
+void AAvatar::ToggleCameraBool(const FInputActionValue& Value)
 {
 	bCameraLocked = !bCameraLocked;
 	FInputModeGameAndUI InputMode;
@@ -441,7 +441,7 @@ void AHero::ToggleCameraBool(const FInputActionValue& Value)
 	MainCamera->SetActive(bCameraLocked);
 }
 
-void AHero::HoldCamera(const FInputActionValue& Value)
+void AAvatar::HoldCamera(const FInputActionValue& Value)
 {
 	if(!bCameraLocked)
 	{
@@ -451,7 +451,7 @@ void AHero::HoldCamera(const FInputActionValue& Value)
 	}
 }
 
-void AHero::ReleaseHoldCamera(const FInputActionValue& InputActionValue)
+void AAvatar::ReleaseHoldCamera(const FInputActionValue& InputActionValue)
 {
 	if(!bCameraLocked)
 	{
@@ -462,14 +462,14 @@ void AHero::ReleaseHoldCamera(const FInputActionValue& InputActionValue)
 	}
 }
 
-void AHero::AttackMove(const FInputActionValue& Value)
+void AAvatar::AttackMove(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Attack Move"));
 	const FHitResult HitResult = GetMousePositionInWorld();
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackMoveSystemTemplate, HitResult.Location);
 }
 
-void AHero::HandleCamera()
+void AAvatar::HandleCamera()
 {
 	if(!bCameraLocked)
 	{
@@ -501,22 +501,22 @@ void AHero::HandleCamera()
 	}
 }
 
-void AHero::Restart()
+void AAvatar::Restart()
 {
 	Super::Restart();
 }
 
-void AHero::PostInitializeComponents()
+void AAvatar::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 }
 
-void AHero::PostLoad()
+void AAvatar::PostLoad()
 {
 	Super::PostLoad();
 }
 
-void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
+void AAvatar::S_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
 {
 	bRotationLocked = RotationLocked;
 	TargetDirection = TargetDir;
@@ -524,7 +524,7 @@ void AHero::S_SetRotationLock_Implementation(bool RotationLocked, FVector Target
 	bUseControllerRotationYaw = RotationLocked;
 }
 
-void AHero::SetFPS()
+void AAvatar::SetFPS()
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{
@@ -537,7 +537,7 @@ void AHero::SetFPS()
 }
 
 // Called every frame
-void AHero::Tick(float DeltaTime)
+void AAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	FPS = 1.0/DeltaTime;
@@ -570,29 +570,29 @@ void AHero::Tick(float DeltaTime)
 	}
 }
 
-void AHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void AAvatar::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
 // Called to bind functionality to input
-void AHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AHero::OnUpdateTarget);
-		EnhancedInputComponent->BindAction(AbilityOneAction, ETriggerEvent::Started, this, &AHero::OnAbilityOne);
-		EnhancedInputComponent->BindAction(AbilityTwoAction, ETriggerEvent::Started, this, &AHero::OnAbilityTwo);
-		EnhancedInputComponent->BindAction(AbilityThreeAction, ETriggerEvent::Started, this, &AHero::OnAbilityThree);
-		EnhancedInputComponent->BindAction(AbilityFourAction, ETriggerEvent::Started, this, &AHero::OnAbilityFour);
-		EnhancedInputComponent->BindAction(AbilityFiveAction, ETriggerEvent::Started, this, &AHero::OnAbilityFive);
-		EnhancedInputComponent->BindAction(AbilitySixAction, ETriggerEvent::Started, this, &AHero::OnAbilitySix);
-		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this, &AHero::ToggleCameraBool);
-		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this, &AHero::HoldCamera);
-		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &AHero::ReleaseHoldCamera);
-		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &AHero::AttackMove);
+		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AAvatar::OnUpdateTarget);
+		EnhancedInputComponent->BindAction(AbilityOneAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityOne);
+		EnhancedInputComponent->BindAction(AbilityTwoAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityTwo);
+		EnhancedInputComponent->BindAction(AbilityThreeAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityThree);
+		EnhancedInputComponent->BindAction(AbilityFourAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityFour);
+		EnhancedInputComponent->BindAction(AbilityFiveAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityFive);
+		EnhancedInputComponent->BindAction(AbilitySixAction, ETriggerEvent::Started, this, &AAvatar::OnAbilitySix);
+		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this, &AAvatar::ToggleCameraBool);
+		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this, &AAvatar::HoldCamera);
+		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &AAvatar::ReleaseHoldCamera);
+		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &AAvatar::AttackMove);
 	}
 }
 

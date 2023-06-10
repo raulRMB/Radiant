@@ -4,7 +4,7 @@
 #include "Combat/Artillery/LinearSkillshot.h"
 
 #include "GameplayEffect.h"
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -72,14 +72,14 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 	if(!HasAuthority() || !ShouldHit(OtherActor))
 		return;
 	
-	if(auto Hero = Cast<AHero>(OtherActor))
+	if(auto Hero = Cast<AAvatar>(OtherActor))
 	{
 		for(auto Effect : GameplayEffects)
 		{
 			if(!AffectedActors.Contains(OtherActor))
 			{
 				UGameplayEffect* NewEffect = NewObject<UGameplayEffect>(GetTransientPackage(), Effect);
-				if(AHero* Projectile_Instigator = Cast<AHero>(GetInstigator()))
+				if(AAvatar* Projectile_Instigator = Cast<AAvatar>(GetInstigator()))
 				{
 					Projectile_Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(NewEffect, Hero->GetAbilitySystemComponent(),1.f);
 				}

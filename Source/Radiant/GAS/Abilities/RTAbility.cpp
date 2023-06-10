@@ -3,7 +3,7 @@
 
 #include "GAS/Abilities/RTAbility.h"
 
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Util/Util.h"
 
 void URTAbility::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -21,7 +21,7 @@ FVector URTAbility::GetRangeBasedMouseLocation()
 
 FVector URTAbility::GetRangedBaseMouseLocationWithHeroHalfHeight()
 {
-	if(AHero* Hero = Cast<AHero>(GetAvatarActorFromActorInfo()))
+	if(AAvatar* Hero = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
 	{
 		return GetRangeBasedMouseLocation() + Hero->GetHalfHeightVector();
 	}

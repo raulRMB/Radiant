@@ -5,7 +5,7 @@
 
 #include "RTGameState.h"
 #include "RTPlayerStart.h"
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "GameFramework/GameSession.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,7 +43,7 @@ ARTGameMode::ARTGameMode()
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Team Size Argument Passed!"))
 	}
-	static ConstructorHelpers::FClassFinder<AHero> PlayerControllerBPClass(TEXT("/Game/Blueprints/BP_Hero"));
+	static ConstructorHelpers::FClassFinder<AAvatar> PlayerControllerBPClass(TEXT("/Game/Blueprints/BP_Hero"));
 	if (PlayerControllerBPClass.Class != NULL)
 	{
 		HeroClass = PlayerControllerBPClass.Class;
@@ -104,7 +104,7 @@ void ARTGameMode::SpawnAvatar(ARadiantPlayerController* PlayerController)
 	}
 
 	ARTPlayerStart* PlayerStart = FindTeamStartTransform(PlayerController->GetPlayerState<ARTPlayerState>()->TeamId);
-	AHero* Hero = GetWorld()->SpawnActor<AHero>(HeroClass, PlayerStart->GetActorTransform());
+	AAvatar* Hero = GetWorld()->SpawnActor<AAvatar>(HeroClass, PlayerStart->GetActorTransform());
 	PlayerController->Possess(Hero);
 	PlayerController->S_SetPlayerStart(PlayerStart);
 }
@@ -116,7 +116,7 @@ void ARTGameMode::PlayersAreLoaded() const
 		APlayerController* PlayerController = Iterator->Get();
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
-			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
+			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
 			Hero->GameReady();
 			Hero->ApplyInitialEffects();
 			Hero->GameReadyUnicast();
@@ -131,7 +131,7 @@ void ARTGameMode::NotifyMatchEnd(int32 WinningTeam)
 		APlayerController* PlayerController = Iterator->Get();
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
-			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
+			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
 			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->TeamId == WinningTeam);
 		}
 	}
@@ -144,7 +144,7 @@ void ARTGameMode::DisableAllAbilities()
 		APlayerController* PlayerController = Iterator->Get();
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
-			AHero* Hero = Cast<AHero>(PlayerController->GetPawn());
+			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
 			Hero->GetAbilitySystemComponent()->CancelAllAbilities();
 			Hero->GetAbilitySystemComponent()->ClearAllAbilities();
 		}
@@ -230,6 +230,6 @@ void ARTGameMode::Respawn(ARadiantPlayerController* PlayerController)
 	{
 		PlayerController->GetPawn()->Destroy();
 	}
-	AHero* Hero = GetWorld()->SpawnActor<AHero>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
+	AAvatar* Hero = GetWorld()->SpawnActor<AAvatar>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
 	PlayerController->Possess(Hero);
 }

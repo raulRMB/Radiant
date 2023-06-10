@@ -3,7 +3,7 @@
 
 #include "Combat/Artillery/AreaOfEffect.h"
 
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -63,7 +63,7 @@ void AAreaOfEffect::ApplyInstantEffects()
 		auto Actor = Component->GetAttachmentRootActor();
 		if(ShouldHit(Actor))
 		{
-			if(AHero* Hero = Cast<AHero>(Actor))
+			if(AAvatar* Hero = Cast<AAvatar>(Actor))
 			{
 				EffectTargets.AddUnique(Hero);
 			}

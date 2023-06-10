@@ -3,7 +3,7 @@
 
 #include "UI/RTInfoPanel.h"
 
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"

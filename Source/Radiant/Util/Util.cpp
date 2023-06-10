@@ -5,7 +5,7 @@
 
 #include "Modes/RTGameMode.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
@@ -72,7 +72,7 @@ FVector UUtil::ClampVectorMaxDist(FVector A, FVector B, float MaxDist)
 	return B;
 }
 
-AHero* UUtil::GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID)
+AAvatar* UUtil::GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID)
 {
 	auto GameState = WorldContext->GetWorld()->GetGameState<ARTGameState>();
 	
@@ -81,7 +81,7 @@ AHero* UUtil::GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID)
 		auto RTPlayerState = Cast<ARTPlayerState>(PlayerState);
 		if(RTPlayerState->GetPlayerId() == PlayerID)
 		{
-			return Cast<AHero>(RTPlayerState->GetPawn());
+			return Cast<AAvatar>(RTPlayerState->GetPawn());
 		}
 	}
 	

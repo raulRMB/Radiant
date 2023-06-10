@@ -3,7 +3,7 @@
 
 #include "HeatSeeking.h"
 
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -55,8 +55,8 @@ void AHeatSeeking::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 void AHeatSeeking::OnOvelapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AHero* Hero = Cast<AHero>(GetInstigator());
-	AHero* OtherHero = Cast<AHero>(OtherActor);
+	AAvatar* Hero = Cast<AAvatar>(GetInstigator());
+	AAvatar* OtherHero = Cast<AAvatar>(OtherActor);
 
 	if(HasAuthority())
 	{
@@ -82,7 +82,7 @@ void AHeatSeeking::Tick(float DeltaTime)
 		FVector Direction = Target->GetActorLocation() - GetActorLocation();
 		SetActorRotation(Direction.Rotation());
 		SetActorLocation(GetActorLocation() + (Direction.GetSafeNormal() * Speed * DeltaTime));
-		if(UAbilitySystemComponent* ASC = Cast<AHero>(Target)->GetAbilitySystemComponent())
+		if(UAbilitySystemComponent* ASC = Cast<AAvatar>(Target)->GetAbilitySystemComponent())
 		{
 			FGameplayTagContainer OwnedTags;			
 			ASC->GetOwnedGameplayTags(OwnedTags);

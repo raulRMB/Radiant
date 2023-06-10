@@ -15,7 +15,7 @@ struct FTeam
 	
 	uint8 TeamID : 1;
 	int Score;
-	TArray<class AHero*> Heroes;
+	TArray<class AAvatar*> Heroes;
 };
 
 /**
@@ -38,7 +38,7 @@ public:
 	uint32 BlueScore;
 	
 	UFUNCTION(Server, Reliable)
-	void OnHeroDeath(AHero* Hero);
+	void OnHeroDeath(AAvatar* Hero);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void NotifyHeroDeath(uint32 Score1, uint32 Score2);

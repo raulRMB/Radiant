@@ -4,7 +4,7 @@
 #include "Characters/Avatars/DPS_Skillshot.h"
 
 #include "AbilitySystemComponent.h"
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 
 void UDPS_Skillshot::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                      const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
@@ -19,7 +19,7 @@ void UDPS_Skillshot::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventDa
 
 	FGameplayCueParameters CueParameters;
 	CueParameters.Location = GetAvatarActorFromActorInfo()->GetActorLocation();
-	if(AHero* Hero = Cast<AHero>(GetAvatarActorFromActorInfo()))
+	if(AAvatar* Hero = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
 	{
 		CueParameters.TargetAttachComponent = Hero->GetMesh();
 		CueParameters.Instigator = Hero;

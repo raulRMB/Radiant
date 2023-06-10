@@ -3,7 +3,7 @@
 
 #include "GAS/Abilities/GAAreaOfEffect.h"
 
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Combat/Artillery/AreaOfEffect.h"
 
 UGAAreaOfEffect::UGAAreaOfEffect()
@@ -49,7 +49,7 @@ void UGAAreaOfEffect::SpawnAreaOfEffect()
 			Cast<APawn>(Avatar)
 			);
 
-		AreaOfEffect->SetAvatar(Cast<AHero>(Avatar));
+		AreaOfEffect->SetAvatar(Cast<AAvatar>(Avatar));
 		AreaOfEffect->FinishSpawning(SpawnTransform);
 	}
 	CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);

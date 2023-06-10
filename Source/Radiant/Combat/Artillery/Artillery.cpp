@@ -2,14 +2,14 @@
 
 
 #include "Combat/Artillery/Artillery.h"
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "Player/RTPlayerState.h"
 
 // Add default functionality here for any IArtillery functions that are not pure virtual.
 bool AArtillery::ShouldHit(AActor* OtherActor)
 {
-	AHero* Target = Cast<AHero>(OtherActor);
-	AHero* Self = Cast<AHero>(GetInstigator());
+	AAvatar* Target = Cast<AAvatar>(OtherActor);
+	AAvatar* Self = Cast<AAvatar>(GetInstigator());
 	ARTPlayerState* TargetState = Target->GetPlayerState<ARTPlayerState>();
 	ARTPlayerState* MyState = Self->GetPlayerState<ARTPlayerState>();
 

@@ -3,7 +3,7 @@
 
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "GameplayEffectExtension.h"
-#include "Character/Hero.h"
+#include "Character/Avatar.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Modes/RTGameState.h"
@@ -19,7 +19,7 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 	{
 		if(GetHealth() <= 0)
 		{
-			AHero* Hero = Cast<AHero>(GetActorInfo()->AvatarActor);
+			AAvatar* Hero = Cast<AAvatar>(GetActorInfo()->AvatarActor);
 			Hero->M_SetInfoBarVisibility(false);
 
 			if(Hero->HasAuthority())
@@ -128,7 +128,7 @@ void URTHeroAttributeSetBase::UpdateMovementSpeed()
 {
 	if(auto PS = Cast<ARTPlayerState>(GetOwningActor()))
 	{
-		if(auto Hero = Cast<AHero>(PS->GetPawn()))
+		if(auto Hero = Cast<AAvatar>(PS->GetPawn()))
 		{
 			Hero->GetCharacterMovement()->MaxWalkSpeed = GetMovementSpeed();
 		}
