@@ -15,7 +15,6 @@ class RADIANT_API AAvatar : public ACharacter
 	GENERATED_BODY()
 	
 public:
-	// Sets default values for this character's properties
 	AAvatar();
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -77,39 +76,6 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class USpringArmComponent* SpringArm;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* ClickAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* AttackMoveAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* CameraToggleAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* CameraHoldAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* AbilityOneAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* AbilityTwoAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* AbilityThreeAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* AbilityFourAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* AbilityFiveAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputAction* AbilitySixAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	class UInputMappingContext* MappingContext;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
@@ -134,40 +100,21 @@ protected:
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
-	void OnUpdateTarget(const FInputActionValue& Value);
 	void CheckShouldAttack();
 public:
 	void ApplyInitialEffects();
 	void CastAbility(FGameplayTag& AbilityTag);
-protected:
-	UFUNCTION()
+	
+	void OnUpdateTarget(const FInputActionValue& Value);
 	void OnAbilityOne(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void OnAbilityTwo(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void OnAbilityThree(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void OnAbilityFour(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void OnAbilityFive(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void OnAbilitySix(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void ToggleCameraBool(const FInputActionValue& Value);
-
-	UFUNCTION()
 	void HoldCamera(const FInputActionValue& Value);
-
-	UFUNCTION()	
 	void ReleaseHoldCamera(const FInputActionValue& InputActionValue);
-
-	UFUNCTION()
 	void AttackMove(const FInputActionValue& Value);
 	
 	virtual void PossessedBy(AController* NewController) override;
@@ -192,25 +139,18 @@ protected:
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 	void OnManaChanged(const FOnAttributeChangeData& Data);
 
-public:
 	FGameplayEventData BufferAbility;
 	bool bShouldActivateBuffer = false;
 	void SetFPS();
-	// Called every frame
+	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	UFUNCTION(BlueprintCallable)
 	void SetRotationLock(bool RotationLocked, FVector TargetDir = FVector::ZeroVector);
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void S_SetRotationLock(bool RotationLocked, FVector TargetDir);
-
-	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void C_ResetDestination();
 
 	void ResetDestination();
 

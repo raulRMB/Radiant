@@ -96,10 +96,6 @@ void AAvatar::BeginPlay()
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		PlayerController->bShowMouseCursor = true;
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(MappingContext, 0);
-		}
 	}
 	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
 	if(OverHeadInfoBar)
@@ -331,11 +327,6 @@ void AAvatar::SetRotationLock(bool RotationLocked, FVector TargetDir)
 void AAvatar::ResetDestination()
 {
 	Destination = GetActorLocation();
-}
-
-void AAvatar::C_ResetDestination_Implementation()
-{
-	ResetDestination();
 }
 
 void AAvatar::SetDestination(FVector NewDestination)
@@ -573,26 +564,5 @@ void AAvatar::Tick(float DeltaTime)
 void AAvatar::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-}
-
-// Called to bind functionality to input
-void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AAvatar::OnUpdateTarget);
-		EnhancedInputComponent->BindAction(AbilityOneAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityOne);
-		EnhancedInputComponent->BindAction(AbilityTwoAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityTwo);
-		EnhancedInputComponent->BindAction(AbilityThreeAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityThree);
-		EnhancedInputComponent->BindAction(AbilityFourAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityFour);
-		EnhancedInputComponent->BindAction(AbilityFiveAction, ETriggerEvent::Started, this, &AAvatar::OnAbilityFive);
-		EnhancedInputComponent->BindAction(AbilitySixAction, ETriggerEvent::Started, this, &AAvatar::OnAbilitySix);
-		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this, &AAvatar::ToggleCameraBool);
-		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this, &AAvatar::HoldCamera);
-		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &AAvatar::ReleaseHoldCamera);
-		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &AAvatar::AttackMove);
-	}
 }
 
