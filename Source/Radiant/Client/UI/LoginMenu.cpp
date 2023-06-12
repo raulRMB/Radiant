@@ -6,6 +6,7 @@
 #include "../../Util/WidgetManager.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
+#include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 
 void ULoginMenu::NativeConstruct()
@@ -20,6 +21,7 @@ void ULoginMenu::NativeConstruct()
 	PasswordTextBox->OnTextCommitted.AddDynamic(this, &ULoginMenu::OnEnterPressed);
 	ExitButton->OnClicked.AddDynamic(this, &ULoginMenu::QuitGame);
 	UserNameTextBox->SetFocus();
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLoginErrorMessage.AddUObject(this, &ULoginMenu::HandleError);
 }
 
 void ULoginMenu::OnEnterPressed(const FText& Text, ETextCommit::Type CommitMethod)
@@ -57,5 +59,17 @@ void ULoginMenu::OnRegisterButtonHovered()
 void ULoginMenu::QuitGame()
 {
 	FGenericPlatformMisc::RequestExit(false);
+}
+
+void ULoginMenu::HandleError(const PlayFab::FPlayFabCppError& Error)
+{
+	if(Error.ErrorCode == 1000)
+	{
+		ErrorMessage->SetText(FText::FromString("Login Failed. Please check your username and password."));	
+	}
+	else
+	{
+		ErrorMessage->SetText(FText::FromString(Error.ErrorMessage));	
+	}
 }
 

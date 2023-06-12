@@ -5,7 +5,7 @@
 
 #include "../ClientSubsystem.h"
 #include "Components/Button.h"
-
+#include "Components/TextBlock.h"
 
 
 void ULobbyMenu::NativeConstruct()
@@ -18,7 +18,7 @@ void ULobbyMenu::NativeConstruct()
 	CancelMatchmakingButton->OnHovered.AddDynamic(this, &ULobbyMenu::OnCancelMatchmakingButtonHovered);
 	LogoutButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnLogoutButtonClicked);
 	ExitButton->OnClicked.AddDynamic(this, &ULobbyMenu::QuitGame);
-	
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLobbyErrorMessage.AddUObject(this, &ULobbyMenu::HandleError);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
 	
 }
@@ -42,6 +42,11 @@ void ULobbyMenu::OnCancelMatchmakingButtonHovered()
 void ULobbyMenu::QuitGame()
 {
 	FGenericPlatformMisc::RequestExit(false);
+}
+
+void ULobbyMenu::HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError)
+{
+	ErrorMessage->SetText(FText::FromString(PlayFabCppError.ErrorMessage));
 }
 
 void ULobbyMenu::OnCancelMatchmakingButtonClicked()

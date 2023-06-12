@@ -37,7 +37,13 @@ void UClientSubsystem::LoginUser(const FString& Username, const FString& Passwor
 
 	clientAPI->LoginWithPlayFab(request, PlayFab::UPlayFabClientAPI::FLoginWithPlayFabDelegate::CreateUObject(this,
 		&UClientSubsystem::OnLoginSuccess),
-		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnError));
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnLoginError));
+}
+
+void UClientSubsystem::OnRegisterError(const PlayFab::FPlayFabCppError& PlayFabCppError)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *PlayFabCppError.ErrorMessage);
+	OnRegisterErrorMessage.Broadcast(PlayFabCppError);
 }
 
 void UClientSubsystem::RegisterUser(const FString& Email, const FString& Username, const FString& Password)
@@ -49,7 +55,13 @@ void UClientSubsystem::RegisterUser(const FString& Email, const FString& Usernam
 
 	clientAPI->RegisterPlayFabUser(request, PlayFab::UPlayFabClientAPI::FRegisterPlayFabUserDelegate::CreateUObject(this,
 		&UClientSubsystem::OnRegisterSuccess),
-		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnError));
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnRegisterError));
+}
+
+void UClientSubsystem::OnLobbyError(const PlayFab::FPlayFabCppError& PlayFabCppError)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *PlayFabCppError.ErrorMessage);
+	OnLobbyErrorMessage.Broadcast(PlayFabCppError);
 }
 
 void UClientSubsystem::StartMatchmaking()
@@ -80,7 +92,7 @@ void UClientSubsystem::StartMatchmaking()
 	
 	multiplayerAPI->CreateMatchmakingTicket(Request,
 		PlayFab::UPlayFabMultiplayerAPI::FCreateMatchmakingTicketDelegate::CreateUObject(this, &UClientSubsystem::OnCreateMatchmakingTicketSuccess),
-		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnError)
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnLobbyError)
 	);
 
 	UE_LOG(LogTemp, Warning, TEXT("User has started matchmaking %s"), *Request.QueueName)
@@ -89,6 +101,12 @@ void UClientSubsystem::StartMatchmaking()
 void UClientSubsystem::SetQueueName(const FString& Name)
 {
 	QueueName = Name;
+}
+
+void UClientSubsystem::OnLoginError(const PlayFab::FPlayFabCppError& PlayFabCppError)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *PlayFabCppError.ErrorMessage);
+	OnLoginErrorMessage.Broadcast(PlayFabCppError);
 }
 
 void UClientSubsystem::CancelMatchmaking()
@@ -101,7 +119,7 @@ void UClientSubsystem::CancelMatchmaking()
 	
 	multiplayerAPI->CancelAllMatchmakingTicketsForPlayer(Request,
 		PlayFab::UPlayFabMultiplayerAPI::FCancelAllMatchmakingTicketsForPlayerDelegate::CreateUObject(this, &UClientSubsystem::OnCancelAllMatchmakingTicketsForPlayerSuccess),
-		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnError)
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnLobbyError)
 	);
 }
 
@@ -143,6 +161,8 @@ void UClientSubsystem::Logout()
 
 void UClientSubsystem::OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result)
 {
+	if(!WidgetManager)
+		WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
 	if(WidgetManager)
 		WidgetManager->SwitchTo(FString("LoginMenu"));
 	
@@ -211,7 +231,5 @@ void UClientSubsystem::OnCancelAllMatchmakingTicketsForPlayerSuccess(
 
 void UClientSubsystem::OnError(const PlayFab::FPlayFabCppError& ErrorResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Error: %s"), *ErrorResult.ErrorMessage);
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *ErrorResult.ErrorMessage);
 }
-
-

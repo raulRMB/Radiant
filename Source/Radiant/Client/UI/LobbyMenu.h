@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayFabError.h"
 #include "Blueprint/UserWidget.h"
 #include "LobbyMenu.generated.h"
 
@@ -26,6 +27,9 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* ExitButton;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* ErrorMessage;
 	
 	UFUNCTION()
 	void OnFindMatchButtonHovered();
@@ -33,6 +37,7 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 	void OnCancelMatchmakingButtonHovered();
 	UFUNCTION()
 	void QuitGame();
+	void HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION()

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayFabError.h"
 #include "Blueprint/UserWidget.h"
 #include "LoginMenu.generated.h"
 
@@ -30,6 +31,9 @@ class RADIANT_API ULoginMenu : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	class UButton* ExitButton;
 
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* ErrorMessage;
+
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnLoginButtonClicked_BP();
@@ -50,6 +54,7 @@ private:
 	void OnRegisterButtonHovered();
 	UFUNCTION()
 	void QuitGame();
+	void HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	UFUNCTION()
 	virtual void NativeConstruct() override;
 
