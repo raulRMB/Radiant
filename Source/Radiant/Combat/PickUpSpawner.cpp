@@ -4,6 +4,7 @@
 #include "Combat/PickUpSpawner.h"
 
 #include "PickUp.h"
+#include "Util/Util.h"
 
 APickUpSpawner::APickUpSpawner()
 {
@@ -18,9 +19,11 @@ void APickUpSpawner::OnPickedUp()
 
 void APickUpSpawner::SpawnPickup()
 {
-	APickUp* Spawned = GetWorld()->SpawnActorDeferred<APickUp>(PickUpClass, GetActorTransform(), this, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	APickUp* Spawned = GetWorld()->SpawnActorDeferred<APickUp>(PickUpClass, FTransform(GetActorLocation() + SpawnOffset), this, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+	RTLOGP("Spawn offset %s", *SpawnOffset.ToString());
 	Spawned->OnPickedUp.BindUObject(this, &APickUpSpawner::OnPickedUp);
-	Spawned->FinishSpawning(GetActorTransform());
+	Spawned->FinishSpawning(FTransform(GetActorLocation() + SpawnOffset));
 }
 
 void APickUpSpawner::BeginPlay()

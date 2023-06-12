@@ -9,8 +9,6 @@
 void UDPS_Steroid::RemoveCue()
 {
 	GetAbilitySystemComponentFromActorInfo_Checked()->RemoveGameplayCue(EffectCueTag);
-	RTLOGP("Cue removed: %s", *EffectCueTag.ToString());
-	RTPRINTP("Cue removed: %s", *EffectCueTag.ToString());
 }
 
 void UDPS_Steroid::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,

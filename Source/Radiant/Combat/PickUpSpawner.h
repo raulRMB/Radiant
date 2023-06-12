@@ -20,6 +20,9 @@ class RADIANT_API APickUpSpawner : public AActor
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta= (AllowPrivateAccess = "true"))
 	int32 InitialDelay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = true, MakeEditWidget))
+	FVector SpawnOffset;
 public:	
 	// Sets default values for this actor's properties
 	APickUpSpawner();
