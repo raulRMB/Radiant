@@ -61,6 +61,7 @@ void ULobbyMenu::OnButtonToggle(bool bIsMatchmaking)
 	{
 		FindMatchButton->SetVisibility(ESlateVisibility::Hidden);
 		CancelMatchmakingButton->SetVisibility(ESlateVisibility::Visible);
+		ErrorMessage->SetText(FText::FromString(""));
 	}
 	else
 	{
