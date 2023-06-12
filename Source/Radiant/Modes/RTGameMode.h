@@ -39,8 +39,8 @@ protected:
 	UFUNCTION(Exec)
 	void StartGame();
 
-private:
 	virtual bool ReadyToStartMatch_Implementation() override;
+private:
 	bool ReadyToEndMatch_Implementation();
 	mutable bool bInitialPlayerLoad = false;
 

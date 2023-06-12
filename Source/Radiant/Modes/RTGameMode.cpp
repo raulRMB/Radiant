@@ -74,8 +74,6 @@ void ARTGameMode::EndGame()
 	FGenericPlatformMisc::RequestExit(false);
 }
 
-
-
 void ARTGameMode::PlayerLoaded()
 {
 	if(!bInitialPlayerLoad)
