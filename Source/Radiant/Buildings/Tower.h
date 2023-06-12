@@ -25,10 +25,16 @@ class RADIANT_API ATower : public AActor, public IAbilitySystemInterface
 	class UStaticMeshComponent* Gem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
+	class USphereComponent* AttackRadius;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
 	class URTAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
 	class UTowerAttributeSet* AttributeSet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
+	TSubclassOf<class UGameplayEffect> AttackEffect;
 public:	
 	// Sets default values for this actor's properties
 	ATower();
@@ -42,5 +48,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+private:
+	UFUNCTION()
+	void BeingOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor,
+	                  class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                  const FHitResult& SweepResult);
 };
