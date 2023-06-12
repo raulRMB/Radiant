@@ -24,6 +24,7 @@ class RADIANT_API UBasicAttack : public UGAAnimated
 	virtual void OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	
 	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
+	
 	UFUNCTION()
 	void OnUncancellableEventRecieved(FGameplayEventData EventData);
 

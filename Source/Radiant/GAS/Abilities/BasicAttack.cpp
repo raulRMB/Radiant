@@ -53,8 +53,6 @@ void UBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData
 
 void UBasicAttack::OnUncancellableEventRecieved(FGameplayEventData EventData)
 {
-	RTLOG("Uncancellable event received")
-	RTPRINT("Uncancellable event received")
 	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
 }
 
