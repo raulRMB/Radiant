@@ -22,12 +22,14 @@ void APickUp::BeginPlay()
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &APickUp::OnBeginOverlap);
 }
 
+
 void APickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(AAvatar* Avatar = Cast<AAvatar>(OtherActor))
 	{
 		Avatar->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(GameplayEffect.GetDefaultObject(), 1, Avatar->GetAbilitySystemComponent()->MakeEffectContext());
+		OnPickedUp.Execute();
 		Destroy();
 	}
 }

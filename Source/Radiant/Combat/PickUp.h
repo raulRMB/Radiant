@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "PickUp.generated.h"
 
+DECLARE_DELEGATE(FPickedupDelegate)
+
 UCLASS()
 class RADIANT_API APickUp : public AActor
 {
@@ -20,6 +22,7 @@ class RADIANT_API APickUp : public AActor
 
 public:	
 	APickUp();
+	FPickedupDelegate OnPickedUp;
 
 protected:
 	virtual void BeginPlay() override;
