@@ -6,10 +6,10 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Util.generated.h"
 
-#define PRINTP(f, x) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f), x));
+#define RTPRINTP(f, x) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f), x));
 #define RTPRINT(f) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f)));
-#define LOG(x) UE_LOG(LogTemp, Warning, TEXT(x));
-#define LOGP(x, a) UE_LOG(LogTemp, Warning, TEXT(x), a);
+#define RTLOG(x) UE_LOG(LogTemp, Warning, TEXT(x));
+#define RTLOGP(x, a) UE_LOG(LogTemp, Warning, TEXT(x), a);
 
 /**
  * 

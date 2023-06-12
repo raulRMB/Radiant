@@ -17,8 +17,15 @@ class RADIANT_API UBasicAttack : public UGAAnimated
 
 	UPROPERTY(EditAnywhere, Category="Projectile")
 	TSubclassOf<AHeatSeeking> ProjectileClass;
+
+	virtual void OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData) override;
+	virtual void OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData) override;
+	virtual void OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) override;
+	virtual void OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	
 	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
+	UFUNCTION()
+	void OnUncancellableEventRecieved(FGameplayEventData EventData);
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

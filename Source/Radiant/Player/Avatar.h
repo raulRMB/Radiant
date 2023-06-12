@@ -121,6 +121,9 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 	void GiveInitialAbilities();
+
+	UFUNCTION(Server, Reliable)
+	void S_CancelAllAbilities();
 	
 	class URTAbilitySystemComponent* AbilitySystemComponent;
 	class URTHeroAttributeSetBase* AttributeSetBase;

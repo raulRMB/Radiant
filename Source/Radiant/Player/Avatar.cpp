@@ -169,6 +169,10 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	{
 		bAtDestination = false;
 	}
+	if(!AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Uncancellable"))))
+	{
+		S_CancelAllAbilities();
+	}
 }
 
 void AAvatar::CheckShouldAttack()
@@ -295,6 +299,11 @@ void AAvatar::GiveInitialAbilities()
 	{
 		AbilitySystemComponent->GiveAbility(Ability);
 	}
+}
+
+void AAvatar::S_CancelAllAbilities_Implementation()
+{
+	AbilitySystemComponent->CancelAllAbilities();
 }
 
 void AAvatar::OnHealthChanged(const FOnAttributeChangeData& Data)
