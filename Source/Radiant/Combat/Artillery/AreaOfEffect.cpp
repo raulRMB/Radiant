@@ -36,7 +36,7 @@ void AAreaOfEffect::ApplyGameplayEffects()
 	{
 		for(auto Hero : EffectTargets)
 		{
-			if(URTAbilitySystemComponent* AbilitySystemComponent = Hero->GetAbilitySystemComponent())
+			if(UAbilitySystemComponent* AbilitySystemComponent = Hero->GetAbilitySystemComponent())
 			{
 				for(auto GameplayEffect : GameplayEffects)
 				{

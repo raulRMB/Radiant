@@ -8,25 +8,23 @@
 // Add default functionality here for any IArtillery functions that are not pure virtual.
 bool AArtillery::ShouldHit(AActor* OtherActor)
 {
-	AAvatar* Target = Cast<AAvatar>(OtherActor);
-	AAvatar* Self = Cast<AAvatar>(GetInstigator());
-	ARTPlayerState* TargetState = Target->GetPlayerState<ARTPlayerState>();
-	ARTPlayerState* MyState = Self->GetPlayerState<ARTPlayerState>();
+	ITeamMember* Self = Cast<ITeamMember>(Owner);
+	ITeamMember* Target = Cast<ITeamMember>(OtherActor);
 
-	if(!Target || !Self || !TargetState || !MyState)
+	if(!Self || !Target)
 	{
 		return false;
 	}
 	
-	if(Behavior & static_cast<int32>(EArtilleryBehavior::HitSelf) && Target == Self)
+	if(Behavior & static_cast<int32>(EArtilleryBehavior::HitSelf) && OtherActor == Owner)
 	{
 		return true;
 	}
-	if(Behavior & static_cast<int32>(EArtilleryBehavior::HitAllies) && TargetState->TeamId == MyState->TeamId && Target != Self)
+	if(Behavior & static_cast<int32>(EArtilleryBehavior::HitAllies) && Self->GetTeamId() == Target->GetTeamId() && OtherActor != Owner)
 	{
 		return true;
 	}
-	if(Behavior & static_cast<int32>(EArtilleryBehavior::HitEnemies) && TargetState->TeamId != MyState->TeamId)
+	if(Behavior & static_cast<int32>(EArtilleryBehavior::HitEnemies) && Self->GetTeamId() != Target->GetTeamId())
 	{
 		return true;
 	}

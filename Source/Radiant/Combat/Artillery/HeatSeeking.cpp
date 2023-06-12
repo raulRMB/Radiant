@@ -55,8 +55,8 @@ void AHeatSeeking::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 void AHeatSeeking::OnOvelapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AAvatar* Hero = Cast<AAvatar>(GetInstigator());
-	AAvatar* OtherHero = Cast<AAvatar>(OtherActor);
+	IAbilitySystemInterface* SourceASC = Cast<IAbilitySystemInterface>(GetOwner());
+	IAbilitySystemInterface* TargetASC = Cast<IAbilitySystemInterface>(OtherActor);
 
 	if(HasAuthority())
 	{
@@ -65,7 +65,7 @@ void AHeatSeeking::OnOvelapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 			for(TSubclassOf<UGameplayEffect> GameplayEffect : GameplayEffects)
 			{
 				UGameplayEffect* Effect = GameplayEffect.GetDefaultObject();
-				Hero->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(Effect, OtherHero->GetAbilitySystemComponent());
+				SourceASC->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(Effect, TargetASC->GetAbilitySystemComponent());
 			}
 			Destroy();
 		}

@@ -28,14 +28,11 @@ ATower::ATower()
 	AttackRadius->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AttackRadius->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn,ECollisionResponse::ECR_Overlap);
 	
-	
 	AbilitySystemComponent = CreateDefaultSubobject<URTAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UTowerAttributeSet>("AttributeSet");
-
-	
 }
 
 UAbilitySystemComponent* ATower::GetAbilitySystemComponent() const
@@ -52,7 +49,9 @@ UTowerAttributeSet* ATower::GetAttributeSet() const
 void ATower::BeginPlay()
 {
 	Super::BeginPlay();
+	GiveInitialAbilities();
 	AttackRadius->OnComponentBeginOverlap.AddDynamic(this,&ATower::BeingOverlap);
+	AttackRadius->OnComponentEndOverlap.AddDynamic(this,&ATower::EndOverlap);
 	AttributeSet->InitMaxHealth(MaxHealth);
 	AttributeSet->InitHealth(AttributeSet->GetMaxHealth());
 	AttributeSet->InitAttackDamage(AttackDamage);
@@ -63,17 +62,57 @@ void ATower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(Target)
+	{
+		FGameplayEventData EventData;
+		EventData.Target = Target;
+		EventData.Instigator = this;
+		GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Event.Tower.Attack"), &EventData);
+	}
+}
+
+FTransform ATower::GetGemTransform() const
+{
+	return FTransform(Gem->GetComponentLocation() + GemOffset);
+}
+
+TObjectPtr<AActor> ATower::GetTarget() const
+{
+	return Target;
 }
 
 void ATower::BeingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	ITeamMember* OtherTeamMember = Cast<ITeamMember>(OtherActor);
+	if(Target || OtherTeamMember->GetTeamId() == GetTeamId())
+		return;
+	
 	if(HasAuthority())
 	{
 		if(AAvatar* Avatar = Cast<AAvatar>(OtherActor))
 		{
-			RTLOG("Tower Attack")			
-			GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(AttackEffect.GetDefaultObject(),Avatar->GetAbilitySystemComponent());
+			Target = Avatar;
 		}
+	}
+}
+
+void ATower::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex)
+{
+	if(HasAuthority())
+	{
+		if(OtherActor == Target)
+		{
+			Target = nullptr;
+		}
+	}
+}
+
+void ATower::GiveInitialAbilities()
+{
+	for(auto Ability : Abilities)
+	{
+		AbilitySystemComponent->GiveAbility(Ability);
 	}
 }

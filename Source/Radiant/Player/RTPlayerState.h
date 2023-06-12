@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
+#include "Interfaces/TeamMember.h"
 #include "RTPlayerState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RADIANT_API ARTPlayerState : public APlayerState, public IAbilitySystemInterface
+class RADIANT_API ARTPlayerState : public APlayerState, public IAbilitySystemInterface, public ITeamMember
 {
 	GENERATED_BODY()
 	
@@ -34,7 +35,7 @@ public:
 	void S_SetTargetId(const int32 NewTargetId);
 
 	int32 GetTargetId() const { return TargetId; }
-	int32 GetTeamId() const { return TeamId; }
+	virtual int32 GetTeamId() const override { return TeamId; }
 	
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	

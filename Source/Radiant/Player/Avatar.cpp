@@ -418,6 +418,11 @@ FVector AAvatar::GetHalfHeightVector()
 	return FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 }
 
+UAbilitySystemComponent* AAvatar::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 bool AAvatar::HasTag(FString Tag)
 {
 	FGameplayTagContainer TagContainer;
