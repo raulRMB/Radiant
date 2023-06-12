@@ -13,7 +13,7 @@ APickUpSpawner::APickUpSpawner()
 void APickUpSpawner::OnPickedUp()
 {
 	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, this, &APickUpSpawner::SpawnPickup, 5, false);
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &APickUpSpawner::SpawnPickup, SpawnTimer, false);
 }
 
 void APickUpSpawner::SpawnPickup()
@@ -26,7 +26,15 @@ void APickUpSpawner::SpawnPickup()
 void APickUpSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnPickup();
+	if(InitialDelay <= 0)
+	{
+		SpawnPickup();
+	}
+	else
+	{
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, this, &APickUpSpawner::SpawnPickup, InitialDelay, false);
+	}
 }
 
 void APickUpSpawner::Tick(float DeltaTime)

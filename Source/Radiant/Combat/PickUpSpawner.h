@@ -14,6 +14,12 @@ class RADIANT_API APickUpSpawner : public AActor
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta= (AllowPrivateAccess = "true"))
 	TSubclassOf<APickUp> PickUpClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta= (AllowPrivateAccess = "true"))
+	int32 SpawnTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta= (AllowPrivateAccess = "true"))
+	int32 InitialDelay;
 public:	
 	// Sets default values for this actor's properties
 	APickUpSpawner();
