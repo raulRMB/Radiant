@@ -61,7 +61,7 @@ void ATower::BeginPlay()
 void ATower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	Gem->AddLocalRotation(FRotator(0.f, 90.f * DeltaTime, 0.f));
 	if(Target)
 	{
 		FGameplayEventData EventData;
