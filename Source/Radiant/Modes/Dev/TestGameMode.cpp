@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Modes/TestGameMode.h"
+#include "TestGameMode.h"
 
 void ATestGameMode::BeginPlay()
 {

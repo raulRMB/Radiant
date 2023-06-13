@@ -9,7 +9,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
-#include "Modes/RTGameState.h"
+#include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
 
 

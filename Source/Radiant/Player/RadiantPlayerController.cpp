@@ -5,7 +5,7 @@
 #include "Avatar.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Modes/RTGameMode.h"
+#include "Modes/Base/RTGameMode.h"
 #include "Net/UnrealNetwork.h"
 #include "Util/Util.h"
 

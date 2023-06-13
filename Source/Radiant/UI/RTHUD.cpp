@@ -18,8 +18,6 @@ void ARTHUD::BeginPlay()
 	SettingsPanel->AddToViewport();
 	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
 	CaptureAreaBar->AddToViewport();
-	RTLOG("HUD BEGIN PLAY")
-	RTPRINT("HUD BEGIN PLAY")
 }
 
 void ARTHUD::ShowEndScreen(bool won)

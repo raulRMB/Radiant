@@ -56,7 +56,7 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 	
 	if(ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(NewPlayer))
 	{
-		PC->GetPlayerState<ARTPlayerState>()->SetTeamId(ETeamId(NumPlayers % 2));
+		PC->GetPlayerState<ARTPlayerState>()->SetTeamId(ETeamId(NumPlayers % TeamCount));
 	}
 }
 

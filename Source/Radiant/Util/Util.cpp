@@ -3,13 +3,12 @@
 
 #include "Util/Util.h"
 
-#include "Modes/RTGameMode.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Player/Avatar.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
-#include "Modes/RTGameState.h"
+#include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
 
 struct FGameplayAbilityTargetDataHandle;

@@ -19,7 +19,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
-#include "Modes/RTGameState.h"
+#include "Modes/Base/RTGameState.h"
 #include "UI/HeroInfoBar.h"
 #include "UI/RTHUD.h"
 #include "Util/Util.h"

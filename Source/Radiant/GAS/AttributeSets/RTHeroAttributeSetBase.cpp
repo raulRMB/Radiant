@@ -6,7 +6,7 @@
 #include "Player/Avatar.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
-#include "Modes/RTGameState.h"
+#include "Modes/Base/RTGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
 #include "Util/Util.h"

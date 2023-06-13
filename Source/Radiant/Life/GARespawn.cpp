@@ -5,7 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "Player/RadiantPlayerController.h"
-#include "Modes/RTGameMode.h"
+#include "Modes/Base/RTGameMode.h"
 #include "Player/RTPlayerState.h"
 
 UGARespawn::UGARespawn()

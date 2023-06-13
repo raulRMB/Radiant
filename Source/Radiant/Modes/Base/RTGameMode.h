@@ -18,9 +18,12 @@ class RADIANT_API ARTGameMode : public AGameMode
 
 public:
 	ARTGameMode();
-	
+
+	UPROPERTY(EditAnywhere)
 	uint32 TeamSize = INT_MAX;
+	UPROPERTY(EditAnywhere)
 	uint32 TeamCount = 2;
+	
 	uint32 PlayersLoaded = 0;
 	UPROPERTY(EditAnywhere)
 	uint32 KillsToWin = 3;
