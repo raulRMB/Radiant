@@ -11,6 +11,8 @@ namespace UnrealBuildTool.Rules
     {
         public PlayFab(ReadOnlyTargetRules Target) : base(Target)
         {
+            bPrecompile = true;
+            
             PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
             PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));

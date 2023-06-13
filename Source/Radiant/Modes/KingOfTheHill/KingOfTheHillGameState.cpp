@@ -16,6 +16,7 @@ void AKingOfTheHillGameState::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME_CONDITION(AKingOfTheHillGameState, RedTeamInArea, COND_None);
 	DOREPLIFETIME_CONDITION(AKingOfTheHillGameState, BlueTeamInArea, COND_None);
 	DOREPLIFETIME_CONDITION(AKingOfTheHillGameState, CaptureAreaTeam, COND_None);
+	DOREPLIFETIME_CONDITION(AKingOfTheHillGameState, bGameOver, COND_None);
 }
 
 void AKingOfTheHillGameState::BeginPlay()
@@ -38,7 +39,15 @@ void AKingOfTheHillGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	UpdateCaptureAreaPercent(DeltaSeconds);
+	if(!bGameOver)
+	{
+		UpdateCaptureAreaPercent(DeltaSeconds);
+	}
+}
+
+void AKingOfTheHillGameState::MatchEnded()
+{
+	bGameOver = true;
 }
 
 void AKingOfTheHillGameState::OnCaptureAreaUpdate(ETeamId TeamId, bool bEntered)

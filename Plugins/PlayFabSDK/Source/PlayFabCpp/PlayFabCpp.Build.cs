@@ -9,6 +9,8 @@ public class PlayFabCpp : ModuleRules
 {
     public PlayFabCpp(ReadOnlyTargetRules Target) : base(Target)
     {
+        bPrecompile = true;
+        
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
       
         PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));

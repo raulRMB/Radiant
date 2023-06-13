@@ -26,7 +26,9 @@ class RADIANT_API AKingOfTheHillGameState : public ARTGameState
 	uint8 RedTeamInArea = 0;
 	UPROPERTY(Replicated)
 	uint8 BlueTeamInArea = 0;
-
+	UPROPERTY(Replicated)
+	uint8 bGameOver : 1;
+	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
@@ -34,7 +36,10 @@ protected:
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
-	
+
+	float GetCaptureAreaPercent() const { return CaptureAreaPercent; }
+
+	void MatchEnded();
 private:
 	UFUNCTION()
 	void OnCaptureAreaUpdate(ETeamId TeamId, bool bEntered);
