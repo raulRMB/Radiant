@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
 #include "Player/RadiantPlayerController.h"
+#include "Util/Enums/TeamId.h"
 #include "RTGameMode.generated.h"
 
 /**
@@ -33,7 +34,7 @@ protected:
 	void HandleMatchHasEnded() override;
 	void EndGame();
 	void PlayersAreLoaded() const;
-	void NotifyMatchEnd(int32 WinningTeam);
+	void NotifyMatchEnd(ETeamId WinningTeam);
 	void DisableAllAbilities();
 
 	UFUNCTION(Exec)
@@ -46,7 +47,7 @@ private:
 
 	virtual void HandleMatchHasStarted() override;
 
-	class ARTPlayerStart* FindTeamStartTransform(uint8 TeamId);
+	class ARTPlayerStart* FindTeamStartTransform(ETeamId TeamId);
 public:
 	void Respawn(class ARadiantPlayerController* PlayerController);
 };

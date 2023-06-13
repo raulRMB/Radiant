@@ -48,7 +48,7 @@ void ARTPlayerState::SetPlayerStats()
 	AttributeSetBase->SetCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
 }
 
-void ARTPlayerState::S_SetTargetId_Implementation(const int32 NewTargetId)
+void ARTPlayerState::S_SetTargetId_Implementation(const int NewTargetId)
 {
 	TargetId = NewTargetId;
 }

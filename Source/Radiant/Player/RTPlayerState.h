@@ -24,6 +24,12 @@ protected:
 	class URTHeroAttributeSetBase* AttributeSetBase;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	
+	UPROPERTY(Replicated, VisibleAnywhere)
+	int TargetId = -1;
+	UPROPERTY(Replicated, VisibleAnywhere)
+	ETeamId TeamId = ETeamId::Neutral;
 	
 public:
 	ARTPlayerState();
@@ -32,17 +38,15 @@ public:
 	void SetPlayerStats();
 
 	UFUNCTION(Server, Reliable)
-	void S_SetTargetId(const int32 NewTargetId);
+	void S_SetTargetId(const int NewTargetId);
 
-	int32 GetTargetId() const { return TargetId; }
-	virtual int32 GetTeamId() const override { return TeamId; }
+	int GetTargetId() const { return TargetId; }
+	virtual ETeamId GetTeamId() const override { return TeamId; }
+
+	void SetTeamId(ETeamId NewTeamId) { TeamId = NewTeamId; }
 	
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	class URTHeroAttributeSetBase* GetAttributeSetBase() const;
 	
-	UPROPERTY(Replicated, VisibleAnywhere)
-	int32 TargetId = -1;
-	UPROPERTY(Replicated, VisibleAnywhere)
-	int32 TeamId = -1;
 };

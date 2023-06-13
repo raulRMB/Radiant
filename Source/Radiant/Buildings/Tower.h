@@ -44,7 +44,7 @@ class RADIANT_API ATower : public AActor, public IAbilitySystemInterface, public
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Team, meta=(AllowPrivateAccess=true))
-	int32 TeamId = -1;
+	ETeamId TeamId = ETeamId::Neutral;
 public:	
 	// Sets default values for this actor's properties
 	ATower();
@@ -61,7 +61,7 @@ public:
 	FTransform GetGemTransform() const;
 	TObjectPtr<class AActor> GetTarget() const;
 
-	virtual int32 GetTeamId() const override { return TeamId; }
+	virtual ETeamId GetTeamId() const override { return TeamId; }
 private:
 	UFUNCTION()
 	void BeingOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor,

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "Util/Enums/TeamId.h"
 #include "TeamMember.generated.h"
 
 // This class does not need to be modified.
@@ -22,5 +23,5 @@ class RADIANT_API ITeamMember
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual int32 GetTeamId() const { return -1; }
+	virtual ETeamId GetTeamId() const { return ETeamId::Neutral; }
 };

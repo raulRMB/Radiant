@@ -56,7 +56,7 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 	
 	if(ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(NewPlayer))
 	{
-		PC->GetPlayerState<ARTPlayerState>()->TeamId = NumPlayers % TeamCount;
+		PC->GetPlayerState<ARTPlayerState>()->SetTeamId(ETeamId(NumPlayers % 2));
 	}
 }
 
@@ -101,7 +101,7 @@ void ARTGameMode::SpawnAvatar(ARadiantPlayerController* PlayerController)
 		PlayerController->GetPawn()->Destroy();
 	}
 
-	ARTPlayerStart* PlayerStart = FindTeamStartTransform(PlayerController->GetPlayerState<ARTPlayerState>()->TeamId);
+	ARTPlayerStart* PlayerStart = FindTeamStartTransform(PlayerController->GetPlayerState<ARTPlayerState>()->GetTeamId());
 	AAvatar* Hero = GetWorld()->SpawnActor<AAvatar>(HeroClass, PlayerStart->GetActorTransform());
 	PlayerController->Possess(Hero);
 	PlayerController->S_SetPlayerStart(PlayerStart);
@@ -122,7 +122,7 @@ void ARTGameMode::PlayersAreLoaded() const
 	}
 }
 
-void ARTGameMode::NotifyMatchEnd(int32 WinningTeam)
+void ARTGameMode::NotifyMatchEnd(ETeamId WinningTeam)
 {
 	for( FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator )
 	{
@@ -130,7 +130,7 @@ void ARTGameMode::NotifyMatchEnd(int32 WinningTeam)
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
 			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
-			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->TeamId == WinningTeam);
+			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->GetTeamId() == WinningTeam);
 		}
 	}
 }
@@ -164,12 +164,12 @@ bool ARTGameMode::ReadyToEndMatch_Implementation()
 	ARTGameState* State = Cast<ARTGameState>(GetWorld()->GetGameState());
 	if(State->RedScore >= KillsToWin * TeamSize)
 	{
-		NotifyMatchEnd(1);
+		NotifyMatchEnd(ETeamId::Red);
 		return true;
 	}
 	if(State->BlueScore >= KillsToWin * TeamSize)
 	{
-		NotifyMatchEnd(0);
+		NotifyMatchEnd(ETeamId::Blue);
 		return true;
 	}
 	return false;
@@ -202,7 +202,7 @@ void ARTGameMode::HandleMatchHasStarted()
 	GetWorldSettings()->NotifyMatchStarted();
 }
 
-ARTPlayerStart* ARTGameMode::FindTeamStartTransform(uint8 TeamId)
+ARTPlayerStart* ARTGameMode::FindTeamStartTransform(ETeamId TeamId)
 {
 	TArray<AActor*> Starts;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARTPlayerStart::StaticClass(), Starts);

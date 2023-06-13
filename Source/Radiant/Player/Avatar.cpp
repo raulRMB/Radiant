@@ -358,11 +358,11 @@ void AAvatar::SetOwnHealthBarColor()
 		{
 			return;
 		}
-		int Id = GetPlayerState<ARTPlayerState>()->TeamId;
+		ETeamId Id = GetPlayerState<ARTPlayerState>()->GetTeamId();
 		FLinearColor Color;
 		if(LocalPS)
 		{
-			if(Id == LocalPS->TeamId)
+			if(Id == LocalPS->GetTeamId())
 			{
 				Color = FLinearColor::Green;
 			}
@@ -389,7 +389,7 @@ void AAvatar::SetAllHealthBarColors()
 	{
 		if(GetPlayerState<ARTPlayerState>())
 		{
-			int Id = GetPlayerState<ARTPlayerState>()->TeamId;
+			ETeamId Id = GetPlayerState<ARTPlayerState>()->GetTeamId();
 			TArray<APlayerState*> States = GetWorld()->GetGameState<ARTGameState>()->PlayerArray;
 			if(States.Num() > 0)
 			{
@@ -397,7 +397,7 @@ void AAvatar::SetAllHealthBarColors()
 				{
 					if(auto s = Cast<ARTPlayerState>(State))
 					{
-						int OtherId = s->TeamId;
+						ETeamId OtherId = s->GetTeamId();
 						if(Id == OtherId)
 						{
 							State->GetPawn<AAvatar>()->SetHealthColor(FLinearColor::Green);

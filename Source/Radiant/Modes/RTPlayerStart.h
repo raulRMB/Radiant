@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerStart.h"
+#include "Util/Enums/TeamId.h"
 #include "RTPlayerStart.generated.h"
 
 /**
@@ -16,7 +17,7 @@ class RADIANT_API ARTPlayerStart : public APlayerStart
 
 public:
 	UPROPERTY(Replicated, EditAnywhere, Category="PlayerStart")
-	uint8 TeamId : 1;
+	ETeamId TeamId = ETeamId::Neutral;
 
 	UPROPERTY(Replicated, EditAnywhere, Category="PlayerStart")
 	uint8 bOccupied : 1;

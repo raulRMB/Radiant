@@ -3,7 +3,9 @@
 
 #include "UI/RTHUD.h"
 
+#include "CaptureAreaBar.h"
 #include "RTInfoPanel.h"
+#include "Util/Util.h"
 
 void ARTHUD::BeginPlay()
 {
@@ -14,6 +16,10 @@ void ARTHUD::BeginPlay()
 	SettingsPanel = CreateWidget<UUserWidget>(GetWorld(), SettingsPanelClass);
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
 	SettingsPanel->AddToViewport();
+	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
+	CaptureAreaBar->AddToViewport();
+	RTLOG("HUD BEGIN PLAY")
+	RTPRINT("HUD BEGIN PLAY")
 }
 
 void ARTHUD::ShowEndScreen(bool won)
