@@ -31,6 +31,9 @@ void ARadiantPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FInputModeGameAndUI InputMode;
+	SetInputMode(InputMode);
+	
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(MappingContext, 0);
