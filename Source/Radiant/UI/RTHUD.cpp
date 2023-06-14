@@ -17,7 +17,6 @@ void ARTHUD::BeginPlay()
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
 	SettingsPanel->AddToViewport();
 	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
-	CaptureAreaBar->AddToViewport();
 }
 
 void ARTHUD::ShowEndScreen(bool won)
@@ -40,6 +39,7 @@ void ARTHUD::ToggleSettings(bool on)
 void ARTHUD::HideLoadScreen()
 {
 	InfoPanel->HideLoadScreen();
+	CaptureAreaBar->AddToViewport();
 }
 
 void ARTHUD::SetFPS(float FPS)

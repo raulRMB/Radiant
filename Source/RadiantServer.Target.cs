@@ -9,5 +9,7 @@ public class RadiantServerTarget : TargetRules //Change this line according to t
         DefaultBuildSettings = BuildSettingsVersion.V2;
         IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
         ExtraModuleNames.Add("Radiant"); //Change this line according to the name of your project
+        BuildEnvironment = TargetBuildEnvironment.Unique;
+        bUseLoggingInShipping = true;
     }
 }

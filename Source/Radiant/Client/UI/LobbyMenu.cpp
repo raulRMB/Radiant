@@ -20,7 +20,6 @@ void ULobbyMenu::NativeConstruct()
 	ExitButton->OnClicked.AddDynamic(this, &ULobbyMenu::QuitGame);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLobbyErrorMessage.AddUObject(this, &ULobbyMenu::HandleError);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
-	
 }
 
 void ULobbyMenu::OnFindMatchButtonClicked()

@@ -82,11 +82,11 @@ void AKingOfTheHillGameState::UpdateCaptureAreaPercent(float DeltaSeconds)
 {
 	if(RedTeamInArea == 0)
 	{
-		CaptureAreaPercent += 0.05f * DeltaSeconds * BlueTeamInArea;
+		CaptureAreaPercent += 0.025f * DeltaSeconds * BlueTeamInArea;
 	}
 	else if(BlueTeamInArea == 0)
 	{
-		CaptureAreaPercent -= 0.05f * DeltaSeconds * RedTeamInArea;
+		CaptureAreaPercent -= 0.025f * DeltaSeconds * RedTeamInArea;
 	}
 	
 	if(CaptureAreaBar)
