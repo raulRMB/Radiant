@@ -32,6 +32,7 @@ void ARadiantPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(InputMode);
 	
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
