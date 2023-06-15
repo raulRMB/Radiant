@@ -299,6 +299,8 @@ void AAvatar::GiveInitialAbilities()
 	{
 		AbilitySystemComponent->GiveAbility(Ability);
 	}
+	
+	GiveDeathAbilities();
 }
 
 void AAvatar::S_CancelAllAbilities_Implementation()
@@ -421,6 +423,11 @@ FVector AAvatar::GetHalfHeightVector()
 UAbilitySystemComponent* AAvatar::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+TArray<TSubclassOf<UGameplayAbility>> AAvatar::GetDeathAbilities() const
+{
+	return DeathAbilities;
 }
 
 bool AAvatar::HasTag(FString Tag)

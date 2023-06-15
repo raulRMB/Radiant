@@ -6,11 +6,12 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
+#include "Interfaces/Killable.h"
 #include "Player/RTPlayerState.h"
 #include "Avatar.generated.h"
 
 UCLASS()
-class RADIANT_API AAvatar : public ACharacter, public ITeamMember, public IAbilitySystemInterface
+class RADIANT_API AAvatar : public ACharacter, public ITeamMember, public IAbilitySystemInterface, public IKillable
 {
 	GENERATED_BODY()
 	
@@ -95,6 +96,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	USoundBase* FailedSound;
 
+	UPROPERTY(EditAnywhere, Category=Death)
+	TArray<TSubclassOf<UGameplayAbility>> DeathAbilities;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -173,6 +177,7 @@ public:
 	FVector GetHalfHeightVector();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual TArray<TSubclassOf<UGameplayAbility>> GetDeathAbilities() const override;
 private:
 	
 	bool HasTag(FString Tag);
