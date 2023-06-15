@@ -2,8 +2,8 @@
 
 
 #include "LoginMenu.h"
-#include "../ClientSubsystem.h"
-#include "../../Util/WidgetManager.h"
+#include "UI/Client/ClientSubsystem.h"
+#include "Util/WidgetManager.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 #include "Components/TextBlock.h"

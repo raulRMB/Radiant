@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Client/ClientPlayerController.h"
+#include "UI/Client/ClientPlayerController.h"
 
 void AClientPlayerController::BeginPlay()
 {
