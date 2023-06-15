@@ -11,12 +11,14 @@ void ARTHUD::BeginPlay()
 {
 	Super::BeginPlay();
 	InfoPanel = CreateWidget<URTInfoPanel>(GetWorld(), InfoPanelClass);
-	InfoPanel->AddToViewport();
+	InfoPanel->AddToViewport(1000);
 	InfoPanel->Init();
 	SettingsPanel = CreateWidget<UUserWidget>(GetWorld(), SettingsPanelClass);
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
 	SettingsPanel->AddToViewport();
 	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
+	check(CaptureAreaBar)
+	CaptureAreaBar->AddToViewport();
 }
 
 void ARTHUD::ShowEndScreen(bool won)
@@ -38,8 +40,8 @@ void ARTHUD::ToggleSettings(bool on)
 
 void ARTHUD::HideLoadScreen()
 {
+	check(InfoPanel)
 	InfoPanel->HideLoadScreen();
-	CaptureAreaBar->AddToViewport();
 }
 
 void ARTHUD::SetFPS(float FPS)

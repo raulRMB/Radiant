@@ -176,7 +176,7 @@ public:
 private:
 	
 	bool HasTag(FString Tag);
-	void HandleCamera();
+	void HandleCamera(float DeltaSeconds);
 
 	virtual void Restart() override;
 

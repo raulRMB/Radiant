@@ -474,7 +474,7 @@ void AAvatar::AttackMove(const FInputActionValue& Value)
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackMoveSystemTemplate, HitResult.Location);
 }
 
-void AAvatar::HandleCamera()
+void AAvatar::HandleCamera(float DeltaSeconds)
 {
 	if(!bCameraLocked)
 	{
@@ -502,7 +502,7 @@ void AAvatar::HandleCamera()
 			CameraMove += FVector::RightVector * CameraMovementSpeed;
 		}
 		CameraMove = CameraMove.RotateAngleAxis(UnlockedCamera->GetComponentRotation().Yaw + 90, FVector::UpVector);
-		UnlockedCamera->SetWorldLocation(UnlockedCamera->GetComponentLocation() + CameraMove);
+		UnlockedCamera->SetWorldLocation(UnlockedCamera->GetComponentLocation() + CameraMove * DeltaSeconds);
 	}
 }
 
@@ -546,7 +546,7 @@ void AAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	FPS = 1.0/DeltaTime;
-	HandleCamera();
+	HandleCamera(DeltaTime);
 	CheckShouldAttack();
 	
 	if(!HasTag("States.Movement.Stopped") && !bIsAttacking)
