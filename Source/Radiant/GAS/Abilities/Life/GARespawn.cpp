@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Life/GARespawn.h"
+#include "GAS/Abilities/Life/GARespawn.h"
 
 #include "AbilitySystemComponent.h"
 #include "Player/RTPlayerController.h"
