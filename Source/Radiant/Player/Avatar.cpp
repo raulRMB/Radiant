@@ -6,7 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "RadiantPlayerController.h"
+#include "RTPlayerController.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 #include "AI/NavigationSystemBase.h"
 #include "Camera/CameraComponent.h"
@@ -54,7 +54,7 @@ void AAvatar::GameReadyUnicast_Implementation()
 {
 	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AAvatar::OnAbilityFailed);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAvatar::CastingTagChanged);
-	GetController<ARadiantPlayerController>()->GetHUD<ARTHUD>()->HideLoadScreen();
+	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->HideLoadScreen();
 }
 
 void AAvatar::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags)
@@ -81,7 +81,7 @@ void AAvatar::CastingTagChanged(FGameplayTag GameplayTag, int I)
 
 void AAvatar::GameEnding_Implementation(bool Won)
 {
-	GetController<ARadiantPlayerController>()->GetHUD<ARTHUD>()->ShowEndScreen(Won);
+	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->ShowEndScreen(Won);
 	UGameplayStatics::PlaySound2D(GetWorld(), Won ? WinSound : LoseSound); 
 }
 
@@ -105,7 +105,7 @@ void AAvatar::BeginPlay()
 	}
 	if(!HasAuthority())
 	{
-		auto PC = Cast<ARadiantPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		auto PC = Cast<ARTPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		PC->PlayerLoaded();
 	}
 	SetOwnHealthBarColor();
@@ -539,7 +539,7 @@ void AAvatar::SetFPS()
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{
-		ARadiantPlayerController* PC = GetController<ARadiantPlayerController>();
+		ARTPlayerController* PC = GetController<ARTPlayerController>();
 		if(PC)
 		{
 			PC->GetHUD<ARTHUD>()->SetFPS(FPS);

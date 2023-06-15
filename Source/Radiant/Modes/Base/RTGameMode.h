@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "Player/RadiantPlayerController.h"
+#include "Player/RTPlayerController.h"
 #include "Util/Enums/TeamId.h"
 #include "RTGameMode.generated.h"
 
@@ -26,7 +26,7 @@ public:
 	uint32 KillsToWin = 3;
 	void PlayerLoaded();
 
-	void SpawnAvatar(class ARadiantPlayerController* PlayerController);
+	void SpawnAvatar(class ARTPlayerController* PlayerController);
 
 	UPROPERTY(EditAnywhere, Category="Gameplay")
 	TSubclassOf<class AAvatar> HeroClass;	
@@ -50,5 +50,5 @@ private:
 
 	class ARTPlayerStart* FindTeamStartTransform(ETeamId TeamId);
 public:
-	void Respawn(class ARadiantPlayerController* PlayerController);
+	void Respawn(class ARTPlayerController* PlayerController);
 };

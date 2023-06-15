@@ -49,7 +49,7 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 {
 	Super::OnPostLogin(NewPlayer);
 	
-	if(ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(NewPlayer))
+	if(ARTPlayerController* PC = Cast<ARTPlayerController>(NewPlayer))
 	{
 		PC->GetPlayerState<ARTPlayerState>()->SetTeamId(ETeamId(NumPlayers % TeamCount));
 	}
@@ -83,7 +83,7 @@ void ARTGameMode::PlayerLoaded()
 	}
 }
 
-void ARTGameMode::SpawnAvatar(ARadiantPlayerController* PlayerController)
+void ARTGameMode::SpawnAvatar(ARTPlayerController* PlayerController)
 {
 	if(!PlayerController)
 	{
@@ -181,7 +181,7 @@ void ARTGameMode::HandleMatchHasStarted()
 		APlayerController* PlayerController = Iterator->Get();
 		if (PlayerController && (PlayerController->GetPawn() == nullptr) && PlayerCanRestart(PlayerController))
 		{
-			ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(PlayerController);
+			ARTPlayerController* PC = Cast<ARTPlayerController>(PlayerController);
 			SpawnAvatar(PC);
 		}
 	}
@@ -216,7 +216,7 @@ ARTPlayerStart* ARTGameMode::FindTeamStartTransform(ETeamId TeamId)
 	return nullptr;
 }
 
-void ARTGameMode::Respawn(ARadiantPlayerController* PlayerController)
+void ARTGameMode::Respawn(ARTPlayerController* PlayerController)
 {
 	if(PlayerController->GetPawn() != nullptr)
 	{

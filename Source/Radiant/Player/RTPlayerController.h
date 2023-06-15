@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
-#include "RadiantPlayerController.generated.h"
+#include "RTPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RADIANT_API ARadiantPlayerController : public APlayerController
+class RADIANT_API ARTPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	

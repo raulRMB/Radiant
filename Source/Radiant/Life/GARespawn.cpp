@@ -4,7 +4,7 @@
 #include "Life/GARespawn.h"
 
 #include "AbilitySystemComponent.h"
-#include "Player/RadiantPlayerController.h"
+#include "Player/RTPlayerController.h"
 #include "Modes/Base/RTGameMode.h"
 #include "Player/RTPlayerState.h"
 
@@ -23,7 +23,7 @@ void UGARespawn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	
 	if(HasAuthority(&CurrentActivationInfo))
 	{
-		ARadiantPlayerController* PC = Cast<ARadiantPlayerController>(ActorInfo->PlayerController.Get());
+		ARTPlayerController* PC = Cast<ARTPlayerController>(ActorInfo->PlayerController.Get());
 		GetWorld()->GetAuthGameMode<ARTGameMode>()->Respawn(PC);
 		PC->GetPlayerState<ARTPlayerState>()->SetPlayerStats();
 	}
