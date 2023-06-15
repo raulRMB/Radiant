@@ -22,6 +22,12 @@ void ULoginMenu::NativeConstruct()
 	ExitButton->OnClicked.AddDynamic(this, &ULoginMenu::QuitGame);
 	UserNameTextBox->SetFocus();
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLoginErrorMessage.AddUObject(this, &ULoginMenu::HandleError);
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetChange(this, &ULoginMenu::ResetPage);
+}
+
+void ULoginMenu::ResetPage()
+{
+	ErrorMessage->SetText(FText::FromString(""));
 }
 
 void ULoginMenu::OnEnterPressed(const FText& Text, ETextCommit::Type CommitMethod)

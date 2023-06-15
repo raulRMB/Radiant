@@ -6,6 +6,8 @@
 #include "../ClientSubsystem.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
+#include "Util/WidgetManager.h"
 
 
 void ULobbyMenu::NativeConstruct()
@@ -19,7 +21,15 @@ void ULobbyMenu::NativeConstruct()
 	LogoutButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnLogoutButtonClicked);
 	ExitButton->OnClicked.AddDynamic(this, &ULobbyMenu::QuitGame);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLobbyErrorMessage.AddUObject(this, &ULobbyMenu::HandleError);
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetChange(this, &ULobbyMenu::ResetPage);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
+}
+
+void ULobbyMenu::ResetPage()
+{
+	FindMatchButton->SetVisibility(ESlateVisibility::Visible);
+	CancelMatchmakingButton->SetVisibility(ESlateVisibility::Hidden);
+	ErrorMessage->SetText(FText::FromString(""));
 }
 
 void ULobbyMenu::OnFindMatchButtonClicked()

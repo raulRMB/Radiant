@@ -42,7 +42,8 @@ void AWidgetManager::Tick(float DeltaTime)
 }
 
 void AWidgetManager::SwitchTo(const FString& Name)
-{	
+{
+	OnWidgetSwitchPage.Broadcast();
 	TArray<UUserWidget*> AllWidgets;
 	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), AllWidgets, UUserWidget::StaticClass(), false);
 

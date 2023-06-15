@@ -29,6 +29,15 @@ void URegisterMenu::NativeConstruct()
 	BackButton->OnClicked.AddDynamic(this, &URegisterMenu::OnBackButtonClicked);
 	OnRegisterSuccess.BindUObject(this, &URegisterMenu::OnRegisterSuccessCallback);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnRegisterErrorMessage.AddUObject(this, &URegisterMenu::HandleError);
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetChange(this, &URegisterMenu::ResetPage);
+}
+
+void URegisterMenu::ResetPage()
+{
+	EmailTextBox->SetText(FText::FromString(""));
+	UserNameTextBox->SetText(FText::FromString(""));
+	PasswordTextBox->SetText(FText::FromString(""));
+	ErrorMessage->SetText(FText::FromString(""));
 }
 
 void URegisterMenu::OnRegisterButtonClicked()

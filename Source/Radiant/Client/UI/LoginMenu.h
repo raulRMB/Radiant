@@ -57,6 +57,7 @@ private:
 	void HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	UFUNCTION()
 	virtual void NativeConstruct() override;
+	void ResetPage();
 
 	UFUNCTION()
 	void OnEnterPressed(const FText& Text, ETextCommit::Type CommitMethod);

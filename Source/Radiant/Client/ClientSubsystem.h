@@ -8,6 +8,7 @@
 #include "PlayFabMultiplayerDataModels.h"
 #include "PlayFabError.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Util/WidgetManager.h"
 #include "ClientSubsystem.generated.h"
 
 DECLARE_DELEGATE_TwoParams(FToggleQueueButtonsSignature, bool, FString)
@@ -44,6 +45,15 @@ protected:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 public:
+	template <typename UserClass, typename Func>
+	FDelegateHandle OnWidgetChange(UserClass* InUserObject, Func Function)
+	{
+		if(!WidgetManager)
+			WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
+		if(WidgetManager)
+			return WidgetManager->OnWidgetSwitchPage.AddUObject(InUserObject, Function);
+		return FDelegateHandle();
+	}
 	void Setup();
 	UFUNCTION(BlueprintCallable)
 		void SetQueueName(const FString& QueueName);
