@@ -23,7 +23,6 @@
 #include "UI/HeroInfoBar.h"
 #include "UI/RTHUD.h"
 #include "Util/Util.h"
-#include "Util/MouseVec.h"
 
 // Sets default values
 AAvatar::AAvatar()
