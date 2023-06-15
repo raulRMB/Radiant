@@ -6,7 +6,7 @@
 #include "Player/Avatar.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Combat/Artillery/LinearSkillshot.h"
-#include "Util/PlayMontageAndWaitForEvent.h"
+#include "GAS/Tasks/PlayMontageAndWaitForEvent.h"
 
 UGALinearSkillshot::UGALinearSkillshot() : UGAAnimated()
 {

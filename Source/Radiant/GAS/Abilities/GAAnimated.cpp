@@ -7,7 +7,7 @@
 #include "Player/Avatar.h"
 #include "Combat/Artillery/LinearSkillshot.h"
 #include "Player/RTPlayerState.h"
-#include "Util/PlayMontageAndWaitForEvent.h"
+#include "GAS/Tasks/PlayMontageAndWaitForEvent.h"
 
 UGAAnimated::UGAAnimated()
 {

@@ -6,7 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Player/Avatar.h"
-#include "Util/PlayMontageAndWaitForEvent.h"
+#include "GAS/Tasks/PlayMontageAndWaitForEvent.h"
 #include "Util/Util.h"
 
 void UBasicAttack::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)

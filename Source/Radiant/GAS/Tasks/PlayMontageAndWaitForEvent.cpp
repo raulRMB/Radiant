@@ -1,7 +1,7 @@
 // Copyright 2020 Dan Kestranek.
 
 
-#include "Util/PlayMontageAndWaitForEvent.h"
+#include "GAS/Tasks/PlayMontageAndWaitForEvent.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "Animation/AnimInstance.h"
