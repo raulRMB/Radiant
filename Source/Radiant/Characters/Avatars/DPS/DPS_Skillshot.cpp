@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Characters/Avatars/DPS_Skillshot.h"
+#include "Characters/Avatars/DPS/DPS_Skillshot.h"
 
 #include "AbilitySystemComponent.h"
 #include "Player/Avatar.h"

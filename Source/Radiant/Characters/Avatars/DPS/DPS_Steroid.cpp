@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Characters/Avatars/DPS_Steroid.h"
+#include "Characters/Avatars/DPS/DPS_Steroid.h"
 
 #include "Player/Avatar.h"
 #include "Util/Util.h"

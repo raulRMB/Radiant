@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Characters/Avatars/DPS_Ultimate.h"
+#include "Characters/Avatars/DPS/DPS_Ultimate.h"
 
 void UDPS_Ultimate::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

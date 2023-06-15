@@ -1,6 +1,6 @@
 // Copyright Radiant Studios
 
-#include "Characters/Avatars/DPS_Blink.h"
+#include "Characters/Avatars/DPS/DPS_Blink.h"
 
 #include "AbilitySystemComponent.h"
 
