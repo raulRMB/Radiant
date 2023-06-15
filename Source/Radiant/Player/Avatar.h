@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
-#include "Interfaces/Killable.h"
+#include "Util/Interfaces/Killable.h"
 #include "Player/RTPlayerState.h"
 #include "Avatar.generated.h"
 

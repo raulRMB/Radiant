@@ -5,7 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Components/TextRenderComponent.h"
-#include "Interfaces/TeamMember.h"
+#include "Util/Interfaces/TeamMember.h"
 
 // Sets default values
 ACaptureArea::ACaptureArea()

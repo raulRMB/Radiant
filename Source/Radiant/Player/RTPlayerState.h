@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
-#include "Interfaces/TeamMember.h"
+#include "Util/Interfaces/TeamMember.h"
 #include "RTPlayerState.generated.h"
 
 /**

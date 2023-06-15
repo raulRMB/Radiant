@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/TeamMember.h"
+#include "Util/Interfaces/TeamMember.h"
 #include "Tower.generated.h"
 
 UCLASS()

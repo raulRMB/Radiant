@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Interfaces/Killable.h"
+#include "Util/Interfaces/Killable.h"
 
 #include "AbilitySystemInterface.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
