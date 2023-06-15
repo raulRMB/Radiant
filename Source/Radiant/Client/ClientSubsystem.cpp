@@ -179,7 +179,7 @@ void UClientSubsystem::OnCreateMatchmakingTicketSuccess(
 
 	bIsMatchmaking = true;
 
-	OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking);
+	OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking, "");
 	
 	UE_LOG(LogTemp, Warning, TEXT("On Create Matchmaking Ticket success"));
 }
@@ -209,12 +209,28 @@ void UClientSubsystem::OnGetMatchmakingTicketSuccess(
 
 void UClientSubsystem::OnGetMatchSuccess(const PlayFab::MultiplayerModels::FGetMatchResult& Result)
 {
-	FString Address = Result.pfServerDetails->IPV4Address;
-	Address.Append(":");
-	Address.AppendInt(Result.pfServerDetails->Ports[0].Num);
-	UE_LOG(LogTemp, Warning, TEXT("Address: %s"), *Address);
-	UGameplayStatics::OpenLevel(GetWorld(), FName(Address));
-	UE_LOG(LogTemp, Warning, TEXT("User found Match!"));
+	if(Result.pfServerDetails)
+	{
+		FString Address = Result.pfServerDetails->IPV4Address;
+		TArray<PlayFab::MultiplayerModels::FPort> Ports = Result.pfServerDetails->Ports;
+		if(!Address.IsEmpty() && Ports.Num() > 0)
+		{
+			Address.Append(":");
+			Address.AppendInt(Ports[0].Num);
+			UE_LOG(LogTemp, Warning, TEXT("Loading Address: %s"), *Address);
+			UGameplayStatics::OpenLevel(GetWorld(), FName(Address));
+		} else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Server Address!"));
+			bIsMatchmaking = false;
+			OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking, "Failed To Find Server");
+		}
+	} else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Server Address!"));
+		bIsMatchmaking = false;
+		OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking, "Failed To Find Server");
+	}
 }
 
 void UClientSubsystem::OnCancelAllMatchmakingTicketsForPlayerSuccess(
@@ -222,7 +238,7 @@ void UClientSubsystem::OnCancelAllMatchmakingTicketsForPlayerSuccess(
 {
 	bIsMatchmaking = false;
 
-	OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking);
+	OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking, "");
 
 	GetWorld()->GetTimerManager().ClearTimer(HGetTicketResult);
 	

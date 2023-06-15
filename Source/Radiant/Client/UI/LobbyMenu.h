@@ -47,7 +47,7 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 	void OnCancelMatchmakingButtonClicked();
 
 	UFUNCTION()
-	void OnButtonToggle(bool bIsMatchmaking);
+	void OnButtonToggle(bool bIsMatchmaking, FString Message);
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)

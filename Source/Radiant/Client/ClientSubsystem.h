@@ -10,7 +10,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ClientSubsystem.generated.h"
 
-DECLARE_DELEGATE_OneParam(FToggleQueueButtonsSignature, bool)
+DECLARE_DELEGATE_TwoParams(FToggleQueueButtonsSignature, bool, FString)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabLoginErrorMessage, const PlayFab::FPlayFabCppError&)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabRegisterErrorMessage, const PlayFab::FPlayFabCppError&)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabLobbyErrorMessage, const PlayFab::FPlayFabCppError&)

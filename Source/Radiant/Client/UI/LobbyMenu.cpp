@@ -54,7 +54,7 @@ void ULobbyMenu::OnCancelMatchmakingButtonClicked()
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->CancelMatchmaking();
 }
 
-void ULobbyMenu::OnButtonToggle(bool bIsMatchmaking)
+void ULobbyMenu::OnButtonToggle(bool bIsMatchmaking, FString Message)
 {
 	if(bIsMatchmaking)
 	{
@@ -66,6 +66,7 @@ void ULobbyMenu::OnButtonToggle(bool bIsMatchmaking)
 	{
 		FindMatchButton->SetVisibility(ESlateVisibility::Visible);
 		CancelMatchmakingButton->SetVisibility(ESlateVisibility::Hidden);
+		ErrorMessage->SetText(FText::FromString(Message));
 	}
 }
 
