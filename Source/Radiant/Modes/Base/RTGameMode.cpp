@@ -43,11 +43,6 @@ ARTGameMode::ARTGameMode()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Team Size Argument Passed!"))
 	}
-	static ConstructorHelpers::FClassFinder<AAvatar> PlayerControllerBPClass(TEXT("/Game/Characters/Avatars/DPS/BP_Ninja"));
-	if (PlayerControllerBPClass.Class != NULL)
-	{
-		HeroClass = PlayerControllerBPClass.Class;
-	}
 }
 
 void ARTGameMode::OnPostLogin(AController* NewPlayer)

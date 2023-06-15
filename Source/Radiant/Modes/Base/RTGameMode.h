@@ -28,6 +28,7 @@ public:
 
 	void SpawnAvatar(class ARadiantPlayerController* PlayerController);
 
+	UPROPERTY(EditAnywhere, Category="Gameplay")
 	TSubclassOf<class AAvatar> HeroClass;	
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
