@@ -28,3 +28,6 @@
 - Right click Radiant.uproject -> Generate Visual Studio Project Files
 - Open Radiant.sln and build the project
 - Right click Radiant.uproject -> Switch to unreal engine version and select the source code build
+
+### Known Engine Issues
+- If you resize and then minimize a game built with the engine, it seems to cause a memory leak.
