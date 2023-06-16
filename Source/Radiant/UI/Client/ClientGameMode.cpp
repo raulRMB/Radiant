@@ -4,8 +4,6 @@
 #include "ClientGameMode.h"
 
 #include "ClientSubsystem.h"
-#include "Util/WidgetManager.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
 
 AClientGameMode::AClientGameMode()
 {

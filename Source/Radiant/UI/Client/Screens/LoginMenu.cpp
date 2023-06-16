@@ -3,7 +3,7 @@
 
 #include "LoginMenu.h"
 #include "UI/Client/ClientSubsystem.h"
-#include "Util/WidgetManager.h"
+#include "../WidgetManager.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 #include "Components/TextBlock.h"
@@ -22,7 +22,11 @@ void ULoginMenu::NativeConstruct()
 	ExitButton->OnClicked.AddDynamic(this, &ULoginMenu::QuitGame);
 	UserNameTextBox->SetFocus();
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLoginErrorMessage.AddUObject(this, &ULoginMenu::HandleError);
-	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetChange(this, &ULoginMenu::ResetPage);
+	FWidgetSwitchPage* SwitchPageDelegate = GetGameInstance()->GetSubsystem<UClientSubsystem>()->GetPageChangeDelegate();
+	if(ensureMsgf(SwitchPageDelegate, TEXT("No SwitchPageDelegate found in ClientSubsystem!")))
+	{
+		SwitchPageDelegate->AddUObject(this, &ULoginMenu::ResetPage);
+	}
 }
 
 void ULoginMenu::ResetPage()

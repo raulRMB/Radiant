@@ -3,7 +3,7 @@
 
 #include "RegisterMenu.h"
 #include "UI/Client/ClientSubsystem.h"
-#include "Util/WidgetManager.h"
+#include "../WidgetManager.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 #include "Components/TextBlock.h"
@@ -29,7 +29,11 @@ void URegisterMenu::NativeConstruct()
 	BackButton->OnClicked.AddDynamic(this, &URegisterMenu::OnBackButtonClicked);
 	OnRegisterSuccess.BindUObject(this, &URegisterMenu::OnRegisterSuccessCallback);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnRegisterErrorMessage.AddUObject(this, &URegisterMenu::HandleError);
-	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetChange(this, &URegisterMenu::ResetPage);
+	FWidgetSwitchPage* SwitchPageDelegate = GetGameInstance()->GetSubsystem<UClientSubsystem>()->GetPageChangeDelegate();
+	if(ensureMsgf(SwitchPageDelegate, TEXT("No SwitchPageDelegate found in ClientSubsystem!")))
+	{
+		SwitchPageDelegate->AddUObject(this, &URegisterMenu::ResetPage);
+	}
 }
 
 void URegisterMenu::ResetPage()

@@ -6,8 +6,6 @@
 #include "../ClientSubsystem.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
-#include "Kismet/GameplayStatics.h"
-#include "Util/WidgetManager.h"
 
 
 void ULobbyMenu::NativeConstruct()
@@ -21,7 +19,11 @@ void ULobbyMenu::NativeConstruct()
 	LogoutButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnLogoutButtonClicked);
 	ExitButton->OnClicked.AddDynamic(this, &ULobbyMenu::QuitGame);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLobbyErrorMessage.AddUObject(this, &ULobbyMenu::HandleError);
-	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetChange(this, &ULobbyMenu::ResetPage);
+	FWidgetSwitchPage* SwitchPageDelegate = GetGameInstance()->GetSubsystem<UClientSubsystem>()->GetPageChangeDelegate();
+	if(ensureMsgf(SwitchPageDelegate, TEXT("No SwitchPageDelegate found in ClientSubsystem!")))
+	{
+		SwitchPageDelegate->AddUObject(this, &ULobbyMenu::ResetPage);
+	}
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
 }
 

@@ -40,7 +40,7 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 	void HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	virtual void NativeConstruct() override;
 	void ResetPage();
-
+	
 	UFUNCTION()
 	void OnFindMatchButtonClicked();
 

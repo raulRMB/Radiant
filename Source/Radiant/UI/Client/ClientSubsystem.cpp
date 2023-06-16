@@ -7,9 +7,7 @@
 #include "PlayFabClientDataModels.h"
 #include "PlayFabMultiplayerDataModels.h"
 #include "PlayFabRuntimeSettings.h"
-#include "RadiantGameInstance.h"
-#include "Util/WidgetManager.h"
-#include "Blueprint/UserWidget.h"
+#include "WidgetManager.h"
 #include "Core/PlayFabClientAPI.h"
 #include "Core/PlayFabMultiplayerAPI.h"
 #include "Kismet/GameplayStatics.h"
@@ -205,6 +203,15 @@ void UClientSubsystem::OnGetMatchmakingTicketSuccess(
 	{
 		UE_LOG(LogTemp, Warning, TEXT("User is in queue"));
 	}
+}
+
+FWidgetSwitchPage* UClientSubsystem::GetPageChangeDelegate()
+{
+	if(!WidgetManager)
+		WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
+	if(WidgetManager)
+		return &WidgetManager->OnWidgetSwitchPage;
+	return nullptr;
 }
 
 void UClientSubsystem::OnGetMatchSuccess(const PlayFab::MultiplayerModels::FGetMatchResult& Result)
