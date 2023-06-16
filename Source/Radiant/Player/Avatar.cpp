@@ -9,6 +9,7 @@
 #include "RTPlayerController.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 #include "AI/NavigationSystemBase.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -77,6 +78,11 @@ void AAvatar::CastingTagChanged(FGameplayTag GameplayTag, int I)
 		AbilitySystemComponent->HandleGameplayEvent(BufferAbility.EventTag, &BufferAbility);
 		bShouldActivateBuffer = false;
 	}
+}
+
+void AAvatar::StopMovement()
+{
+	GetCharacterMovement()->StopActiveMovement();
 }
 
 void AAvatar::GameEnding_Implementation(bool Won)
@@ -161,17 +167,15 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	else
 	{
 		Target = nullptr;
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), HitResult.Location);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
-	Destination = HitResult.Location;
-	if((Destination - GetActorLocation()).Size() >= 200)
-	{
-		bAtDestination = false;
-	}
+	
 	if(!AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Uncancellable"))))
 	{
 		S_CancelAllAbilities();
 	}
+	
 }
 
 void AAvatar::CheckShouldAttack()
@@ -554,31 +558,24 @@ void AAvatar::Tick(float DeltaTime)
 	FPS = 1.0/DeltaTime;
 	HandleCamera(DeltaTime);
 	CheckShouldAttack();
-	
-	if(!HasTag("States.Movement.Stopped") && !bIsAttacking)
+
+	if(IsLocallyControlled())
 	{
-		if(Target)
+		if(Target && !bIsAttacking)
 		{
-			Destination = Target->GetActorLocation();
+			UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), Target->GetActorLocation());
 		}
-		if(!bAtDestination && (Destination - GetActorLocation()).Size() >= 200.f)
+		if(bRotationLocked)
 		{
-			FVector dir = Destination - GetActorLocation();
-			AddMovementInput(dir, 1);
-		}
-		else
-		{
-			bAtDestination = true;
+			FRotator CurrentRotation = GetCapsuleComponent()->GetComponentRotation();
+			FRotator Rotation = FMath::Lerp(CurrentRotation, TargetDirection.Rotation(), RotationSpeed * DeltaTime);
+			Rotation.Pitch = CurrentRotation.Pitch;
+			Rotation.Roll = CurrentRotation.Roll;
+			GetController()->SetControlRotation(Rotation);
 		}
 	}
-	if(IsLocallyControlled() && bRotationLocked)
-	{
-		FRotator CurrentRotation = GetCapsuleComponent()->GetComponentRotation();
-		FRotator Rotation = FMath::Lerp(CurrentRotation, TargetDirection.Rotation(), RotationSpeed * DeltaTime);
-		Rotation.Pitch = CurrentRotation.Pitch;
-		Rotation.Roll = CurrentRotation.Roll;
-		GetController()->SetControlRotation(Rotation);
-	}
+	if(HasTag("States.Movement.Stopped") || HasTag("States.Dead"))
+		StopMovement();
 }
 
 void AAvatar::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

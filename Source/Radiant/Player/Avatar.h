@@ -27,6 +27,7 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void GameEnding(bool Won);
+	void StopMovement();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;
