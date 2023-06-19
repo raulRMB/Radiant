@@ -62,6 +62,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Repsawn", ReplicatedUsing = OnRep_MaxRespawnTime)
 	FGameplayAttributeData MaxRespawnTime;
 	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxRespawnTime)
+
+	UPROPERTY(BlueprintReadOnly, Category = "XP", ReplicatedUsing = OnRep_XP)
+	FGameplayAttributeData XP;
+	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, XP)
+
+	UPROPERTY(BlueprintReadOnly, Category = "XP", ReplicatedUsing = OnRep_MaxXP)
+	FGameplayAttributeData MaxXP;
+	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxXP)
 	
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
@@ -96,6 +104,12 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MaxRespawnTime(const FGameplayAttributeData& OldMaxRespawnTime);
+
+	UFUNCTION()
+	virtual void OnRep_XP(const FGameplayAttributeData& OldXP);
+
+	UFUNCTION()
+	virtual void OnRep_MaxXP(const FGameplayAttributeData& OldMaxXP);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

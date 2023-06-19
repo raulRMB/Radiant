@@ -69,6 +69,8 @@ void URTHeroAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, Damage, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, CurrentRespawnTime, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MaxRespawnTime, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, XP, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MaxXP, COND_None, REPNOTIFY_Always);
 }
 
 void URTHeroAttributeSetBase::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
@@ -125,6 +127,16 @@ void URTHeroAttributeSetBase::OnRep_CurrentRespawnTime(const FGameplayAttributeD
 void URTHeroAttributeSetBase::OnRep_MaxRespawnTime(const FGameplayAttributeData& OldMaxRespawnTime)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, MaxRespawnTime, OldMaxRespawnTime);
+}
+
+void URTHeroAttributeSetBase::OnRep_XP(const FGameplayAttributeData& OldXP)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, XP, OldXP);
+}
+
+void URTHeroAttributeSetBase::OnRep_MaxXP(const FGameplayAttributeData& OldMaxXP)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, MaxXP, OldMaxXP);
 }
 
 void URTHeroAttributeSetBase::UpdateMovementSpeed()

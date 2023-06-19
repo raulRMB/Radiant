@@ -123,6 +123,7 @@ public:
 	void AttackMove(const FInputActionValue& Value);
 	
 	virtual void PossessedBy(AController* NewController) override;
+	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	virtual void OnRep_PlayerState() override;
 
 	virtual ETeamId GetTeamId() const override { return GetPlayerState<ARTPlayerState>()->GetTeamId(); }
