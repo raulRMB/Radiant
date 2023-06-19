@@ -26,6 +26,11 @@ void ARTHUD::ShowEndScreen(bool won)
 	InfoPanel->ShowEndScreen(won);
 }
 
+void ARTHUD::UpdateAbilities(TArray<UAbilityDataAsset*> Abilities)
+{
+	InfoPanel->UpdateAbilities(Abilities);
+}
+
 void ARTHUD::ToggleSettings(bool on)
 {
 	if(on)

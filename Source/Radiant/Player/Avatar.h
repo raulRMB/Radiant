@@ -80,7 +80,7 @@ public:
 	class USpringArmComponent* SpringArm;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
-	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
+	TArray<class UAbilityDataAsset*> Abilities;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayEffect>> InitialEffects;
@@ -126,6 +126,7 @@ public:
 	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	virtual void OnRep_PlayerState() override;
+	void SetHUDIcons();
 
 	virtual ETeamId GetTeamId() const override { return GetPlayerState<ARTPlayerState>()->GetTeamId(); }
 

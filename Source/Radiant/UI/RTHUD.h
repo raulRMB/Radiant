@@ -29,6 +29,7 @@ class RADIANT_API ARTHUD : public AHUD
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 public:
+	void UpdateAbilities(TArray<class UAbilityDataAsset*> Abilities);
 	void ShowEndScreen(bool won);
 	UFUNCTION(BlueprintCallable, Exec)
 	void ToggleSettings(bool on);

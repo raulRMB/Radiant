@@ -135,7 +135,7 @@ public:
 	void OnHeroDeath(uint32 RedScore, uint32 BlueScore);
 
 	bool GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining, float& CooldownDuration);
-
+	void UpdateAbilities(TArray<class UAbilityDataAsset*> AbilityData);
 	float GetCooldownPercent(const float TimeRemaining, const float CooldownDuration);
 	void ShowEndScreen(bool bWon);
 	void HideLoadScreen();

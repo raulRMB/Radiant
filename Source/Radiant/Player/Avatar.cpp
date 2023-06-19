@@ -12,6 +12,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Data/AbilityDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/Abilities/RTAbility.h"
@@ -122,6 +123,7 @@ void AAvatar::BeginPlay()
 	}
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::SetFPS, 0.3f, true);
+	SetHUDIcons();
 }
 
 void AAvatar::GameReady_Implementation()
@@ -320,13 +322,24 @@ void AAvatar::OnRep_PlayerState()
 	}
 }
 
+void AAvatar::SetHUDIcons()
+{
+	if(GetLocalRole() == ROLE_AutonomousProxy)
+	{
+		ARTPlayerController* PC = GetController<ARTPlayerController>();
+		if(PC)
+		{
+			PC->GetHUD<ARTHUD>()->UpdateAbilities(Abilities);
+		}
+	}
+}
+
 void AAvatar::GiveInitialAbilities()
 {
-	for(auto Ability : Abilities)
+	for(auto AbilityData : Abilities)
 	{
-		AbilitySystemComponent->GiveAbility(Ability);
+		AbilitySystemComponent->GiveAbility(AbilityData->Ability);
 	}
-	
 	GiveDeathAbilities();
 }
 

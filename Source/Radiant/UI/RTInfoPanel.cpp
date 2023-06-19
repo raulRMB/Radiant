@@ -8,6 +8,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Data/AbilityDataAsset.h"
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
@@ -62,6 +63,25 @@ void URTInfoPanel::UpdateProperties(float DeltaTime)
 FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 {
 	return FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHealth, MaxHealth));
+}
+
+void URTInfoPanel::UpdateAbilities(TArray<UAbilityDataAsset*> AbilityData)
+{
+	int32 iconCounter = 0;
+	for(int i = 0; i < AbilityData.Num(); i++)
+	{
+		if(AbilityData[i]->IsAuto)
+		{
+			continue;
+		}
+		if(iconCounter < Abilities.Num())
+		{
+			Abilities[iconCounter].AbilityImage->SetBrushFromTexture(AbilityData[i]->Icon);
+			Abilities[iconCounter].AbilityImage->SetToolTipText(AbilityData[i]->Tooltip);
+			Abilities[iconCounter].MaskImage->SetToolTipText(AbilityData[i]->Tooltip);
+			iconCounter++;
+		}
+	}
 }
 
 void URTInfoPanel::Init()
