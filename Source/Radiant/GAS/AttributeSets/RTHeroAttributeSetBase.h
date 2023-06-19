@@ -70,6 +70,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "XP", ReplicatedUsing = OnRep_MaxXP)
 	FGameplayAttributeData MaxXP;
 	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxXP)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_Level)
+	FGameplayAttributeData Level;
+	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Level)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_MaxLevel)
+	FGameplayAttributeData MaxLevel;
+	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxLevel)
 	
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
@@ -110,6 +118,12 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MaxXP(const FGameplayAttributeData& OldMaxXP);
+
+	UFUNCTION()
+	virtual void OnRep_Level(const FGameplayAttributeData& OldLevel);
+
+	UFUNCTION()
+	virtual void OnRep_MaxLevel(const FGameplayAttributeData& OldMaxLevel);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

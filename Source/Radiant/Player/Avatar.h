@@ -124,6 +124,7 @@ public:
 	
 	virtual void PossessedBy(AController* NewController) override;
 	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
+	void OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	virtual void OnRep_PlayerState() override;
 
 	virtual ETeamId GetTeamId() const override { return GetPlayerState<ARTPlayerState>()->GetTeamId(); }

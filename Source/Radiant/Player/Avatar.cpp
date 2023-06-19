@@ -286,6 +286,14 @@ void AAvatar::OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData)
 	}
 }
 
+void AAvatar::OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	if(OverHeadInfoBar)
+	{
+		OverHeadInfoBar->SetLevel(OnAttributeChangeData.NewValue);
+	}
+}
+
 void AAvatar::ApplyInitialEffects()
 {
 	for(auto Effect : InitialEffects)
@@ -307,6 +315,7 @@ void AAvatar::OnRep_PlayerState()
 		AttributeSetBase = PS->GetAttributeSetBase();
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AAvatar::OnHealthChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetXPAttribute()).AddUObject(this, &AAvatar::OnXPChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetLevelAttribute()).AddUObject(this, &AAvatar::OnLevelChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AAvatar::OnManaChanged);
 	}
 }

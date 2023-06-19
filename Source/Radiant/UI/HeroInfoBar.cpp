@@ -5,6 +5,7 @@
 
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 
 void UHeroInfoBar::NativeConstruct()
 {
@@ -37,3 +38,7 @@ void UHeroInfoBar::SetXPPercent(const float Percent)
 	MaterialInstance->SetScalarParameterValue("Percent", Percent);
 }
 
+void UHeroInfoBar::SetLevel(int32 Value)
+{
+	Level->SetText(FText::FromString(FString::FromInt(Value)));
+}

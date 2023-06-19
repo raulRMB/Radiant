@@ -20,6 +20,8 @@ class RADIANT_API UHeroInfoBar : public UUserWidget
 	class UProgressBar* ManaBar;
 	UPROPERTY(meta = (BindWidget))
 	class UImage* XPBar;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Level;
 public:
 	UMaterialInstanceDynamic* MaterialInstance;
 
@@ -29,5 +31,6 @@ public:
 	void SetManaPercent(float Percent);
 	void SetHealthColor(const FLinearColor& Color);
 	void SetXPPercent(float Percent);
+	void SetLevel(int32 Value);
 	virtual void NativeConstruct() override;
 };

@@ -40,6 +40,7 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSetBase->InitCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
 	AttributeSetBase->InitXP(0.f);
 	AttributeSetBase->InitMaxXP(100.f);
+	AttributeSetBase->InitLevel(1.f);
 }
 
 void ARTPlayerState::SetPlayerStats()
