@@ -31,7 +31,8 @@ void UGARespawn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(TagContainer);
 	for(auto Tag : TagContainer)
 	{
-		GetAbilitySystemComponentFromActorInfo()->UpdateTagMap(Tag, -INT_MAX);
+		GetAbilitySystemComponentFromActorInfo()->SetLooseGameplayTagCount(Tag, 0);
+		GetAbilitySystemComponentFromActorInfo()->SetReplicatedLooseGameplayTagCount(Tag, 0);
 	}
 	EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
 }
