@@ -5,6 +5,7 @@
 
 #include "CaptureAreaBar.h"
 #include "RTInfoPanel.h"
+#include "Menu/LevelUp.h"
 #include "Util/Util.h"
 
 void ARTHUD::BeginPlay()
@@ -16,6 +17,9 @@ void ARTHUD::BeginPlay()
 	SettingsPanel = CreateWidget<UUserWidget>(GetWorld(), SettingsPanelClass);
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
 	SettingsPanel->AddToViewport();
+	LevelUpPanel = CreateWidget<UUserWidget>(GetWorld(), LevelUpClass);
+	LevelUpPanel->SetVisibility(ESlateVisibility::Hidden);
+	LevelUpPanel->AddToViewport();
 	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
 	check(CaptureAreaBar)
 	CaptureAreaBar->AddToViewport();
@@ -52,4 +56,10 @@ void ARTHUD::HideLoadScreen()
 void ARTHUD::SetFPS(float FPS)
 {
 	InfoPanel->SetFPS(FPS);
+}
+
+void ARTHUD::ShowLevelUpScreen()
+{
+	Cast<ULevelUp>(LevelUpPanel)->RefreshList();
+	LevelUpPanel->SetVisibility(ESlateVisibility::Visible);
 }

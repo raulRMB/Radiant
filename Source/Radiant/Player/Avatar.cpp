@@ -86,6 +86,11 @@ void AAvatar::StopMovement()
 	GetCharacterMovement()->StopActiveMovement();
 }
 
+void AAvatar::LevelUp_Implementation(float GetLevel)
+{
+	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->ShowLevelUpScreen();
+}
+
 void AAvatar::GameEnding_Implementation(bool Won)
 {
 	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->ShowEndScreen(Won);

@@ -60,6 +60,9 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 		{
 			SetLevel(GetLevel() + 1);
 			SetXP(GetXP() - GetMaxXP());
+			SetMaxXP(GetMaxXP() * 1.3f);
+			AAvatar* Hero = Cast<AAvatar>(GetActorInfo()->AvatarActor);
+			Hero->LevelUp(GetLevel());
 		}
 	}
 }

@@ -29,6 +29,9 @@ public:
 	void GameEnding(bool Won);
 	void StopMovement();
 
+	UFUNCTION(Client, Reliable)
+	void LevelUp(float GetLevel);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;
 	
