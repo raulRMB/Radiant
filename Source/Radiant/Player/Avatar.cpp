@@ -66,7 +66,8 @@ void AAvatar::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGa
 	if (OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Casting"))))
 	{
 		bShouldActivateBuffer = true;
-	} else if(!GameplayAbility->GetName().Contains("BasicAttack"))
+	}
+	else if(!GameplayAbility->GetName().Contains("BasicAttack"))
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), FailedSound, 0.5, 1.5); 
 	}
@@ -174,23 +175,23 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	else
 	{
 		Target = nullptr;
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), HitResult.Location);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
-	
 	if(!AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Uncancellable"))))
 	{
 		S_CancelAllAbilities();
 	}
-	
+
+	FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.PathTo"));
+	CastAbility(Tag);
 }
 
-void AAvatar::CheckShouldAttack()
+bool AAvatar::CheckShouldAttack()
 {
-	if(!Target)
+	if(!Target || bShouldActivateBuffer)
 	{
 		bIsAttacking = false;
-		return;
+		return false;
 	}
 	
 	FVector dir = Target->GetActorLocation() - GetActorLocation();
@@ -206,11 +207,9 @@ void AAvatar::CheckShouldAttack()
 		GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
 	}
 	
-	if(IsLocallyControlled() && bIsAttacking)
-	{
-		FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack"));
-		CastAbility(Tag);
-	}
+	BasicAttack();
+
+	return true;
 }
 
 void AAvatar::CastAbility(FGameplayTag& AbilityTag)
@@ -275,7 +274,6 @@ void AAvatar::PossessedBy(AController* NewController)
 		
 		AttributeSetBase = PS->GetAttributeSetBase();
 	}
-
 	GiveInitialAbilities();
 }
 
@@ -283,7 +281,6 @@ void AAvatar::OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData)
 {
 	if(OverHeadInfoBar)
 	{
-		RTLOG("XPCHANGED")
 		if(auto PS = GetPlayerState<ARTPlayerState>())
 		{
 			float CurrentXP = PS->GetAttributeSetBase()->GetXP();
@@ -465,6 +462,16 @@ FVector AAvatar::GetHalfHeightVector()
 	return FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 }
 
+void AAvatar::BasicAttack()
+{
+	if(IsLocallyControlled() && bIsAttacking)
+	{
+		FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack"));
+		FGameplayEventData EventData;		
+		GetAbilitySystemComponent()->HandleGameplayEvent(Tag, &EventData);
+	}
+}
+
 UAbilitySystemComponent* AAvatar::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
@@ -599,14 +606,9 @@ void AAvatar::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	FPS = 1.0/DeltaTime;
 	HandleCamera(DeltaTime);
-	CheckShouldAttack();
 
 	if(IsLocallyControlled())
 	{
-		if(Target && !bIsAttacking)
-		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), Target->GetActorLocation());
-		}
 		if(bRotationLocked)
 		{
 			FRotator CurrentRotation = GetCapsuleComponent()->GetComponentRotation();

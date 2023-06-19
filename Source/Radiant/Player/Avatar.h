@@ -108,8 +108,8 @@ protected:
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
-	void CheckShouldAttack();
 public:
+	bool CheckShouldAttack();
 	void ApplyInitialEffects();
 	void CastAbility(FGameplayTag& AbilityTag);
 	
@@ -181,13 +181,15 @@ public:
 
 	void SetAllHealthBarColors();
 
+	bool HasTag(FString Tag);
 	FVector GetHalfHeightVector();
+
+	void BasicAttack();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual TArray<TSubclassOf<UGameplayAbility>> GetDeathAbilities() const override;
 private:
 	
-	bool HasTag(FString Tag);
 	void HandleCamera(float DeltaSeconds);
 
 	virtual void Restart() override;

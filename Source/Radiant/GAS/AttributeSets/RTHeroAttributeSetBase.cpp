@@ -27,8 +27,8 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 				Cast<ARTGameState>(GetWorld()->GetGameState())->OnHeroDeath(Hero);
 			}
 
-			Hero->Die();
 			Hero->StopMovement();
+			Hero->Die();
 			
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.State.Death")));

@@ -5,6 +5,8 @@
 #include "Avatar.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Modes/Base/RTGameMode.h"
 #include "Net/UnrealNetwork.h"
 #include "Util/Util.h"

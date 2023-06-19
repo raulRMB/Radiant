@@ -58,7 +58,7 @@ public:
 	void S_SetPlayerStart(class ARTPlayerStart* NewPlayerStart);
 
 	class ARTPlayerStart* GetPlayerStart() const { return PlayerStart; }
-protected:
+protected:	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void BeginPlay() override;
