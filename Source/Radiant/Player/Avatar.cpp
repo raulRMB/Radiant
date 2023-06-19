@@ -276,7 +276,13 @@ void AAvatar::OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData)
 {
 	if(OverHeadInfoBar)
 	{
-		OverHeadInfoBar->SetXPPercent(OnAttributeChangeData.NewValue);
+		RTLOG("XPCHANGED")
+		if(auto PS = GetPlayerState<ARTPlayerState>())
+		{
+			float CurrentXP = PS->GetAttributeSetBase()->GetXP();
+			float MaxXP = PS->GetAttributeSetBase()->GetMaxXP();
+			OverHeadInfoBar->SetXPPercent(CurrentXP / MaxXP);
+		}
 	}
 }
 
@@ -300,7 +306,7 @@ void AAvatar::OnRep_PlayerState()
 		
 		AttributeSetBase = PS->GetAttributeSetBase();
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AAvatar::OnHealthChanged);
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AAvatar::OnXPChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetXPAttribute()).AddUObject(this, &AAvatar::OnXPChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AAvatar::OnManaChanged);
 	}
 }
