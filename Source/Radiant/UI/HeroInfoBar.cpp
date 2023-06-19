@@ -13,6 +13,7 @@ void UHeroInfoBar::NativeConstruct()
 	{
 		MaterialInstance = UMaterialInstanceDynamic::Create(Interface, this);
 		XPBar->SetBrushResourceObject(MaterialInstance);
+		MaterialInstance->SetScalarParameterValue("Percent", 0);
 	}
 }
 
