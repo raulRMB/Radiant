@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ADPCMAudioInfo.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/SaveGame.h"
+#include "EnhancedInputSubsystems.h"
 #include "RTPlayerController.generated.h"
 
 /**
@@ -56,12 +59,14 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void S_SetPlayerStart(class ARTPlayerStart* NewPlayerStart);
-
+	void SaveUserSettings();
+	void SaveUserSettingsDelay();
 	class ARTPlayerStart* GetPlayerStart() const { return PlayerStart; }
 protected:	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void BeginPlay() override;
+	void LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem);
 	
 	virtual void SetupInputComponent() override;
 

@@ -5,10 +5,13 @@
 #include "Avatar.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameMode.h"
 #include "Net/UnrealNetwork.h"
+#include "Util/UserSettings.h"
 #include "Util/Util.h"
 
 void ARTPlayerController::PlayerLoaded_Implementation()
@@ -36,17 +39,51 @@ void ARTPlayerController::BeginPlay()
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(InputMode);
-	
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(MappingContext, 0);
+		LoadUserSettings(Subsystem);
+	}
+}
+
+void ARTPlayerController::LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem)
+{
+	if(UGameplayStatics::DoesSaveGameExist("UserSettings", 0))
+	{
+		UUserSettings* Save = Cast<UUserSettings>(UGameplayStatics::LoadGameFromSlot("UserSettings", 0));
+		for(FEnhancedActionKeyMapping& Mapping : Save->Mappings)
+		{
+			Subsystem->AddPlayerMappedKey(Mapping.PlayerMappableOptions.Name, Mapping.Key);
+		}
+	}
+}
+
+void ARTPlayerController::SaveUserSettingsDelay()
+{
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &ARTPlayerController::SaveUserSettings, 0.2f, false);
+}
+
+void ARTPlayerController::SaveUserSettings()
+{
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		UUserSettings* Save;
+		if(UGameplayStatics::DoesSaveGameExist("UserSettings", 0)) {
+			Save = Cast<UUserSettings>(UGameplayStatics::LoadGameFromSlot("UserSettings", 0));
+		}
+		else
+		{
+			Save = Cast<UUserSettings>(UGameplayStatics::CreateSaveGameObject(UUserSettings::StaticClass()));
+		}
+		Save->Mappings = Subsystem->GetAllPlayerMappableActionKeyMappings();
+		UGameplayStatics::SaveGameToSlot(Save, "UserSettings", 0);
 	}
 }
 
 void ARTPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &ARTPlayerController::OnClick);
