@@ -596,6 +596,17 @@ void AAvatar::AttackMove(const FInputActionValue& Value)
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackMoveSystemTemplate, HitResult.Location);
 }
 
+void AAvatar::MoveCamera(FVector Dir)
+{
+	if(!bCameraLocked)
+	{
+		FVector CameraMove = FVector::ZeroVector;
+		CameraMove += Dir * CameraMovementSpeed * GetWorld()->DeltaTimeSeconds;
+		CameraMove = CameraMove.RotateAngleAxis(UnlockedCamera->GetComponentRotation().Yaw + 90, FVector::UpVector);
+		UnlockedCamera->SetWorldLocation(UnlockedCamera->GetComponentLocation() + CameraMove);
+	}
+}
+
 void AAvatar::HandleCamera(float DeltaSeconds)
 {
 	if(!bCameraLocked)

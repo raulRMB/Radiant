@@ -50,9 +50,13 @@ class RADIANT_API ARTPlayerController : public APlayerController
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* AbilitySixAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
+	class UInputAction* CameraMoveAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
+
 public:
 	UFUNCTION(Server, Reliable)
 	void PlayerLoaded();
@@ -102,4 +106,7 @@ protected:
 
 	UFUNCTION()
 	void AttackMove(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void CameraMove(const FInputActionValue& Value);
 }; 

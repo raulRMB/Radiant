@@ -129,7 +129,8 @@ public:
 	void HoldCamera(const FInputActionValue& Value);
 	void ReleaseHoldCamera(const FInputActionValue& InputActionValue);
 	void AttackMove(const FInputActionValue& Value);
-	
+	void MoveCamera(FVector Dir);
+
 	virtual void PossessedBy(AController* NewController) override;
 	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData);

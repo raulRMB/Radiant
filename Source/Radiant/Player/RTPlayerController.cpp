@@ -97,6 +97,7 @@ void ARTPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this, &ARTPlayerController::HoldCamera);
 		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &ARTPlayerController::ReleaseHoldCamera);
 		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &ARTPlayerController::AttackMove);
+		EnhancedInputComponent->BindAction(CameraMoveAction, ETriggerEvent::Triggered, this, &ARTPlayerController::CameraMove);
 	}
 }
 
@@ -153,4 +154,9 @@ void ARTPlayerController::ReleaseHoldCamera(const FInputActionValue& Value)
 void ARTPlayerController::AttackMove(const FInputActionValue& Value)
 {
 	GetPawn<AAvatar>()->AttackMove(Value);
+}
+
+void ARTPlayerController::CameraMove(const FInputActionValue& Value)
+{
+	GetPawn<AAvatar>()->MoveCamera(Value.Get<FVector>());
 }
