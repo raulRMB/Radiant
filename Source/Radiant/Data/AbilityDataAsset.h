@@ -18,7 +18,7 @@ public:
 	FText Name;
 
 	UPROPERTY(EditAnywhere)
-	bool IsAuto;
+	bool IgnoreHud;
 
 	UPROPERTY(EditAnywhere)
 	FText Tooltip;

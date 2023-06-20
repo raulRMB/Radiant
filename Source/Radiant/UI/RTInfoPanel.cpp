@@ -70,7 +70,7 @@ void URTInfoPanel::UpdateAbilities(TArray<UAbilityDataAsset*> AbilityData)
 	int32 iconCounter = 0;
 	for(int i = 0; i < AbilityData.Num(); i++)
 	{
-		if(AbilityData[i]->IsAuto)
+		if(AbilityData[i]->IgnoreHud)
 		{
 			continue;
 		}
