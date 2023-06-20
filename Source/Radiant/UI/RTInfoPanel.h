@@ -121,8 +121,10 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	
 	TArray<FUIAbility> Abilities;
 	UPROPERTY(EditAnywhere, Category="Cooldowns")
-	TArray<FGameplayTagContainer> Tags;
+	TArray<FGameplayTag> CooldownTags;
 public:
+	void SetCooldownTags(TArray<FGameplayTag> NewCooldownTags);
+	
 	void SetAbilityCoolDown(EAbilityID Abilty, const float Percent);
 	void AbilityCooldowns();
 	void UpdateProperties(float DeltaTime);
@@ -134,7 +136,7 @@ public:
 	UFUNCTION()
 	void OnHeroDeath(uint32 RedScore, uint32 BlueScore);
 
-	bool GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining, float& CooldownDuration);
+	bool GetCooldownRemainingForTag(FGameplayTag CooldownTags, float& TimeRemaining, float& CooldownDuration);
 	void UpdateAbilities(TArray<class UAbilityDataAsset*> AbilityData);
 	float GetCooldownPercent(const float TimeRemaining, const float CooldownDuration);
 	void ShowEndScreen(bool bWon);

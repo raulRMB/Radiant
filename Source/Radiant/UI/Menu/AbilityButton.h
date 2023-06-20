@@ -28,7 +28,13 @@ class RADIANT_API UAbilityButton : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Tooltip;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* Button;
+
 public:
 	void SetAbilityData(class UAbilityDataAsset* Data);
-	
+private:
+	UFUNCTION()
+	void OnButtonClicked();
 };

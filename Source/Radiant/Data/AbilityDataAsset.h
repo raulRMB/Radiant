@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "AbilityDataAsset.generated.h"
 
@@ -28,5 +29,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UGameplayAbility> Ability;
-	
+
+	UPROPERTY(EditAnywhere)
+	FGameplayTag CooldownTag;
 };

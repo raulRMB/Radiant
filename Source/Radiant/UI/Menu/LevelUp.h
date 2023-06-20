@@ -20,7 +20,9 @@ class RADIANT_API ULevelUp : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* AbilityList;
-	
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UAbilityButton> AbilityButtonClass;
 public:
 	void RefreshList();
 	UPROPERTY(EditAnywhere)

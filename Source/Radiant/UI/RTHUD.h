@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "RTHUD.generated.h"
 
+DECLARE_DELEGATE_OneParam(FGiveAbilityFromButtonSignature, class UAbilityDataAsset*)
+
 /**
  * 
  */
@@ -32,6 +34,8 @@ class RADIANT_API ARTHUD : public AHUD
 	UUserWidget* LevelUpPanel;
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
+
+	FGiveAbilityFromButtonSignature GiveAbilityFromButton;
 public:
 	void UpdateAbilities(TArray<class UAbilityDataAsset*> Abilities);
 	void ShowEndScreen(bool won);

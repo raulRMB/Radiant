@@ -27,6 +27,8 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void GameEnding(bool Won);
+	UFUNCTION(Client, Reliable)
+	void S_StopMovement();
 	void StopMovement();
 
 	UFUNCTION(Client, Reliable)
@@ -82,7 +84,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class USpringArmComponent* SpringArm;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
+	UPROPERTY(Replicated, BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<class UAbilityDataAsset*> Abilities;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
@@ -134,6 +136,10 @@ public:
 	virtual ETeamId GetTeamId() const override { return GetPlayerState<ARTPlayerState>()->GetTeamId(); }
 
 	void GiveInitialAbilities();
+	UFUNCTION(Server, Reliable)
+	void S_GiveAbility(class UAbilityDataAsset* AbilityDataAsset);
+	UFUNCTION(Client, Reliable)
+	void C_GiveAbility();
 
 	UFUNCTION(Server, Reliable)
 	void S_CancelAllAbilities();

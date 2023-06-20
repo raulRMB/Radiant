@@ -21,7 +21,7 @@ void ULevelUp::RefreshList()
 	AbilityList->ClearChildren();
 	for(auto Ability : Abilities)
 	{
-		UAbilityButton* Button = CreateWidget<UAbilityButton>(GetWorld(), UAbilityButton::StaticClass());
+		UAbilityButton* Button = CreateWidget<UAbilityButton>(GetWorld(), AbilityButtonClass);
 		if(Ability && Button)
 		{
 			Button->SetAbilityData(Ability);

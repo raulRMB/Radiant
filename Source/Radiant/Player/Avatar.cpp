@@ -82,6 +82,11 @@ void AAvatar::CastingTagChanged(FGameplayTag GameplayTag, int I)
 	}
 }
 
+void AAvatar::S_StopMovement_Implementation()
+{
+	StopMovement();
+}
+
 void AAvatar::StopMovement()
 {
 	GetCharacterMovement()->StopActiveMovement();
@@ -129,6 +134,15 @@ void AAvatar::BeginPlay()
 	}
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::SetFPS, 0.3f, true);
+
+	if(auto PC = Cast<ARTPlayerController>(GetController()))
+	{
+		if(auto HUD = PC->GetHUD<ARTHUD>())
+		{
+			HUD->GiveAbilityFromButton.BindUObject(this, &AAvatar::S_GiveAbility);
+		}
+	}
+	
 	SetHUDIcons();
 }
 
@@ -343,6 +357,21 @@ void AAvatar::GiveInitialAbilities()
 		AbilitySystemComponent->GiveAbility(AbilityData->Ability);
 	}
 	GiveDeathAbilities();
+}
+
+void AAvatar::C_GiveAbility_Implementation()
+{
+	SetHUDIcons();
+}
+
+void AAvatar::S_GiveAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
+{
+	if(HasAuthority())
+	{
+		Abilities.AddUnique(AbilityDataAsset);
+		AbilitySystemComponent->GiveAbility(AbilityDataAsset->Ability);
+		C_GiveAbility();
+	}
 }
 
 void AAvatar::S_CancelAllAbilities_Implementation()
@@ -625,5 +654,7 @@ void AAvatar::Tick(float DeltaTime)
 void AAvatar::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AAvatar, Abilities);
 }
 

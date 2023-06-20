@@ -23,6 +23,11 @@ void URTInfoPanel::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 	UpdateProperties(DeltaTime);
 }
 
+void URTInfoPanel::SetCooldownTags(TArray<FGameplayTag> NewCooldownTags)
+{
+	CooldownTags = NewCooldownTags;
+}
+
 void URTInfoPanel::SetAbilityCoolDown(EAbilityID Abilty, const float Percent)
 {
 	Abilities[static_cast<int>(Abilty)].MaterialInstance->SetScalarParameterValue("Percent", Percent);
@@ -30,12 +35,12 @@ void URTInfoPanel::SetAbilityCoolDown(EAbilityID Abilty, const float Percent)
 
 void URTInfoPanel::AbilityCooldowns()
 {
-	for(int i = 0; i < Tags.Num(); i++)
+	for(int i = 0; i < CooldownTags.Num(); i++)
 	{
 		float TimeRemaining = 0.f;
 		float CooldownDuration = 0.f;
 		Abilities[i].SetOn(false);
-		if(GetCooldownRemainingForTag(Tags[i], TimeRemaining, CooldownDuration))
+		if(GetCooldownRemainingForTag(CooldownTags[i], TimeRemaining, CooldownDuration))
 		{
 			float Percent = GetCooldownPercent(TimeRemaining, CooldownDuration);
 			SetAbilityCoolDown(static_cast<EAbilityID>(i), Percent);
@@ -68,6 +73,7 @@ FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 void URTInfoPanel::UpdateAbilities(TArray<UAbilityDataAsset*> AbilityData)
 {
 	int32 iconCounter = 0;
+	TArray<FGameplayTag> NewCooldownTags;
 	for(int i = 0; i < AbilityData.Num(); i++)
 	{
 		if(AbilityData[i]->IgnoreHud)
@@ -81,7 +87,9 @@ void URTInfoPanel::UpdateAbilities(TArray<UAbilityDataAsset*> AbilityData)
 			Abilities[iconCounter].MaskImage->SetToolTipText(AbilityData[i]->Tooltip);
 			iconCounter++;
 		}
+		NewCooldownTags.AddUnique(AbilityData[i]->CooldownTag);
 	}
+	SetCooldownTags(NewCooldownTags);
 }
 
 void URTInfoPanel::Init()
@@ -107,17 +115,19 @@ void URTInfoPanel::OnHeroDeath(uint32 RedScore, uint32 BlueScore)
 	RedTeam->SetText(FText::FromString(FString::FromInt(RedScore)));
 	BlueTeam->SetText(FText::FromString(FString::FromInt(BlueScore)));
 }
-bool URTInfoPanel::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float& TimeRemaining,
+bool URTInfoPanel::GetCooldownRemainingForTag(FGameplayTag CooldownTag, float& TimeRemaining,
 	float& CooldownDuration)
 {
 	URTAbilitySystemComponent* AbilitySystemComponent = Cast<URTAbilitySystemComponent>(GetOwningPlayerState<ARTPlayerState>()->GetAbilitySystemComponent());
 	
-	if (AbilitySystemComponent && CooldownTags.Num() > 0)
+	if (AbilitySystemComponent && CooldownTag.IsValid())
 	{
 		TimeRemaining = 0.f;
 		CooldownDuration = 0.f;
 
-		FGameplayEffectQuery const Query = FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags(CooldownTags);
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(CooldownTag);
+		FGameplayEffectQuery const Query = FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags(TagContainer);
 		TArray< TPair<float, float> > DurationAndTimeRemaining = AbilitySystemComponent->GetActiveEffectsTimeRemainingAndDuration(Query);
 		if (DurationAndTimeRemaining.Num() > 0)
 		{
