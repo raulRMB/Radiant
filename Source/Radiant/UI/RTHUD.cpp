@@ -6,6 +6,7 @@
 #include "CaptureAreaBar.h"
 #include "RTInfoPanel.h"
 #include "Menu/LevelUp.h"
+#include "Menu/Settings.h"
 #include "Util/Util.h"
 
 void ARTHUD::BeginPlay()
@@ -37,6 +38,7 @@ void ARTHUD::UpdateAbilities(TArray<UAbilityDataAsset*> Abilities)
 
 void ARTHUD::ToggleSettings(bool on)
 {
+	Cast<USettings>(SettingsPanel)->RefreshKeybindList();
 	if(on)
 	{
 		SettingsPanel->SetVisibility(ESlateVisibility::Visible);
