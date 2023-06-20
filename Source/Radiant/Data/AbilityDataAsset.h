@@ -28,7 +28,7 @@ public:
 	UTexture2D* Icon;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UGameplayAbility> Ability;
+	TSubclassOf<class URTAbility> Ability;
 
 	UPROPERTY(EditAnywhere)
 	FGameplayTag CooldownTag;

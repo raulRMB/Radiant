@@ -141,3 +141,8 @@ void URTAbility::GetMissingTags(const FGameplayTagContainer& Tags1, const FGamep
 		}
 	}
 }
+
+FGameplayTag URTAbility::GetTriggerTag() const
+{
+	return AbilityTriggers[0].TriggerTag;
+}

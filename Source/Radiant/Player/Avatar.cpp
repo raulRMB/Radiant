@@ -177,6 +177,16 @@ FHitResult AAvatar::GetMousePositionInWorld() const
 	return FHitResult(PlayerHitResult.GetActor(), PlayerHitResult.GetComponent(), GroundHitResult.Location, GroundHitResult.ImpactNormal);
 }
 
+void AAvatar::OnRep_Abilities()
+{
+	FGameplayTag ActivationTag = Cast<URTAbility>(Abilities.Last()->Ability.GetDefaultObject())->GetTriggerTag();
+	if(OwnedAbilityTags.Num() <= 6)
+	{
+		OwnedAbilityTags.Add(ActivationTag);
+	}
+	SetHUDIcons();
+}
+
 void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 {
 	FHitResult HitResult = GetMousePositionInWorld();
@@ -243,38 +253,55 @@ void AAvatar::CastAbility(FGameplayTag& AbilityTag)
 	const FGameplayTag EventTag = AbilityTag;
 
 	BufferAbility = EventData;
-	
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
-	CastAbility(AbilityTags[0]);
+	if(OwnedAbilityTags.Num() > 0)
+	{
+		CastAbility(OwnedAbilityTags[0]);
+	}
 }
 
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
-	CastAbility(AbilityTags[1]);
+	if(OwnedAbilityTags.Num() > 1)
+	{
+		CastAbility(OwnedAbilityTags[1]);
+	}
 }
 
 void AAvatar::OnAbilityThree(const FInputActionValue& Value)
 {
-	CastAbility(AbilityTags[2]);
+	if(OwnedAbilityTags.Num() > 2)
+	{
+		CastAbility(OwnedAbilityTags[2]);
+	}
 }
 
 void AAvatar::OnAbilityFour(const FInputActionValue& Value)
 {
-	CastAbility(AbilityTags[3]);
+	if(OwnedAbilityTags.Num() > 3)
+	{
+		CastAbility(OwnedAbilityTags[3]);
+	}
 }
 
 void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 {
-	CastAbility(AbilityTags[4]);
+	if(OwnedAbilityTags.Num() > 4)
+	{
+		CastAbility(OwnedAbilityTags[4]);
+	}
 }
 
 void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
-	CastAbility(AbilityTags[5]);
+	if(OwnedAbilityTags.Num() > 5)
+	{
+		CastAbility(OwnedAbilityTags[5]);
+	}
 }
 
 void AAvatar::PossessedBy(AController* NewController)
@@ -354,7 +381,8 @@ void AAvatar::GiveInitialAbilities()
 {
 	for(auto AbilityData : Abilities)
 	{
-		AbilitySystemComponent->GiveAbility(AbilityData->Ability);
+		FGameplayAbilitySpec AbilitySpec = AbilityData->Ability.GetDefaultObject();
+		AbilitySystemComponent->GiveAbility(AbilitySpec);
 	}
 	GiveDeathAbilities();
 }
@@ -368,9 +396,15 @@ void AAvatar::S_GiveAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
 {
 	if(HasAuthority())
 	{
+		if(OwnedAbilityTags.Contains(AbilityDataAsset->Ability.GetDefaultObject()->GetTriggerTag()))
+		{
+			return;
+		}
+		RTLOG("Ability Given");
+		OwnedAbilityTags.AddUnique(AbilityDataAsset->Ability.GetDefaultObject()->GetTriggerTag());
 		Abilities.AddUnique(AbilityDataAsset);
-		AbilitySystemComponent->GiveAbility(AbilityDataAsset->Ability);
-		C_GiveAbility();
+		FGameplayAbilitySpec AbilitySpec = AbilityDataAsset->Ability.GetDefaultObject();
+		AbilitySystemComponent->GiveAbility(AbilitySpec);
 	}
 }
 

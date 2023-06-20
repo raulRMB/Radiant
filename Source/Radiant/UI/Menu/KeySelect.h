@@ -27,5 +27,4 @@ public:
 	UFUNCTION()
 	void RebindKey(FInputChord SelectedKey);
 	void SetMapping(FEnhancedActionKeyMapping NewMapping);
-	
 };

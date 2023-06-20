@@ -31,4 +31,5 @@ public:
 	                            FGameplayTagContainer* OptionalRelevantTags);
 	static void GetMissingTags(const FGameplayTagContainer& Tags1, const FGameplayTagContainer& Tags2,
 	                           FGameplayTagContainer* OptionalRelevantTags);
+	FGameplayTag GetTriggerTag() const;
 };

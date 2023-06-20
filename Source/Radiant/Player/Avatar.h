@@ -84,7 +84,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class USpringArmComponent* SpringArm;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, EditAnywhere, Category = "Combat")
+	UPROPERTY(ReplicatedUsing=OnRep_Abilities, BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<class UAbilityDataAsset*> Abilities;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
@@ -97,7 +97,7 @@ public:
 	class UNiagaraSystem* AttackMoveSystemTemplate;
 
 	UPROPERTY(EditAnywhere)
-	TArray<FGameplayTag> AbilityTags;
+	TArray<FGameplayTag> OwnedAbilityTags;
 
 	UPROPERTY(EditAnywhere)
 	USoundBase* FailedSound;
@@ -110,6 +110,9 @@ protected:
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
+
+	UFUNCTION()
+	virtual void OnRep_Abilities();
 public:
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();
