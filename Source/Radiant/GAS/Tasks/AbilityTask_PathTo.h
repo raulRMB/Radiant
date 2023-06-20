@@ -23,9 +23,9 @@ public:
 
 	FPathToSignature OnPathToComplete;
 
+	void OnUnitDied();
 	virtual void Activate() override;
 	virtual void TickTask(float DeltaTime) override;
-	virtual void OnDestroy(bool bInOwnerFinished) override;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:

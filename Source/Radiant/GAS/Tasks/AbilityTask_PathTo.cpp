@@ -25,9 +25,23 @@ UAbilityTask_PathTo* UAbilityTask_PathTo::PathTo(UGameplayAbility* OwningAbility
 	return MyTask;
 }
 
+void UAbilityTask_PathTo::OnUnitDied()
+{
+	EndTask();
+	if(ShouldBroadcastAbilityTaskDelegates())
+	{
+		OnPathToComplete.Broadcast(false);
+	}
+}
+
 void UAbilityTask_PathTo::Activate()
 {
 	Super::Activate();
+
+	if(IKillable* Killable = Cast<IKillable>(GetAvatarActor()))
+	{
+		Killable->OnUnitDied.AddUObject(this, &UAbilityTask_PathTo::OnUnitDied);
+	}
 }
 
 void UAbilityTask_PathTo::TickTask(float DeltaTime)
@@ -36,16 +50,25 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 
 	if(bFollow && !Target)
 	{
+		EndTask();
 		if(ShouldBroadcastAbilityTaskDelegates())
 		{
 			OnPathToComplete.Broadcast(false);
 		}
-		EndTask();
 		return;
 	}
-	
 	if(Ability)
 	{
+		if(!Ability->IsActive())
+		{
+			EndTask();
+			if(ShouldBroadcastAbilityTaskDelegates())
+			{
+				OnPathToComplete.Broadcast(false);
+			}
+			return;
+		}
+			
 		if(AAvatar* Avatar = Cast<AAvatar>(Ability->GetAvatarActorFromActorInfo()))
 		{
 			if(Target)
@@ -64,11 +87,11 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 			float Dist = FVector::Dist(Avatar->GetActorLocation(), Location);
 			if(Dist < 190.f)
 			{
+				EndTask();
 				if(ShouldBroadcastAbilityTaskDelegates())
 				{
 					OnPathToComplete.Broadcast(true);
 				}
-				EndTask();
 			}
 			
 			if(auto Controller = Avatar->GetController())
@@ -84,12 +107,6 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 			}
 		}
 	}
-}
-
-void UAbilityTask_PathTo::OnDestroy(bool bInOwnerFinished)
-{
-	Super::OnDestroy(bInOwnerFinished);
-	
 }
 
 void UAbilityTask_PathTo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
