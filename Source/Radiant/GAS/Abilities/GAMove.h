@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "GAS/Abilities/RTAbility.h"
 #include "GAMove.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RADIANT_API UGAMove : public UGameplayAbility
+class RADIANT_API UGAMove : public URTAbility
 {
 	GENERATED_BODY()
 
