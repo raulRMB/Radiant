@@ -17,13 +17,13 @@ void ARTHUD::BeginPlay()
 	InfoPanel->Init();
 	SettingsPanel = CreateWidget<UUserWidget>(GetWorld(), SettingsPanelClass);
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
-	SettingsPanel->AddToViewport();
 	LevelUpPanel = CreateWidget<UUserWidget>(GetWorld(), LevelUpClass);
 	LevelUpPanel->SetVisibility(ESlateVisibility::Hidden);
 	LevelUpPanel->AddToViewport();
 	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
 	check(CaptureAreaBar)
 	CaptureAreaBar->AddToViewport();
+	SettingsPanel->AddToViewport();
 }
 
 void ARTHUD::ShowEndScreen(bool won)
