@@ -25,10 +25,17 @@ void ULevelUp::RefreshList()
 		if(Ability && Button)
 		{
 			Button->SetAbilityData(Ability);
+			Button->OnRemoveAbility.BindUObject(this, &ULevelUp::RemoveAbility);
 			AbilityList->AddChild(Button);
-			Button->AddToViewport();
 		}
 	}
+}
+
+void ULevelUp::RemoveAbility(UAbilityDataAsset* AbilityData)
+{
+	Abilities.Remove(AbilityData);
+	RefreshList();
+	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void ULevelUp::SynchronizeProperties()

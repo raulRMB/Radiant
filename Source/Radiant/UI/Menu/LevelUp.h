@@ -27,4 +27,7 @@ public:
 	void RefreshList();
 	UPROPERTY(EditAnywhere)
 	TArray<class UAbilityDataAsset*> Abilities;
+
+	bool ShouldShow() const { return Abilities.Num() > 0; }
+	void RemoveAbility(class UAbilityDataAsset* AbilityData);
 };

@@ -380,7 +380,7 @@ void AAvatar::SetHUDIcons()
 void AAvatar::GiveInitialAbilities()
 {
 	for(auto AbilityData : Abilities)
-	{
+	{	
 		FGameplayAbilitySpec AbilitySpec = AbilityData->Ability.GetDefaultObject();
 		AbilitySystemComponent->GiveAbility(AbilitySpec);
 	}

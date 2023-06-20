@@ -3,6 +3,7 @@
 
 #include "UI/Menu/AbilityButton.h"
 
+#include "LevelUp.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -56,6 +57,8 @@ void UAbilityButton::SetAbilityData(UAbilityDataAsset* Data)
 
 void UAbilityButton::OnButtonClicked()
 {
+	OnRemoveAbility.ExecuteIfBound(AbilityData);
+	
 	if(ARTHUD* HUD = GetWorld()->GetFirstPlayerController()->GetHUD<ARTHUD>())
 	{
 		HUD->GiveAbilityFromButton.ExecuteIfBound(AbilityData);

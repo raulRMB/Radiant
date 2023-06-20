@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "AbilityButton.generated.h"
 
+DECLARE_DELEGATE_OneParam(FRemoveAbilitySignature, class UAbilityDataAsset*)
+
 /**
  * 
  */
@@ -34,6 +36,7 @@ class RADIANT_API UAbilityButton : public UUserWidget
 
 public:
 	void SetAbilityData(class UAbilityDataAsset* Data);
+	FRemoveAbilitySignature OnRemoveAbility;
 private:
 	UFUNCTION()
 	void OnButtonClicked();

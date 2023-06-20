@@ -62,6 +62,12 @@ void ARTHUD::SetFPS(float FPS)
 
 void ARTHUD::ShowLevelUpScreen()
 {
-	Cast<ULevelUp>(LevelUpPanel)->RefreshList();
-	LevelUpPanel->SetVisibility(ESlateVisibility::Visible);
+	if(ULevelUp* LevelUp = Cast<ULevelUp>(LevelUpPanel))
+	{
+		if(LevelUp->ShouldShow())
+		{
+			LevelUp->RefreshList();
+			LevelUp->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
 }
