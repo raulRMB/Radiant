@@ -26,6 +26,7 @@ public:
 	void OnUnitDied();
 	virtual void Activate() override;
 	virtual void TickTask(float DeltaTime) override;
+	virtual void OnDestroy(bool AbilityEnded) override;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:

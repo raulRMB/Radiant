@@ -109,6 +109,15 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 	}
 }
 
+void UAbilityTask_PathTo::OnDestroy(bool AbilityEnded)
+{
+	if(AAvatar* Avatar = Cast<AAvatar>(Ability->GetAvatarActorFromActorInfo()))
+	{
+		Avatar->CheckShouldAttack();
+	}
+	Super::OnDestroy(AbilityEnded);
+}
+
 void UAbilityTask_PathTo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

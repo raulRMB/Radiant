@@ -33,6 +33,7 @@ void UGAAreaOfEffect::SpawnAreaOfEffect()
 			{
 				Direction = Direction.GetSafeNormal() * SpawnRange;
 				SpawnLocation = AvatarLocation + Direction;
+				SpawnLocation.Z = 0;
 			}
 			else
 			{

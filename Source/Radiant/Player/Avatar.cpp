@@ -591,9 +591,61 @@ void AAvatar::ReleaseHoldCamera(const FInputActionValue& InputActionValue)
 
 void AAvatar::AttackMove(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack Move"));
 	const FHitResult HitResult = GetMousePositionInWorld();
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackMoveSystemTemplate, HitResult.Location);
+
+	TArray<AActor*> OverlappingActors;
+	UKismetSystemLibrary::SphereOverlapActors(this, HitResult.Location, 2000.f, TArray<TEnumAsByte<EObjectTypeQuery>>(), AAvatar::StaticClass(), {this}, OverlappingActors);
+	
+	for(auto Actor : OverlappingActors)
+	{
+		if(auto Avatar = Cast<AAvatar>(Actor))
+		{
+			if(Avatar->GetPlayerState<ARTPlayerState>()->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId())
+			{
+				float DistToNew = FVector::Dist(HitResult.Location, Avatar->GetActorLocation());
+				float DistToOld = 0;
+				if(Target)
+				{
+					DistToOld = FVector::Dist(HitResult.Location, Target->GetActorLocation());
+				}
+				if(DistToNew < DistToOld || !Target)
+				{
+					Target = Avatar;
+				}
+			}
+		}
+	}
+
+	if(OverlappingActors.Num() == 0)
+	{
+		UKismetSystemLibrary::SphereOverlapActors(this, GetActorLocation(), 2000.f, TArray<TEnumAsByte<EObjectTypeQuery>>(), AAvatar::StaticClass(), {this}, OverlappingActors);
+	
+		for(auto Actor : OverlappingActors)
+		{
+			if(auto Avatar = Cast<AAvatar>(Actor))
+			{
+				if(Avatar->GetPlayerState<ARTPlayerState>()->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId())
+				{
+					float DistToNew = FVector::Dist(GetActorLocation(), Avatar->GetActorLocation());
+					float DistToOld = 0;
+					if(Target)
+					{
+						DistToOld = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
+					}
+					if(DistToNew < DistToOld || !Target)
+					{
+						Target = Avatar;
+					}
+				}
+			}
+		}
+	}
+
+	CheckShouldAttack();
+	
+	FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.PathTo"));
+	CastAbility(Tag);
 }
 
 void AAvatar::MoveCamera(FVector Dir)
