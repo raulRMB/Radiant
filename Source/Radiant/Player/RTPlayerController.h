@@ -74,6 +74,8 @@ protected:
 	
 	virtual void SetupInputComponent() override;
 
+	virtual void OnRep_Pawn() override;
+
 	UFUNCTION()
 	void OnClick(const FInputActionValue& Value);
 	

@@ -10,6 +10,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameMode.h"
+#include "Navigation/PathFollowingComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Util/UserSettings.h"
 #include "Util/Util.h"
@@ -98,6 +99,20 @@ void ARTPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &ARTPlayerController::ReleaseHoldCamera);
 		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &ARTPlayerController::AttackMove);
 		EnhancedInputComponent->BindAction(CameraMoveAction, ETriggerEvent::Triggered, this, &ARTPlayerController::CameraMove);
+	}
+}
+
+void ARTPlayerController::OnRep_Pawn()
+{
+	Super::OnRep_Pawn();
+
+	if (GetLocalRole() < ROLE_Authority)
+	{
+		UPathFollowingComponent* PathFollowingComp = FindComponentByClass<UPathFollowingComponent>();
+		if (PathFollowingComp)
+		{
+			PathFollowingComp->UpdateCachedComponents();
+		}
 	}
 }
 
