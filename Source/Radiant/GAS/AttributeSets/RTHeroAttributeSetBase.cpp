@@ -14,8 +14,6 @@
 void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
-
-	
 	
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
@@ -29,7 +27,7 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 				Cast<ARTGameState>(GetWorld()->GetGameState())->OnHeroDeath(Hero);
 			}
 			
-			Hero->StopMovement();
+			Hero->S_StopMovement();
 			Hero->Die();
 			
 			FGameplayTagContainer TagContainer;
