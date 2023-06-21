@@ -37,9 +37,9 @@ void UAbilityTask_PathTo::OnUnitDied()
 void UAbilityTask_PathTo::Activate()
 {
 	Super::Activate();
-
+	
 	if(IKillable* Killable = Cast<IKillable>(GetAvatarActor()))
-	{
+	{		
 		Killable->OnUnitDied.AddUObject(this, &UAbilityTask_PathTo::OnUnitDied);
 	}
 }
@@ -47,7 +47,7 @@ void UAbilityTask_PathTo::Activate()
 void UAbilityTask_PathTo::TickTask(float DeltaTime)
 {
 	Super::TickTask(DeltaTime);
-
+	
 	if(bFollow && !Target)
 	{
 		EndTask();
@@ -57,10 +57,11 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 		}
 		return;
 	}
+	
 	if(Ability)
 	{
 		if(!Ability->IsActive())
-		{
+		{			
 			EndTask();
 			if(ShouldBroadcastAbilityTaskDelegates())
 			{
@@ -82,7 +83,9 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 			}
 			
 			if(Avatar->HasTag("States.Movement.Stopped"))
+			{
 				return;
+			}
 			
 			float Dist = FVector::Dist(Avatar->GetActorLocation(), Location);
 			if(Dist < 190.f)
@@ -92,10 +95,11 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 				{
 					OnPathToComplete.Broadcast(true);
 				}
+				return;
 			}
 			
 			if(auto Controller = Avatar->GetController())
-			{
+			{				
 				if(bFollow)
 				{
 					UAIBlueprintHelperLibrary::SimpleMoveToActor(Controller, Target);
@@ -105,6 +109,14 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 					UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, Location);
 				}
 			}
+		}
+	}
+	else
+	{
+		EndTask();
+		if(ShouldBroadcastAbilityTaskDelegates())
+		{
+			OnPathToComplete.Broadcast(false);
 		}
 	}
 }
