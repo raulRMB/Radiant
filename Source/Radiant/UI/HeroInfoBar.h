@@ -22,6 +22,8 @@ class RADIANT_API UHeroInfoBar : public UUserWidget
 	class UImage* XPBar;
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Level;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Username;
 public:
 	UMaterialInstanceDynamic* MaterialInstance;
 
@@ -33,4 +35,5 @@ public:
 	void SetXPPercent(float Percent);
 	void SetLevel(int32 Value);
 	virtual void NativeConstruct() override;
+	void SetOverheadText(const FString& String);
 };

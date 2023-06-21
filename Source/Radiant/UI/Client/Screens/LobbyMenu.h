@@ -30,6 +30,9 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* ErrorMessage;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* Welcome;
 	
 	UFUNCTION()
 	void OnFindMatchButtonHovered();

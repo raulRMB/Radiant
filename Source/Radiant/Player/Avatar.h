@@ -33,6 +33,7 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void LevelUp(float GetLevel);
+	void SetOverheadBarText(const FString& String);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;

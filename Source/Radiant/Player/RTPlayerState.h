@@ -30,7 +30,8 @@ protected:
 	int TargetId = -1;
 	UPROPERTY(Replicated, VisibleAnywhere)
 	ETeamId TeamId = ETeamId::Neutral;
-	
+	UPROPERTY(ReplicatedUsing=OnRep_UsernameChanged, VisibleAnywhere)
+	FString Username = "";
 public:
 	ARTPlayerState();
 
@@ -40,6 +41,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void S_SetTargetId(const int NewTargetId);
 
+	UFUNCTION()
+	virtual void OnRep_UsernameChanged();
+	
 	int GetTargetId() const { return TargetId; }
 	virtual ETeamId GetTeamId() const override { return TeamId; }
 
@@ -48,5 +52,7 @@ public:
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	class URTHeroAttributeSetBase* GetAttributeSetBase() const;
-	
+
+	UFUNCTION(Server, Reliable)
+	void SetUsername(const FString& String);
 };

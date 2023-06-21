@@ -29,6 +29,7 @@ void ULobbyMenu::NativeConstruct()
 
 void ULobbyMenu::ResetPage()
 {
+	Welcome->SetText(FText::FromString(GetGameInstance()->GetSubsystem<UClientSubsystem>()->Username));
 	FindMatchButton->SetVisibility(ESlateVisibility::Visible);
 	CancelMatchmakingButton->SetVisibility(ESlateVisibility::Hidden);
 	ErrorMessage->SetText(FText::FromString(""));

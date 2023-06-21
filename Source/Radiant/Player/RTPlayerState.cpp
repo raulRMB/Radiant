@@ -14,6 +14,7 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(ARTPlayerState, TargetId);
 	DOREPLIFETIME(ARTPlayerState, TeamId);
+	DOREPLIFETIME(ARTPlayerState, Username);
 }
 
 ARTPlayerState::ARTPlayerState()
@@ -51,6 +52,11 @@ void ARTPlayerState::SetPlayerStats()
 	AttributeSetBase->SetCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
 }
 
+void ARTPlayerState::OnRep_UsernameChanged()
+{
+	GetPawn<AAvatar>()->SetOverheadBarText(Username);
+}
+
 void ARTPlayerState::S_SetTargetId_Implementation(const int NewTargetId)
 {
 	TargetId = NewTargetId;
@@ -64,4 +70,9 @@ UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const
 URTHeroAttributeSetBase* ARTPlayerState::GetAttributeSetBase() const
 {
 	return AttributeSetBase;
+}
+
+void ARTPlayerState::SetUsername_Implementation(const FString& String)
+{
+	Username = String;
 }

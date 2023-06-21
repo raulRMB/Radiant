@@ -25,6 +25,7 @@ public:
 	FPlayFabLoginErrorMessage OnLoginErrorMessage;
 	FPlayFabLoginErrorMessage OnRegisterErrorMessage;
 	FPlayFabLobbyErrorMessage OnLobbyErrorMessage;
+	FString Username;
 private:
 	PlayFabClientPtr clientAPI = nullptr;
 	PlayFabMultiplayerPtr multiplayerAPI = nullptr;
@@ -76,6 +77,7 @@ public:
 	bool GetIsLoggedIn() const { return bIsLoggedIn; }
 	void SetIsLoggedIn(bool IsLoggedIn) { bIsLoggedIn = IsLoggedIn; }
 private:
+	void OnGetUserDataSuccess(const PlayFab::ClientModels::FGetAccountInfoResult& GetAccountInfoResult);
 	void OnLoginSuccess(const PlayFab::ClientModels::FLoginResult& Result);
 
 	void OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result);

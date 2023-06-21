@@ -27,10 +27,10 @@ void UClientSubsystem::Setup()
 	WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
 }
 
-void UClientSubsystem::LoginUser(const FString& Username, const FString& Password)
+void UClientSubsystem::LoginUser(const FString& Name, const FString& Password)
 {
 	PlayFab::ClientModels::FLoginWithPlayFabRequest request;
-	request.Username = Username;
+	request.Username = Name;
 	request.Password = Password;
 
 	clientAPI->LoginWithPlayFab(request, PlayFab::UPlayFabClientAPI::FLoginWithPlayFabDelegate::CreateUObject(this,
@@ -44,11 +44,11 @@ void UClientSubsystem::OnRegisterError(const PlayFab::FPlayFabCppError& PlayFabC
 	OnRegisterErrorMessage.Broadcast(PlayFabCppError);
 }
 
-void UClientSubsystem::RegisterUser(const FString& Email, const FString& Username, const FString& Password)
+void UClientSubsystem::RegisterUser(const FString& Email, const FString& Name, const FString& Password)
 {
 	PlayFab::ClientModels::FRegisterPlayFabUserRequest request;
 	request.Email = Email;
-	request.Username = Username;
+	request.Username = Name;
 	request.Password = Password;
 
 	clientAPI->RegisterPlayFabUser(request, PlayFab::UPlayFabClientAPI::FRegisterPlayFabUserDelegate::CreateUObject(this,
@@ -133,18 +133,25 @@ void UClientSubsystem::GetMatchmakingTicketResult()
 		);
 }
 
-void UClientSubsystem::OnLoginSuccess(const PlayFab::ClientModels::FLoginResult& Result)
+void UClientSubsystem::OnGetUserDataSuccess(const PlayFab::ClientModels::FGetAccountInfoResult& GetAccountInfoResult)
 {
-	EntityId = Result.EntityToken.Get()->Entity.Get()->Id;
-	EntityType = Result.EntityToken.Get()->Entity.Get()->Type;
+	Username = GetAccountInfoResult.AccountInfo.Get()->Username;
 	if(!WidgetManager)
 		WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
 	if(WidgetManager)
 		WidgetManager->SwitchTo(FString("LobbyMenu"));
-
 	bIsLoggedIn = true;
-	
-	UE_LOG(LogTemp, Warning, TEXT("Login Success"));
+}
+
+void UClientSubsystem::OnLoginSuccess(const PlayFab::ClientModels::FLoginResult& Result)
+{
+	EntityId = Result.EntityToken.Get()->Entity.Get()->Id;
+	EntityType = Result.EntityToken.Get()->Entity.Get()->Type;
+	PlayFab::ClientModels::FGetAccountInfoRequest request = PlayFab::ClientModels::FGetAccountInfoRequest();
+	request.PlayFabId = Result.PlayFabId;
+	clientAPI->GetAccountInfo(request,
+		PlayFab::UPlayFabClientAPI::FGetAccountInfoDelegate::CreateUObject(this, &UClientSubsystem::OnGetUserDataSuccess),
+		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnError));
 }
 
 void UClientSubsystem::Logout()

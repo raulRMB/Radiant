@@ -24,6 +24,7 @@
 #include "Modes/Base/RTGameState.h"
 #include "UI/HeroInfoBar.h"
 #include "UI/RTHUD.h"
+#include "UI/Client/ClientSubsystem.h"
 #include "Util/Util.h"
 
 // Sets default values
@@ -54,6 +55,16 @@ AAvatar::AAvatar()
 
 void AAvatar::GameReadyUnicast_Implementation()
 {
+	auto SS = GetGameInstance()->GetSubsystem<UClientSubsystem>();
+	if(SS)
+	{
+		FString Username = GetGameInstance()->GetSubsystem<UClientSubsystem>()->Username;
+		if(!Username.IsEmpty())
+		{
+			GetPlayerState<ARTPlayerState>()->SetUsername(Username);
+		}
+	}
+	
 	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AAvatar::OnAbilityFailed);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAvatar::CastingTagChanged);
 	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->HideLoadScreen();
@@ -90,6 +101,11 @@ void AAvatar::S_StopMovement_Implementation()
 void AAvatar::StopMovement()
 {
 	GetCharacterMovement()->StopActiveMovement();
+}
+
+void AAvatar::SetOverheadBarText(const FString& String)
+{
+	OverHeadInfoBar->SetOverheadText(String);
 }
 
 void AAvatar::LevelUp_Implementation(float GetLevel)
