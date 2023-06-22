@@ -21,6 +21,7 @@ void ULobbyMenu::NativeConstruct()
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLobbyErrorMessage.AddUObject(this, &ULobbyMenu::HandleError);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetSwitchPage.AddUObject(this, &ULobbyMenu::ResetPage);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
+	ResetPage();
 }
 
 void ULobbyMenu::ResetPage()
