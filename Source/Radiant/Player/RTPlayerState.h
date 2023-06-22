@@ -55,4 +55,5 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void SetUsername(const FString& String);
+	FString GetUsername();
 };

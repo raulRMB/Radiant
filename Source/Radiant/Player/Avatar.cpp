@@ -142,6 +142,11 @@ void AAvatar::BeginPlay()
 		auto PC = Cast<ARTPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		PC->PlayerLoaded();
 	}
+	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
+	if(PS)
+	{
+		SetOverheadBarText(PS->GetUsername());
+	}
 	SetOwnHealthBarColor();
 	if(AbilitySystemComponent)
 	{

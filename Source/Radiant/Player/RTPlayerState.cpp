@@ -72,6 +72,11 @@ URTHeroAttributeSetBase* ARTPlayerState::GetAttributeSetBase() const
 	return AttributeSetBase;
 }
 
+FString ARTPlayerState::GetUsername()
+{
+	return Username;
+}
+
 void ARTPlayerState::SetUsername_Implementation(const FString& String)
 {
 	Username = String;
