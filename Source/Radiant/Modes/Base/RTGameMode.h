@@ -18,7 +18,7 @@ class RADIANT_API ARTGameMode : public AGameMode
 
 public:
 	ARTGameMode();
-	uint32 TeamSize = INT_MAX;
+	uint32 TeamSize = 1;
 	uint32 TeamCount = 2;
 	
 	uint32 PlayersLoaded = 0;

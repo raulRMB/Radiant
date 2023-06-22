@@ -1,6 +1,10 @@
 # Setup Instructions
 
-## Install Unreal Engine Source
+## Install Unreal Engine 
+
+### Installing The Linux Cross-Compile Toolchain
+- Download and install the [Linux Cross-Compile Toolchain](https://cdn.unrealengine.com/CrossToolchain_Linux/v20_clang-13.0.1-centos7.exe)
+
 ### Cloning the repo
 - Go to the [Unreal Engine website](https://www.unrealengine.com) and login with an Epic Games account
 - Go to the [Connections tab](https://www.unrealengine.com/account/connections) and link your epic games account with your Github account
