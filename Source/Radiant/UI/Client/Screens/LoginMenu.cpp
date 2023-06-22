@@ -22,11 +22,7 @@ void ULoginMenu::NativeConstruct()
 	ExitButton->OnClicked.AddDynamic(this, &ULoginMenu::QuitGame);
 	UserNameTextBox->SetFocus();
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLoginErrorMessage.AddUObject(this, &ULoginMenu::HandleError);
-	FWidgetSwitchPage* SwitchPageDelegate = GetGameInstance()->GetSubsystem<UClientSubsystem>()->GetPageChangeDelegate();
-	if(ensureMsgf(SwitchPageDelegate, TEXT("No SwitchPageDelegate found in ClientSubsystem!")))
-	{
-		SwitchPageDelegate->AddUObject(this, &ULoginMenu::ResetPage);
-	}
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetSwitchPage.AddUObject(this, &ULoginMenu::ResetPage);
 }
 
 void ULoginMenu::ResetPage()

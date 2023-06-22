@@ -15,6 +15,7 @@ DECLARE_DELEGATE_TwoParams(FToggleQueueButtonsSignature, bool, FString)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabLoginErrorMessage, const PlayFab::FPlayFabCppError&)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabRegisterErrorMessage, const PlayFab::FPlayFabCppError&)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabLobbyErrorMessage, const PlayFab::FPlayFabCppError&)
+DECLARE_MULTICAST_DELEGATE(FWidgetSwitchPage)
 
 UCLASS()
 class RADIANT_API UClientSubsystem : public UGameInstanceSubsystem
@@ -25,6 +26,7 @@ public:
 	FPlayFabLoginErrorMessage OnLoginErrorMessage;
 	FPlayFabLoginErrorMessage OnRegisterErrorMessage;
 	FPlayFabLobbyErrorMessage OnLobbyErrorMessage;
+	FWidgetSwitchPage OnWidgetSwitchPage;
 	FString Username;
 private:
 	PlayFabClientPtr clientAPI = nullptr;
@@ -46,7 +48,6 @@ protected:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 public:
-	FWidgetSwitchPage* GetPageChangeDelegate();
 	void Setup();
 	UFUNCTION(BlueprintCallable)
 		void SetQueueName(const FString& QueueName);
@@ -67,6 +68,7 @@ public:
 	
 	UFUNCTION()
 		void GetMatchmakingTicketResult();
+	void SwitchPage(FString PageName);
 
 	UFUNCTION()
 		void Logout();

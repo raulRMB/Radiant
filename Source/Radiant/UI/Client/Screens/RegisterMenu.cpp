@@ -29,11 +29,7 @@ void URegisterMenu::NativeConstruct()
 	BackButton->OnClicked.AddDynamic(this, &URegisterMenu::OnBackButtonClicked);
 	OnRegisterSuccess.BindUObject(this, &URegisterMenu::OnRegisterSuccessCallback);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnRegisterErrorMessage.AddUObject(this, &URegisterMenu::HandleError);
-	FWidgetSwitchPage* SwitchPageDelegate = GetGameInstance()->GetSubsystem<UClientSubsystem>()->GetPageChangeDelegate();
-	if(ensureMsgf(SwitchPageDelegate, TEXT("No SwitchPageDelegate found in ClientSubsystem!")))
-	{
-		SwitchPageDelegate->AddUObject(this, &URegisterMenu::ResetPage);
-	}
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetSwitchPage.AddUObject(this, &URegisterMenu::ResetPage);
 }
 
 void URegisterMenu::ResetPage()

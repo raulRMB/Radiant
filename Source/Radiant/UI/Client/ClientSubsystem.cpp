@@ -133,13 +133,19 @@ void UClientSubsystem::GetMatchmakingTicketResult()
 		);
 }
 
-void UClientSubsystem::OnGetUserDataSuccess(const PlayFab::ClientModels::FGetAccountInfoResult& GetAccountInfoResult)
+void UClientSubsystem::SwitchPage(FString PageName)
 {
-	Username = GetAccountInfoResult.AccountInfo.Get()->Username;
+	OnWidgetSwitchPage.Broadcast();
 	if(!WidgetManager)
 		WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
 	if(WidgetManager)
-		WidgetManager->SwitchTo(FString("LobbyMenu"));
+		WidgetManager->SwitchTo(PageName);
+}
+
+void UClientSubsystem::OnGetUserDataSuccess(const PlayFab::ClientModels::FGetAccountInfoResult& GetAccountInfoResult)
+{
+	Username = GetAccountInfoResult.AccountInfo.Get()->Username;
+	SwitchPage("LobbyMenu");
 	bIsLoggedIn = true;
 }
 
@@ -159,18 +165,13 @@ void UClientSubsystem::Logout()
 	bIsLoggedIn = false;
 	EntityId = "";
 	EntityType = "";
-	if(WidgetManager)
-		WidgetManager->SwitchTo(FString("LoginMenu"));
+	SwitchPage(FString("LoginMenu"));
 
 }
 
 void UClientSubsystem::OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result)
 {
-	if(!WidgetManager)
-		WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
-	if(WidgetManager)
-		WidgetManager->SwitchTo(FString("LoginMenu"));
-	
+	SwitchPage(FString("LoginMenu"));
 	UE_LOG(LogTemp, Warning, TEXT("Register Success"));
 }
 
@@ -210,15 +211,6 @@ void UClientSubsystem::OnGetMatchmakingTicketSuccess(
 	{
 		UE_LOG(LogTemp, Warning, TEXT("User is in queue"));
 	}
-}
-
-FWidgetSwitchPage* UClientSubsystem::GetPageChangeDelegate()
-{
-	if(!WidgetManager)
-		WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass()));
-	if(WidgetManager)
-		return &WidgetManager->OnWidgetSwitchPage;
-	return nullptr;
 }
 
 void UClientSubsystem::OnGetMatchSuccess(const PlayFab::MultiplayerModels::FGetMatchResult& Result)

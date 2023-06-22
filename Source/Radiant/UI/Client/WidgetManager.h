@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "WidgetManager.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FWidgetSwitchPage)
-
 UCLASS()
 class RADIANT_API AWidgetManager : public AActor
 {
@@ -21,7 +19,6 @@ class RADIANT_API AWidgetManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AWidgetManager();
-	FWidgetSwitchPage OnWidgetSwitchPage;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
