@@ -62,6 +62,9 @@ public:
 	void PlayerLoaded();
 
 	UFUNCTION(Server, Reliable)
+	void SetQueueName(const FString& QueueName);
+
+	UFUNCTION(Server, Reliable)
 	void S_SetPlayerStart(class ARTPlayerStart* NewPlayerStart);
 	void SaveUserSettings();
 	void SaveUserSettingsDelay();

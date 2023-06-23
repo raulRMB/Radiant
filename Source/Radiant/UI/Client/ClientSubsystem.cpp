@@ -98,7 +98,15 @@ void UClientSubsystem::StartMatchmaking()
 
 void UClientSubsystem::SetQueueName(const FString& Name)
 {
-	QueueName = Name;
+	if(!bIsMatchmaking)
+	{
+		QueueName = Name;
+	}
+}
+
+bool UClientSubsystem::IsUserMatchmaking()
+{
+	return bIsMatchmaking;
 }
 
 void UClientSubsystem::OnLoginError(const PlayFab::FPlayFabCppError& PlayFabCppError)
@@ -185,7 +193,7 @@ void UClientSubsystem::OnCreateMatchmakingTicketSuccess(
 
 	bIsMatchmaking = true;
 
-	OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking, "");
+	OnMatchmakingStatusChanged.ExecuteIfBound(bIsMatchmaking, "");
 	
 	UE_LOG(LogTemp, Warning, TEXT("On Create Matchmaking Ticket success"));
 }
@@ -229,13 +237,13 @@ void UClientSubsystem::OnGetMatchSuccess(const PlayFab::MultiplayerModels::FGetM
 		{
 			UE_LOG(LogTemp, Warning, TEXT("No Server Address!"));
 			bIsMatchmaking = false;
-			OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking, "Failed To Find Server");
+			OnMatchmakingStatusChanged.ExecuteIfBound(bIsMatchmaking, "Failed To Find Server");
 		}
 	} else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Server Address!"));
 		bIsMatchmaking = false;
-		OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking, "Failed To Find Server");
+		OnMatchmakingStatusChanged.ExecuteIfBound(bIsMatchmaking, "Failed To Find Server");
 	}
 }
 
@@ -244,7 +252,7 @@ void UClientSubsystem::OnCancelAllMatchmakingTicketsForPlayerSuccess(
 {
 	bIsMatchmaking = false;
 
-	OnToggleQueueButtons.ExecuteIfBound(bIsMatchmaking, "");
+	OnMatchmakingStatusChanged.ExecuteIfBound(bIsMatchmaking, "");
 
 	GetWorld()->GetTimerManager().ClearTimer(HGetTicketResult);
 	

@@ -11,7 +11,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ClientSubsystem.generated.h"
 
-DECLARE_DELEGATE_TwoParams(FToggleQueueButtonsSignature, bool, FString)
+DECLARE_DELEGATE_TwoParams(FMatchmakingStatus, bool, FString)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabLoginErrorMessage, const PlayFab::FPlayFabCppError&)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabRegisterErrorMessage, const PlayFab::FPlayFabCppError&)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabLobbyErrorMessage, const PlayFab::FPlayFabCppError&)
@@ -22,12 +22,13 @@ class RADIANT_API UClientSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 public:
-	FToggleQueueButtonsSignature OnToggleQueueButtons;
+	FMatchmakingStatus OnMatchmakingStatusChanged;
 	FPlayFabLoginErrorMessage OnLoginErrorMessage;
 	FPlayFabLoginErrorMessage OnRegisterErrorMessage;
 	FPlayFabLobbyErrorMessage OnLobbyErrorMessage;
 	FWidgetSwitchPage OnWidgetSwitchPage;
 	FString Username;
+	FString QueueName = "1v1";
 private:
 	PlayFabClientPtr clientAPI = nullptr;
 	PlayFabMultiplayerPtr multiplayerAPI = nullptr;
@@ -36,7 +37,6 @@ private:
 	FString SessionId;
 	FString EntityId;
 	FString EntityType;
-	FString QueueName = "1v1";
 	FString TicketId;
 
 	uint8 bIsMatchmaking : 1;
@@ -51,6 +51,8 @@ public:
 	void Setup();
 	UFUNCTION(BlueprintCallable)
 		void SetQueueName(const FString& QueueName);
+	UFUNCTION(BlueprintCallable)
+		bool IsUserMatchmaking();
 	void OnLoginError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	UFUNCTION()
 		void LoginUser(const FString& Username, const FString& Password);

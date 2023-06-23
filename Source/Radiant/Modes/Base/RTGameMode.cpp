@@ -13,35 +13,33 @@
 
 ARTGameMode::ARTGameMode()
 {
-	const TCHAR* CmdLine = FCommandLine::Get();
-	if(FParse::Param(CmdLine, TEXT("-1v1")))
+}
+
+void ARTGameMode::SetTeamSize(FString QueueName)
+{
+	if(!TeamSizeSet)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Game Mode 1v1"))
-		TeamSize = 1;
-	}
-	else if(FParse::Param(CmdLine, TEXT("-2v2")))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Game Mode 2v2"))
-		TeamSize = 2;
-	}
-	else if(FParse::Param(CmdLine, TEXT("-3v3")))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Game Mode 3v3"))
-		TeamSize = 3;
-	}
-	else if(FParse::Param(CmdLine, TEXT("-4v4")))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Game Mode 4v4"))
-		TeamSize = 4;
-	}
-	else if(FParse::Param(CmdLine, TEXT("-5v5")))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Game Mode 5v5"))
-		TeamSize = 5;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Team Size Argument Passed!"))
+		if(QueueName == "1v1")
+		{
+			TeamSize = 1;
+		}
+		else if(QueueName == "2v2")
+		{
+			TeamSize = 2;
+		}
+		else if(QueueName == "3v3")
+		{
+			TeamSize = 3;
+		}
+		else if(QueueName == "4v4")
+		{
+			TeamSize = 4;
+		}
+		else if(QueueName == "5v5")
+		{
+			TeamSize = 5;
+		}
+		TeamSizeSet = true;
 	}
 }
 

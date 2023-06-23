@@ -18,6 +18,7 @@ class RADIANT_API ARTGameMode : public AGameMode
 
 public:
 	ARTGameMode();
+	void SetTeamSize(FString QueueName);
 	uint32 TeamSize = 1;
 	uint32 TeamCount = 2;
 	
@@ -45,7 +46,7 @@ protected:
 private:
 	bool ReadyToEndMatch_Implementation();
 	mutable bool bInitialPlayerLoad = false;
-
+	bool TeamSizeSet = false;
 	virtual void HandleMatchHasStarted() override;
 
 	class ARTPlayerStart* FindTeamStartTransform(ETeamId TeamId);

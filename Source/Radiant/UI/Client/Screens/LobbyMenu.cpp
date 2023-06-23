@@ -5,6 +5,8 @@
 
 #include "../ClientSubsystem.h"
 #include "Components/Button.h"
+#include "Components/ComboBox.h"
+#include "Components/ComboBoxString.h"
 #include "Components/TextBlock.h"
 
 
@@ -20,8 +22,9 @@ void ULobbyMenu::NativeConstruct()
 	ExitButton->OnClicked.AddDynamic(this, &ULobbyMenu::QuitGame);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLobbyErrorMessage.AddUObject(this, &ULobbyMenu::HandleError);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetSwitchPage.AddUObject(this, &ULobbyMenu::ResetPage);
-	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnToggleQueueButtons.BindUObject(this, &ULobbyMenu::OnButtonToggle);
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnMatchmakingStatusChanged.BindUObject(this, &ULobbyMenu::OnButtonToggle);
 	ResetPage();
+	QueueSelector->SetIsEnabled(true);
 }
 
 void ULobbyMenu::ResetPage()
@@ -68,12 +71,14 @@ void ULobbyMenu::OnButtonToggle(bool bIsMatchmaking, FString Message)
 {
 	if(bIsMatchmaking)
 	{
+		QueueSelector->SetIsEnabled(false);
 		FindMatchButton->SetVisibility(ESlateVisibility::Hidden);
 		CancelMatchmakingButton->SetVisibility(ESlateVisibility::Visible);
 		ErrorMessage->SetText(FText::FromString(""));
 	}
 	else
 	{
+		QueueSelector->SetIsEnabled(true);
 		FindMatchButton->SetVisibility(ESlateVisibility::Visible);
 		CancelMatchmakingButton->SetVisibility(ESlateVisibility::Hidden);
 		ErrorMessage->SetText(FText::FromString(Message));

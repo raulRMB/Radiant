@@ -12,6 +12,7 @@
 #include "Modes/Base/RTGameMode.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "UI/Client/ClientSubsystem.h"
 #include "Util/UserSettings.h"
 #include "Util/Util.h"
 
@@ -45,6 +46,10 @@ void ARTPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(MappingContext, 0);
 		LoadUserSettings(Subsystem);
 	}
+	if(UClientSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UClientSubsystem>())
+	{
+		SetQueueName(Subsystem->QueueName);
+	}
 }
 
 void ARTPlayerController::LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem)
@@ -63,6 +68,12 @@ void ARTPlayerController::SaveUserSettingsDelay()
 {
 	FTimerHandle Handle;
 	GetWorldTimerManager().SetTimer(Handle, this, &ARTPlayerController::SaveUserSettings, 0.2f, false);
+}
+
+void ARTPlayerController::SetQueueName_Implementation(const FString& QueueName)
+{
+	ARTGameMode* GM = GetWorld()->GetAuthGameMode<ARTGameMode>();
+	GM->SetTeamSize(QueueName);
 }
 
 void ARTPlayerController::SaveUserSettings()

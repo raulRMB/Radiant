@@ -26,6 +26,9 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 	class UButton* LogoutButton;
 
 	UPROPERTY(meta = (BindWidget))
+	class UComboBoxString* QueueSelector;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* ExitButton;
 
 	UPROPERTY(meta=(BindWidget))
