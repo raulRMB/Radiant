@@ -72,6 +72,10 @@ public:
 	void SaveUserSettings();
 	void SaveUserSettingsDelay();
 	class ARTPlayerStart* GetPlayerStart() const { return PlayerStart; }
+
+	UFUNCTION(Client, Reliable)
+	void Connected();
+
 protected:	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

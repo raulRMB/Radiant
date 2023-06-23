@@ -20,7 +20,10 @@ void UHeroInfoBar::NativeConstruct()
 
 void UHeroInfoBar::SetOverheadText(const FString& String)
 {
-	Username->SetText(FText::FromString(String));
+	if(Username)
+	{
+		Username->SetText(FText::FromString(String));
+	}
 }
 
 void UHeroInfoBar::SetHealthPercent(float Percent)

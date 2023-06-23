@@ -28,6 +28,14 @@ void ARTPlayerController::S_SetPlayerStart_Implementation(ARTPlayerStart* NewPla
 	PlayerStart = NewPlayerStart;	
 }
 
+void ARTPlayerController::Connected_Implementation()
+{
+	if(UClientSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UClientSubsystem>())
+	{
+		SetQueueName(Subsystem->QueueName);
+	}
+}
+
 void ARTPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -46,10 +54,6 @@ void ARTPlayerController::BeginPlay()
 	{
 		Subsystem->AddMappingContext(MappingContext, 0);
 		LoadUserSettings(Subsystem);
-	}
-	if(UClientSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UClientSubsystem>())
-	{
-		SetQueueName(Subsystem->QueueName);
 	}
 }
 

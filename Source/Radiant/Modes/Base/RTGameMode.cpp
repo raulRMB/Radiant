@@ -22,22 +22,31 @@ void ARTGameMode::SetTeamSize(FString QueueName)
 		if(QueueName == "1v1")
 		{
 			TeamSize = 1;
+			UE_LOG(LogTemp, Warning, TEXT("Set Team Size - 1v1"))
 		}
 		else if(QueueName == "2v2")
 		{
 			TeamSize = 2;
+			UE_LOG(LogTemp, Warning, TEXT("Set Team Size - 2v2"))
 		}
 		else if(QueueName == "3v3")
 		{
 			TeamSize = 3;
+			UE_LOG(LogTemp, Warning, TEXT("Set Team Size - 3v3"))
 		}
 		else if(QueueName == "4v4")
 		{
 			TeamSize = 4;
+			UE_LOG(LogTemp, Warning, TEXT("Set Team Size - 4v4"))
 		}
 		else if(QueueName == "5v5")
 		{
 			TeamSize = 5;
+			UE_LOG(LogTemp, Warning, TEXT("Set Team Size - 5v5"))
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Team Size not set"))
 		}
 		TeamSizeSet = true;
 	}
@@ -50,6 +59,7 @@ void ARTGameMode::OnPostLogin(AController* NewPlayer)
 	if(ARTPlayerController* PC = Cast<ARTPlayerController>(NewPlayer))
 	{
 		PC->GetPlayerState<ARTPlayerState>()->SetTeamId(ETeamId(NumPlayers % TeamCount));
+		PC->Connected();
 	}
 }
 

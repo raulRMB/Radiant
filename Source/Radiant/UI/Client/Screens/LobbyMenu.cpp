@@ -25,6 +25,7 @@ void ULobbyMenu::NativeConstruct()
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnMatchmakingStatusChanged.BindUObject(this, &ULobbyMenu::OnButtonToggle);
 	ResetPage();
 	QueueSelector->SetIsEnabled(true);
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->SetQueueName("1v1");
 }
 
 void ULobbyMenu::ResetPage()
