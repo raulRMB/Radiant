@@ -10,6 +10,7 @@
 APickUp::APickUp()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxComponent");
 	RootComponent = BoxComponent;
 	BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -29,7 +30,7 @@ void APickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	if(AAvatar* Avatar = Cast<AAvatar>(OtherActor))
 	{
 		Avatar->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(GameplayEffect.GetDefaultObject(), 1, Avatar->GetAbilitySystemComponent()->MakeEffectContext());
-		OnPickedUp.Execute();
+		OnPickedUp.ExecuteIfBound();
 		Destroy();
 	}
 }

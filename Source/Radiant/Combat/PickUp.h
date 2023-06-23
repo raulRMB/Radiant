@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "PickUp.generated.h"
 
-DECLARE_DELEGATE(FPickedupDelegate)
+DECLARE_DELEGATE(FPickedupSignature)
 
 UCLASS()
 class RADIANT_API APickUp : public AActor
@@ -22,7 +22,8 @@ class RADIANT_API APickUp : public AActor
 
 public:	
 	APickUp();
-	FPickedupDelegate OnPickedUp;
+	
+	FPickedupSignature OnPickedUp;
 
 protected:
 	virtual void BeginPlay() override;
