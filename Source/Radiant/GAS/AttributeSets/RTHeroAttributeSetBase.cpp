@@ -61,6 +61,18 @@ void URTHeroAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectMod
 			SetLevel(GetLevel() + 1);
 			SetXP(GetXP() - GetMaxXP());
 			SetMaxXP(GetMaxXP() * 1.3f);
+
+			
+			auto currHealth = GetHealth() / GetMaxHealth();
+			SetMaxHealth(GetMaxHealth() * 1.20f);
+			SetHealth(GetMaxHealth() * currHealth);
+			
+			auto currMana = GetMana() / GetMaxMana();
+			SetMaxMana(GetMaxMana() * 1.20f);
+			SetMana(GetMaxMana() * currMana);
+
+			SetDamage(GetDamage() * 1.20f);
+			
 			AAvatar* Hero = Cast<AAvatar>(GetActorInfo()->AvatarActor);
 			Hero->LevelUp(GetLevel());
 		}
