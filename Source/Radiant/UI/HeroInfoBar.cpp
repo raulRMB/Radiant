@@ -10,7 +10,12 @@
 void UHeroInfoBar::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if(Interface && XPBar)
+	InitXPMaterial();
+}
+
+void UHeroInfoBar::InitXPMaterial()
+{
+	if(XPBar && Interface)
 	{
 		MaterialInstance = UMaterialInstanceDynamic::Create(Interface, this);
 		XPBar->SetBrushResourceObject(MaterialInstance);
@@ -43,7 +48,10 @@ void UHeroInfoBar::SetHealthColor(const FLinearColor& Color)
 
 void UHeroInfoBar::SetXPPercent(const float Percent)
 {
-	MaterialInstance->SetScalarParameterValue("Percent", Percent);
+	if(MaterialInstance)
+	{
+		MaterialInstance->SetScalarParameterValue("Percent", Percent);
+	}
 }
 
 void UHeroInfoBar::SetLevel(int32 Value)

@@ -25,6 +25,7 @@ class RADIANT_API UHeroInfoBar : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Username;
 public:
+	UPROPERTY()
 	UMaterialInstanceDynamic* MaterialInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -35,5 +36,6 @@ public:
 	void SetXPPercent(float Percent);
 	void SetLevel(int32 Value);
 	virtual void NativeConstruct() override;
+	void InitXPMaterial();
 	void SetOverheadText(const FString& String);
 };

@@ -137,9 +137,18 @@ void AAvatar::BeginPlay()
 	OverHeadInfoBar = Cast<UHeroInfoBar>(OverHeadInfoBarWidgetComponent->GetWidget());
 	if(OverHeadInfoBar)
 	{
-		
 		OverHeadInfoBar->SetHealthPercent(1.f);		
 		OverHeadInfoBar->SetManaPercent(1.f);
+		auto PS = GetRTPlayerState();
+		if(PS)
+		{
+			auto AS = PS->GetAttributeSetBase();
+			if(AS)
+			{
+				OverHeadInfoBar->SetXPPercent(AS->GetXP() / AS->GetMaxXP());
+				OverHeadInfoBar->SetLevel(AS->GetLevel());
+			}
+		}
 	}
 	if(!HasAuthority())
 	{
