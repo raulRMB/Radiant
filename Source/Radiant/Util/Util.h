@@ -11,6 +11,7 @@
 #define RTPRINTT(f, t) GEngine->AddOnScreenDebugMessage(-1, t, FColor::Red, FString::Printf(TEXT(f)));
 #define RTLOG(x) UE_LOG(LogTemp, Warning, TEXT(x));
 #define RTLOGP(x, a) UE_LOG(LogTemp, Warning, TEXT(x), a);
+#define RTPRINTF(s, x) FText::FromString(FString::Printf(TEXT(s), x))
 
 /**
  * 

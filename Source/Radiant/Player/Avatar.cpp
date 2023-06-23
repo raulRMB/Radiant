@@ -155,14 +155,6 @@ void AAvatar::BeginPlay()
 	}
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::SetFPS, 0.3f, true);
-
-	if(auto PC = Cast<ARTPlayerController>(GetController()))
-	{
-		if(auto HUD = PC->GetHUD<ARTHUD>())
-		{
-			HUD->GiveAbilityFromButton.BindUObject(this, &AAvatar::S_GiveAbility);
-		}
-	}
 	
 	SetHUDIcons();
 }
@@ -196,16 +188,6 @@ FHitResult AAvatar::GetMousePositionInWorld() const
 	GetWorld()->LineTraceSingleByChannel(GroundHitResult, WorldPosition, WorldPosition + WorldDirection * 1000000, ECC_GameTraceChannel2, CollisionQueryParams);
 	
 	return FHitResult(PlayerHitResult.GetActor(), PlayerHitResult.GetComponent(), GroundHitResult.Location, GroundHitResult.ImpactNormal);
-}
-
-void AAvatar::OnRep_Abilities()
-{
-	FGameplayTag ActivationTag = Cast<URTAbility>(Abilities.Last()->Ability.GetDefaultObject())->GetTriggerTag();
-	if(OwnedAbilityTags.Num() <= 6)
-	{
-		OwnedAbilityTags.Add(ActivationTag);
-	}
-	SetHUDIcons();
 }
 
 void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
@@ -257,7 +239,7 @@ bool AAvatar::CheckShouldAttack()
 	return true;
 }
 
-void AAvatar::CastAbility(FGameplayTag& AbilityTag)
+void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 {
 	TArray<AActor*> Actors;
 	FGameplayEventData EventData;
@@ -273,56 +255,40 @@ void AAvatar::CastAbility(FGameplayTag& AbilityTag)
 	EventData.EventTag = AbilityTag;
 	const FGameplayTag EventTag = AbilityTag;
 
+	RTPRINTP("Cast %s", *AbilityTag.ToString())
+
 	BufferAbility = EventData;
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
-	if(OwnedAbilityTags.Num() > 0)
-	{
-		CastAbility(OwnedAbilityTags[0]);
-	}
+	CastAbility(GetRTPlayerState()->GetAbilityTrigger(0));
 }
 
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
-	if(OwnedAbilityTags.Num() > 1)
-	{
-		CastAbility(OwnedAbilityTags[1]);
-	}
+	CastAbility(GetRTPlayerState()->GetAbilityTrigger(1));
 }
 
 void AAvatar::OnAbilityThree(const FInputActionValue& Value)
 {
-	if(OwnedAbilityTags.Num() > 2)
-	{
-		CastAbility(OwnedAbilityTags[2]);
-	}
+	CastAbility(GetRTPlayerState()->GetAbilityTrigger(2));
 }
 
 void AAvatar::OnAbilityFour(const FInputActionValue& Value)
 {
-	if(OwnedAbilityTags.Num() > 3)
-	{
-		CastAbility(OwnedAbilityTags[3]);
-	}
+	CastAbility(GetRTPlayerState()->GetAbilityTrigger(3));
 }
 
 void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 {
-	if(OwnedAbilityTags.Num() > 4)
-	{
-		CastAbility(OwnedAbilityTags[4]);
-	}
+	CastAbility(GetRTPlayerState()->GetAbilityTrigger(4));
 }
 
 void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
-	if(OwnedAbilityTags.Num() > 5)
-	{
-		CastAbility(OwnedAbilityTags[5]);
-	}
+	CastAbility(GetRTPlayerState()->GetAbilityTrigger(5));
 }
 
 void AAvatar::PossessedBy(AController* NewController)
@@ -390,43 +356,24 @@ void AAvatar::SetHUDIcons()
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{
-		ARTPlayerController* PC = GetController<ARTPlayerController>();
-		if(PC)
+		if(ARTPlayerController* PC = GetController<ARTPlayerController>())
 		{
-			PC->GetHUD<ARTHUD>()->UpdateAbilities(Abilities);
+			if(ARTPlayerState* PS = GetRTPlayerState())
+			{
+				PC->GetHUD<ARTHUD>()->UpdateAbilities(PS->GetOwnedAbilities());
+			}
 		}
 	}
 }
 
 void AAvatar::GiveInitialAbilities()
 {
-	for(auto AbilityData : Abilities)
+	for(auto AbilityData : GetRTPlayerState()->GetOwnedAbilities())
 	{	
 		FGameplayAbilitySpec AbilitySpec = AbilityData->Ability.GetDefaultObject();
 		AbilitySystemComponent->GiveAbility(AbilitySpec);
 	}
 	GiveDeathAbilities();
-}
-
-void AAvatar::C_GiveAbility_Implementation()
-{
-	SetHUDIcons();
-}
-
-void AAvatar::S_GiveAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
-{
-	if(HasAuthority())
-	{
-		if(OwnedAbilityTags.Contains(AbilityDataAsset->Ability.GetDefaultObject()->GetTriggerTag()))
-		{
-			return;
-		}
-		RTLOG("Ability Given");
-		OwnedAbilityTags.AddUnique(AbilityDataAsset->Ability.GetDefaultObject()->GetTriggerTag());
-		Abilities.AddUnique(AbilityDataAsset);
-		FGameplayAbilitySpec AbilitySpec = AbilityDataAsset->Ability.GetDefaultObject();
-		AbilitySystemComponent->GiveAbility(AbilitySpec);
-	}
 }
 
 void AAvatar::S_CancelAllAbilities_Implementation()
@@ -772,7 +719,5 @@ void AAvatar::Tick(float DeltaTime)
 void AAvatar::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AAvatar, Abilities);
 }
 

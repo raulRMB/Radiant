@@ -5,6 +5,7 @@
 
 #include "CaptureAreaBar.h"
 #include "RTInfoPanel.h"
+#include "InGame/InGameStore.h"
 #include "Menu/LevelUp.h"
 #include "Menu/Settings.h"
 #include "Util/Util.h"
@@ -24,6 +25,9 @@ void ARTHUD::BeginPlay()
 	check(CaptureAreaBar)
 	CaptureAreaBar->AddToViewport();
 	SettingsPanel->AddToViewport();
+	StoreUI = CreateWidget<UInGameStore>(GetWorld(), StoreUIClass);
+	StoreUI->AddToViewport();
+	StoreUI->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void ARTHUD::ShowEndScreen(bool won)
@@ -70,4 +74,11 @@ void ARTHUD::ShowLevelUpScreen()
 			LevelUp->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
+}
+
+void ARTHUD::ToggleStore()
+{
+	bStoreOpen = !bStoreOpen;
+	
+	StoreUI->SetVisibility(bStoreOpen ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }

@@ -85,9 +85,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class USpringArmComponent* SpringArm;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Abilities, BlueprintReadOnly, EditAnywhere, Category = "Combat")
-	TArray<class UAbilityDataAsset*> Abilities;
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayEffect>> InitialEffects;
 	
@@ -98,26 +95,19 @@ public:
 	class UNiagaraSystem* AttackMoveSystemTemplate;
 
 	UPROPERTY(EditAnywhere)
-	TArray<FGameplayTag> OwnedAbilityTags;
-
-	UPROPERTY(EditAnywhere)
 	USoundBase* FailedSound;
 
 	UPROPERTY(EditAnywhere, Category=Death)
 	TArray<TSubclassOf<UGameplayAbility>> DeathAbilities;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
-
-	UFUNCTION()
-	virtual void OnRep_Abilities();
 public:
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();
-	void CastAbility(FGameplayTag& AbilityTag);
+	void CastAbility(const FGameplayTag& AbilityTag);
 	
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void OnAbilityOne(const FInputActionValue& Value);
@@ -132,6 +122,8 @@ public:
 	void AttackMove(const FInputActionValue& Value);
 	void MoveCamera(FVector Dir);
 
+	ARTPlayerState* GetRTPlayerState() const { return GetPlayerState<ARTPlayerState>(); }
+
 	virtual void PossessedBy(AController* NewController) override;
 	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData);
@@ -141,10 +133,6 @@ public:
 	virtual ETeamId GetTeamId() const override { return GetPlayerState<ARTPlayerState>()->GetTeamId(); }
 
 	void GiveInitialAbilities();
-	UFUNCTION(Server, Reliable)
-	void S_GiveAbility(class UAbilityDataAsset* AbilityDataAsset);
-	UFUNCTION(Client, Reliable)
-	void C_GiveAbility();
 
 	UFUNCTION(Server, Reliable)
 	void S_CancelAllAbilities();

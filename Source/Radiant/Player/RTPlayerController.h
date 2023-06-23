@@ -53,6 +53,9 @@ class RADIANT_API ARTPlayerController : public APlayerController
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* CameraMoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
+	class UInputAction* ToggleStoreAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
@@ -76,7 +79,6 @@ protected:
 	void LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem);
 	
 	virtual void SetupInputComponent() override;
-
 	virtual void OnRep_Pawn() override;
 
 	UFUNCTION()
@@ -114,4 +116,7 @@ protected:
 
 	UFUNCTION()
 	void CameraMove(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void ToggleStore(const FInputActionValue& Value);
 }; 

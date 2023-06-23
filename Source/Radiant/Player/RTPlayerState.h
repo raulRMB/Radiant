@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
+#include "GameFramework/PlayerState.h"
+#include "GameplayTags/Classes/GameplayTagContainer.h"
 #include "Util/Interfaces/TeamMember.h"
 #include "RTPlayerState.generated.h"
 
@@ -49,11 +50,24 @@ public:
 
 	void SetTeamId(ETeamId NewTeamId) { TeamId = NewTeamId; }
 	
-	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	class URTHeroAttributeSetBase* GetAttributeSetBase() const;
 
 	UFUNCTION(Server, Reliable)
 	void SetUsername(const FString& String);
 	FString GetUsername();
+	
+	UPROPERTY(Replicated, EditAnywhere)
+	TArray<class UAbilityDataAsset*> OwnedAbilities;
+	TArray<class UAbilityDataAsset*> GetOwnedAbilities() const;
+	UFUNCTION(Server, Reliable)
+	void S_GiveAbility(class UAbilityDataAsset* AbilityDataAsset);
+
+	UPROPERTY(ReplicatedUsing=OnRepAbilityTriggers, EditAnywhere)
+	FGameplayTagContainer AbilityTriggers;
+	FGameplayTagContainer GetAbilityTriggers() const;
+	FGameplayTag GetAbilityTrigger(const int Index) const { return AbilityTriggers.GetByIndex(Index); }
+	UFUNCTION()
+	void OnRepAbilityTriggers();
 };

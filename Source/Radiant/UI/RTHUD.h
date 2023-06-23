@@ -29,9 +29,18 @@ class RADIANT_API ARTHUD : public AHUD
 	UPROPERTY(EditAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UUserWidget> CaptureAreaBarClass;
 
+	UPROPERTY()
 	URTInfoPanel* InfoPanel;
+	UPROPERTY()
 	UUserWidget* SettingsPanel;
+	UPROPERTY()
 	UUserWidget* LevelUpPanel;
+
+	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
+	TSubclassOf<class UUserWidget> StoreUIClass;
+	UPROPERTY()
+	class UInGameStore* StoreUI;
+	uint8 bStoreOpen : 1;	
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
@@ -44,4 +53,5 @@ public:
 	void HideLoadScreen();
 	void SetFPS(float FPS);
 	void ShowLevelUpScreen();
+	void ToggleStore();
 };

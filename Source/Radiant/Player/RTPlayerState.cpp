@@ -3,6 +3,7 @@
 
 #include "Player/RTPlayerState.h"
 
+#include "Data/AbilityDataAsset.h"
 #include "Player/Avatar.h"
 #include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -15,6 +16,8 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, TargetId);
 	DOREPLIFETIME(ARTPlayerState, TeamId);
 	DOREPLIFETIME(ARTPlayerState, Username);
+	DOREPLIFETIME(ARTPlayerState, OwnedAbilities);
+	DOREPLIFETIME(ARTPlayerState, AbilityTriggers);
 }
 
 ARTPlayerState::ARTPlayerState()
@@ -75,6 +78,32 @@ URTHeroAttributeSetBase* ARTPlayerState::GetAttributeSetBase() const
 FString ARTPlayerState::GetUsername()
 {
 	return Username;
+}
+
+void ARTPlayerState::S_GiveAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
+{
+	if(OwnedAbilities.Contains(AbilityDataAsset))
+	{
+		return;
+	}
+	OwnedAbilities.Add(AbilityDataAsset);
+	AbilityTriggers.AddTag(AbilityDataAsset->Ability.GetDefaultObject()->GetTriggerTag());
+	AbilitySystemComponent->GiveAbility(AbilityDataAsset->Ability.GetDefaultObject());
+}
+
+TArray<class UAbilityDataAsset*> ARTPlayerState::GetOwnedAbilities() const
+{
+	return OwnedAbilities;
+}
+
+FGameplayTagContainer ARTPlayerState::GetAbilityTriggers() const
+{
+	return AbilityTriggers;
+}
+
+void ARTPlayerState::OnRepAbilityTriggers()
+{
+	GetPawn<AAvatar>()->SetHUDIcons();
 }
 
 void ARTPlayerState::SetUsername_Implementation(const FString& String)

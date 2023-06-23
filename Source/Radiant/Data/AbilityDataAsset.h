@@ -33,4 +33,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FGameplayTag CooldownTag;
+
+	UPROPERTY(EditAnywhere)
+	float Price;
 };
