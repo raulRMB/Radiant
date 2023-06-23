@@ -64,6 +64,11 @@ void ARTHUD::SetFPS(float FPS)
 	InfoPanel->SetFPS(FPS);
 }
 
+void ARTHUD::SetMS(float MS)
+{
+	InfoPanel->SetMS(MS);
+}
+
 void ARTHUD::ShowLevelUpScreen()
 {
 	if(ULevelUp* LevelUp = Cast<ULevelUp>(LevelUpPanel))

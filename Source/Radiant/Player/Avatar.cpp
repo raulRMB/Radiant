@@ -154,7 +154,7 @@ void AAvatar::BeginPlay()
 		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAvatar::CastingTagChanged);
 	}
 	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::SetFPS, 0.3f, true);
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::ShowStats, 0.3f, true);
 	
 	SetHUDIcons();
 }
@@ -254,8 +254,6 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 	EventData.TargetData = TargetData;
 	EventData.EventTag = AbilityTag;
 	const FGameplayTag EventTag = AbilityTag;
-
-	RTPRINTP("Cast %s", *AbilityTag.ToString())
 
 	BufferAbility = EventData;
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
@@ -682,7 +680,7 @@ void AAvatar::S_SetRotationLock_Implementation(bool RotationLocked, FVector Targ
 	bUseControllerRotationYaw = RotationLocked;
 }
 
-void AAvatar::SetFPS()
+void AAvatar::ShowStats()
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{
@@ -690,6 +688,7 @@ void AAvatar::SetFPS()
 		if(PC)
 		{
 			PC->GetHUD<ARTHUD>()->SetFPS(FPS);
+			PC->GetHUD<ARTHUD>()->SetMS(GetPlayerState()->GetPingInMilliseconds());
 		}
 	}
 }

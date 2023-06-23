@@ -156,7 +156,7 @@ public:
 
 	FGameplayEventData BufferAbility;
 	bool bShouldActivateBuffer = false;
-	void SetFPS();
+	void ShowStats();
 	
 	virtual void Tick(float DeltaTime) override;
 

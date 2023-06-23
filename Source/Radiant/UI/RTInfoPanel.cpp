@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
+#include "Util/Util.h"
 
 
 class ARTPlayerState;
@@ -179,4 +180,9 @@ void URTInfoPanel::HideLoadScreen()
 void URTInfoPanel::SetFPS(float FPS)
 {
 	FPSCounter->SetText(FText::FromString(FString::Printf(TEXT("FPS: %.0f"), FPS)));
+}
+
+void URTInfoPanel::SetMS(float MS)
+{
+	MSCounter->SetText(RTPRINTF("MS: %.0f", MS));
 }

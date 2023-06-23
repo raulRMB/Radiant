@@ -117,6 +117,9 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* FPSCounter;
 
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* MSCounter;
+
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 	
 	TArray<FUIAbility> Abilities;
@@ -142,4 +145,5 @@ public:
 	void ShowEndScreen(bool bWon);
 	void HideLoadScreen();
 	void SetFPS(float FPS);
+	void SetMS(float MS);
 };

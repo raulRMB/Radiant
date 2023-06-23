@@ -52,6 +52,7 @@ public:
 	void ToggleSettings(bool on);
 	void HideLoadScreen();
 	void SetFPS(float FPS);
+	void SetMS(float MS);
 	void ShowLevelUpScreen();
 	void ToggleStore();
 };
