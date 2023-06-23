@@ -78,6 +78,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_MaxLevel)
 	FGameplayAttributeData MaxLevel;
 	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxLevel)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Currency", ReplicatedUsing = OnRep_Radianite)
+	FGameplayAttributeData Radianite;
+	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Radianite)
 	
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
@@ -124,6 +128,9 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MaxLevel(const FGameplayAttributeData& OldMaxLevel);
+
+	UFUNCTION()
+	virtual void OnRep_Radianite(const FGameplayAttributeData& OldRadianite);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

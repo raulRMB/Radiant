@@ -10,6 +10,8 @@
 #include "Player/RTPlayerState.h"
 #include "Avatar.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);
+
 UCLASS()
 class RADIANT_API AAvatar : public ACharacter, public ITeamMember, public IAbilitySystemInterface, public IKillable
 {
@@ -99,12 +101,15 @@ public:
 
 	UPROPERTY(EditAnywhere, Category=Death)
 	TArray<TSubclassOf<UGameplayAbility>> DeathAbilities;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
 public:
+	FUpdateRadianiteSignature OnUpdateRadianite;
+
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();
 	void CastAbility(const FGameplayTag& AbilityTag);
@@ -127,6 +132,7 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData);
+	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData) const;
 	virtual void OnRep_PlayerState() override;
 	void SetHUDIcons();
 

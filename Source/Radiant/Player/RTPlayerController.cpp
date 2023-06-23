@@ -116,6 +116,7 @@ void ARTPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &ARTPlayerController::AttackMove);
 		EnhancedInputComponent->BindAction(CameraMoveAction, ETriggerEvent::Triggered, this, &ARTPlayerController::CameraMove);
 		EnhancedInputComponent->BindAction(ToggleStoreAction, ETriggerEvent::Triggered, this, &ARTPlayerController::ToggleStore);
+		EnhancedInputComponent->BindAction(EscapeAction, ETriggerEvent::Triggered, this, &ARTPlayerController::Escape);
 	}
 }
 
@@ -196,4 +197,9 @@ void ARTPlayerController::CameraMove(const FInputActionValue& Value)
 void ARTPlayerController::ToggleStore(const FInputActionValue& Value)
 {
 	GetHUD<ARTHUD>()->ToggleStore();
+}
+
+void ARTPlayerController::Escape(const FInputActionValue& Value)
+{
+	GetHUD<ARTHUD>()->Escape();
 }

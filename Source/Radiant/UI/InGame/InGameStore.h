@@ -16,6 +16,9 @@ class RADIANT_API UInGameStore : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UGridPanel* GridPanel;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* RadianiteText;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UStoreItem> StoreItemClass;
@@ -24,4 +27,9 @@ class RADIANT_API UInGameStore : public UUserWidget
 	class UDataTable* ItemTable;
 
 	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void UpdateRadianite(float RadianiteAmount);
+public:
+	void Init(class AAvatar* Avatar);
 };

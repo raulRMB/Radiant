@@ -56,6 +56,9 @@ class RADIANT_API ARTPlayerController : public APlayerController
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* ToggleStoreAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
+	class UInputAction* EscapeAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
@@ -123,4 +126,7 @@ protected:
 
 	UFUNCTION()
 	void ToggleStore(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void Escape(const FInputActionValue& Value);
 }; 

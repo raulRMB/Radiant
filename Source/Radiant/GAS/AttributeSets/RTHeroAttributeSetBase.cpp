@@ -96,6 +96,7 @@ void URTHeroAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MaxXP, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, Level, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, MaxLevel, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTHeroAttributeSetBase, Radianite, COND_None, REPNOTIFY_Always);
 }
 
 void URTHeroAttributeSetBase::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
@@ -172,6 +173,11 @@ void URTHeroAttributeSetBase::OnRep_Level(const FGameplayAttributeData& OldLevel
 void URTHeroAttributeSetBase::OnRep_MaxLevel(const FGameplayAttributeData& OldMaxLevel)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, MaxLevel, OldMaxLevel);
+}
+
+void URTHeroAttributeSetBase::OnRep_Radianite(const FGameplayAttributeData& OldRadianite)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTHeroAttributeSetBase, Radianite, OldRadianite);
 }
 
 void URTHeroAttributeSetBase::UpdateMovementSpeed()

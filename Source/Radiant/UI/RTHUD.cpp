@@ -8,6 +8,7 @@
 #include "InGame/InGameStore.h"
 #include "Menu/LevelUp.h"
 #include "Menu/Settings.h"
+#include "Player/Avatar.h"
 #include "Util/Util.h"
 
 void ARTHUD::BeginPlay()
@@ -16,7 +17,7 @@ void ARTHUD::BeginPlay()
 	InfoPanel = CreateWidget<URTInfoPanel>(GetWorld(), InfoPanelClass);
 	InfoPanel->AddToViewport(1000);
 	InfoPanel->Init();
-	SettingsPanel = CreateWidget<UUserWidget>(GetWorld(), SettingsPanelClass);
+	SettingsPanel = CreateWidget<USettings>(GetWorld(), SettingsPanelClass);
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
 	LevelUpPanel = CreateWidget<UUserWidget>(GetWorld(), LevelUpClass);
 	LevelUpPanel->SetVisibility(ESlateVisibility::Hidden);
@@ -28,6 +29,7 @@ void ARTHUD::BeginPlay()
 	StoreUI = CreateWidget<UInGameStore>(GetWorld(), StoreUIClass);
 	StoreUI->AddToViewport();
 	StoreUI->SetVisibility(ESlateVisibility::Hidden);
+	
 }
 
 void ARTHUD::ShowEndScreen(bool won)
@@ -40,17 +42,11 @@ void ARTHUD::UpdateAbilities(TArray<UAbilityDataAsset*> Abilities)
 	InfoPanel->UpdateAbilities(Abilities);
 }
 
-void ARTHUD::ToggleSettings(bool on)
+void ARTHUD::ToggleSettings()
 {
-	Cast<USettings>(SettingsPanel)->RefreshKeybindList();
-	if(on)
-	{
-		SettingsPanel->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
-	{
-		SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
-	}
+	SettingsPanel->RefreshKeybindList();
+	bSettingsOpen = !bSettingsOpen;
+	SettingsPanel->SetVisibility(bSettingsOpen ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
 void ARTHUD::HideLoadScreen()
@@ -84,6 +80,23 @@ void ARTHUD::ShowLevelUpScreen()
 void ARTHUD::ToggleStore()
 {
 	bStoreOpen = !bStoreOpen;
-	
 	StoreUI->SetVisibility(bStoreOpen ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
+void ARTHUD::BindUIItems()
+{
+	StoreUI->Init(Cast<AAvatar>(GetOwningPawn()));
+}
+
+void ARTHUD::Escape()
+{
+	if(bStoreOpen)
+	{
+		bStoreOpen = false;
+		StoreUI->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		ToggleSettings();
+	}
 }

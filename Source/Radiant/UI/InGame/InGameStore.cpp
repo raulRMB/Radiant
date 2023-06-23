@@ -5,12 +5,28 @@
 
 #include "StoreItem.h"
 #include "Components/GridPanel.h"
+#include "Components/TextBlock.h"
 #include "Data/ItemData.h"
+#include "Player/Avatar.h"
+#include "Util/Util.h"
+
+void UInGameStore::UpdateRadianite(float RadianiteAmount)
+{
+	RadianiteText->SetText(RTPRINTF("Radianite: %.0f", RadianiteAmount));
+}
+
+void UInGameStore::Init(AAvatar* Avatar)
+{
+	if (Avatar)
+	{
+		Avatar->OnUpdateRadianite.AddUObject(this, &UInGameStore::UpdateRadianite);
+	}
+}
 
 void UInGameStore::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	
 	if (ItemTable && GridPanel)
 	{
 		static const FString ContextString(TEXT("Store Item Button Native Construct"));

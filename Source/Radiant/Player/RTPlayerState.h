@@ -62,7 +62,7 @@ public:
 	TArray<class UAbilityDataAsset*> OwnedAbilities;
 	TArray<class UAbilityDataAsset*> GetOwnedAbilities() const;
 	UFUNCTION(Server, Reliable)
-	void S_GiveAbility(class UAbilityDataAsset* AbilityDataAsset);
+	void S_BuyAbility(class UAbilityDataAsset* AbilityDataAsset);
 
 	UPROPERTY(ReplicatedUsing=OnRepAbilityTriggers, EditAnywhere)
 	FGameplayTagContainer AbilityTriggers;

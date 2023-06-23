@@ -45,6 +45,7 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSetBase->InitXP(0.f);
 	AttributeSetBase->InitMaxXP(100.f);
 	AttributeSetBase->InitLevel(1.f);
+	AttributeSetBase->InitRadianite(0.f);
 }
 
 void ARTPlayerState::SetPlayerStats()
@@ -80,8 +81,12 @@ FString ARTPlayerState::GetUsername()
 	return Username;
 }
 
-void ARTPlayerState::S_GiveAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
+void ARTPlayerState::S_BuyAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
 {
+	if(AttributeSetBase->GetRadianite() < AbilityDataAsset->Price)
+	{
+		return;
+	}
 	if(OwnedAbilities.Contains(AbilityDataAsset))
 	{
 		return;
@@ -89,6 +94,7 @@ void ARTPlayerState::S_GiveAbility_Implementation(UAbilityDataAsset* AbilityData
 	OwnedAbilities.Add(AbilityDataAsset);
 	AbilityTriggers.AddTag(AbilityDataAsset->Ability.GetDefaultObject()->GetTriggerTag());
 	AbilitySystemComponent->GiveAbility(AbilityDataAsset->Ability.GetDefaultObject());
+	AttributeSetBase->SetRadianite(AttributeSetBase->GetRadianite() - AbilityDataAsset->Price);
 }
 
 TArray<class UAbilityDataAsset*> ARTPlayerState::GetOwnedAbilities() const

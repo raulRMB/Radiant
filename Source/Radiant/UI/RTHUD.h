@@ -32,7 +32,7 @@ class RADIANT_API ARTHUD : public AHUD
 	UPROPERTY()
 	URTInfoPanel* InfoPanel;
 	UPROPERTY()
-	UUserWidget* SettingsPanel;
+	class USettings* SettingsPanel;
 	UPROPERTY()
 	UUserWidget* LevelUpPanel;
 
@@ -40,7 +40,10 @@ class RADIANT_API ARTHUD : public AHUD
 	TSubclassOf<class UUserWidget> StoreUIClass;
 	UPROPERTY()
 	class UInGameStore* StoreUI;
-	uint8 bStoreOpen : 1;	
+	uint8 bStoreOpen : 1;
+	uint8 bStoreInitialized : 1;
+
+	uint8 bSettingsOpen : 1;
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
@@ -48,11 +51,13 @@ public:
 public:
 	void UpdateAbilities(TArray<class UAbilityDataAsset*> Abilities);
 	void ShowEndScreen(bool won);
-	UFUNCTION(BlueprintCallable, Exec)
-	void ToggleSettings(bool on);
+	void ToggleSettings();
 	void HideLoadScreen();
 	void SetFPS(float FPS);
 	void SetMS(float MS);
 	void ShowLevelUpScreen();
 	void ToggleStore();
+	UFUNCTION()
+	void BindUIItems();
+	void Escape();
 };

@@ -23,7 +23,7 @@ void UStoreItem::OnClicked()
 		{
 			if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetWorld()->GetFirstPlayerController()))
 			{
-				PC->GetPlayerState<ARTPlayerState>()->S_GiveAbility(AbilityData);
+				PC->GetPlayerState<ARTPlayerState>()->S_BuyAbility(AbilityData);
 			}
 		}
 	}
