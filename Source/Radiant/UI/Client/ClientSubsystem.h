@@ -28,7 +28,7 @@ public:
 	FPlayFabLobbyErrorMessage OnLobbyErrorMessage;
 	FWidgetSwitchPage OnWidgetSwitchPage;
 	FString Username;
-	FString QueueName;
+	FString QueueName = "1v1";
 private:
 	PlayFabClientPtr clientAPI = nullptr;
 	PlayFabMultiplayerPtr multiplayerAPI = nullptr;
