@@ -110,7 +110,7 @@ void AAvatar::SetOverheadBarText(const FString& String)
 
 void AAvatar::LevelUp_Implementation(float GetLevel)
 {
-	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->ShowLevelUpScreen();
+	//GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->ShowLevelUpScreen();
 }
 
 void AAvatar::GameEnding_Implementation(bool Won)
