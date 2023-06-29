@@ -19,11 +19,14 @@ void APickUpSpawner::OnPickedUp()
 
 void APickUpSpawner::SpawnPickup()
 {
-	APickUp* Spawned = GetWorld()->SpawnActorDeferred<APickUp>(PickUpClass, FTransform(GetActorLocation() + SpawnOffset), this, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	if(HasAuthority())
+	{
+		APickUp* Spawned = GetWorld()->SpawnActorDeferred<APickUp>(PickUpClass, FTransform(GetActorLocation() + SpawnOffset), this, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-	RTLOGP("Spawn offset %s", *SpawnOffset.ToString());
-	Spawned->OnPickedUp.BindUObject(this, &APickUpSpawner::OnPickedUp);
-	Spawned->FinishSpawning(FTransform(GetActorLocation() + SpawnOffset));
+		RTLOGP("Spawn offset %s", *SpawnOffset.ToString());
+		Spawned->OnPickedUp.BindUObject(this, &APickUpSpawner::OnPickedUp);
+		Spawned->FinishSpawning(FTransform(GetActorLocation() + SpawnOffset));
+	}
 }
 
 void APickUpSpawner::BeginPlay()
