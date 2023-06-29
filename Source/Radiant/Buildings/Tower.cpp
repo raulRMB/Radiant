@@ -12,10 +12,6 @@
 // Sets default values
 ATower::ATower()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	bReplicates = true;
-	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	SetRootComponent(Mesh);
 
@@ -27,33 +23,14 @@ ATower::ATower()
 	AttackRadius->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	AttackRadius->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AttackRadius->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn,ECollisionResponse::ECR_Overlap);
-	
-	AbilitySystemComponent = CreateDefaultSubobject<URTAbilitySystemComponent>("AbilitySystemComponent");
-	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
-
-	AttributeSet = CreateDefaultSubobject<UTowerAttributeSet>("AttributeSet");
-}
-
-UAbilitySystemComponent* ATower::GetAbilitySystemComponent() const
-{
-	return AbilitySystemComponent;
-}
-
-UTowerAttributeSet* ATower::GetAttributeSet() const
-{
-	return AttributeSet;
 }
 
 // Called when the game starts or when spawned
 void ATower::BeginPlay()
 {
 	Super::BeginPlay();
-	GiveInitialAbilities();
 	AttackRadius->OnComponentBeginOverlap.AddDynamic(this,&ATower::BeingOverlap);
 	AttackRadius->OnComponentEndOverlap.AddDynamic(this,&ATower::EndOverlap);
-	AttributeSet->InitMaxHealth(MaxHealth);
-	AttributeSet->InitHealth(AttributeSet->GetMaxHealth());
 	AttributeSet->InitAttackDamage(AttackDamage);
 }
 
@@ -106,13 +83,5 @@ void ATower::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherA
 		{
 			Target = nullptr;
 		}
-	}
-}
-
-void ATower::GiveInitialAbilities()
-{
-	for(auto Ability : Abilities)
-	{
-		AbilitySystemComponent->GiveAbility(Ability);
 	}
 }

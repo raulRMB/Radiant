@@ -4,17 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "Building.h"
 #include "GameFramework/Actor.h"
 #include "Util/Interfaces/TeamMember.h"
 #include "Tower.generated.h"
 
 UCLASS()
-class RADIANT_API ATower : public AActor, public IAbilitySystemInterface, public ITeamMember
+class RADIANT_API ATower : public ABuilding
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats, meta=(AllowPrivateAccess=true))
-	float MaxHealth = 500.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats, meta=(AllowPrivateAccess=true))
 	float AttackDamage = 50.f;
@@ -30,38 +28,20 @@ class RADIANT_API ATower : public AActor, public IAbilitySystemInterface, public
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
 	class USphereComponent* AttackRadius;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
-	class URTAbilitySystemComponent* AbilitySystemComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
-	class UTowerAttributeSet* AttributeSet;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess=true))
 	TObjectPtr<class AActor> Target;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Ability, meta=(AllowPrivateAccess=true))
-	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Team, meta=(AllowPrivateAccess=true))
-	ETeamId TeamId = ETeamId::Neutral;
 public:	
-	// Sets default values for this actor's properties
 	ATower();
-
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UTowerAttributeSet* GetAttributeSet() const;
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	FTransform GetGemTransform() const;
 	TObjectPtr<class AActor> GetTarget() const;
 
-	virtual ETeamId GetTeamId() const override { return TeamId; }
 private:
 	UFUNCTION()
 	void BeingOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor,
@@ -71,6 +51,4 @@ private:
 	UFUNCTION()
 	void EndOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor,
 	                class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	void GiveInitialAbilities();
 };
