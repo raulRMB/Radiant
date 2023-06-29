@@ -34,17 +34,17 @@ void AAreaOfEffect::ApplyGameplayEffects()
 {
 	if(HasAuthority())
 	{
-		for(auto Hero : EffectTargets)
+		for(ARTCharacter* Character : EffectTargets)
 		{
-			if(UAbilitySystemComponent* AbilitySystemComponent = Hero->GetAbilitySystemComponent())
+			if(UAbilitySystemComponent* AbilitySystemComponent = Character->GetAbilitySystemComponent())
 			{
 				for(auto GameplayEffect : GameplayEffects)
 				{
-					FGameplayEffectContextHandle EffectContext = Avatar->GetAbilitySystemComponent()->MakeEffectContext();
-					FGameplayEffectSpecHandle NewHandle = Avatar->GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
+					FGameplayEffectContextHandle EffectContext = SourceCharacter->GetAbilitySystemComponent()->MakeEffectContext();
+					FGameplayEffectSpecHandle NewHandle = SourceCharacter->GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
 					if(NewHandle.IsValid())
 					{
-						Avatar->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
+						SourceCharacter->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
 					}
 				}
 			}
@@ -63,18 +63,18 @@ void AAreaOfEffect::ApplyInstantEffects()
 		auto Actor = Component->GetAttachmentRootActor();
 		if(ShouldHit(Actor))
 		{
-			if(AAvatar* Hero = Cast<AAvatar>(Actor))
+			if(ARTCharacter* Character = Cast<ARTCharacter>(Actor))
 			{
-				EffectTargets.AddUnique(Hero);
+				EffectTargets.AddUnique(Character);
 			}
 		}
 	}
 
-	if(Avatar)
+	if(SourceCharacter)
 	{
 		FGameplayCueParameters CueParameters;
 		CueParameters.Location = GetActorLocation();		
-		Avatar->GetAbilitySystemComponent()->ExecuteGameplayCue(CueTag, CueParameters);
+		SourceCharacter->GetAbilitySystemComponent()->ExecuteGameplayCue(CueTag, CueParameters);
 	}
 	
 	ApplyGameplayEffects();

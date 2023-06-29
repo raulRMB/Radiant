@@ -5,7 +5,7 @@
 
 #include "Data/AbilityDataAsset.h"
 #include "Player/Avatar.h"
-#include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
+#include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -13,7 +13,7 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ARTPlayerState, TargetId);
+	DOREPLIFETIME(ARTPlayerState, Target);
 	DOREPLIFETIME(ARTPlayerState, TeamId);
 	DOREPLIFETIME(ARTPlayerState, Username);
 	DOREPLIFETIME(ARTPlayerState, OwnedAbilities);
@@ -30,30 +30,30 @@ ARTPlayerState::ARTPlayerState()
 	// we won't be told about it by the Server. Attributes, GameplayTags, and GameplayCues will still replicate to us.
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);	
 
-	AttributeSetBase = CreateDefaultSubobject<URTHeroAttributeSetBase>(TEXT("AttributeSetBase"));
+	AttributeSet = CreateDefaultSubobject<URTAvatarAttributeSet>(TEXT("AttributeSet"));
 
 	NetUpdateFrequency = 100.f;
 
-	AttributeSetBase->InitMaxHealth(100.f);
-	AttributeSetBase->InitHealth(AttributeSetBase->GetMaxHealth());
-	AttributeSetBase->InitMaxMana(150.f);
-	AttributeSetBase->InitMana(AttributeSetBase->GetMaxMana());
-	AttributeSetBase->InitMovementSpeed(600.f);
-	AttributeSetBase->InitDamage(15.f);
-	AttributeSetBase->InitMaxRespawnTime(10.f);
-	AttributeSetBase->InitCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
-	AttributeSetBase->InitXP(0.f);
-	AttributeSetBase->InitMaxXP(100.f);
-	AttributeSetBase->InitLevel(1.f);
-	AttributeSetBase->InitRadianite(0.f);
+	AttributeSet->InitMaxHealth(100.f);
+	AttributeSet->InitHealth(AttributeSet->GetMaxHealth());
+	AttributeSet->InitMaxMana(150.f);
+	AttributeSet->InitMana(AttributeSet->GetMaxMana());
+	AttributeSet->InitMovementSpeed(600.f);
+	AttributeSet->InitDamage(15.f);
+	AttributeSet->InitMaxRespawnTime(10.f);
+	AttributeSet->InitCurrentRespawnTime(AttributeSet->GetMaxRespawnTime());
+	AttributeSet->InitXP(0.f);
+	AttributeSet->InitMaxXP(100.f);
+	AttributeSet->InitLevel(1.f);
+	AttributeSet->InitRadianite(0.f);
 }
 
 void ARTPlayerState::SetPlayerStats()
 {
-	AttributeSetBase->SetHealth(AttributeSetBase->GetMaxHealth());
-	AttributeSetBase->SetMana(AttributeSetBase->GetMaxMana());
-	AttributeSetBase->SetMovementSpeed(600.f);
-	AttributeSetBase->SetCurrentRespawnTime(AttributeSetBase->GetMaxRespawnTime());
+	AttributeSet->SetHealth(AttributeSet->GetMaxHealth());
+	AttributeSet->SetMana(AttributeSet->GetMaxMana());
+	AttributeSet->SetMovementSpeed(600.f);
+	AttributeSet->SetCurrentRespawnTime(AttributeSet->GetMaxRespawnTime());
 }
 
 void ARTPlayerState::OnRep_UsernameChanged()
@@ -61,9 +61,9 @@ void ARTPlayerState::OnRep_UsernameChanged()
 	GetPawn<AAvatar>()->SetOverheadBarText(Username);
 }
 
-void ARTPlayerState::S_SetTargetId_Implementation(const int NewTargetId)
+void ARTPlayerState::S_SetTarget_Implementation(AActor* NewTargetId)
 {
-	TargetId = NewTargetId;
+	Target = NewTargetId;
 }
 
 UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const
@@ -71,9 +71,9 @@ UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;	
 }
 
-URTHeroAttributeSetBase* ARTPlayerState::GetAttributeSetBase() const
+URTAvatarAttributeSet* ARTPlayerState::GetAttributeSetBase() const
 {
-	return AttributeSetBase;
+	return AttributeSet;
 }
 
 FString ARTPlayerState::GetUsername()
@@ -83,7 +83,7 @@ FString ARTPlayerState::GetUsername()
 
 void ARTPlayerState::S_BuyAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
 {
-	if(AttributeSetBase->GetRadianite() < AbilityDataAsset->Price)
+	if(AttributeSet->GetRadianite() < AbilityDataAsset->Price)
 	{
 		return;
 	}
@@ -94,7 +94,7 @@ void ARTPlayerState::S_BuyAbility_Implementation(UAbilityDataAsset* AbilityDataA
 	OwnedAbilities.Add(AbilityDataAsset);
 	AbilityTriggers.AddTag(AbilityDataAsset->Ability.GetDefaultObject()->GetTriggerTag());
 	AbilitySystemComponent->GiveAbility(AbilityDataAsset->Ability.GetDefaultObject());
-	AttributeSetBase->SetRadianite(AttributeSetBase->GetRadianite() - AbilityDataAsset->Price);
+	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - AbilityDataAsset->Price);
 }
 
 TArray<class UAbilityDataAsset*> ARTPlayerState::GetOwnedAbilities() const

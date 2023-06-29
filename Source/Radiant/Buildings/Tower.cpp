@@ -85,7 +85,7 @@ void ATower::BeingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ITeamMember* OtherTeamMember = Cast<ITeamMember>(OtherActor);
-	if(Target || OtherTeamMember->GetTeamId() == GetTeamId())
+	if(Target || !OtherTeamMember || OtherTeamMember->GetTeamId() == GetTeamId())
 		return;
 	
 	if(HasAuthority())

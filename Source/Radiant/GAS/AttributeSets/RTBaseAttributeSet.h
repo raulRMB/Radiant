@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
-#include "RTHeroAttributeSetBase.generated.h"
+#include "RTBaseAttributeSet.generated.h"
 
 // Uses macros from AttributeSet.h
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -18,76 +18,53 @@
  * 
  */
 UCLASS()
-class RADIANT_API URTHeroAttributeSetBase : public UAttributeSet
+class RADIANT_API URTBaseAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 
 public:
-	// Current Health, when 0 we expect owner to die unless prevented by an ability. Capped by MaxHealth.
-	// Positive changes can directly use this.
-	// Negative changes to Health should go through Damage meta attribute.
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Health)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, Health)
 
-	// MaxHealth is its own attribute since GameplayEffects may modify it
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_MaxHealth)
 	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxHealth)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRep_Mana)
-	FGameplayAttributeData Mana;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Mana)
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRep_MaxMana)
-	FGameplayAttributeData MaxMana;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxMana)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxHealth)
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MovementSpeed)
 	FGameplayAttributeData MovementSpeed;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MovementSpeed)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MovementSpeed)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MaxMovementSpeed)
 	FGameplayAttributeData MaxMovementSpeed;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxMovementSpeed)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxMovementSpeed)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage", ReplicatedUsing = OnRep_AttackDamage)
 	FGameplayAttributeData Damage;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Damage)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Repsawn", ReplicatedUsing = OnRep_CurrentRespawnTime)
-	FGameplayAttributeData CurrentRespawnTime;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, CurrentRespawnTime)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Repsawn", ReplicatedUsing = OnRep_MaxRespawnTime)
-	FGameplayAttributeData MaxRespawnTime;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxRespawnTime)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, Damage)
 
 	UPROPERTY(BlueprintReadOnly, Category = "XP", ReplicatedUsing = OnRep_XP)
 	FGameplayAttributeData XP;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, XP)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, XP)
 
 	UPROPERTY(BlueprintReadOnly, Category = "XP", ReplicatedUsing = OnRep_MaxXP)
 	FGameplayAttributeData MaxXP;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxXP)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxXP)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_Level)
 	FGameplayAttributeData Level;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Level)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, Level)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_MaxLevel)
 	FGameplayAttributeData MaxLevel;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, MaxLevel)
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxLevel)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Currency", ReplicatedUsing = OnRep_Radianite)
-	FGameplayAttributeData Radianite;
-	ATTRIBUTE_ACCESSORS(URTHeroAttributeSetBase, Radianite)
-	
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
-	
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 protected:
 	UFUNCTION()
@@ -97,12 +74,6 @@ protected:
 	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
 
 	UFUNCTION()
-	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana);
-
-	UFUNCTION()
-	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana);
-
-	UFUNCTION()
 	virtual void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed);
 
 	UFUNCTION()
@@ -110,12 +81,6 @@ protected:
 	
 	UFUNCTION()
 	virtual void OnRep_AttackDamage(const FGameplayAttributeData& OldDamage);
-
-	UFUNCTION()
-	virtual void OnRep_CurrentRespawnTime(const FGameplayAttributeData& OldCurrentRespawnTime);
-
-	UFUNCTION()
-	virtual void OnRep_MaxRespawnTime(const FGameplayAttributeData& OldMaxRespawnTime);
 
 	UFUNCTION()
 	virtual void OnRep_XP(const FGameplayAttributeData& OldXP);
@@ -128,9 +93,6 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MaxLevel(const FGameplayAttributeData& OldMaxLevel);
-
-	UFUNCTION()
-	virtual void OnRep_Radianite(const FGameplayAttributeData& OldRadianite);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

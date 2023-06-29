@@ -5,15 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
-#include "Util/Interfaces/Killable.h"
+#include "Characters/RTCharacter.h"
+#include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "Player/RTPlayerState.h"
 #include "Avatar.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);
 
 UCLASS()
-class RADIANT_API AAvatar : public ACharacter, public ITeamMember, public IAbilitySystemInterface, public IKillable
+class RADIANT_API AAvatar : public ARTCharacter
 {
 	GENERATED_BODY()
 	
@@ -43,7 +43,7 @@ public:
 	uint8 bAtDestination : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-	class AAvatar* Target;
+	class AActor* Target;
 	
 	UPROPERTY(EditAnywhere)
 	class USoundBase* WinSound;
@@ -98,9 +98,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	USoundBase* FailedSound;
-
-	UPROPERTY(EditAnywhere, Category=Death)
-	TArray<TSubclassOf<UGameplayAbility>> DeathAbilities;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -143,8 +140,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void S_CancelAllAbilities();
 	
-	class URTAbilitySystemComponent* AbilitySystemComponent;
-	class URTHeroAttributeSetBase* AttributeSetBase;
+	class URTAvatarAttributeSet* AttributeSetBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
 	class UWidgetComponent* OverHeadInfoBarWidgetComponent;
@@ -190,9 +186,6 @@ public:
 	FVector GetHalfHeightVector();
 
 	void BasicAttack();
-
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	virtual TArray<TSubclassOf<UGameplayAbility>> GetDeathAbilities() const override;
 private:
 	
 	void HandleCamera(float DeltaSeconds);

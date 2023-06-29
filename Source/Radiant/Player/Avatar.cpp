@@ -17,7 +17,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/Abilities/RTAbility.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
-#include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
+#include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
@@ -27,6 +27,8 @@
 #include "UI/Client/ClientSubsystem.h"
 #include "UI/InGame/InGameStore.h"
 #include "Util/Util.h"
+#include "Util/Interfaces/Targetable.h"
+#include "Util/Managers/ActorManager.h"
 
 // Sets default values
 AAvatar::AAvatar()
@@ -206,11 +208,12 @@ FHitResult AAvatar::GetMousePositionInWorld() const
 void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 {
 	FHitResult HitResult = GetMousePositionInWorld();
-	auto Hero = Cast<AAvatar>(HitResult.GetActor());
-	if(Hero && Hero->GetPlayerState<ARTPlayerState>()->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId())
+	ITargetable* Targetable = Cast<ITargetable>(HitResult.GetActor());
+	ITeamMember* TeamMember = Cast<ITeamMember>(HitResult.GetActor());
+	if(Targetable && TeamMember->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId())
 	{
-		Target = Hero;
-		GetPlayerState<ARTPlayerState>()->S_SetTargetId(Hero->GetPlayerState<ARTPlayerState>()->GetPlayerId());
+		Target = HitResult.GetActor();
+		GetPlayerState<ARTPlayerState>()->S_SetTarget(HitResult.GetActor());
 	}
 	else
 	{
@@ -237,8 +240,12 @@ bool AAvatar::CheckShouldAttack()
 	FVector dir = Target->GetActorLocation() - GetActorLocation();
 	bIsAttacking = dir.Size() < AttackRange;
 
-	FGameplayTagContainer OwnedTags;			
-	Target->GetAbilitySystemComponent()->GetOwnedGameplayTags(OwnedTags);
+	FGameplayTagContainer OwnedTags;
+	if(IAbilitySystemInterface* Interface = Cast<IAbilitySystemInterface>(Target))
+	{
+		Interface->GetAbilitySystemComponent()->GetOwnedGameplayTags(OwnedTags);
+	}
+	
 	if(OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Dead"))))
 	{
 		Target = nullptr;
@@ -315,6 +322,11 @@ void AAvatar::PossessedBy(AController* NewController)
 
 	}
 	GiveInitialAbilities();
+
+	if(UActorManager* ActorManager = GetGameInstance()->GetSubsystem<UActorManager>())
+	{
+		ActorManager->AddPlayer(this);
+	}
 }
 
 void AAvatar::OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData)
@@ -520,16 +532,6 @@ void AAvatar::BasicAttack()
 	}
 }
 
-UAbilitySystemComponent* AAvatar::GetAbilitySystemComponent() const
-{
-	return AbilitySystemComponent;
-}
-
-TArray<TSubclassOf<UGameplayAbility>> AAvatar::GetDeathAbilities() const
-{
-	return DeathAbilities;
-}
-
 bool AAvatar::HasTag(FString Tag)
 {
 	FGameplayTagContainer TagContainer;
@@ -707,7 +709,8 @@ void AAvatar::ShowStats()
 		if(PC)
 		{
 			PC->GetHUD<ARTHUD>()->SetFPS(FPS);
-			PC->GetHUD<ARTHUD>()->SetMS(GetPlayerState()->GetPingInMilliseconds());
+			if(GetPlayerState())
+				PC->GetHUD<ARTHUD>()->SetMS(GetPlayerState()->GetPingInMilliseconds());
 		}
 	}
 }

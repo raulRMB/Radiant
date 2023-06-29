@@ -35,15 +35,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void ApplyGameplayEffects();
-	class AAvatar* Avatar;
+	class ARTCharacter* SourceCharacter;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
-	TArray<class AAvatar*> EffectTargets;
+	TArray<class ARTCharacter*> EffectTargets;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetAvatar(class AAvatar* NewAvatar) { Avatar = NewAvatar; }
-	void SetEffectTargets(TArray<AAvatar*> NewEffectTargets) const { NewEffectTargets = EffectTargets; }
+	void SetSourceCharacter(class ARTCharacter* NewChracter) { SourceCharacter = NewChracter; }
+	void SetEffectTargets(TArray<ARTCharacter*> NewEffectTargets) const { NewEffectTargets = EffectTargets; }
 
 	void ApplyInstantEffects();
 };

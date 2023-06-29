@@ -2,12 +2,11 @@
 
 
 #include "DamageCalculation.h"
-
-#include "GAS/AttributeSets/RTHeroAttributeSetBase.h"
+#include "GAS/AttributeSets/RTBaseAttributeSet.h"
 
 UDamageCalculation::UDamageCalculation()
 {
-	DamageDef.AttributeToCapture = URTHeroAttributeSetBase::GetDamageAttribute();
+	DamageDef.AttributeToCapture = URTBaseAttributeSet::GetDamageAttribute();
 	DamageDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Source;
 	DamageDef.bSnapshot = true;
 

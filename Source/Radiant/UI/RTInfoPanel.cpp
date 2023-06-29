@@ -54,7 +54,7 @@ void URTInfoPanel::UpdateProperties(float DeltaTime)
 {
 	if(auto State = GetOwningPlayerState<ARTPlayerState>())
 	{
-		if(URTHeroAttributeSetBase* Attributes = State->GetAttributeSetBase())
+		if(URTAvatarAttributeSet* Attributes = State->GetAttributeSetBase())
 		{
 			AbilityCooldowns();
 			

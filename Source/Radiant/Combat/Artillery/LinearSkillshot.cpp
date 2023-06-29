@@ -72,25 +72,25 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 	if(!HasAuthority() || !ShouldHit(OtherActor))
 		return;
 	
-	if(auto Hero = Cast<AAvatar>(OtherActor))
+	if(auto Character = Cast<ARTCharacter>(OtherActor))
 	{
 		for(auto Effect : GameplayEffects)
 		{
 			if(!AffectedActors.Contains(OtherActor))
 			{
 				UGameplayEffect* NewEffect = NewObject<UGameplayEffect>(GetTransientPackage(), Effect);
-				if(AAvatar* Projectile_Instigator = Cast<AAvatar>(GetInstigator()))
+				if(ARTCharacter* Projectile_Instigator = Cast<ARTCharacter>(GetInstigator()))
 				{
-					Projectile_Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(NewEffect, Hero->GetAbilitySystemComponent(),1.f);
+					Projectile_Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(NewEffect, Character->GetAbilitySystemComponent(),1.f);
 				}
 				AffectedActors.AddUnique(OtherActor);
 			}
 		}
 		FGameplayCueParameters CueParameters;
-		CueParameters.Location = Hero->GetActorLocation();
-		CueParameters.TargetAttachComponent = Hero->GetMesh();
+		CueParameters.Location = Character->GetActorLocation();
+		CueParameters.TargetAttachComponent = Character->GetMesh();
 		CueParameters.Instigator = this;
-		Hero->GetAbilitySystemComponent()->ExecuteGameplayCue(HitCueTag, CueParameters);
+		Character->GetAbilitySystemComponent()->ExecuteGameplayCue(HitCueTag, CueParameters);
 	}
 
 	OverlapStart(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);

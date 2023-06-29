@@ -42,8 +42,7 @@ void UBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData
 		AAvatar* Hero = Cast<AAvatar>(GetAvatarActorFromActorInfo());
 		FTransform Transform = FTransform(Hero->GetMesh()->GetSocketLocation(FName("LeftHandSocket")));
 		AHeatSeeking* Projectile = GetWorld()->SpawnActorDeferred<AHeatSeeking>(ProjectileClass, Transform, GetOwningActorFromActorInfo(), Hero);
-		int TargetId = Hero->GetPlayerState<ARTPlayerState>()->GetTargetId();
-		AAvatar* Target = UUtil::GetHeroFromPlayerID(this, TargetId);
+		AActor* Target = Hero->GetPlayerState<ARTPlayerState>()->GetTarget();
 		Projectile->SetTarget(Target);
 		Projectile->FinishSpawning(Transform);
 	}
@@ -60,11 +59,10 @@ void UBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
-	ARTPlayerState* Owner = Cast<ARTPlayerState>(GetOwningActorFromActorInfo());
-
+	
 	SetSelfTags(true);
-
-	AAvatar* Target = UUtil::GetHeroFromPlayerID(this, Avatar->GetPlayerState<ARTPlayerState>()->GetTargetId());
+	
+	AActor* Target = Avatar->GetPlayerState<ARTPlayerState>()->GetTarget();
 	if(!Target)
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);

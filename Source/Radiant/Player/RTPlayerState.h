@@ -22,13 +22,13 @@ protected:
 	class URTAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY()
-	class URTHeroAttributeSetBase* AttributeSetBase;
+	class URTAvatarAttributeSet* AttributeSet;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	
 	UPROPERTY(Replicated, VisibleAnywhere)
-	int TargetId = -1;
+	class AActor* Target;
 	UPROPERTY(Replicated, VisibleAnywhere)
 	ETeamId TeamId = ETeamId::Neutral;
 	UPROPERTY(ReplicatedUsing=OnRep_UsernameChanged, VisibleAnywhere)
@@ -40,19 +40,19 @@ public:
 	void SetPlayerStats();
 
 	UFUNCTION(Server, Reliable)
-	void S_SetTargetId(const int NewTargetId);
+	void S_SetTarget(AActor* NewTargetId);
 
 	UFUNCTION()
 	virtual void OnRep_UsernameChanged();
 	
-	int GetTargetId() const { return TargetId; }
+	AActor* GetTarget() const { return Target; }
 	virtual ETeamId GetTeamId() const override { return TeamId; }
 
 	void SetTeamId(ETeamId NewTeamId) { TeamId = NewTeamId; }
 	
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
-	class URTHeroAttributeSetBase* GetAttributeSetBase() const;
+	class URTAvatarAttributeSet* GetAttributeSetBase() const;
 
 	UFUNCTION(Server, Reliable)
 	void SetUsername(const FString& String);

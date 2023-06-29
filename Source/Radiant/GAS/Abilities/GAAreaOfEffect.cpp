@@ -50,7 +50,7 @@ void UGAAreaOfEffect::SpawnAreaOfEffect()
 			Cast<APawn>(Avatar)
 			);
 
-		AreaOfEffect->SetAvatar(Cast<AAvatar>(Avatar));
+		AreaOfEffect->SetSourceCharacter(Cast<AAvatar>(Avatar));
 		AreaOfEffect->FinishSpawning(SpawnTransform);
 	}
 	CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
