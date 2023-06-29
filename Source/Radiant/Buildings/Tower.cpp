@@ -13,13 +13,13 @@
 ATower::ATower()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	SetRootComponent(Mesh);
+	Mesh->SetupAttachment(RootComponent);
 
 	Gem = CreateDefaultSubobject<UStaticMeshComponent>("Gem");
-	Gem->SetupAttachment(Mesh);
+	Gem->SetupAttachment(RootComponent);
 
 	AttackRadius = CreateDefaultSubobject<USphereComponent>("AttackRadius");
-	AttackRadius->SetupAttachment(Mesh);
+	AttackRadius->SetupAttachment(RootComponent);
 	AttackRadius->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	AttackRadius->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AttackRadius->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn,ECollisionResponse::ECR_Overlap);
@@ -46,6 +46,8 @@ void ATower::Tick(float DeltaTime)
 		EventData.Instigator = this;
 		GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Event.Tower.Attack"), &EventData);
 	}
+	// if(AttributeSet)
+	// 	RTLOGP("%f", AttributeSet->GetHealth())
 }
 
 FTransform ATower::GetGemTransform() const

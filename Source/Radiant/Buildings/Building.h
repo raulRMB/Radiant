@@ -1,16 +1,20 @@
 ﻿#pragma once
 
 #include "AbilitySystemInterface.h"
+#include "Util/Interfaces/Targetable.h"
 #include "Util/Interfaces/TeamMember.h"
 #include "Building.generated.h"
 
 UCLASS()
-class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMember
+class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMember, public ITargetable
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats, meta=(AllowPrivateAccess=true))
 	float MaxHealth = 500.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
+	class UCapsuleComponent* CapsuleComponent;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Ability, meta=(AllowPrivateAccess=true))
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;

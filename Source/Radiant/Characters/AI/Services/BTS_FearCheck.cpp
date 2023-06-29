@@ -33,6 +33,10 @@ void UBTS_FearCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	
 	for(AActor* Player : PlayerActors)
 	{
+		if(!Player)
+		{
+			continue;
+		}
 		FVector PlayerVector = Player->GetActorLocation();
 		FVector MyVector = OwnerComp.GetAIOwner()->GetPawn()->GetActorLocation();
 		FVector FearDirection = MyVector - PlayerVector;

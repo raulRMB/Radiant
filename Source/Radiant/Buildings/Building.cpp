@@ -1,5 +1,6 @@
 ﻿#include "Building.h"
 
+#include "Components/CapsuleComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/TowerAttributeSet.h"
 
@@ -11,6 +12,8 @@ ABuilding::ABuilding()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	AttributeSet = CreateDefaultSubobject<UTowerAttributeSet>("AttributeSet");
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
+	SetRootComponent(CapsuleComponent);
 }
 
 
