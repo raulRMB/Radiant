@@ -31,7 +31,13 @@ void AAISpawner::Spawn()
 	FVector SpawnLocation = GetActorLocation() + (FVector(XOffset, YOffset, 0.0f) * SpawnRange);
 	
 	ARTAICharacter* Character = GetWorld()->SpawnActorDeferred<ARTAICharacter>(AI, FTransform(SpawnLocation));
+	Character->OnUnitDied.AddUObject(this, &AAISpawner::OnDeath);
 	Character->FinishSpawning(FTransform(SpawnLocation));
+}
+
+void AAISpawner::OnDeath()
+{
+	Count--;
 }
 
 void AAISpawner::Tick(float DeltaTime)

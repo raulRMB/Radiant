@@ -26,7 +26,10 @@ class RADIANT_API AAISpawner : public AActor
 	int Count;
 
 	void Spawn();
-	
+
+	UFUNCTION()
+	void OnDeath();
+
 public:	
 	// Sets default values for this actor's properties
 	AAISpawner();
