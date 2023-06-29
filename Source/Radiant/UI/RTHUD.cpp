@@ -25,6 +25,7 @@ void ARTHUD::BeginPlay()
 	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
 	check(CaptureAreaBar)
 	CaptureAreaBar->AddToViewport();
+	CaptureAreaBar->SetVisibility(ESlateVisibility::Hidden);
 	SettingsPanel->AddToViewport();
 	StoreUI = CreateWidget<UInGameStore>(GetWorld(), StoreUIClass);
 	StoreUI->AddToViewport();
