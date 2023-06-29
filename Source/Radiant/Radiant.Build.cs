@@ -24,7 +24,9 @@ public class Radiant : ModuleRules
 			"NiagaraCore",
 			"Niagara",
 			"Slate",
-			"SlateCore"
+			"SlateCore",
+			"AIModule",
+			"NavigationSystem"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  "GameplayAbilities", "GameplayTags", "GameplayTasks" });

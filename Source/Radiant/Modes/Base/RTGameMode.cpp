@@ -10,6 +10,7 @@
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerState.h"
+#include "Util/Managers/ActorManager.h"
 
 ARTGameMode::ARTGameMode()
 {
@@ -229,7 +230,17 @@ void ARTGameMode::Respawn(ARTPlayerController* PlayerController)
 	if(PlayerController->GetPawn() != nullptr)
 	{
 		PlayerController->GetPawn()->Destroy();
+
+		if(AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn()))
+		{
+			if(UActorManager* Manager = GetGameInstance()->GetSubsystem<UActorManager>())
+			{
+				Manager->RemovePlayer(Hero);
+				
+				Hero = GetWorld()->SpawnActor<AAvatar>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
+				PlayerController->Possess(Hero);
+				Manager->AddPlayer(Hero);
+			}
+		}
 	}
-	AAvatar* Hero = GetWorld()->SpawnActor<AAvatar>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
-	PlayerController->Possess(Hero);
 }
