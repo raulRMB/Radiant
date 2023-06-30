@@ -44,5 +44,6 @@ void UStoreItem::Init(const FName& Name)
 	if(ensure(Button))
 	{
 		Button->OnClicked.AddUniqueDynamic(this, &UStoreItem::OnClicked);
+		Button->SetToolTipText(AbilityData->Tooltip);
 	}
 }
