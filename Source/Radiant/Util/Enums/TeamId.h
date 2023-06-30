@@ -10,5 +10,5 @@ enum class ETeamId : uint8
 {
 	Red			= 0,
 	Blue		= 1,
-	Neutral 	= 2,
+	Neutral 	= 2
 };
