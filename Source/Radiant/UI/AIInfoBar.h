@@ -23,4 +23,5 @@ public:
 	void ShowLevel(bool Value);
 	void SetHealthPercent(float Percent);
 	void SetLevel(int32 Value);
+	void SetColor(FColor Color);
 };

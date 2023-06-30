@@ -26,7 +26,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Ability, meta=(AllowPrivateAccess=true))
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Team, meta=(AllowPrivateAccess=true))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category=Team, meta=(AllowPrivateAccess=true))
 	ETeamId TeamId = ETeamId::Neutral;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
@@ -39,13 +39,20 @@ protected:
 	void GiveInitialAbilities();
 	
 	virtual void Tick(float DeltaSeconds) override;
+
 public:
 	ABuilding();
 
+	void SetHealthBarColor();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UBuildingAttributeSet* GetAttributeSet() const;
 	virtual ETeamId GetTeamId() const override { return TeamId; }
 
+	UFUNCTION(Server, Reliable)
+	void S_SetTeamId(ETeamId NewTeamId);
+
 private:
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

@@ -15,10 +15,24 @@ void UAIInfoBar::ShowLevel(bool Value)
 
 void UAIInfoBar::SetHealthPercent(float Percent)
 {
-	HealthBar->SetPercent(Percent);
+	if(HealthBar)
+	{
+		HealthBar->SetPercent(Percent);
+	}
 }
 
 void UAIInfoBar::SetLevel(int32 Value)
 {
-	Level->SetText(FText::FromString(FString::FromInt(Value)));
+	if(Level)
+	{
+		Level->SetText(FText::FromString(FString::FromInt(Value)));
+	}
+}
+
+void UAIInfoBar::SetColor(FColor Color)
+{
+	if(HealthBar)
+	{
+		HealthBar->SetFillColorAndOpacity(FLinearColor(Color));
+	}
 }

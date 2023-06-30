@@ -13,6 +13,7 @@
 ATower::ATower()
 {
 	bReplicates = true;
+	PrimaryActorTick.bCanEverTick = true;
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(RootComponent);
@@ -45,9 +46,8 @@ void ATower::Tick(float DeltaTime)
 		FGameplayEventData EventData;
 		EventData.Target = Target;
 		EventData.Instigator = this;
-		GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Event.Tower.Attack"), &EventData);
+		GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Trigger.Tower.Attack"), &EventData);
 	}
-	
 }
 
 FTransform ATower::GetGemTransform() const
@@ -69,10 +69,7 @@ void ATower::BeingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 	
 	if(HasAuthority())
 	{
-		if(AAvatar* Avatar = Cast<AAvatar>(OtherActor))
-		{
-			Target = Avatar;
-		}
+		Target = OtherActor;
 	}
 }
 

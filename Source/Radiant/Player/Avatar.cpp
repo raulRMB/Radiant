@@ -10,6 +10,7 @@
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 #include "AI/NavigationSystemBase.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Buildings/Building.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Data/AbilityDataAsset.h"
@@ -378,6 +379,17 @@ void AAvatar::OnRep_PlayerState()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetXPAttribute()).AddUObject(this, &AAvatar::OnXPChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetLevelAttribute()).AddUObject(this, &AAvatar::OnLevelChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AAvatar::OnManaChanged);
+	}
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(this, ABuilding::StaticClass(), FoundActors);
+	for(AActor* Actor : FoundActors)
+	{
+		ABuilding* Building = Cast<ABuilding>(Actor);
+		if(Building)
+		{
+			Building->SetHealthBarColor();
+		}
 	}
 }
 
