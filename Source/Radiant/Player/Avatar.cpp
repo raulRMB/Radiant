@@ -381,14 +381,17 @@ void AAvatar::OnRep_PlayerState()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AAvatar::OnManaChanged);
 	}
 
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(this, ABuilding::StaticClass(), FoundActors);
-	for(AActor* Actor : FoundActors)
+	if(!HasAuthority())
 	{
-		ABuilding* Building = Cast<ABuilding>(Actor);
-		if(Building)
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(this, ABuilding::StaticClass(), FoundActors);
+		for(AActor* Actor : FoundActors)
 		{
-			Building->SetHealthBarColor();
+			ABuilding* Building = Cast<ABuilding>(Actor);
+			if(IsValid(Building))
+			{
+				Building->SetHealthBarColor();
+			}
 		}
 	}
 }

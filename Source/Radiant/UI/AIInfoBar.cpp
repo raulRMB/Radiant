@@ -31,8 +31,9 @@ void UAIInfoBar::SetLevel(int32 Value)
 
 void UAIInfoBar::SetColor(FColor Color)
 {
-	if(HealthBar)
-	{
-		HealthBar->SetFillColorAndOpacity(FLinearColor(Color));
-	}
+	if(this)
+		if(HealthBar)
+		{
+			HealthBar->SetFillColorAndOpacity(FLinearColor(Color));
+		}
 }
