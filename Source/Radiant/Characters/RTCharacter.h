@@ -37,4 +37,8 @@ public:
 	virtual TArray<TSubclassOf<class UGameplayAbility>> GetDeathAbilities() const override;
 
 	virtual ETeamId GetTeamId() const override { return TeamId; }
+
+public:
+	UFUNCTION(NetMulticast, Reliable)
+	void M_SetIgnoreWalls(const bool bIgnoreWalls);
 };

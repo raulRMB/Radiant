@@ -359,7 +359,7 @@ void AAvatar::ApplyInitialEffects()
 {
 	for(auto Effect : InitialEffects)
 	{
-		UGameplayEffect *EffectInstance = NewObject<UGameplayEffect>(GetTransientPackage(), Effect);
+		UGameplayEffect *EffectInstance = NewObject<UGameplayEffect>(this, Effect);
 		AbilitySystemComponent->ApplyGameplayEffectToSelf(EffectInstance, 1, AbilitySystemComponent->MakeEffectContext());
 	}
 }

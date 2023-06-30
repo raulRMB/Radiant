@@ -126,6 +126,10 @@ void UAbilityTask_PathTo::OnDestroy(bool AbilityEnded)
 	if(AAvatar* Avatar = Cast<AAvatar>(Ability->GetAvatarActorFromActorInfo()))
 	{
 		Avatar->CheckShouldAttack();
+		if(AController* Controller = Avatar->GetController())
+		{
+			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, Avatar->GetActorLocation());
+		}
 	}
 	Super::OnDestroy(AbilityEnded);
 }

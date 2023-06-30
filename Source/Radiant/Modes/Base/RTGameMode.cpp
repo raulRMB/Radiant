@@ -119,8 +119,11 @@ void ARTGameMode::PlayersAreLoaded() const
 		{
 			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
 			Hero->GameReady();
-			Hero->ApplyInitialEffects();
 			Hero->GameReadyUnicast();
+			if(HasAuthority())
+			{
+				Hero->ApplyInitialEffects();
+			}
 		}
 	}
 }
