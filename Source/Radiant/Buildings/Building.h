@@ -17,13 +17,12 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UCapsuleComponent* CapsuleComponent;
-	
-	class UAIInfoBar* InfoBar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UWidgetComponent* InfoBarWidgetComponent;
 	
 protected:
+	class UAIInfoBar* InfoBar;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Ability, meta=(AllowPrivateAccess=true))
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 

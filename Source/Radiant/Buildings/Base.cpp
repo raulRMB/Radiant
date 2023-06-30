@@ -6,6 +6,7 @@
 #include "GAS/AttributeSets/BuildingAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameMode.h"
+#include "UI/AIInfoBar.h"
 
 void ABase::OnBaseHealthChanged(const FOnAttributeChangeData& Data)
 {
@@ -42,5 +43,9 @@ void ABase::BeginPlay()
 {
 	Super::BeginPlay();
 	Gem = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Diamond")));
+	if(InfoBar)
+	{
+		InfoBar->ShowLevel(false);
+	}
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ABase::OnBaseHealthChanged);
 }
