@@ -51,6 +51,7 @@ private:
 	mutable bool bInitialPlayerLoad = false;
 	bool TeamSizeSet = false;
 	virtual void HandleMatchHasStarted() override;
+	ETeamId WinningTeam = ETeamId::Neutral;
 
 	class ARTPlayerStart* FindTeamStartTransform(ETeamId TeamId);
 public:

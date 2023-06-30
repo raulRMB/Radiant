@@ -15,6 +15,8 @@ class RADIANT_API ABase : public ABuilding
 	GENERATED_BODY()
 	
 	void OnBaseHealthChanged(const FOnAttributeChangeData& Data);
+	virtual void Tick(float DeltaTime) override;
+	class UStaticMeshComponent* Gem;
 protected:
 	virtual void BeginPlay() override;
 };

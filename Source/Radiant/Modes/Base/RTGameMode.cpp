@@ -92,9 +92,9 @@ void ARTGameMode::PlayerLoaded()
 	}
 }
 
-void ARTGameMode::SetMatchOver(ETeamId WinningTeam)
+void ARTGameMode::SetMatchOver(ETeamId WinningTeamId)
 {
-	NotifyMatchEnd(WinningTeam);
+	WinningTeam = WinningTeamId;
 	bMatchIsOver = true;
 }
 
@@ -134,7 +134,7 @@ void ARTGameMode::PlayersAreLoaded() const
 	}
 }
 
-void ARTGameMode::NotifyMatchEnd(ETeamId WinningTeam)
+void ARTGameMode::NotifyMatchEnd(ETeamId WinningTeamId)
 {
 	for( FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator )
 	{
@@ -142,7 +142,7 @@ void ARTGameMode::NotifyMatchEnd(ETeamId WinningTeam)
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
 			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
-			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->GetTeamId() == WinningTeam);
+			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->GetTeamId() == WinningTeamId);
 		}
 	}
 }
@@ -173,6 +173,10 @@ bool ARTGameMode::ReadyToStartMatch_Implementation()
 
 bool ARTGameMode::ReadyToEndMatch_Implementation()
 {
+	if(bMatchIsOver)
+	{
+		NotifyMatchEnd(WinningTeam);
+	}
 	return bMatchIsOver;
 }
 
