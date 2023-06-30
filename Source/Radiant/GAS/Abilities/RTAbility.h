@@ -19,7 +19,7 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	UPROPERTY(EditAnywhere, Category="Ability")
-	float MaxRange;
+	float MaxRange = 1000.f;
 public:
 	const FVector& GetMouseWorldLocation() const { return MouseWorldLocation; }
 	FVector GetRangeBasedMouseLocation();
