@@ -410,6 +410,16 @@ void AAvatar::SetHUDIcons()
 	}
 }
 
+ETeamId AAvatar::GetTeamId() const
+{
+	if(GetPlayerState<ARTPlayerState>())
+	{
+		return GetPlayerState<ARTPlayerState>()->GetTeamId();
+	}
+	return ETeamId::Neutral;
+}
+
+
 void AAvatar::GiveInitialAbilities()
 {
 	for(auto AbilityData : GetRTPlayerState()->GetOwnedAbilities())

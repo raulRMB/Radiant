@@ -133,8 +133,7 @@ public:
 	virtual void OnRep_PlayerState() override;
 	void SetHUDIcons();
 
-	virtual ETeamId GetTeamId() const override { return GetPlayerState<ARTPlayerState>()->GetTeamId(); }
-
+	virtual ETeamId GetTeamId() const override;
 	void GiveInitialAbilities();
 
 	UFUNCTION(Server, Reliable)

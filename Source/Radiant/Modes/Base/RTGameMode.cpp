@@ -231,13 +231,13 @@ void ARTGameMode::Respawn(ARTPlayerController* PlayerController)
 {
 	if(PlayerController->GetPawn() != nullptr)
 	{
-		PlayerController->GetPawn()->Destroy();
 
 		if(AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn()))
 		{
 			if(UActorManager* Manager = GetGameInstance()->GetSubsystem<UActorManager>())
 			{
 				Manager->RemovePlayer(Hero);
+				PlayerController->GetPawn()->Destroy();
 				
 				Hero = GetWorld()->SpawnActor<AAvatar>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
 				PlayerController->Possess(Hero);
