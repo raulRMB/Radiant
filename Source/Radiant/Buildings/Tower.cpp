@@ -40,13 +40,34 @@ void ATower::BeginPlay()
 void ATower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	TArray<AActor*> OverlappingActors;
 	Gem->AddLocalRotation(FRotator(0.f, 90.f * DeltaTime, 0.f));
-	if(Target)
+	if(IsValid(Target))
 	{
 		FGameplayEventData EventData;
 		EventData.Target = Target;
 		EventData.Instigator = this;
 		GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Trigger.Tower.Attack"), &EventData);
+	}
+	else
+	{
+		AttackRadius->GetOverlappingActors(OverlappingActors);
+		if(OverlappingActors.Num() > 0)
+		{
+			for(AActor* Actor : OverlappingActors)
+			{
+				auto TeamMember = Cast<ITeamMember>(Actor);
+				if(TeamMember && TeamMember->GetTeamId() != GetTeamId())
+				{
+					Target = Actor;
+					break;
+				}
+			}
+		}
+		else
+		{
+			Target = nullptr;
+		}
 	}
 }
 
