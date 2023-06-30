@@ -5,6 +5,8 @@
 #include "Util/Interfaces/TeamMember.h"
 #include "Building.generated.h"
 
+struct FOnAttributeChangeData;
+
 UCLASS()
 class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMember, public ITargetable
 {
@@ -15,6 +17,12 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UCapsuleComponent* CapsuleComponent;
+	
+	class UAIInfoBar* InfoBar;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
+	class UWidgetComponent* InfoBarWidgetComponent;
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Ability, meta=(AllowPrivateAccess=true))
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
@@ -26,14 +34,19 @@ protected:
 	class URTAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
-	class UTowerAttributeSet* AttributeSet;
-	void BeginPlay();
+	class UBuildingAttributeSet* AttributeSet;
+	
+	virtual void BeginPlay() override;
 	void GiveInitialAbilities();
-public:	
-	// Sets default values for this actor's properties
+	
+	virtual void Tick(float DeltaSeconds) override;
+public:
 	ABuilding();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UTowerAttributeSet* GetAttributeSet() const;
+	UBuildingAttributeSet* GetAttributeSet() const;
 	virtual ETeamId GetTeamId() const override { return TeamId; }
+
+private:
+	void OnHealthChanged(const FOnAttributeChangeData& Data);
 };

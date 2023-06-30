@@ -5,13 +5,15 @@
 
 #include "Components/SphereComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
-#include "GAS/AttributeSets/TowerAttributeSet.h"
+#include "GAS/AttributeSets/BuildingAttributeSet.h"
 #include "Player/Avatar.h"
 #include "Util/Util.h"
 
 // Sets default values
 ATower::ATower()
 {
+	bReplicates = true;
+	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(RootComponent);
 
@@ -31,7 +33,6 @@ void ATower::BeginPlay()
 	Super::BeginPlay();
 	AttackRadius->OnComponentBeginOverlap.AddDynamic(this,&ATower::BeingOverlap);
 	AttackRadius->OnComponentEndOverlap.AddDynamic(this,&ATower::EndOverlap);
-	AttributeSet->InitAttackDamage(AttackDamage);
 }
 
 // Called every frame
@@ -46,8 +47,7 @@ void ATower::Tick(float DeltaTime)
 		EventData.Instigator = this;
 		GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Event.Tower.Attack"), &EventData);
 	}
-	// if(AttributeSet)
-	// 	RTLOGP("%f", AttributeSet->GetHealth())
+	
 }
 
 FTransform ATower::GetGemTransform() const

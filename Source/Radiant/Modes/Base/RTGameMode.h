@@ -15,7 +15,9 @@ UCLASS()
 class RADIANT_API ARTGameMode : public AGameMode
 {
 	GENERATED_BODY()
-
+	
+	uint8 bMatchIsOver : 1;
+	
 public:
 	ARTGameMode();
 	void SetTeamSize(FString QueueName);
@@ -23,9 +25,10 @@ public:
 	uint32 TeamCount = 2;
 	
 	uint32 PlayersLoaded = 0;
-	UPROPERTY(EditAnywhere)
-	uint32 KillsToWin = 3;
+
 	void PlayerLoaded();
+
+	void SetMatchOver(ETeamId WinningTeam);
 
 	void SpawnAvatar(class ARTPlayerController* PlayerController);
 

@@ -92,6 +92,12 @@ void ARTGameMode::PlayerLoaded()
 	}
 }
 
+void ARTGameMode::SetMatchOver(ETeamId WinningTeam)
+{
+	NotifyMatchEnd(WinningTeam);
+	bMatchIsOver = true;
+}
+
 void ARTGameMode::SpawnAvatar(ARTPlayerController* PlayerController)
 {
 	if(!PlayerController)
@@ -167,18 +173,7 @@ bool ARTGameMode::ReadyToStartMatch_Implementation()
 
 bool ARTGameMode::ReadyToEndMatch_Implementation()
 {
-	ARTGameState* State = Cast<ARTGameState>(GetWorld()->GetGameState());
-	if(State->RedScore >= KillsToWin * TeamSize)
-	{
-		NotifyMatchEnd(ETeamId::Red);
-		return true;
-	}
-	if(State->BlueScore >= KillsToWin * TeamSize)
-	{
-		NotifyMatchEnd(ETeamId::Blue);
-		return true;
-	}
-	return false;
+	return bMatchIsOver;
 }
 
 void ARTGameMode::HandleMatchHasStarted()

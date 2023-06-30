@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
-#include "TowerAttributeSet.generated.h"
+#include "BuildingAttributeSet.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
@@ -17,22 +17,22 @@
  * 
  */
 UCLASS()
-class RADIANT_API UTowerAttributeSet : public UAttributeSet
+class RADIANT_API UBuildingAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(UTowerAttributeSet, Health)
+	ATTRIBUTE_ACCESSORS(UBuildingAttributeSet, Health)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_MaxHealth)
 	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(UTowerAttributeSet, MaxHealth)
+	ATTRIBUTE_ACCESSORS(UBuildingAttributeSet, MaxHealth)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage", ReplicatedUsing = OnRep_AttackDamage)
 	FGameplayAttributeData AttackDamage;
-	ATTRIBUTE_ACCESSORS(UTowerAttributeSet, AttackDamage)
+	ATTRIBUTE_ACCESSORS(UBuildingAttributeSet, AttackDamage)
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
