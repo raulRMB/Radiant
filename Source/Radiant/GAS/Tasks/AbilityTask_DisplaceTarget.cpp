@@ -49,7 +49,7 @@ void UAbilityTask_DisplaceTarget::SharedInitAndApply()
 {
 	ACharacter* CharacterToDisplace = Cast<ACharacter>(TargetToDisplace);
 	
-	if (CharacterToDisplace->GetMovementComponent())
+	if (CharacterToDisplace && CharacterToDisplace->GetMovementComponent())
 	{
 		MovementComponent = Cast<UCharacterMovementComponent>(CharacterToDisplace->GetMovementComponent());
 		StartTime = GetWorld()->GetTimeSeconds();
