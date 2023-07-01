@@ -14,11 +14,7 @@ AAISpawner::AAISpawner()
 void AAISpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	if(HasAuthority())
-	{
-		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAISpawner::Spawn, SpawnRate, true);
-	}
+	
 }
 
 void AAISpawner::Spawn()
@@ -38,6 +34,15 @@ void AAISpawner::Spawn()
 void AAISpawner::OnDeath()
 {
 	Count--;
+}
+
+void AAISpawner::StartSpawning()
+{
+	if(HasAuthority())
+	{
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAISpawner::Spawn, SpawnRate, true);
+	}
 }
 
 void AAISpawner::Tick(float DeltaTime)

@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerState.h"
 #include "Util/Managers/ActorManager.h"
+#include "Util/Spawners/AISpawner.h"
 
 ARTGameMode::ARTGameMode()
 {
@@ -205,6 +206,14 @@ void ARTGameMode::HandleMatchHasStarted()
 
 	// Then fire off match started
 	GetWorldSettings()->NotifyMatchStarted();
+
+	TArray<AActor*> Spawners;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAISpawner::StaticClass(), Spawners);
+	for(AActor* Spawner : Spawners)
+	{
+		AAISpawner* AISpawner = Cast<AAISpawner>(Spawner);
+		AISpawner->StartSpawning();
+	}
 }
 
 ARTPlayerStart* ARTGameMode::FindTeamStartTransform(ETeamId TeamId)
