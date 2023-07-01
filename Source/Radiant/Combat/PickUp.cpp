@@ -29,9 +29,12 @@ void APickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 {
 	if(AAvatar* Avatar = Cast<AAvatar>(OtherActor))
 	{
-		Avatar->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(GameplayEffect.GetDefaultObject(), 1, Avatar->GetAbilitySystemComponent()->MakeEffectContext());
-		OnPickedUp.ExecuteIfBound();
-		Destroy();
+		if(Avatar->GetAbilitySystemComponent())
+		{
+			Avatar->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(GameplayEffect.GetDefaultObject(), 1, Avatar->GetAbilitySystemComponent()->MakeEffectContext());
+			OnPickedUp.ExecuteIfBound();
+			Destroy();
+		}
 	}
 }
 
