@@ -8,6 +8,7 @@
 #include "Components/ComboBox.h"
 #include "Components/ComboBoxString.h"
 #include "Components/TextBlock.h"
+#include "Util/Util.h"
 
 
 void ULobbyMenu::NativeConstruct()
@@ -75,6 +76,7 @@ void ULobbyMenu::OnButtonToggle(bool bIsMatchmaking, FString Message)
 		QueueSelector->SetIsEnabled(false);
 		FindMatchButton->SetVisibility(ESlateVisibility::Hidden);
 		CancelMatchmakingButton->SetVisibility(ESlateVisibility::Visible);
+		CancelButtonText->SetText(RTPRINTF("Cancel Queue: %s", *Message));
 		ErrorMessage->SetText(FText::FromString(""));
 	}
 	else

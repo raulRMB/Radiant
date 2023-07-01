@@ -193,7 +193,7 @@ void UClientSubsystem::OnCreateMatchmakingTicketSuccess(
 
 	bIsMatchmaking = true;
 
-	OnMatchmakingStatusChanged.ExecuteIfBound(bIsMatchmaking, "");
+	OnMatchmakingStatusChanged.ExecuteIfBound(bIsMatchmaking, QueueName);
 	
 	UE_LOG(LogTemp, Warning, TEXT("On Create Matchmaking Ticket success"));
 }
