@@ -15,11 +15,11 @@ void UInGameStore::UpdateRadianite(float RadianiteAmount)
 	RadianiteText->SetText(RTPRINTF("Radianite: %.0f", RadianiteAmount));
 }
 
-void UInGameStore::Init(AAvatar* Avatar)
+void UInGameStore::Init(ARTPlayerState* PS)
 {
-	if (Avatar)
+	if (PS)
 	{
-		Avatar->OnUpdateRadianite.AddUObject(this, &UInGameStore::UpdateRadianite);
+		PS->OnUpdateRadianite.AddUObject(this, &UInGameStore::UpdateRadianite);
 	}
 }
 

@@ -86,7 +86,7 @@ void ARTHUD::ToggleStore()
 
 void ARTHUD::BindUIItems()
 {
-	StoreUI->Init(Cast<AAvatar>(GetOwningPawn()));
+	StoreUI->Init(GetOwningPlayerController()->GetPlayerState<ARTPlayerState>());
 }
 
 void ARTHUD::Escape()

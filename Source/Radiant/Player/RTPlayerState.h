@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayEffectTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "GameplayTags/Classes/GameplayTagContainer.h"
 #include "Util/Interfaces/TeamMember.h"
@@ -12,6 +13,8 @@
 /**
  * 
  */
+DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);
+
 UCLASS()
 class RADIANT_API ARTPlayerState : public APlayerState, public IAbilitySystemInterface, public ITeamMember
 {
@@ -34,6 +37,8 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_UsernameChanged, VisibleAnywhere)
 	FString Username = "";
 public:
+	FUpdateRadianiteSignature OnUpdateRadianite;
+	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	ARTPlayerState();
 
 	UFUNCTION(BlueprintCallable)

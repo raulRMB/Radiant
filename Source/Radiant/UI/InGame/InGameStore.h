@@ -31,5 +31,5 @@ class RADIANT_API UInGameStore : public UUserWidget
 	UFUNCTION()
 	void UpdateRadianite(float RadianiteAmount);
 public:
-	void Init(class AAvatar* Avatar);
+	void Init(class ARTPlayerState* PS);
 };

@@ -20,6 +20,11 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, AbilityTriggers);
 }
 
+void ARTPlayerState::OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	OnUpdateRadianite.Broadcast(OnAttributeChangeData.NewValue);
+}
+
 ARTPlayerState::ARTPlayerState()
 {
 	// Create ability system component, and set it to be explicitly replicated
@@ -46,6 +51,7 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSet->InitMaxXP(100.f);
 	AttributeSet->InitLevel(1.f);
 	AttributeSet->InitRadianite(0.f);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetRadianiteAttribute()).AddUObject(this, &ARTPlayerState::OnRadianiteChanged);
 }
 
 void ARTPlayerState::SetPlayerStats()

@@ -10,8 +10,6 @@
 #include "Player/RTPlayerState.h"
 #include "Avatar.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);
-
 UCLASS()
 class RADIANT_API AAvatar : public ARTCharacter
 {
@@ -105,7 +103,6 @@ protected:
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
 public:
-	FUpdateRadianiteSignature OnUpdateRadianite;
 
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();

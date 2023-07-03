@@ -68,9 +68,6 @@ void AAvatar::GameReadyUnicast_Implementation()
 			GetPlayerState<ARTPlayerState>()->SetUsername(Username);
 		}
 	}
-
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetRadianiteAttribute()).AddUObject(this, &AAvatar::OnRadianiteChanged);
-	
 	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AAvatar::OnAbilityFailed);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAvatar::CastingTagChanged);
 	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->HideLoadScreen();
@@ -349,11 +346,6 @@ void AAvatar::OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData
 	{
 		OverHeadInfoBar->SetLevel(OnAttributeChangeData.NewValue);
 	}
-}
-
-void AAvatar::OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData) const
-{
-	OnUpdateRadianite.Broadcast(OnAttributeChangeData.NewValue);
 }
 
 void AAvatar::ApplyInitialEffects()
