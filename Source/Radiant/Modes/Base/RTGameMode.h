@@ -21,7 +21,7 @@ class RADIANT_API ARTGameMode : public AGameMode
 public:
 	ARTGameMode();
 	void SetTeamSize(FString QueueName);
-	uint32 TeamSize = INT_MAX;
+	uint32 TeamSize = UINT_MAX;
 	uint32 TeamCount = 2;
 	
 	uint32 PlayersLoaded = 0;

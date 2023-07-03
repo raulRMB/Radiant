@@ -19,7 +19,7 @@ ARTGameMode::ARTGameMode()
 
 void ARTGameMode::SetTeamSize(FString QueueName)
 {
-	if(!TeamSizeSet)
+	if(!TeamSizeSet && TeamSize == UINT_MAX)
 	{
 		if(QueueName == "1v1")
 		{
@@ -240,7 +240,6 @@ void ARTGameMode::Respawn(ARTPlayerController* PlayerController)
 {
 	if(PlayerController->GetPawn() != nullptr)
 	{
-
 		if(AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn()))
 		{
 			if(UActorManager* Manager = GetGameInstance()->GetSubsystem<UActorManager>())

@@ -4,6 +4,7 @@
 #include "UI/RTHUD.h"
 
 #include "CaptureAreaBar.h"
+#include "Minimap.h"
 #include "RTInfoPanel.h"
 #include "InGame/InGameStore.h"
 #include "Menu/LevelUp.h"
@@ -30,12 +31,20 @@ void ARTHUD::BeginPlay()
 	StoreUI = CreateWidget<UInGameStore>(GetWorld(), StoreUIClass);
 	StoreUI->AddToViewport();
 	StoreUI->SetVisibility(ESlateVisibility::Hidden);
+	Minimap = Cast<UMinimap>(CreateWidget<UMinimap>(GetWorld(), MinimapClass));
+	Minimap->AddToViewport();
+	Minimap->SetVisibility(ESlateVisibility::Visible);
 	
 }
 
 void ARTHUD::ShowEndScreen(bool won)
 {
 	InfoPanel->ShowEndScreen(won);
+}
+
+ARTHUD::ARTHUD()
+{
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void ARTHUD::UpdateAbilities(TArray<UAbilityDataAsset*> Abilities)
@@ -103,3 +112,11 @@ void ARTHUD::Escape()
 		ToggleSettings();
 	}
 }
+
+void ARTHUD::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	Minimap->DrawDynamic();
+}
+

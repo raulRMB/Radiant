@@ -29,12 +29,18 @@ class RADIANT_API ARTHUD : public AHUD
 	UPROPERTY(EditAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UUserWidget> CaptureAreaBarClass;
 
+	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
+	TSubclassOf<class UUserWidget> MinimapClass;
+
 	UPROPERTY()
 	URTInfoPanel* InfoPanel;
 	UPROPERTY()
 	class USettings* SettingsPanel;
 	UPROPERTY()
 	UUserWidget* LevelUpPanel;
+
+	UPROPERTY()
+	class UMinimap* Minimap;
 
 	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
 	TSubclassOf<class UUserWidget> StoreUIClass;
@@ -49,6 +55,8 @@ public:
 
 	FGiveAbilityFromButtonSignature GiveAbilityFromButton;
 public:
+	ARTHUD();
+	
 	void UpdateAbilities(TArray<class UAbilityDataAsset*> Abilities);
 	void ShowEndScreen(bool won);
 	void ToggleSettings();
@@ -60,4 +68,6 @@ public:
 	UFUNCTION()
 	void BindUIItems();
 	void Escape();
+
+	virtual void Tick(float DeltaSeconds) override;
 };
