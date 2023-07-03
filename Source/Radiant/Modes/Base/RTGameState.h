@@ -48,7 +48,12 @@ public:
 	FOnHeroDeath OnHeroDeathDelegate;
 	
 	virtual void GetLifetimeReplicatedProps (TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UGridManager> GridManagerClass; 
 	
+	UPROPERTY()
+	class UGridManager* GridManager;
 protected:
 	virtual void BeginPlay() override;
 	

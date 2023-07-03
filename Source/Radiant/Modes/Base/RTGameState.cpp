@@ -9,6 +9,7 @@
 #include "Objectives/CaptureArea.h"
 #include "Player/RTPlayerState.h"
 #include "UI/CaptureAreaBar.h"
+#include "Util/Managers/GridManager.h"
 
 void ARTGameState::OnHeroDeath_Implementation(AAvatar* Hero)
 {
@@ -38,9 +39,14 @@ void ARTGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 void ARTGameState::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	GridManager = NewObject<UGridManager>(this, GridManagerClass);
+	GridManager->InitGrid(20, 20);
 }
 
 void ARTGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	GridManager->DrawGrid();
 }
