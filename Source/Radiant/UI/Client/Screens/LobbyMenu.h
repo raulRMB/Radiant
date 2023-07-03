@@ -47,6 +47,8 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 	UFUNCTION()
 	void QuitGame();
 	void HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError);
+	UFUNCTION()
+	void OnQueueSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 	virtual void NativeConstruct() override;
 	void ResetPage();
 	

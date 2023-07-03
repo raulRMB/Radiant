@@ -223,6 +223,7 @@ void UClientSubsystem::OnGetMatchmakingTicketSuccess(
 
 void UClientSubsystem::OnGetMatchSuccess(const PlayFab::MultiplayerModels::FGetMatchResult& Result)
 {
+	bIsMatchmaking = false;
 	if(Result.pfServerDetails)
 	{
 		FString Address = Result.pfServerDetails->IPV4Address;
@@ -232,17 +233,16 @@ void UClientSubsystem::OnGetMatchSuccess(const PlayFab::MultiplayerModels::FGetM
 			Address.Append(":");
 			Address.AppendInt(Ports[0].Num);
 			UE_LOG(LogTemp, Warning, TEXT("Loading Address: %s"), *Address);
+
 			UGameplayStatics::OpenLevel(GetWorld(), FName(Address));
 		} else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("No Server Address!"));
-			bIsMatchmaking = false;
 			OnMatchmakingStatusChanged.ExecuteIfBound(bIsMatchmaking, "Failed To Find Server");
 		}
 	} else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Server Address!"));
-		bIsMatchmaking = false;
 		OnMatchmakingStatusChanged.ExecuteIfBound(bIsMatchmaking, "Failed To Find Server");
 	}
 }
