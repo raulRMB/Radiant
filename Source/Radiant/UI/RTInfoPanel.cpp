@@ -111,6 +111,19 @@ void URTInfoPanel::Init()
 	Cast<ARTGameState>(UGameplayStatics::GetGameState(this))->OnHeroDeathDelegate.BindUObject(this, &URTInfoPanel::OnHeroDeath);
 }
 
+void URTInfoPanel::UpdateRadianite(float Amount)
+{
+	Radianite->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Amount)));
+}
+
+void URTInfoPanel::Bind(ARTPlayerState* PS)
+{
+	if (PS)
+	{
+		PS->OnUpdateRadianite.AddUObject(this, &URTInfoPanel::UpdateRadianite);
+	}
+}
+
 void URTInfoPanel::OnHeroDeath(uint32 RedScore, uint32 BlueScore)
 {
 	RedTeam->SetText(FText::FromString(FString::FromInt(RedScore)));

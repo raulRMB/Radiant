@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
+#include "Player/RTPlayerState.h"
 #include "RTInfoPanel.generated.h"
 
 UENUM(BlueprintType)
@@ -104,6 +105,9 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* HealthAmount;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* Radianite;
 	
 	UPROPERTY(meta=(BindWidget))
 	class UProgressBar* ManaBar;
@@ -138,6 +142,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Init();
+	void UpdateRadianite(float X);
+	void Bind(ARTPlayerState* PS);
 
 	UFUNCTION()
 	void OnHeroDeath(uint32 RedScore, uint32 BlueScore);

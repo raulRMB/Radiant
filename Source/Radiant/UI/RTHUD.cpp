@@ -86,7 +86,9 @@ void ARTHUD::ToggleStore()
 
 void ARTHUD::BindUIItems()
 {
-	StoreUI->Init(GetOwningPlayerController()->GetPlayerState<ARTPlayerState>());
+	auto PS = GetOwningPlayerController()->GetPlayerState<ARTPlayerState>();
+	StoreUI->Init(PS);
+	InfoPanel->Bind(PS);
 }
 
 void ARTHUD::Escape()
