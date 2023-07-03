@@ -12,8 +12,11 @@ class UCurveVector;
 class UGameplayTasksComponent;
 enum class ERootMotionFinishVelocityMode : uint8;
 
+USTRUCT()
 struct FDisplaceTargetData
 {
+	GENERATED_BODY()
+	UPROPERTY()
 	class AActor* Target;
 	FVector Location;
 	float Duration;

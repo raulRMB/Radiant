@@ -34,6 +34,7 @@ class RADIANT_API ALinearSkillshot : public AArtillery
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement", meta = (AllowPrivateAccess = "true"))
 	float LifeSpan = 1.f;
 
+	UPROPERTY()
 	TArray<AActor*> AffectedActors;
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")

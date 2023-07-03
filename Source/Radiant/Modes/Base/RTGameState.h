@@ -15,6 +15,7 @@ struct FTeam
 	
 	uint8 TeamID : 1;
 	int Score;
+	UPROPERTY()
 	TArray<class AAvatar*> Heroes;
 };
 

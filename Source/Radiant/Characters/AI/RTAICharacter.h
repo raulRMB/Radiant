@@ -22,6 +22,7 @@ class RADIANT_API ARTAICharacter : public ARTCharacter
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class APickUp> PickUpClass;
 
+	UPROPERTY()
 	class UAIInfoBar* OverHeadInfoBar;
 public:
 	// Sets default values for this character's properties

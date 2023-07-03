@@ -24,8 +24,11 @@ struct FUIAbility
 {
 	GENERATED_BODY()
 	uint8 bOn : 1;
+	UPROPERTY()
 	UMaterialInstanceDynamic* MaterialInstance{};
+	UPROPERTY()
 	class UImage* AbilityImage{};
+	UPROPERTY()
 	class UImage* MaskImage{};
 
 	FUIAbility(UMaterialInterface* Interface = nullptr, UObject* Context = nullptr, UImage* Ability = nullptr, UImage* Mask = nullptr)

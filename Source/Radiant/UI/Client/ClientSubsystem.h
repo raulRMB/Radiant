@@ -42,6 +42,7 @@ private:
 	uint8 bIsMatchmaking : 1;
 	uint8 bIsLoggedIn : 1;
 
+	UPROPERTY()
 	class AWidgetManager* WidgetManager = nullptr;
 	FTimerHandle HGetTicketResult;
 protected:

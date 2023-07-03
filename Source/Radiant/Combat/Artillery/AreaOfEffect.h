@@ -35,6 +35,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void ApplyGameplayEffects();
+	UPROPERTY()
 	class ARTCharacter* SourceCharacter;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	TArray<class ARTCharacter*> EffectTargets;

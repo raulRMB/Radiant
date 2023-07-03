@@ -16,6 +16,7 @@ class RADIANT_API UActorManager final : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	TArray<class AAvatar*> Players;
 public:
 	FPlayersUpdatedSignature OnPlayersUpdated;

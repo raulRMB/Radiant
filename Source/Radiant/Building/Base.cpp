@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Buildings/Base.h"
+#include "Base.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/BuildingAttributeSet.h"
 #include "Kismet/GameplayStatics.h"

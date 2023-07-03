@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Buildings/Building.h"
+#include "Building.h"
 #include "Base.generated.h"
 
 /**
@@ -16,6 +16,7 @@ class RADIANT_API ABase : public ABuilding
 	
 	void OnBaseHealthChanged(const FOnAttributeChangeData& Data);
 	virtual void Tick(float DeltaTime) override;
+	UPROPERTY()
 	class UStaticMeshComponent* Gem;
 protected:
 	virtual void BeginPlay() override;

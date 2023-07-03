@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Buildings/Tower.h"
+#include "Tower.h"
 
 #include "Components/SphereComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"

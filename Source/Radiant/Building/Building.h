@@ -22,6 +22,7 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	class UWidgetComponent* InfoBarWidgetComponent;
 	
 protected:
+	UPROPERTY()
 	class UAIInfoBar* InfoBar;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Ability, meta=(AllowPrivateAccess=true))
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;

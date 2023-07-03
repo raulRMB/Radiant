@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "Buildings/GATowerAttack.h"
+#include "GATowerAttack.h"
 
 #include "Tower.h"
 #include "Combat/Artillery/HeatSeeking.h"

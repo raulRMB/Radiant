@@ -4,7 +4,7 @@
 #include "GAS/Abilities/Building/GABuildAbility.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Buildings/Building.h"
+#include "Building/Building.h"
 
 void UGABuildAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                       const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,

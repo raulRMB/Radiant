@@ -16,7 +16,6 @@ class RADIANT_API ACaptureArea : public AActor
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta = (AllowPrivateAccess=true))
 	class UBoxComponent* HitBox;
-	
 public:	
 	// Sets default values for this actor's properties
 	ACaptureArea();

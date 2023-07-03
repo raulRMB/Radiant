@@ -10,7 +10,7 @@
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 #include "AI/NavigationSystemBase.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "Buildings/Building.h"
+#include "Building/Building.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Data/AbilityDataAsset.h"

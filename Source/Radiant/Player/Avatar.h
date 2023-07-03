@@ -138,7 +138,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void S_CancelAllAbilities();
-	
+
+	UPROPERTY()
 	class URTAvatarAttributeSet* AttributeSetBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
@@ -149,7 +150,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float CameraMovementSpeed;
-	
+
+	UPROPERTY()
 	class UHeroInfoBar* OverHeadInfoBar;
 
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
