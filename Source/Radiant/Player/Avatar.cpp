@@ -27,6 +27,7 @@
 #include "UI/RTHUD.h"
 #include "UI/Client/ClientSubsystem.h"
 #include "UI/InGame/InGameStore.h"
+#include "Util/UserSettings.h"
 #include "Util/Util.h"
 #include "Util/Interfaces/Targetable.h"
 #include "Util/Managers/ActorManager.h"
@@ -170,6 +171,8 @@ void AAvatar::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::ShowStats, 0.3f, true);
 	
 	SetHUDIcons();
+
+	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
 }
 
 void AAvatar::GameReady_Implementation()
@@ -280,7 +283,26 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
 	CastAbility(GetRTPlayerState()->GetAbilityTrigger(0));
+	
+	FGridPiece Piece;
+	Piece.Level = 0;
+	Piece.Type = EEnvironmentType::EEnvironmentType_Tower;
+	Piece.Size = 1;
+	Piece.TeamId = GetRTPlayerState()->GetTeamId();
+
+	FVector Mouse = UUtil::GetMousePosition(this, {});
+	Mouse.X = FMath::RoundToInt(Mouse.X / GridManager->CellSize);
+	Mouse.Y = FMath::RoundToInt(Mouse.Y / GridManager->CellSize);
+	Piece.Position = FIntVector2(Mouse.X, Mouse.Y);
+	
+	S_PlacePieceAtMouse(Piece);
 }
+
+void AAvatar::S_PlacePieceAtMouse_Implementation(FGridPiece Piece)
+{
+	GridManager->PlacePieceAtMouse(Piece);	
+}
+
 
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
@@ -384,6 +406,19 @@ void AAvatar::OnRep_PlayerState()
 			{
 				Building->SetHealthBarColor();
 			}
+		}
+	}
+}
+
+void AAvatar::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	if(UGameplayStatics::DoesSaveGameExist("UserSettings", 0))
+	{
+		if(UUserSettings* Save = Cast<UUserSettings>(UGameplayStatics::LoadGameFromSlot("UserSettings", 0)))
+		{
+			CameraMovementSpeed = Save->CameraSpeed;
 		}
 	}
 }
@@ -736,6 +771,7 @@ void AAvatar::ShowStats()
 void AAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
 	FPS = 1.0/DeltaTime;
 	HandleCamera(DeltaTime);
 

@@ -8,6 +8,7 @@
 #include "Characters/RTCharacter.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "Player/RTPlayerState.h"
+#include "Util/Managers/GridManager.h"
 #include "Avatar.generated.h"
 
 UCLASS()
@@ -96,18 +97,24 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	USoundBase* FailedSound;
+
+	UPROPERTY()
+	class AGridManager* GridManager;
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
+
+	UFUNCTION(Server, Reliable)
+	void S_PlacePieceAtMouse(FGridPiece Piece);
+	
 public:
 
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();
 	void CastAbility(const FGameplayTag& AbilityTag);
-	
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void OnAbilityOne(const FInputActionValue& Value);
 	void OnAbilityTwo(const FInputActionValue& Value);
@@ -128,6 +135,7 @@ public:
 	void OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData) const;
 	virtual void OnRep_PlayerState() override;
+	virtual void OnRep_Controller() override;
 	void SetHUDIcons();
 
 	virtual ETeamId GetTeamId() const override;

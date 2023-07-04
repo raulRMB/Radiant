@@ -18,4 +18,7 @@ public:
 	UUserSettings();
 	UPROPERTY()
 	TArray<FEnhancedActionKeyMapping> Mappings;
+
+	UPROPERTY()
+	float CameraSpeed;
 };

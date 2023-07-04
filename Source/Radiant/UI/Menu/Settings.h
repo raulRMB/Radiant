@@ -17,6 +17,15 @@ class RADIANT_API USettings : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* KeyList;
 
+	UPROPERTY(meta = (BindWidget))
+	class USlider* CameraSpeedSlider;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* CameraSpeedText;
+
+	UFUNCTION()
+	void OnCameraSpeedChanged(float Value);
+	
 	virtual void NativeConstruct() override;
 public:
 	UPROPERTY(EditAnywhere)

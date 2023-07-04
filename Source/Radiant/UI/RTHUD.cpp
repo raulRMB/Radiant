@@ -10,6 +10,7 @@
 #include "Menu/LevelUp.h"
 #include "Menu/Settings.h"
 #include "Player/Avatar.h"
+#include "Player/RTPlayerController.h"
 #include "Util/Util.h"
 
 void ARTHUD::BeginPlay()
@@ -57,6 +58,8 @@ void ARTHUD::ToggleSettings()
 	SettingsPanel->RefreshKeybindList();
 	bSettingsOpen = !bSettingsOpen;
 	SettingsPanel->SetVisibility(bSettingsOpen ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Hidden);
+
+	Cast<ARTPlayerController>(GetOwningPlayerController())->SaveUserSettingsDelay();
 }
 
 void ARTHUD::HideLoadScreen()

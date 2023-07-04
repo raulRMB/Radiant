@@ -94,6 +94,7 @@ void ARTPlayerController::SaveUserSettings()
 			Save = Cast<UUserSettings>(UGameplayStatics::CreateSaveGameObject(UUserSettings::StaticClass()));
 		}
 		Save->Mappings = Subsystem->GetAllPlayerMappableActionKeyMappings();
+		Save->CameraSpeed = GetPawn<AAvatar>()->CameraMovementSpeed;
 		UGameplayStatics::SaveGameToSlot(Save, "UserSettings", 0);
 	}
 }
