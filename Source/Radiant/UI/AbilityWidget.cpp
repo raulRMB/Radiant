@@ -3,10 +3,12 @@
 
 #include "UI/AbilityWidget.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Data/AbilityDataAsset.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Player/RTPlayerState.h"
+#include "Util/AbilityDragDropOperation.h"
 
 void UAbilityWidget::NativeConstruct()
 {
@@ -14,6 +16,64 @@ void UAbilityWidget::NativeConstruct()
 	MaterialInstance = UMaterialInstanceDynamic::Create(Mat, this);
 	AbilityCDMask->SetBrushResourceObject(MaterialInstance);
 	bOn = false;
+}
+
+void UAbilityWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+	UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+	UAbilityDragDropOperation* DragWidget = Cast<UAbilityDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UAbilityDragDropOperation::StaticClass()));
+	SetVisibility(ESlateVisibility::HitTestInvisible);
+	Ability->SetDesiredSizeOverride(FVector2D(80, 80));
+	DragWidget->DefaultDragVisual = Ability;
+	DragWidget->WidgetReference = this;
+	DragWidget->Pivot = EDragPivot::CenterCenter;
+	OutOperation = DragWidget;
+}
+
+FReply UAbilityWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	auto Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	if(Ability->Brush.GetResourceObject() == nullptr)
+		return Reply;
+	FEventReply ReplyResult = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
+	return ReplyResult.NativeReply;
+}
+
+void UAbilityWidget::Reset()
+{
+	AbilityData = nullptr;
+	Ability->SetBrushFromTexture(nullptr);
+	Ability->SetToolTipText(FText::FromString(""));
+	AbilityCDMask->SetToolTipText(FText::FromString(""));
+	CooldownTag = FGameplayTag();
+}
+
+bool UAbilityWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+                                  UDragDropOperation* InOperation)
+{
+	UAbilityDragDropOperation* DragDropOperation = Cast<UAbilityDragDropOperation>(InOperation);
+	if(DragDropOperation && DragDropOperation->WidgetReference != nullptr && DragDropOperation->WidgetReference->AbilityData != nullptr)
+	{
+		UAbilityDataAsset* Temp = AbilityData;
+		SetData(DragDropOperation->WidgetReference->AbilityData);
+		if(Temp)
+		{
+			DragDropOperation->WidgetReference->SetData(Temp);
+			DragDropOperation->WidgetReference->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			DragDropOperation->WidgetReference->Reset();	
+		}
+	}
+	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+}
+
+void UAbilityWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
+	SetVisibility(ESlateVisibility::Visible);
 }
 
 void UAbilityWidget::SetOn(bool On)
@@ -38,6 +98,7 @@ float UAbilityWidget::GetCooldownPercent(const float TimeRemaining, const float 
 
 void UAbilityWidget::SetData(UAbilityDataAsset * Data)
 {
+	AbilityData = Data;
     Ability->SetBrushFromTexture(Data->Icon);
     Ability->SetToolTipText(Data->Tooltip);
     AbilityCDMask->SetToolTipText(Data->Tooltip);

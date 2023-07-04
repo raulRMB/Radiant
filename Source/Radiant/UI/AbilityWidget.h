@@ -15,6 +15,8 @@ class RADIANT_API UAbilityWidget : public UUserWidget
 	
 	uint8 bOn : 1;
 	UPROPERTY()
+	UAbilityDataAsset* AbilityData;
+	UPROPERTY()
 	UMaterialInstanceDynamic* MaterialInstance{};
 	UPROPERTY(meta=(BindWidget))
 	class UImage* Ability;
@@ -25,6 +27,12 @@ class RADIANT_API UAbilityWidget : public UUserWidget
 	FGameplayTag CooldownTag;
 
 	virtual void NativeConstruct() override;
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	void Reset();
+	bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	                  UDragDropOperation* InOperation);
+	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	void SetOn(bool On);
 	float GetCooldownPercent(const float TimeRemaining, const float CooldownDuration);
 	bool GetCooldownRemaining(float& TimeRemaining, float& CooldownDuration);

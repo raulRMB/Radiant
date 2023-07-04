@@ -116,8 +116,6 @@ void URTBaseAttributeSet::UpdateMovementSpeed()
 {
 	if(ACharacter* Character = Cast<ACharacter>(GetActorInfo()->AvatarActor))
 	{
-		RTPRINT("UPDATE MOVEMENT SPEED");
-		RTLOG("UPDATE MOVEMENT SPEED");
 		Character->GetCharacterMovement()->MaxWalkSpeed = GetMovementSpeed();
 	}
 }

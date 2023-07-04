@@ -284,18 +284,18 @@ void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
 	CastAbility(GetRTPlayerState()->GetAbilityTrigger(0));
 	
-	FGridPiece Piece;
-	Piece.Level = 0;
-	Piece.Type = EEnvironmentType::EEnvironmentType_Tower;
-	Piece.Size = 1;
-	Piece.TeamId = GetRTPlayerState()->GetTeamId();
-
-	FVector Mouse = UUtil::GetMousePosition(this, {});
-	Mouse.X = FMath::RoundToInt(Mouse.X / GridManager->CellSize);
-	Mouse.Y = FMath::RoundToInt(Mouse.Y / GridManager->CellSize);
-	Piece.Position = FIntVector2(Mouse.X, Mouse.Y);
+	// FGridPiece Piece;
+	// Piece.Level = 0;
+	// Piece.Type = EEnvironmentType::EEnvironmentType_Tower;
+	// Piece.Size = 1;
+	// Piece.TeamId = GetRTPlayerState()->GetTeamId();
+	//
+	// FVector Mouse = UUtil::GetMousePosition(this, {});
+	// Mouse.X = FMath::RoundToInt(Mouse.X / GridManager->CellSize);
+	// Mouse.Y = FMath::RoundToInt(Mouse.Y / GridManager->CellSize);
+	// Piece.Position = FIntVector2(Mouse.X, Mouse.Y);
 	
-	S_PlacePieceAtMouse(Piece);
+	//S_PlacePieceAtMouse(Piece);
 }
 
 void AAvatar::S_PlacePieceAtMouse_Implementation(FGridPiece Piece)
