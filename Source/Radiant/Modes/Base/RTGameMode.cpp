@@ -247,7 +247,9 @@ void ARTGameMode::Respawn(ARTPlayerController* PlayerController)
 				Manager->RemovePlayer(Hero);
 				PlayerController->GetPawn()->Destroy();
 				
-				Hero = GetWorld()->SpawnActor<AAvatar>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
+				Hero = GetWorld()->SpawnActorDeferred<AAvatar>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
+				Hero->SetPlayerState(PlayerController->PlayerState);
+				Hero->FinishSpawning(PlayerController->GetPlayerStart()->GetTransform());
 				PlayerController->Possess(Hero);
 				Manager->AddPlayer(Hero);
 			}
