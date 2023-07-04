@@ -33,7 +33,7 @@ void ARTHUD::BeginPlay()
 	StoreUI->SetVisibility(ESlateVisibility::Hidden);
 	Minimap = Cast<UMinimap>(CreateWidget<UMinimap>(GetWorld(), MinimapClass));
 	Minimap->AddToViewport();
-	Minimap->SetVisibility(ESlateVisibility::Visible);
+	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	
 }
 
@@ -56,7 +56,7 @@ void ARTHUD::ToggleSettings()
 {
 	SettingsPanel->RefreshKeybindList();
 	bSettingsOpen = !bSettingsOpen;
-	SettingsPanel->SetVisibility(bSettingsOpen ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	SettingsPanel->SetVisibility(bSettingsOpen ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Hidden);
 }
 
 void ARTHUD::HideLoadScreen()
@@ -82,7 +82,7 @@ void ARTHUD::ShowLevelUpScreen()
 		if(LevelUp->ShouldShow())
 		{
 			LevelUp->RefreshList();
-			LevelUp->SetVisibility(ESlateVisibility::Visible);
+			LevelUp->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		}
 	}
 }
@@ -90,7 +90,7 @@ void ARTHUD::ShowLevelUpScreen()
 void ARTHUD::ToggleStore()
 {
 	bStoreOpen = !bStoreOpen;
-	StoreUI->SetVisibility(bStoreOpen ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	StoreUI->SetVisibility(bStoreOpen ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Hidden);
 }
 
 void ARTHUD::BindUIItems()
