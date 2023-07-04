@@ -9,7 +9,7 @@
 
 APickUp::APickUp()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxComponent");
 	RootComponent = BoxComponent;
@@ -37,9 +37,3 @@ void APickUp::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 		}
 	}
 }
-
-void APickUp::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-

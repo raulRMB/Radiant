@@ -8,7 +8,7 @@
 
 APickUpSpawner::APickUpSpawner()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void APickUpSpawner::OnPickedUp()
@@ -42,10 +42,3 @@ void APickUpSpawner::BeginPlay()
 		GetWorld()->GetTimerManager().SetTimer(Handle, this, &APickUpSpawner::SpawnPickup, InitialDelay, false);
 	}
 }
-
-void APickUpSpawner::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
