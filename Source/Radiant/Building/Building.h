@@ -3,6 +3,7 @@
 #include "AbilitySystemInterface.h"
 #include "Util/Interfaces/Targetable.h"
 #include "Util/Interfaces/TeamMember.h"
+#include "Util/Managers/GridManager.h"
 #include "Building.generated.h"
 
 struct FOnAttributeChangeData;
@@ -21,6 +22,7 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UWidgetComponent* InfoBarWidgetComponent;
 	
+	FGridPiece GridPiece;
 protected:
 	UPROPERTY()
 	class UAIInfoBar* InfoBar;

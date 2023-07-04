@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{1E925516-4E8B-0BED-8E14-CAA078CDB022}",
+	"EngineAssociation": "{68E40C66-4AEF-279B-99E9-C9A0695CCB17}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -12,7 +12,8 @@
 				"Engine",
 				"UMG",
 				"GameplayAbilities",
-				"AIModule"
+				"AIModule",
+				"CoreUObject"
 			]
 		}
 	],
@@ -42,6 +43,7 @@
 		"Linux",
 		"Mac",
 		"Windows",
-		"LinuxArm64"
+		"LinuxArm64",
+		"HoloLens"
 	]
 }

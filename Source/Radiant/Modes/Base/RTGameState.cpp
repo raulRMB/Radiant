@@ -26,7 +26,7 @@ void ARTGameState::NotifyHeroDeath_Implementation(uint32 Score1, uint32 Score2)
 
 ARTGameState::ARTGameState()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void ARTGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -39,14 +39,4 @@ void ARTGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 void ARTGameState::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	GridManager = NewObject<UGridManager>(this, GridManagerClass);
-	GridManager->InitGrid(20, 20);
-}
-
-void ARTGameState::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	GridManager->DrawGrid();
 }

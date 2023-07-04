@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Util/Enums/TeamId.h"
+#include "GameFramework/Actor.h"
 #include "GridManager.generated.h"
 
-UENUM()
-enum EEnvironmentType
-{
+UENUM(BlueprintType)
+enum class EEnvironmentType : uint8
+{	
 	EEnvironmentType_Empty = 0,
 	EEnvironmentType_Wall,
 	EEnvironmentType_Tower,
@@ -21,37 +22,46 @@ struct FGridPiece
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	EEnvironmentType Type;
+	UPROPERTY()
 	uint32 Level;
+	UPROPERTY()
 	FIntVector2 Position;
+	UPROPERTY()
 	uint8 Size;
+	UPROPERTY()
+	ETeamId TeamId;
 };
 
 /**
  * 
  */
 UCLASS()
-class RADIANT_API UGridManager : public UObject
+class RADIANT_API AGridManager : public AActor
 {
 	GENERATED_BODY()
 
 	FIntVector2 GridSize;
 	UPROPERTY()
 	TArray<class ABuilding*> Pieces;
+	UPROPERTY(Replicated)
 	TArray<bool> Cells;
 
 	UPROPERTY(EditAnywhere)
-	uint8 bShouldCreate : 1;
-
-	UPROPERTY(EditAnywhere)
-	TMap<TEnumAsByte<EEnvironmentType>, TSubclassOf<class ABuilding>> BuildingTypes;
-public:	
+	TMap<EEnvironmentType, TSubclassOf<class ABuilding>> BuildingTypes;
+public:
+	AGridManager();
+	
 	void InitGrid(int Width, int Height);
-
-	void DrawGrid();
 	
 	uint32 CellSize = 200;
 	uint32 CellHalfSize = CellSize / 2;
 
 	void PlacePieceAtMouse(FGridPiece Piece);
+	bool CheckCanPlace(const FGridPiece Piece);
+
+	virtual void BeginPlay() override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
