@@ -32,8 +32,5 @@ public:
 	TSubclassOf<class URTAbility> Ability;
 
 	UPROPERTY(EditAnywhere)
-	FGameplayTag CooldownTag;
-
-	UPROPERTY(EditAnywhere)
 	float Price;
 };

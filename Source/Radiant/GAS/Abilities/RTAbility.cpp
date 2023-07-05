@@ -146,3 +146,12 @@ FGameplayTag URTAbility::GetTriggerTag() const
 {
 	return AbilityTriggers[0].TriggerTag;
 }
+
+FGameplayTag URTAbility::GetCooldownTag() const
+{
+	if(GetCooldownGameplayEffect())
+	{
+		return GetCooldownGameplayEffect()->InheritableOwnedTagsContainer.Added.First();
+	}
+	return FGameplayTag();
+}

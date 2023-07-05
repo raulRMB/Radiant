@@ -2,7 +2,6 @@
 
 
 #include "UI/AbilityWidget.h"
-
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Data/AbilityDataAsset.h"
@@ -96,13 +95,13 @@ float UAbilityWidget::GetCooldownPercent(const float TimeRemaining, const float 
 	return (CooldownDuration - TimeRemaining) / CooldownDuration;
 }
 
-void UAbilityWidget::SetData(UAbilityDataAsset * Data)
+void UAbilityWidget::SetData(UAbilityDataAsset* Data)
 {
 	AbilityData = Data;
     Ability->SetBrushFromTexture(Data->Icon);
     Ability->SetToolTipText(Data->Tooltip);
     AbilityCDMask->SetToolTipText(Data->Tooltip);
-	CooldownTag = Data->CooldownTag;
+	CooldownTag = Data->Ability.GetDefaultObject()->GetCooldownTag();
 }
 
 void UAbilityWidget::UpdateCooldown()
