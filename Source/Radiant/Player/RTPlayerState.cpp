@@ -2,7 +2,6 @@
 
 
 #include "Player/RTPlayerState.h"
-
 #include "Data/AbilityDataAsset.h"
 #include "Player/Avatar.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
@@ -18,6 +17,27 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, Username);
 	DOREPLIFETIME(ARTPlayerState, OwnedAbilities);
 	DOREPLIFETIME(ARTPlayerState, PurchasedAbilities);
+}
+
+FVector ARTPlayerState::GetCarrierLocation() const
+{
+	if(GetPawn())
+	{
+		return GetPawn()->GetActorLocation();
+	}
+	return FVector::ZeroVector;
+}
+
+void ARTPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Inventory = NewObject<UInventory>(this, UInventory::StaticClass());
+	Inventory->SetItemClass(WorldItemClass);
+	if(ItemDataTable)
+	{
+		Inventory->InitInventory(ItemDataTable);
+	}
 }
 
 void ARTPlayerState::OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData)
@@ -99,11 +119,7 @@ FGameplayTag ARTPlayerState::GetAbilityTrigger(const uint32 i) const
 
 void ARTPlayerState::S_BuyAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
 {
-	if(AttributeSet->GetRadianite() < AbilityDataAsset->Price)
-	{
-		return;
-	}
-	if(PurchasedAbilities.Contains(AbilityDataAsset))
+	if(AttributeSet->GetRadianite() < AbilityDataAsset->Price || OwnedAbilities.Contains(AbilityDataAsset))
 	{
 		return;
 	}

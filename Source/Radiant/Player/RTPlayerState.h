@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerState.h"
 #include "GameplayTags/Classes/GameplayTagContainer.h"
 #include "UI/AbilityWidget.h"
+#include "Util/Interfaces/Carrier.h"
 #include "Util/Interfaces/TeamMember.h"
 #include "Util/Enums/HotbarSlot.h"
 #include "RTPlayerState.generated.h"
@@ -15,7 +16,7 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);
 
 UCLASS()
-class RADIANT_API ARTPlayerState : public APlayerState, public IAbilitySystemInterface, public ITeamMember
+class RADIANT_API ARTPlayerState : public APlayerState, public IAbilitySystemInterface, public ITeamMember, public ICarrier
 {
 	GENERATED_BODY()
 	
@@ -27,7 +28,6 @@ protected:
 	class URTAvatarAttributeSet* AttributeSet;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	
 	UPROPERTY(Replicated, VisibleAnywhere)
 	class AActor* Target;
@@ -35,7 +35,28 @@ protected:
 	ETeamId TeamId = ETeamId::Neutral;
 	UPROPERTY(ReplicatedUsing=OnRep_UsernameChanged, VisibleAnywhere)
 	FString Username = "";
+
+	/****** Inventory ******/
+	
+	UPROPERTY()
+	class UInventory* Inventory;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AWorldItem> WorldItemClass;
+
+	UPROPERTY(EditAnywhere)
+	class UDataTable* ItemDataTable;
+	
 public:
+	virtual UInventory* GetInventory() const override { return Inventory; }
+	virtual FVector GetCarrierLocation() const override;
+
+	/****** End Inventory ******/
+	
+public:
+
+	virtual void BeginPlay() override;
+	
 	FUpdateRadianiteSignature OnUpdateRadianite;
 	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void SwapHotbarSlot(EHotBarSlot One, EHotBarSlot Two);

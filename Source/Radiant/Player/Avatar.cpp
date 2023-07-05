@@ -263,6 +263,15 @@ void AAvatar::SpawnActorAtMouse(const FString& PieceName, const uint32 Amount)
 	}
 }
 
+UInventory* AAvatar::GetInventory() const
+{
+	if(GetRTPlayerState())
+	{
+		return GetRTPlayerState()->GetInventory();
+	}
+	return nullptr;
+}
+
 bool AAvatar::CheckShouldAttack()
 {
 	if(!Target || bShouldActivateBuffer)
@@ -316,6 +325,8 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
 	CastAbility(GetRTPlayerState()->GetAbilityTrigger(0));
+
+	//GetInventory()->RemoveItem("Fireball");
 }
 
 void AAvatar::S_PlaceGridPiece_Implementation(FGridPiece Piece)
@@ -413,6 +424,7 @@ void AAvatar::OnRep_PlayerState()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetLevelAttribute()).AddUObject(this, &AAvatar::OnLevelChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &AAvatar::OnManaChanged);
 	}
+
 
 	if(!HasAuthority())
 	{
@@ -807,6 +819,14 @@ void AAvatar::Tick(float DeltaTime)
 	}
 	if(HasTag("States.Movement.Stopped") || HasTag("States.Dead"))
 		StopMovement();
+
+	if(GetInventory())
+	{
+		for (const TPair<FString, uint16>& pair : GetInventory()->GetItems())
+		{      
+			RTPRINTTP(-1, "Key: %s", *pair.Key);
+		} 
+	}
 }
 
 void AAvatar::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

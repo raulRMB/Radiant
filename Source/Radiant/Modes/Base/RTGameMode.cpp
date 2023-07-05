@@ -112,7 +112,9 @@ void ARTGameMode::SpawnAvatar(ARTPlayerController* PlayerController)
 	}
 
 	ARTPlayerStart* PlayerStart = FindTeamStartTransform(PlayerController->GetPlayerState<ARTPlayerState>()->GetTeamId());
-	AAvatar* Hero = GetWorld()->SpawnActor<AAvatar>(HeroClass, PlayerStart->GetActorTransform());
+	AAvatar* Hero = GetWorld()->SpawnActorDeferred<AAvatar>(HeroClass, PlayerStart->GetActorTransform(), PlayerController, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	Hero->SetPlayerState(PlayerController->GetPlayerState<ARTPlayerState>());
+	Hero->FinishSpawning(PlayerStart->GetActorTransform());
 	PlayerController->Possess(Hero);
 	PlayerController->S_SetPlayerStart(PlayerStart);
 }

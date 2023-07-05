@@ -10,6 +10,7 @@
 #define RTPRINTP(f, x) GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Red, FString::Printf(TEXT(f), x));
 #define RTPRINT(f) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f)));
 #define RTPRINTT(f, t) GEngine->AddOnScreenDebugMessage(-1, t, FColor::Red, FString::Printf(TEXT(f)));
+#define RTPRINTTP(t, f, x) GEngine->AddOnScreenDebugMessage(-1, t, FColor::Red, FString::Printf(TEXT(f), x));
 #define RTLOG(x) UE_LOG(LogTemp, Warning, TEXT(x));
 #define RTLOGP(x, a) UE_LOG(LogTemp, Warning, TEXT(x), a);
 #define RTPRINTF(s, x) FText::FromString(FString::Printf(TEXT(s), x))

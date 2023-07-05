@@ -8,11 +8,12 @@
 #include "Characters/RTCharacter.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "Player/RTPlayerState.h"
+#include "Util/Interfaces/Carrier.h"
 #include "Util/Managers/GridManager.h"
 #include "Avatar.generated.h"
 
 UCLASS()
-class RADIANT_API AAvatar : public ARTCharacter
+class RADIANT_API AAvatar : public ARTCharacter, public ICarrier
 {
 	GENERATED_BODY()
 	
@@ -104,6 +105,7 @@ public:
 	/** TESTING **/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TESTING)
 	TMap<FString, TSubclassOf<class AActor>> DebugSpawnableItems;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -119,6 +121,9 @@ protected:
 public:
 	UFUNCTION(Server, Reliable)
 	void S_PlaceGridPiece(FGridPiece Piece);
+
+	virtual UInventory* GetInventory() const override;
+	virtual FVector GetCarrierLocation() const override { return GetActorLocation(); }
 	
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();
