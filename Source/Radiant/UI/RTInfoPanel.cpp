@@ -61,7 +61,7 @@ FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 void URTInfoPanel::UpdateAbilities(TMap<EHotBarSlot, UAbilityDataAsset*> AbilityData)
 {
 	auto Slots = Abilities->GetAllChildren();
-	for(int i = 0; i < static_cast<uint32>(EHotBarSlot::Six); i++)
+	for(int i = 0; i <= static_cast<uint32>(EHotBarSlot::Six); i++)
 	{
 		auto data = AbilityData.FindRef(EHotBarSlot(i));
 		if(i >= Slots.Num())

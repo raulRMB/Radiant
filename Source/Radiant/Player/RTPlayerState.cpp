@@ -123,7 +123,7 @@ void ARTPlayerState::OnRepPurchasedAbilities(TArray<UAbilityDataAsset*> OldPurch
 	{
 		if(!OldPurchasedAbilities.Contains(PurchasedAbilities[i]))
 		{
-			for (int j = 0; j < static_cast<uint32>(EHotBarSlot::Six); j++)
+			for (int j = 0; j <= static_cast<uint32>(EHotBarSlot::Six); j++)
 			{
 				EHotBarSlot slot = static_cast<EHotBarSlot>(j);
 				if(!HotBarAbilities.Contains(slot))
