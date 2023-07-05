@@ -450,7 +450,7 @@ void AAvatar::SetHUDIcons()
 		{
 			if(ARTPlayerState* PS = GetRTPlayerState())
 			{
-				PC->GetHUD<ARTHUD>()->UpdateAbilities(PS->GetOwnedAbilities());
+				PC->GetHUD<ARTHUD>()->UpdateAbilities(PS->GetHotBarAbilities());
 			}
 		}
 	}

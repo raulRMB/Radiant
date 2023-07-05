@@ -6,12 +6,16 @@
 #include "GameplayTagContainer.h"
 #include "Blueprint/UserWidget.h"
 #include "Data/AbilityDataAsset.h"
+#include "Util/Enums/HotbarSlot.h"
 #include "AbilityWidget.generated.h"
 
 UCLASS()
 class RADIANT_API UAbilityWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	EHotBarSlot HotbarSlot;
 	
 	uint8 bOn : 1;
 	UPROPERTY()
@@ -29,7 +33,7 @@ class RADIANT_API UAbilityWidget : public UUserWidget
 	virtual void NativeConstruct() override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	void Reset();
+
 	bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	                  UDragDropOperation* InOperation);
 	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
@@ -42,4 +46,5 @@ public:
 	class UMaterialInterface* Mat;
 	void SetData(UAbilityDataAsset* Data);
 	void UpdateCooldown();
+	void Reset();
 };

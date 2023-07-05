@@ -7,12 +7,11 @@
 #include "GameplayEffectTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "GameplayTags/Classes/GameplayTagContainer.h"
+#include "UI/AbilityWidget.h"
 #include "Util/Interfaces/TeamMember.h"
+#include "Util/Enums/HotbarSlot.h"
 #include "RTPlayerState.generated.h"
 
-/**
- * 
- */
 DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);
 
 UCLASS()
@@ -39,6 +38,7 @@ protected:
 public:
 	FUpdateRadianiteSignature OnUpdateRadianite;
 	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData);
+	void SwapHotbarSlot(EHotBarSlot One, EHotBarSlot Two);
 	ARTPlayerState();
 
 	UFUNCTION(BlueprintCallable)
@@ -62,17 +62,23 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SetUsername(const FString& String);
 	FString GetUsername();
+	UFUNCTION(Server, Reliable)
+	void S_BuyAbility(class UAbilityDataAsset* AbilityDataAsset);
 	
 	UPROPERTY(Replicated, EditAnywhere)
 	TArray<class UAbilityDataAsset*> OwnedAbilities;
-	TArray<class UAbilityDataAsset*> GetOwnedAbilities() const;
-	UFUNCTION(Server, Reliable)
-	void S_BuyAbility(class UAbilityDataAsset* AbilityDataAsset);
 
-	UPROPERTY(ReplicatedUsing=OnRepAbilityTriggers, EditAnywhere)
-	FGameplayTagContainer AbilityTriggers;
-	FGameplayTagContainer GetAbilityTriggers() const;
-	FGameplayTag GetAbilityTrigger(const int Index) const { return AbilityTriggers.GetByIndex(Index); }
+	UPROPERTY(ReplicatedUsing=OnRepPurchasedAbilities, EditAnywhere)
+	TArray<class UAbilityDataAsset*> PurchasedAbilities;
+	
+	FGameplayTag GetAbilityTrigger(const uint32 Slot) const;
+	TArray<class UAbilityDataAsset*> GetOwnedAbilities() const;
+
+	UPROPERTY()
+	TMap<EHotBarSlot, UAbilityDataAsset*> HotBarAbilities;
+	TMap<EHotBarSlot, UAbilityDataAsset*> GetHotBarAbilities() const { return HotBarAbilities; }
+	
 	UFUNCTION()
-	void OnRepAbilityTriggers();
+	void OnRepPurchasedAbilities(TArray<UAbilityDataAsset*> OldPurchasedAbilities);
+	TArray<class UAbilityDataAsset*> GetPurchasedAbilities() const;
 };

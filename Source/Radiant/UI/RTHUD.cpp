@@ -48,7 +48,7 @@ ARTHUD::ARTHUD()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ARTHUD::UpdateAbilities(TArray<UAbilityDataAsset*> Abilities)
+void ARTHUD::UpdateAbilities(TMap<EHotBarSlot, UAbilityDataAsset*> Abilities)
 {
 	InfoPanel->UpdateAbilities(Abilities);
 }

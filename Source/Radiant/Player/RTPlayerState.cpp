@@ -17,7 +17,7 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, TeamId);
 	DOREPLIFETIME(ARTPlayerState, Username);
 	DOREPLIFETIME(ARTPlayerState, OwnedAbilities);
-	DOREPLIFETIME(ARTPlayerState, AbilityTriggers);
+	DOREPLIFETIME(ARTPlayerState, PurchasedAbilities);
 }
 
 void ARTPlayerState::OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData)
@@ -87,18 +87,27 @@ FString ARTPlayerState::GetUsername()
 	return Username;
 }
 
+FGameplayTag ARTPlayerState::GetAbilityTrigger(const uint32 i) const
+{
+	auto Ability = HotBarAbilities.FindRef(static_cast<EHotBarSlot>(i));
+	if(Ability)
+	{
+		return Ability->Ability.GetDefaultObject()->GetTriggerTag();
+	}
+	return FGameplayTag();
+}
+
 void ARTPlayerState::S_BuyAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
 {
 	if(AttributeSet->GetRadianite() < AbilityDataAsset->Price)
 	{
 		return;
 	}
-	if(OwnedAbilities.Contains(AbilityDataAsset))
+	if(PurchasedAbilities.Contains(AbilityDataAsset))
 	{
 		return;
 	}
-	OwnedAbilities.Add(AbilityDataAsset);
-	AbilityTriggers.AddTag(AbilityDataAsset->Ability.GetDefaultObject()->GetTriggerTag());
+	PurchasedAbilities.Add(AbilityDataAsset);
 	AbilitySystemComponent->GiveAbility(AbilityDataAsset->Ability.GetDefaultObject());
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - AbilityDataAsset->Price);
 }
@@ -108,14 +117,47 @@ TArray<class UAbilityDataAsset*> ARTPlayerState::GetOwnedAbilities() const
 	return OwnedAbilities;
 }
 
-FGameplayTagContainer ARTPlayerState::GetAbilityTriggers() const
+void ARTPlayerState::OnRepPurchasedAbilities(TArray<UAbilityDataAsset*> OldPurchasedAbilities)
 {
-	return AbilityTriggers;
+	for (int i = 0; i < PurchasedAbilities.Num(); i++)
+	{
+		if(!OldPurchasedAbilities.Contains(PurchasedAbilities[i]))
+		{
+			for (int j = 0; j < static_cast<uint32>(EHotBarSlot::Six); j++)
+			{
+				EHotBarSlot slot = static_cast<EHotBarSlot>(j);
+				if(!HotBarAbilities.Contains(slot))
+				{
+					HotBarAbilities.Add(slot, PurchasedAbilities[i]);
+					break;
+				}
+			}
+		}
+	}
+	GetPawn<AAvatar>()->SetHUDIcons();
 }
 
-void ARTPlayerState::OnRepAbilityTriggers()
+void ARTPlayerState::SwapHotbarSlot(EHotBarSlot One, EHotBarSlot Two)
 {
-	GetPawn<AAvatar>()->SetHUDIcons();
+	if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
+	{
+		UAbilityDataAsset* Temp = HotBarAbilities[One];
+		HotBarAbilities[One] = HotBarAbilities[Two];
+		HotBarAbilities[Two] = Temp;
+	} else if(HotBarAbilities.Contains(One))
+	{
+		HotBarAbilities.Add(Two, HotBarAbilities[One]);
+		HotBarAbilities.Remove(One);
+	} else if(HotBarAbilities.Contains(Two))
+	{
+		HotBarAbilities.Add(One, HotBarAbilities[Two]);
+		HotBarAbilities.Remove(Two);
+	}
+}
+
+TArray<UAbilityDataAsset*> ARTPlayerState::GetPurchasedAbilities() const
+{
+	return PurchasedAbilities;
 }
 
 void ARTPlayerState::SetUsername_Implementation(const FString& String)
