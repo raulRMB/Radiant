@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Util/Managers/GridManager.h"
 #include "Util.generated.h"
 
 #define RTPRINTP(f, x) GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Red, FString::Printf(TEXT(f), x));
@@ -20,7 +21,8 @@ UCLASS()
 class RADIANT_API UUtil :  public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-public:
+
+public:	
 	UFUNCTION(BlueprintCallable)
 	static FVector GetMousePosition(class UObject* WorldContext, TArray<AActor*> IgnoredActors);
 
@@ -37,5 +39,7 @@ public:
 	static AAvatar* GetHeroFromPlayerID(class UObject* WorldContext, int PlayerID);
 
 	UFUNCTION(BlueprintCallable)
-	static void ChangeQualitySetting(FString Name); 
+	static void ChangeQualitySetting(FString Name);
+
+	static TSubclassOf<class AActor> GetBuildingType(EEnvironmentType Type);
 };

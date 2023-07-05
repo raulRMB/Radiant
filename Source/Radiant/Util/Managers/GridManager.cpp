@@ -37,6 +37,11 @@ void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
 {
 	if(HasAuthority())
 	{
+		if(Piece.Position.X < 0 || Piece.Position.Y < 0 || Piece.Position.X >= GridSize.X || Piece.Position.Y >= GridSize.Y)
+		{
+			return;
+		}
+		
 		if(Cells[Piece.Position.X + Piece.Position.Y * GridSize.Y])
 		{
 			return;

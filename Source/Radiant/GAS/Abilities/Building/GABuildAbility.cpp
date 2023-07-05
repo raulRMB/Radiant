@@ -4,7 +4,33 @@
 #include "GAS/Abilities/Building/GABuildAbility.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Building/Building.h"
+#include "GAS/Tasks/AbilityTask_BuildMode.h"
+#include "Player/Avatar.h"
+#include "Player/RTPlayerController.h"
+#include "Player/RTPlayerState.h"
+#include "Util/Util.h"
+
+UGABuildAbility::UGABuildAbility()
+{
+	bIsCancelable = false;
+}
+
+void UGABuildAbility::OnOrderAccepted()
+{
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+
+	if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
+	{
+		FGridPiece GridPiece;
+		GridPiece.TeamId = Cast<ITeamMember>(GetOwningActorFromActorInfo())->GetTeamId();
+		GridPiece.Type = EnvironmentType;
+		FVector Mouse = UUtil::GetMousePosition(this, {});
+		Mouse.X = FMath::RoundToInt(Mouse.X / 200);
+		Mouse.Y = FMath::RoundToInt(Mouse.Y / 200);
+		GridPiece.Position = FIntVector2(Mouse.X, Mouse.Y);
+		Avatar->S_PlaceGridPiece(GridPiece);
+	}
+}
 
 void UGABuildAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                       const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
@@ -12,28 +38,14 @@ void UGABuildAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if(HasAuthority(&CurrentActivationInfo))
-	{		
-		if(ITeamMember* TeamMember = Cast<ITeamMember>(GetOwningActorFromActorInfo()))
+	UAbilityTask_BuildMode* Task = UAbilityTask_BuildMode::BuildModeTask(this, FName("BuildModeTask"), EnvironmentType);
+	Task->ReadyForActivation();
+
+	if(ARTPlayerState* PS = Cast<ARTPlayerState>(GetOwningActorFromActorInfo()))
+	{
+		if(ARTPlayerController* PC = Cast<ARTPlayerController>(PS->GetPlayerController()))
 		{
-			FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
-			FVector Dir = HitResult.Location - GetAvatarActorFromActorInfo()->GetActorLocation();
-			FTransform SpawnTransform;
-			if(Dir.Length() > MaxRange)
-			{
-				Dir = Dir.GetSafeNormal() * MaxRange;
-				SpawnTransform = FTransform(Dir + GetAvatarActorFromActorInfo()->GetActorLocation());
-			}
-			else
-			{
-				SpawnTransform = FTransform(HitResult.Location);
-			}
-			
-			
-			ABuilding* Building = GetWorld()->SpawnActorDeferred<ABuilding>(BuildingClass, SpawnTransform);
-			Building->SetOwner(GetOwningActorFromActorInfo());
-			Building->S_SetTeamId(TeamMember->GetTeamId());
-			Building->FinishSpawning(SpawnTransform);
+			PC->OrderAccepted.AddUObject(this, &UGABuildAbility::OnOrderAccepted);
 		}
 	}
 }

@@ -32,6 +32,14 @@ struct FGridPiece
 	uint8 Size;
 	UPROPERTY()
 	ETeamId TeamId;
+
+	FGridPiece() :
+		Type(EEnvironmentType::EEnvironmentType_Empty),
+		Level(0),
+		Position(FIntVector2(0, 0)),
+		Size(1),
+		TeamId(ETeamId::Neutral)
+	{}
 };
 
 /**
@@ -52,6 +60,8 @@ class RADIANT_API AGridManager : public AActor
 	TMap<EEnvironmentType, TSubclassOf<class ABuilding>> BuildingTypes;
 public:
 	AGridManager();
+	
+
 	
 	void InitGrid(int Width, int Height);
 	

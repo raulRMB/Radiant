@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ADPCMAudioInfo.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
-#include "GameFramework/SaveGame.h"
 #include "EnhancedInputSubsystems.h"
 #include "RTPlayerController.generated.h"
+
+
+DECLARE_MULTICAST_DELEGATE(FOrderAcceptedSignature);
 
 /**
  * 
@@ -59,6 +60,9 @@ class RADIANT_API ARTPlayerController : public APlayerController
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* EscapeAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
+	class UInputAction* AcceptOrderAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
@@ -78,6 +82,8 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void Connected();
+
+	FOrderAcceptedSignature OrderAccepted;
 
 protected:	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -129,4 +135,7 @@ protected:
 
 	UFUNCTION()
 	void Escape(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void AcceptOrder(const FInputActionValue& Value);
 }; 

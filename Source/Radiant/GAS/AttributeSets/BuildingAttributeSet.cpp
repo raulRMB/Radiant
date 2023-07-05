@@ -29,7 +29,6 @@ void UBuildingAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCa
 void UBuildingAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBuildingAttributeSet, Health, OldHealth);
-	RTPRINTP("REP HEALTH %.2f", Health.GetCurrentValue());
 }
 
 void UBuildingAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth)

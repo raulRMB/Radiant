@@ -3,7 +3,9 @@
 
 #include "Util/Util.h"
 
+#include "EngineUtils.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
+#include "Data/BuildingTypes.h"
 #include "Player/Avatar.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
@@ -115,4 +117,15 @@ void UUtil::ChangeQualitySetting(FString Name)
 		GEngine->GetGameUserSettings()->SetOverallScalabilityLevel(Setting);
 		GEngine->GetGameUserSettings()->ApplySettings(false);
 	}
+}
+
+TSubclassOf<AActor> UUtil::GetBuildingType(EEnvironmentType Type)
+{
+	TArray<UObject*> DataAssets;
+	EngineUtils::FindOrLoadAssetsByPath(TEXT("/Game/Data/EnvironmentData/"), DataAssets, EngineUtils::ATL_Regular);
+	if(UBuildingTypes* BuildingTypes = Cast<UBuildingTypes>(DataAssets[0]))
+	{
+		return BuildingTypes->EnvironmentTypes[Type];
+	}
+	return nullptr;
 }
