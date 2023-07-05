@@ -100,18 +100,26 @@ public:
 
 	UPROPERTY()
 	class AGridManager* GridManager;
-	
+
+	/** TESTING **/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TESTING)
+	TMap<FString, TSubclassOf<class AActor>> DebugSpawnableItems;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
-
+	
 	UFUNCTION(Server, Reliable)
-	void S_PlacePieceAtMouse(FGridPiece Piece);
+	void S_SpawnActorAtMouse(const FString& PieceName, const uint32 Amount, const FVector& Location);
+
+	UFUNCTION(Exec)
+	void SpawnActorAtMouse(const FString& PieceName, const uint32 Amount);
 	
 public:
-
+	UFUNCTION(Server, Reliable)
+	void S_PlaceGridPiece(FGridPiece Piece);
+	
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();
 	void CastAbility(const FGameplayTag& AbilityTag);

@@ -20,6 +20,7 @@
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
 #include "Modes/Base/RTGameState.h"
@@ -230,6 +231,38 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	CastAbility(Tag);
 }
 
+void AAvatar::S_SpawnActorAtMouse_Implementation(const FString& PieceName, const uint32 Amount, const FVector& Location)
+{
+	if(HasAuthority())
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+		uint32 Dim = UKismetMathLibrary::Sqrt(Amount);
+		
+		for(uint32 x = 0; x < Dim; x++)
+		{
+			for(uint32 y = 0; y < Dim; y++)
+			{
+				FVector Offset = FVector(x * 5, y * 5, 100);
+				GetWorld()->SpawnActor<AActor>(DebugSpawnableItems[PieceName], Location + Offset, FRotator::ZeroRotator, SpawnParams);
+			}
+		}
+	}
+}
+
+void AAvatar::SpawnActorAtMouse(const FString& PieceName, const uint32 Amount)
+{
+	if(DebugSpawnableItems.Contains(PieceName))
+	{
+		S_SpawnActorAtMouse(PieceName, Amount, UUtil::GetMousePosition(this, {}));
+	}
+	else
+	{
+		RTPRINTP("Error: Invalid PieceName: %s", *PieceName);
+	}
+}
+
 bool AAvatar::CheckShouldAttack()
 {
 	if(!Target || bShouldActivateBuffer)
@@ -283,26 +316,12 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
 	CastAbility(GetRTPlayerState()->GetAbilityTrigger(0));
-	
-	// FGridPiece Piece;
-	// Piece.Level = 0;
-	// Piece.Type = EEnvironmentType::EEnvironmentType_Tower;
-	// Piece.Size = 1;
-	// Piece.TeamId = GetRTPlayerState()->GetTeamId();
-	//
-	// FVector Mouse = UUtil::GetMousePosition(this, {});
-	// Mouse.X = FMath::RoundToInt(Mouse.X / GridManager->CellSize);
-	// Mouse.Y = FMath::RoundToInt(Mouse.Y / GridManager->CellSize);
-	// Piece.Position = FIntVector2(Mouse.X, Mouse.Y);
-	
-	//S_PlacePieceAtMouse(Piece);
 }
 
-void AAvatar::S_PlacePieceAtMouse_Implementation(FGridPiece Piece)
+void AAvatar::S_PlaceGridPiece_Implementation(FGridPiece Piece)
 {
 	GridManager->PlacePieceAtMouse(Piece);	
 }
-
 
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
