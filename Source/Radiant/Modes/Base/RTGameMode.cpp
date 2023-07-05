@@ -247,11 +247,14 @@ void ARTGameMode::Respawn(ARTPlayerController* PlayerController)
 				Manager->RemovePlayer(Hero);
 				PlayerController->GetPawn()->Destroy();
 				
-				Hero = GetWorld()->SpawnActorDeferred<AAvatar>(HeroClass, PlayerController->GetPlayerStart()->GetTransform());
+				Hero = GetWorld()->SpawnActorDeferred<AAvatar>(HeroClass, PlayerController->GetPlayerStart()->GetTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 				Hero->SetPlayerState(PlayerController->PlayerState);
 				Hero->FinishSpawning(PlayerController->GetPlayerStart()->GetTransform());
-				PlayerController->Possess(Hero);
-				Manager->AddPlayer(Hero);
+				if(Hero)
+				{
+					PlayerController->Possess(Hero);
+					Manager->AddPlayer(Hero);
+				}
 			}
 		}
 	}
