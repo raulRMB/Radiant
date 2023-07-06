@@ -36,27 +36,15 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_UsernameChanged, VisibleAnywhere)
 	FString Username = "";
 
-	/****** Inventory ******/
-	
-	UPROPERTY(Replicated)
-	class UInventory* Inventory;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AWorldItem> WorldItemClass;
-
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemDataTable;
+
 	
 public:
-	virtual UInventory* GetInventory() const override { return Inventory; }
 	virtual FVector GetCarrierLocation() const override;
-
-	virtual void DropItem(const FName& ItemName) override;
-
-	/****** End Inventory ******/
+	virtual class UInventoryComponent* GetInventory() const override;
+	class ARTPlayerController* GetRTController() const;
 	
-public:
-
 	virtual void BeginPlay() override;
 	
 	FUpdateRadianiteSignature OnUpdateRadianite;
@@ -89,7 +77,5 @@ public:
 	
 	UPROPERTY(Replicated, EditAnywhere)
 	TArray<class UAbilityDataAsset*> InnateAbilities;
-	
-	FGameplayTag GetAbilityTrigger(const uint32 Slot) const;
-	TArray<class UAbilityDataAsset*> GetOwnedAbilities() const;
+	TArray<class UAbilityDataAsset*> GetInnateAbilities() const;
 };

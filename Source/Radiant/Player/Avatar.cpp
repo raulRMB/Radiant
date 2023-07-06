@@ -4,6 +4,7 @@
 #include "Avatar.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InventoryComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "RTPlayerController.h"
@@ -266,11 +267,11 @@ void AAvatar::SpawnActorAtMouse(const FString& PieceName, const uint32 Amount)
 	}
 }
 
-UInventory* AAvatar::GetInventory() const
+UInventoryComponent* AAvatar::GetInventory() const
 {
-	if(GetRTPlayerState())
+	if(GetController<ARTPlayerController>())
 	{
-		return GetRTPlayerState()->GetInventory();
+		return GetController<ARTPlayerController>()->GetInventory();
 	}
 	return nullptr;
 }
@@ -327,9 +328,8 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
-	CastAbility(GetRTPlayerState()->GetAbilityTrigger(0));
-
-	//GetInventory()->RemoveItem("Fireball");
+	CastAbility(GetInventory()->GetAbilityTrigger(0));
+	GetInventory()->RemoveItem("Fireball");
 }
 
 void AAvatar::S_PlaceGridPiece_Implementation(FGridPiece Piece)
@@ -339,27 +339,27 @@ void AAvatar::S_PlaceGridPiece_Implementation(FGridPiece Piece)
 
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
-	CastAbility(GetRTPlayerState()->GetAbilityTrigger(1));
+	CastAbility(GetInventory()->GetAbilityTrigger(1));
 }
 
 void AAvatar::OnAbilityThree(const FInputActionValue& Value)
 {
-	CastAbility(GetRTPlayerState()->GetAbilityTrigger(2));
+	CastAbility(GetInventory()->GetAbilityTrigger(2));
 }
 
 void AAvatar::OnAbilityFour(const FInputActionValue& Value)
 {
-	CastAbility(GetRTPlayerState()->GetAbilityTrigger(3));
+	CastAbility(GetInventory()->GetAbilityTrigger(3));
 }
 
 void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 {
-	CastAbility(GetRTPlayerState()->GetAbilityTrigger(4));
+	CastAbility(GetInventory()->GetAbilityTrigger(4));
 }
 
 void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
-	CastAbility(GetRTPlayerState()->GetAbilityTrigger(5));
+	CastAbility(GetInventory()->GetAbilityTrigger(5));
 }
 
 void AAvatar::PossessedBy(AController* NewController)
@@ -481,7 +481,7 @@ ETeamId AAvatar::GetTeamId() const
 
 void AAvatar::GiveInitialAbilities()
 {
-	for(auto AbilityData : GetRTPlayerState()->GetOwnedAbilities())
+	for(auto AbilityData : GetRTPlayerState()->GetInnateAbilities())
 	{	
 		FGameplayAbilitySpec AbilitySpec = AbilityData->Ability.GetDefaultObject();
 		AbilitySystemComponent->GiveAbility(AbilitySpec);

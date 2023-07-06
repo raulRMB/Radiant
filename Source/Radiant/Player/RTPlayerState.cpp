@@ -2,6 +2,9 @@
 
 
 #include "Player/RTPlayerState.h"
+
+#include "InventoryComponent.h"
+#include "RTPlayerController.h"
 #include "Data/AbilityDataAsset.h"
 #include "Data/ItemData.h"
 #include "Engine/ActorChannel.h"
@@ -18,40 +21,34 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, TeamId);
 	DOREPLIFETIME(ARTPlayerState, Username);
 	DOREPLIFETIME(ARTPlayerState, InnateAbilities);
-	DOREPLIFETIME(ARTPlayerState, Inventory);
 }
 
 FVector ARTPlayerState::GetCarrierLocation() const
 {
-	if(GetPawn())
+	if(GetRTController())
 	{
-		return GetPawn()->GetActorLocation();
+		return GetRTController()->GetCarrierLocation();
 	}
 	return FVector::ZeroVector;
 }
 
-void ARTPlayerState::DropItem(const FName& ItemName)
+UInventoryComponent* ARTPlayerState::GetInventory() const
 {
-	ICarrier::DropItem(ItemName);
+	if(GetRTController())
+	{
+		return GetRTController()->GetInventory();
+	}
+	return nullptr;
+}
 
-	// TODO: REMOVE ABILITY
+ARTPlayerController* ARTPlayerState::GetRTController() const
+{
+	return Cast<ARTPlayerController>(GetPlayerController());
 }
 
 void ARTPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Inventory = NewObject<UInventory>(this, UInventory::StaticClass());
-	Inventory->SetItemClass(WorldItemClass);
-	if(ItemDataTable)
-	{
-		Inventory->InitInventory(ItemDataTable);
-	}
-
-	if(Inventory)
-	{
-		AddReplicatedSubObject(Inventory);
-	}
 }
 
 void ARTPlayerState::OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData)
@@ -124,15 +121,9 @@ FString ARTPlayerState::GetUsername()
 	return Username;
 }
 
-FGameplayTag ARTPlayerState::GetAbilityTrigger(const uint32 i) const
-{
-	return GetInventory()->GetAbilityTrigger(i);
-}
-
 void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
 {
 	FItemData* ItemData = ItemDataTable->FindRow<FItemData>(AbilityName, FString("BuyAbility"));
-	
 	if(AttributeSet->GetRadianite() < ItemData->AbilityData->Price || InnateAbilities.Contains(ItemData->AbilityData))
 	{
 		return;
@@ -142,7 +133,7 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price);
 }
 
-TArray<class UAbilityDataAsset*> ARTPlayerState::GetOwnedAbilities() const
+TArray<class UAbilityDataAsset*> ARTPlayerState::GetInnateAbilities() const
 {
 	return InnateAbilities;
 }

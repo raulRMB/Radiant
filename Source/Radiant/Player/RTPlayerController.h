@@ -6,6 +6,8 @@
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameplayTagContainer.h"
+#include "Util/Interfaces/Carrier.h"
 #include "RTPlayerController.generated.h"
 
 
@@ -13,7 +15,7 @@ DECLARE_MULTICAST_DELEGATE(FOrderAcceptedSignature);
 
 
 UCLASS()
-class RADIANT_API ARTPlayerController : public APlayerController
+class RADIANT_API ARTPlayerController : public APlayerController, public ICarrier
 {
 	GENERATED_BODY()
 	
@@ -65,7 +67,27 @@ class RADIANT_API ARTPlayerController : public APlayerController
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory, meta = (AllowPrivateAccess = true))
+	class UInventoryComponent* InventoryComponent;
+
+
+	/****** Inventory ******/
+
+	UPROPERTY(EditAnywhere)
+	class UDataTable* ItemDataTable;
+	
 public:
+	virtual UInventoryComponent* GetInventory() const override { return InventoryComponent; }
+	virtual FVector GetCarrierLocation() const override;
+
+	virtual void DropItem(const FName& ItemName) override;
+
+	/****** End Inventory ******/
+	
+public:
+	FGameplayTag GetAbilityTrigger(uint32 i) const;
+	ARTPlayerController();
+	
 	UFUNCTION(Server, Reliable)
 	void PlayerLoaded();
 

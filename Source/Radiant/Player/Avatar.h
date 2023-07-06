@@ -122,7 +122,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void S_PlaceGridPiece(FGridPiece Piece);
 
-	virtual UInventory* GetInventory() const override;
+	virtual UInventoryComponent* GetInventory() const override;
 	virtual FVector GetCarrierLocation() const override { return GetActorLocation(); }
 	
 	bool CheckShouldAttack();

@@ -6,6 +6,7 @@
 #include "Components/Image.h"
 #include "Data/AbilityDataAsset.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Player/InventoryComponent.h"
 #include "Player/RTPlayerState.h"
 #include "Util/AbilityDragDropOperation.h"
 

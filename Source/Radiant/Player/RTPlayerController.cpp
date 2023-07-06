@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "InventoryComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -55,6 +56,27 @@ void ARTPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(MappingContext, 0);
 		LoadUserSettings(Subsystem);
 	}
+
+	if(InventoryComponent)
+	{
+		InventoryComponent->InitInventory(ItemDataTable);
+	}
+}
+
+FVector ARTPlayerController::GetCarrierLocation() const
+{
+	if(GetPawn())
+	{
+		return GetPawn()->GetActorLocation();
+	}
+	return FVector::ZeroVector;
+}
+
+void ARTPlayerController::DropItem(const FName& ItemName)
+{
+	ICarrier::DropItem(ItemName);
+
+	// TODO: REMOVE ABILITY
 }
 
 void ARTPlayerController::LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem)
@@ -79,6 +101,21 @@ void ARTPlayerController::SetQueueName_Implementation(const FString& QueueName)
 {
 	ARTGameMode* GM = GetWorld()->GetAuthGameMode<ARTGameMode>();
 	GM->SetTeamSize(QueueName);
+}
+
+FGameplayTag ARTPlayerController::GetAbilityTrigger(const uint32 i) const
+{
+	return GetInventory()->GetAbilityTrigger(i);
+}
+
+ARTPlayerController::ARTPlayerController()
+{
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+
+	if(InventoryComponent)
+	{
+		InventoryComponent->SetIsReplicated(true);
+	}
 }
 
 void ARTPlayerController::SaveUserSettings()

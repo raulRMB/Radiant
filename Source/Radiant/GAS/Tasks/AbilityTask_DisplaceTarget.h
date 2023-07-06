@@ -18,8 +18,17 @@ struct FDisplaceTargetData
 	GENERATED_BODY()
 	UPROPERTY()
 	class AActor* Target;
+	UPROPERTY()
 	FVector Location;
+	UPROPERTY()
 	float Duration;
+
+	FDisplaceTargetData()
+	{
+		Target = nullptr;
+		Location = FVector::ZeroVector;
+		Duration = 0.0f;
+	}
 };
 
 DECLARE_MULTICAST_DELEGATE(FDisplaceTargetSignature)

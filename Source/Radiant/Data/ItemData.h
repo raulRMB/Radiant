@@ -14,4 +14,9 @@ struct FItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	class UAbilityDataAsset* AbilityData;
+
+	FItemData()
+	{
+		AbilityData = nullptr;
+	}
 };
