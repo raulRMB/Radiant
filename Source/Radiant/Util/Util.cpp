@@ -129,3 +129,16 @@ TSubclassOf<AActor> UUtil::GetBuildingType(EEnvironmentType Type)
 	}
 	return nullptr;
 }
+
+void UUtil::LogServerOrClient(AActor* Actor)
+{
+	if(Actor->HasAuthority())
+	{
+		RTLOG("I am the server")
+	}
+	else
+	{
+		RTLOG("I am the client")
+	}
+}
+

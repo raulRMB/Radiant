@@ -41,4 +41,6 @@ public:
 	static void ChangeQualitySetting(FString Name);
 
 	static TSubclassOf<class AActor> GetBuildingType(EEnvironmentType Type);
+
+	static void LogServerOrClient(class AActor* Actor);
 };
