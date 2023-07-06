@@ -3,6 +3,8 @@
 
 #include "Player/RTPlayerState.h"
 #include "Data/AbilityDataAsset.h"
+#include "Data/ItemData.h"
+#include "Engine/ActorChannel.h"
 #include "Player/Avatar.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -15,8 +17,8 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, Target);
 	DOREPLIFETIME(ARTPlayerState, TeamId);
 	DOREPLIFETIME(ARTPlayerState, Username);
-	DOREPLIFETIME(ARTPlayerState, OwnedAbilities);
-	DOREPLIFETIME(ARTPlayerState, PurchasedAbilities);
+	DOREPLIFETIME(ARTPlayerState, InnateAbilities);
+	DOREPLIFETIME(ARTPlayerState, Inventory);
 }
 
 FVector ARTPlayerState::GetCarrierLocation() const
@@ -26,6 +28,13 @@ FVector ARTPlayerState::GetCarrierLocation() const
 		return GetPawn()->GetActorLocation();
 	}
 	return FVector::ZeroVector;
+}
+
+void ARTPlayerState::DropItem(const FName& ItemName)
+{
+	ICarrier::DropItem(ItemName);
+
+	// TODO: REMOVE ABILITY
 }
 
 void ARTPlayerState::BeginPlay()
@@ -38,6 +47,11 @@ void ARTPlayerState::BeginPlay()
 	{
 		Inventory->InitInventory(ItemDataTable);
 	}
+
+	if(Inventory)
+	{
+		AddReplicatedSubObject(Inventory);
+	}
 }
 
 void ARTPlayerState::OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData)
@@ -47,6 +61,9 @@ void ARTPlayerState::OnRadianiteChanged(const FOnAttributeChangeData& OnAttribut
 
 ARTPlayerState::ARTPlayerState()
 {
+	bReplicates = true;
+	bReplicateUsingRegisteredSubObjectList = true;
+	
 	// Create ability system component, and set it to be explicitly replicated
 	AbilitySystemComponent = CreateDefaultSubobject<URTAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -109,71 +126,25 @@ FString ARTPlayerState::GetUsername()
 
 FGameplayTag ARTPlayerState::GetAbilityTrigger(const uint32 i) const
 {
-	auto Ability = HotBarAbilities.FindRef(static_cast<EHotBarSlot>(i));
-	if(Ability)
-	{
-		return Ability->Ability.GetDefaultObject()->GetTriggerTag();
-	}
-	return FGameplayTag();
+	return GetInventory()->GetAbilityTrigger(i);
 }
 
-void ARTPlayerState::S_BuyAbility_Implementation(UAbilityDataAsset* AbilityDataAsset)
+void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
 {
-	if(AttributeSet->GetRadianite() < AbilityDataAsset->Price || OwnedAbilities.Contains(AbilityDataAsset))
+	FItemData* ItemData = ItemDataTable->FindRow<FItemData>(AbilityName, FString("BuyAbility"));
+	
+	if(AttributeSet->GetRadianite() < ItemData->AbilityData->Price || InnateAbilities.Contains(ItemData->AbilityData))
 	{
 		return;
 	}
-	PurchasedAbilities.Add(AbilityDataAsset);
-	AbilitySystemComponent->GiveAbility(AbilityDataAsset->Ability.GetDefaultObject());
-	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - AbilityDataAsset->Price);
+	GetInventory()->AddItem(AbilityName);
+	AbilitySystemComponent->GiveAbility(ItemData->AbilityData->Ability.GetDefaultObject());
+	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price);
 }
 
 TArray<class UAbilityDataAsset*> ARTPlayerState::GetOwnedAbilities() const
 {
-	return OwnedAbilities;
-}
-
-void ARTPlayerState::OnRepPurchasedAbilities(TArray<UAbilityDataAsset*> OldPurchasedAbilities)
-{
-	for (int i = 0; i < PurchasedAbilities.Num(); i++)
-	{
-		if(!OldPurchasedAbilities.Contains(PurchasedAbilities[i]))
-		{
-			for (int j = 0; j <= static_cast<uint32>(EHotBarSlot::Six); j++)
-			{
-				EHotBarSlot slot = static_cast<EHotBarSlot>(j);
-				if(!HotBarAbilities.Contains(slot))
-				{
-					HotBarAbilities.Add(slot, PurchasedAbilities[i]);
-					break;
-				}
-			}
-		}
-	}
-	GetPawn<AAvatar>()->SetHUDIcons();
-}
-
-void ARTPlayerState::SwapHotbarSlot(EHotBarSlot One, EHotBarSlot Two)
-{
-	if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
-	{
-		UAbilityDataAsset* Temp = HotBarAbilities[One];
-		HotBarAbilities[One] = HotBarAbilities[Two];
-		HotBarAbilities[Two] = Temp;
-	} else if(HotBarAbilities.Contains(One))
-	{
-		HotBarAbilities.Add(Two, HotBarAbilities[One]);
-		HotBarAbilities.Remove(One);
-	} else if(HotBarAbilities.Contains(Two))
-	{
-		HotBarAbilities.Add(One, HotBarAbilities[Two]);
-		HotBarAbilities.Remove(Two);
-	}
-}
-
-TArray<UAbilityDataAsset*> ARTPlayerState::GetPurchasedAbilities() const
-{
-	return PurchasedAbilities;
+	return InnateAbilities;
 }
 
 void ARTPlayerState::SetUsername_Implementation(const FString& String)

@@ -58,7 +58,7 @@ bool UAbilityWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 		ARTPlayerState* PS = Cast<ARTPlayerState>(GetOwningPlayerState());
 		if(PS)
 		{
-			PS->SwapHotbarSlot(DragDropOperation->WidgetReference->HotbarSlot, HotbarSlot);
+			PS->GetInventory()->SwapHotbarSlot(DragDropOperation->WidgetReference->HotbarSlot, HotbarSlot);
 		}
 		UAbilityDataAsset* Temp = AbilityData;
 		SetData(DragDropOperation->WidgetReference->AbilityData);

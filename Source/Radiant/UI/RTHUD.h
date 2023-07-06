@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "Util/Enums/HotbarSlot.h"
+#include "Util/Enums/InventorySlot.h"
 #include "RTHUD.generated.h"
 
 DECLARE_DELEGATE_OneParam(FGiveAbilityFromButtonSignature, class UAbilityDataAsset*)
@@ -58,7 +58,7 @@ public:
 public:
 	ARTHUD();
 	
-	void UpdateAbilities(TMap<EHotBarSlot, UAbilityDataAsset*> Abilities);
+	void UpdateAbilities(const TMap<EInventorySlot, UAbilityDataAsset*>& Abilities);
 	void ShowEndScreen(bool won);
 	void ToggleSettings();
 	void HideLoadScreen();

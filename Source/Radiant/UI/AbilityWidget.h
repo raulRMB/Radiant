@@ -6,7 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "Blueprint/UserWidget.h"
 #include "Data/AbilityDataAsset.h"
-#include "Util/Enums/HotbarSlot.h"
+#include "Util/Enums/InventorySlot.h"
 #include "AbilityWidget.generated.h"
 
 UCLASS()
@@ -15,7 +15,7 @@ class RADIANT_API UAbilityWidget : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	EHotBarSlot HotbarSlot;
+	EInventorySlot HotbarSlot;
 	
 	uint8 bOn : 1;
 	UPROPERTY()

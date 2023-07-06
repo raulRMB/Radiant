@@ -24,7 +24,7 @@ AWorldItem::AWorldItem()
 	NameWidget->SetupAttachment(Mesh);
 }
 
-void AWorldItem::InitItem(FString Name)
+void AWorldItem::InitItem(FName Name)
 {
 	ItemName = Name;
 	if(UWorldItemInfoWidget* ItemInfoWidget = Cast<UWorldItemInfoWidget>(NameWidget->GetWidget()))

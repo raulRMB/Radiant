@@ -58,12 +58,12 @@ FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 	return FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHealth, MaxHealth));
 }
 
-void URTInfoPanel::UpdateAbilities(TMap<EHotBarSlot, UAbilityDataAsset*> AbilityData)
+void URTInfoPanel::UpdateAbilities(TMap<EInventorySlot, UAbilityDataAsset*> AbilityData)
 {
 	auto Slots = Abilities->GetAllChildren();
-	for(int i = 0; i <= static_cast<uint32>(EHotBarSlot::Six); i++)
+	for(int i = 0; i <= static_cast<uint32>(EInventorySlot::Six); i++)
 	{
-		auto data = AbilityData.FindRef(EHotBarSlot(i));
+		auto data = AbilityData.FindRef(EInventorySlot(i));
 		if(i >= Slots.Num())
 		{
 			break;

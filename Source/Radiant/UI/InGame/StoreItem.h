@@ -22,9 +22,9 @@ class RADIANT_API UStoreItem : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* Price;
-
+	
 	UPROPERTY()
-	class UAbilityDataAsset* AbilityData;
+	FString ItemName;
 	
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemTable;

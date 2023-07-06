@@ -10,7 +10,7 @@
 #include "UI/AbilityWidget.h"
 #include "Util/Interfaces/Carrier.h"
 #include "Util/Interfaces/TeamMember.h"
-#include "Util/Enums/HotbarSlot.h"
+#include "Util/Enums/InventorySlot.h"
 #include "RTPlayerState.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);
@@ -38,7 +38,7 @@ protected:
 
 	/****** Inventory ******/
 	
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	class UInventory* Inventory;
 
 	UPROPERTY(EditAnywhere)
@@ -51,6 +51,8 @@ public:
 	virtual UInventory* GetInventory() const override { return Inventory; }
 	virtual FVector GetCarrierLocation() const override;
 
+	virtual void DropItem(const FName& ItemName) override;
+
 	/****** End Inventory ******/
 	
 public:
@@ -59,7 +61,6 @@ public:
 	
 	FUpdateRadianiteSignature OnUpdateRadianite;
 	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData);
-	void SwapHotbarSlot(EHotBarSlot One, EHotBarSlot Two);
 	ARTPlayerState();
 
 	UFUNCTION(BlueprintCallable)
@@ -84,22 +85,11 @@ public:
 	void SetUsername(const FString& String);
 	FString GetUsername();
 	UFUNCTION(Server, Reliable)
-	void S_BuyAbility(class UAbilityDataAsset* AbilityDataAsset);
+	void S_BuyAbility(const FName& AbilityName);
 	
 	UPROPERTY(Replicated, EditAnywhere)
-	TArray<class UAbilityDataAsset*> OwnedAbilities;
-
-	UPROPERTY(ReplicatedUsing=OnRepPurchasedAbilities, EditAnywhere)
-	TArray<class UAbilityDataAsset*> PurchasedAbilities;
+	TArray<class UAbilityDataAsset*> InnateAbilities;
 	
 	FGameplayTag GetAbilityTrigger(const uint32 Slot) const;
 	TArray<class UAbilityDataAsset*> GetOwnedAbilities() const;
-
-	UPROPERTY()
-	TMap<EHotBarSlot, UAbilityDataAsset*> HotBarAbilities;
-	TMap<EHotBarSlot, UAbilityDataAsset*> GetHotBarAbilities() const { return HotBarAbilities; }
-	
-	UFUNCTION()
-	void OnRepPurchasedAbilities(TArray<UAbilityDataAsset*> OldPurchasedAbilities);
-	TArray<class UAbilityDataAsset*> GetPurchasedAbilities() const;
 };

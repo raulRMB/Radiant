@@ -6,8 +6,8 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
-void UWorldItemInfoWidget::SetText(FString Name)
+void UWorldItemInfoWidget::SetText(FName Name)
 {
-	NameText->SetText(FText::FromString(Name));
+	NameText->SetText(FText::FromName(Name));
 	BackgroundImage->SetDesiredSizeOverride(NameText->GetDesiredSize());
 }

@@ -26,15 +26,15 @@ class RADIANT_API AWorldItem : public AActor
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemDataTable;
 protected:
-	FString ItemName;
+	FName ItemName;
 public:
-	void InitItem(FString Name);
+	void InitItem(FName Name);
 	
 	void PickUp(class ICarrier* Carrier);
 public:	
 	AWorldItem();
 
-	FString GetItemName() const { return ItemName; }
+	FName GetItemName() const { return ItemName; }
 protected:
 	virtual void BeginPlay() override;
 };

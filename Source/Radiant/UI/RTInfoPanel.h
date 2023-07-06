@@ -68,7 +68,7 @@ public:
 	UFUNCTION()
 	void OnHeroDeath(uint32 RedScore, uint32 BlueScore);
 	
-	void UpdateAbilities(TMap<EHotBarSlot, UAbilityDataAsset*> Abilities);
+	void UpdateAbilities(TMap<EInventorySlot, UAbilityDataAsset*> Abilities);
 	
 	void ShowEndScreen(bool bWon);
 	void HideLoadScreen();

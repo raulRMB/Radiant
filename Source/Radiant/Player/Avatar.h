@@ -149,7 +149,7 @@ public:
 	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData) const;
 	virtual void OnRep_PlayerState() override;
 	virtual void OnRep_Controller() override;
-	void SetHUDIcons();
+	void SetHUDIcons(const TMap<EInventorySlot, UAbilityDataAsset*>& AbilityMap);
 
 	virtual ETeamId GetTeamId() const override;
 	void GiveInitialAbilities();

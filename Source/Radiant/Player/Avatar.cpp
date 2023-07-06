@@ -171,7 +171,7 @@ void AAvatar::BeginPlay()
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::ShowStats, 0.3f, true);
 	
-	SetHUDIcons();
+	// SetHUDIcons();
 
 	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
 }
@@ -454,16 +454,14 @@ void AAvatar::OnRep_Controller()
 	}
 }
 
-void AAvatar::SetHUDIcons()
+void AAvatar::SetHUDIcons(const TMap<EInventorySlot, UAbilityDataAsset*>& AbilityMap)
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{
-		if(ARTPlayerController* PC = GetController<ARTPlayerController>())
+		if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetController()))
 		{
-			if(ARTPlayerState* PS = GetRTPlayerState())
-			{
-				PC->GetHUD<ARTHUD>()->UpdateAbilities(PS->GetHotBarAbilities());
-			}
+			auto Ab = GetInventory()->GetHotBarAbilities();
+			PC->GetHUD<ARTHUD>()->UpdateAbilities(AbilityMap);
 		}
 	}
 }
@@ -819,14 +817,6 @@ void AAvatar::Tick(float DeltaTime)
 	}
 	if(HasTag("States.Movement.Stopped") || HasTag("States.Dead"))
 		StopMovement();
-
-	if(GetInventory())
-	{
-		for (const TPair<FString, uint16>& pair : GetInventory()->GetItems())
-		{      
-			RTPRINTTP(-1, "Key: %s", *pair.Key);
-		} 
-	}
 }
 
 void AAvatar::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

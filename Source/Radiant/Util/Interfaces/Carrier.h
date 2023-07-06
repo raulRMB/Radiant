@@ -27,7 +27,6 @@ public:
 	virtual UInventory* GetInventory() const = 0;
 	virtual FVector GetCarrierLocation() const = 0;
 	
-	void PickUpItem(const FString& ItemName);
-
-	void DropItem(const FString& ItemName);
+	void PickUpItem(const FName& ItemName);
+	virtual void DropItem(const FName& ItemName);
 };

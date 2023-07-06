@@ -21,5 +21,5 @@ class RADIANT_API UWorldItemInfoWidget : public UUserWidget
 	class UImage* BackgroundImage;
 
 public:
-	void SetText(FString Name);
+	void SetText(FName Name);
 };

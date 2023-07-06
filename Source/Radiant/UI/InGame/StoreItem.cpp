@@ -17,20 +17,15 @@
 
 void UStoreItem::OnClicked()
 {
-	if(ensureMsgf(AbilityData, TEXT("No ability data found in store item button")))
+	if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
-		if(ensureMsgf(GetWorld(), TEXT("No world found in store item button")))
-		{
-			if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetWorld()->GetFirstPlayerController()))
-			{
-				PC->GetPlayerState<ARTPlayerState>()->S_BuyAbility(AbilityData);
-			}
-		}
+		PC->GetPlayerState<ARTPlayerState>()->S_BuyAbility(FName(ItemName));
 	}
 }
 
 void UStoreItem::Init(const FName& Name)
 {
+	ItemName = Name.ToString();
 	if (ItemTable)
 	{
 		static const FString ContextString(TEXT("Store Item Button Native Construct")); 
@@ -38,12 +33,11 @@ void UStoreItem::Init(const FName& Name)
 		{
 			Price->SetText(RTPRINTF("%.0f", ItemData->AbilityData->Price));
 			Icon->SetBrushFromTexture(ItemData->AbilityData->Icon);
-			AbilityData = ItemData->AbilityData;
+			if(ensure(Button))
+			{
+				Button->SetToolTipText(ItemData->AbilityData->Tooltip);
+				Button->OnClicked.AddUniqueDynamic(this, &UStoreItem::OnClicked);
+			}
 		}
-	}
-	if(ensure(Button))
-	{
-		Button->OnClicked.AddUniqueDynamic(this, &UStoreItem::OnClicked);
-		Button->SetToolTipText(AbilityData->Tooltip);
 	}
 }
