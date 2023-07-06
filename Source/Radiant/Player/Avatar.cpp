@@ -111,7 +111,10 @@ void AAvatar::StopMovement()
 
 void AAvatar::SetOverheadBarText(const FString& String)
 {
-	OverHeadInfoBar->SetOverheadText(String);
+	if(OverHeadInfoBar)
+	{
+		OverHeadInfoBar->SetOverheadText(String);
+	}
 }
 
 void AAvatar::LevelUp_Implementation(float GetLevel)
