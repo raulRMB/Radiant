@@ -24,13 +24,12 @@ class RADIANT_API APickUpSpawner : public AActor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = true, MakeEditWidget))
 	FVector SpawnOffset;
 public:	
-	// Sets default values for this actor's properties
 	APickUpSpawner();
 
 protected:
 	UFUNCTION()
 	void OnPickedUp();
 	void SpawnPickup();
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 };

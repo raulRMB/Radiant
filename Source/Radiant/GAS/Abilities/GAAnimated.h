@@ -6,9 +6,7 @@
 #include "RTAbility.h"
 #include "GAAnimated.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UGAAnimated : public URTAbility
 {

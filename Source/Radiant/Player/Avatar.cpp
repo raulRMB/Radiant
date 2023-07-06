@@ -128,7 +128,7 @@ void AAvatar::GameEnding_Implementation(bool Won)
 	UGameplayStatics::PlaySound2D(GetWorld(), Won ? WinSound : LoseSound); 
 }
 
-// Called when the game starts or when spawned
+
 void AAvatar::BeginPlay()
 {
 	Super::BeginPlay();

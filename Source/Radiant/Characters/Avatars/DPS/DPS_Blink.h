@@ -6,9 +6,7 @@
 #include "GAS/Abilities/GADash.h"
 #include "DPS_Blink.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UDPS_Blink : public UGADash
 {

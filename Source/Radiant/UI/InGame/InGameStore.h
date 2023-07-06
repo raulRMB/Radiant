@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "InGameStore.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UInGameStore : public UUserWidget
 {

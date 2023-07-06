@@ -6,9 +6,7 @@
 #include "GAS/Abilities/RTAbility.h"
 #include "GARespawn.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UGARespawn : public URTAbility
 {

@@ -8,9 +8,7 @@
 #include "LoginMenu.generated.h"
 
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ULoginMenu : public UUserWidget
 {

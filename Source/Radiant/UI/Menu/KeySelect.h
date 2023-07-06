@@ -7,9 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "KeySelect.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UKeySelect : public UUserWidget
 {

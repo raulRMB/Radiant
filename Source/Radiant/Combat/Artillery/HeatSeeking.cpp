@@ -31,7 +31,7 @@ void AHeatSeeking::MulticastSetTarget_Implementation(AActor* NewTarget)
 	Target = NewTarget;
 }
 
-// Called when the game starts or when spawned
+
 void AHeatSeeking::BeginPlay()
 {
 	Super::BeginPlay();

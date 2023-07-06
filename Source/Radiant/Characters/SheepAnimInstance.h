@@ -6,9 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "SheepAnimInstance.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API USheepAnimInstance : public UAnimInstance
 {

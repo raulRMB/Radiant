@@ -7,9 +7,7 @@
 #include "Util/Managers/GridManager.h"
 #include "AbilityTask_BuildMode.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UAbilityTask_BuildMode : public UAbilityTask
 {

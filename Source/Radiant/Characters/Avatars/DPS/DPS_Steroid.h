@@ -6,9 +6,7 @@
 #include "GAS/Abilities/GAInstant.h"
 #include "DPS_Steroid.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UDPS_Steroid : public UGAInstant
 {

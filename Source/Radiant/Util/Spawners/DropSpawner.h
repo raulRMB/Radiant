@@ -26,7 +26,6 @@ class RADIANT_API ADropSpawner : public AActor
 
 	int Items;
 public:	
-	// Sets default values for this actor's properties
 	ADropSpawner();
 
 protected:
@@ -34,7 +33,7 @@ protected:
 
 	UFUNCTION()
 	void ItemPickedUp();
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 
 public:	

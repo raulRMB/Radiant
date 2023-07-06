@@ -9,7 +9,6 @@
 #include "Player/Avatar.h"
 #include "Util/Util.h"
 
-// Sets default values
 ATower::ATower()
 {
 	bReplicates = true;
@@ -28,7 +27,6 @@ ATower::ATower()
 	AttackRadius->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn,ECollisionResponse::ECR_Overlap);
 }
 
-// Called when the game starts or when spawned
 void ATower::BeginPlay()
 {
 	Super::BeginPlay();
@@ -36,7 +34,6 @@ void ATower::BeginPlay()
 	AttackRadius->OnComponentEndOverlap.AddDynamic(this,&ATower::EndOverlap);
 }
 
-// Called every frame
 void ATower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

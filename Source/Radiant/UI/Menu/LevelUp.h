@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "LevelUp.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ULevelUp : public UUserWidget
 {

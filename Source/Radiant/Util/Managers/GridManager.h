@@ -42,9 +42,7 @@ struct FGridPiece
 	{}
 };
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API AGridManager : public AActor
 {

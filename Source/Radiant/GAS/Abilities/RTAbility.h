@@ -6,9 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "RTAbility.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API URTAbility : public UGameplayAbility
 {

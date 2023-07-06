@@ -6,9 +6,7 @@
 #include "GAS/Abilities/GALinearSkillshot.h"
 #include "DPS_Skillshot.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UDPS_Skillshot : public UGALinearSkillshot
 {

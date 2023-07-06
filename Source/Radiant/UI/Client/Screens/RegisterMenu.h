@@ -9,9 +9,7 @@
 
 DECLARE_DELEGATE(FRegisterSuccessSignature)
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API URegisterMenu : public UUserWidget
 {

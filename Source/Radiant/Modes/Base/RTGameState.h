@@ -19,9 +19,7 @@ struct FTeam
 	TArray<class AAvatar*> Heroes;
 };
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ARTGameState : public AGameState
 {

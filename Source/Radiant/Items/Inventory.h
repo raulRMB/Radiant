@@ -19,9 +19,7 @@ struct FInventoryItem
 	class UAbilityDataAsset* AbilityData;
 };
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UInventory : public UObject
 {

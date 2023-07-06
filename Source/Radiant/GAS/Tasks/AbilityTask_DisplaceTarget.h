@@ -24,9 +24,7 @@ struct FDisplaceTargetData
 
 DECLARE_MULTICAST_DELEGATE(FDisplaceTargetSignature)
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UAbilityTask_DisplaceTarget : public UAbilityTask_ApplyRootMotionMoveToForce
 {

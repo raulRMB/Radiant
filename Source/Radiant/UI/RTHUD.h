@@ -9,9 +9,7 @@
 
 DECLARE_DELEGATE_OneParam(FGiveAbilityFromButtonSignature, class UAbilityDataAsset*)
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ARTHUD : public AHUD
 {

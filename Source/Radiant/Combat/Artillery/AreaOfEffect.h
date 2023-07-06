@@ -26,13 +26,12 @@ class RADIANT_API AAreaOfEffect : public AArtillery
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag CueTag;
 public:	
-	// Sets default values for this actor's properties
 	AAreaOfEffect();
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 	
 protected:
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 	void ApplyGameplayEffects();
 	UPROPERTY()

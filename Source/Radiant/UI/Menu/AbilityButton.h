@@ -8,9 +8,7 @@
 
 DECLARE_DELEGATE_OneParam(FRemoveAbilitySignature, class UAbilityDataAsset*)
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UAbilityButton : public UUserWidget
 {

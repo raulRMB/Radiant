@@ -6,9 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "ReplicatedObject.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class UReplicatedObject : public UObject
 {

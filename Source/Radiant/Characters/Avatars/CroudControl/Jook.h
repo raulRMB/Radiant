@@ -6,9 +6,7 @@
 #include "Combat/Artillery/LinearSkillshot.h"
 #include "Jook.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API AJook : public ALinearSkillshot
 {

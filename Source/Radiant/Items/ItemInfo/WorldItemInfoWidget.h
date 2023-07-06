@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "WorldItemInfoWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UWorldItemInfoWidget : public UUserWidget
 {

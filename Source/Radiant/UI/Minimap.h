@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Minimap.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UMinimap : public UUserWidget
 {

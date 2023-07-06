@@ -14,9 +14,7 @@ enum class EInstantAbilityTarget : uint8
 	SelfAndTarget
 };
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UGAInstant : public URTAbility
 {

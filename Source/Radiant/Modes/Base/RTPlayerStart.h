@@ -7,9 +7,7 @@
 #include "Util/Enums/TeamId.h"
 #include "RTPlayerStart.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ARTPlayerStart : public APlayerStart
 {

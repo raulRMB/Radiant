@@ -6,9 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "RadiantGameInstance.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API URadiantGameInstance : public UGameInstance
 {

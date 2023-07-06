@@ -32,12 +32,11 @@ class RADIANT_API AAISpawner : public AActor
 
 
 public:	
-	// Sets default values for this actor's properties
 	AAISpawner();
 
 	void StartSpawning();
 protected:
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 
 public:	

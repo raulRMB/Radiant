@@ -17,12 +17,11 @@ class RADIANT_API ACaptureArea : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta = (AllowPrivateAccess=true))
 	class UBoxComponent* HitBox;
 public:	
-	// Sets default values for this actor's properties
 	ACaptureArea();
 
 	FOnUpdatePlayersInAreaSignature OnUpdatePlayersInArea;
 protected:
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:	

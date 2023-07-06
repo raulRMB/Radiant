@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Settings.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API USettings : public UUserWidget
 {

@@ -6,9 +6,7 @@
 #include "GameplayModMagnitudeCalculation.h"
 #include "DamageCalculation.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UDamageCalculation : public UGameplayModMagnitudeCalculation
 {

@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "HeroInfoBar.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UHeroInfoBar : public UUserWidget
 {

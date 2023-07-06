@@ -26,14 +26,12 @@ class RADIANT_API AHeatSeeking : public AArtillery
 
 	FGameplayEffectSpecHandle EffectSpecHandle;
 public:
-	
-	// Sets default values for this actor's properties
 	AHeatSeeking();
 
 	FGameplayEffectSpecHandle GetEffectSpecHandle() const { return EffectSpecHandle; }
 	void SetEffectSpecHandle(FGameplayEffectSpecHandle NewHandle) { EffectSpecHandle = NewHandle; }
 protected:
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 	
 	virtual void OnConstruction(const FTransform& Transform) override;

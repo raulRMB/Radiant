@@ -6,9 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_MoveToLocation.h"
 #include "MoveToLocationParabolic.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UMoveToLocationParabolic : public UAbilityTask_MoveToLocation
 {

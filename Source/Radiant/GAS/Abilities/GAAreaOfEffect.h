@@ -14,9 +14,7 @@ enum class ESpawnBehavior : uint8
 	AtRangeLocation
 };
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UGAAreaOfEffect : public UGAAnimated
 {

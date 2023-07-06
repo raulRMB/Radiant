@@ -6,9 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "HeroAnimInstance.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UHeroAnimInstance : public UAnimInstance
 {

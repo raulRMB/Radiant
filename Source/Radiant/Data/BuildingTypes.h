@@ -7,9 +7,7 @@
 #include "Util/Managers/GridManager.h"
 #include "BuildingTypes.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UBuildingTypes : public UDataAsset
 {

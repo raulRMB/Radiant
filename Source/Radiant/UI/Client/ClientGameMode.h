@@ -6,9 +6,7 @@
 #include "Modes/Base/RTGameMode.h"
 #include "ClientGameMode.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API AClientGameMode : public ARTGameMode
 {

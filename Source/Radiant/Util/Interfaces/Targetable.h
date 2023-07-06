@@ -13,9 +13,7 @@ class UTargetable : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class RADIANT_API ITargetable
 {
 	GENERATED_BODY()

@@ -56,7 +56,6 @@ void ARTAICharacter::OnHealthChanged(const FOnAttributeChangeData& OnAttributeCh
 	}
 }
 
-// Called when the game starts or when spawned
 void ARTAICharacter::BeginPlay()
 {
 	Super::BeginPlay();

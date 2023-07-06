@@ -6,9 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "ClientPlayerController.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API AClientPlayerController : public APlayerController
 {

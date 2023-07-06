@@ -11,9 +11,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOrderAcceptedSignature);
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ARTPlayerController : public APlayerController
 {

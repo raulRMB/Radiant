@@ -6,9 +6,7 @@
 #include "Modes/Base/RTGameMode.h"
 #include "TeamDeathMatchMode.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ATeamDeathMatchMode : public ARTGameMode
 {

@@ -17,10 +17,9 @@ class RADIANT_API AWidgetManager : public AActor
 	UPROPERTY(EditAnywhere, Category = "Widgets")
 	TMap<FName, TSubclassOf<UUserWidget>> Widgets;
 public:	
-	// Sets default values for this actor's properties
 	AWidgetManager();
 protected:
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 
 public:	

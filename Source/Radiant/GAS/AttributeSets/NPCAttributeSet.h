@@ -6,9 +6,7 @@
 #include "RTBaseAttributeSet.h"
 #include "NPCAttributeSet.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UNPCAttributeSet : public URTBaseAttributeSet
 {

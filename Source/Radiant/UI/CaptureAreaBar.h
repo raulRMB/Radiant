@@ -8,9 +8,7 @@
 #include "CaptureAreaBar.generated.h"
 
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UCaptureAreaBar : public UUserWidget
 {

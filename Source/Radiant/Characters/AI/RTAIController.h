@@ -6,9 +6,7 @@
 #include "AIController.h"
 #include "RTAIController.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ARTAIController : public AAIController
 {

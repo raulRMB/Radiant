@@ -15,9 +15,7 @@ enum class EDashType : uint8
 	Parabolic
 };
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UGADash : public UGAAnimated
 {

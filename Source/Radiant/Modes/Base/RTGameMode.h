@@ -8,9 +8,7 @@
 #include "Util/Enums/TeamId.h"
 #include "RTGameMode.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ARTGameMode : public AGameMode
 {

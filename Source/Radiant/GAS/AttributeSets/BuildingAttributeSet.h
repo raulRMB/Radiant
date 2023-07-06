@@ -13,9 +13,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UBuildingAttributeSet : public UAttributeSet
 {

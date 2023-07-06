@@ -6,9 +6,7 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTT_GetRandomLocation.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UBTT_GetRandomLocation : public UBTTask_BlackboardBase
 {

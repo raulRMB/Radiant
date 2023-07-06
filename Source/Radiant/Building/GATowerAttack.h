@@ -6,9 +6,6 @@
 #include "GAS/Abilities/RTAbility.h"
 #include "GATowerAttack.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class RADIANT_API UGATowerAttack : public URTAbility
 {

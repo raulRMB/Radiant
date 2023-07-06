@@ -7,9 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "LobbyMenu.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API ULobbyMenu : public UUserWidget
 {

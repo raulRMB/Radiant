@@ -6,9 +6,6 @@
 #include "Building.h"
 #include "Base.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class RADIANT_API ABase : public ABuilding
 {

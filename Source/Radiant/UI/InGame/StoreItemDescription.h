@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "StoreItemDescription.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UStoreItemDescription : public UUserWidget
 {

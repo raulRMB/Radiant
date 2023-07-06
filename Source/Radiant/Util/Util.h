@@ -15,9 +15,7 @@
 #define RTLOGP(x, a) UE_LOG(LogTemp, Warning, TEXT(x), a);
 #define RTPRINTF(s, x) FText::FromString(FString::Printf(TEXT(s), x))
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UUtil :  public UBlueprintFunctionLibrary
 {

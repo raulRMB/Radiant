@@ -14,9 +14,7 @@ class UTeamMember : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class RADIANT_API ITeamMember
 {
 	GENERATED_BODY()

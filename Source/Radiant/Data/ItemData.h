@@ -6,9 +6,7 @@
 #include "Engine/DataTable.h"
 #include "ItemData.generated.h"
 
-/**
- * 
- */
+
 USTRUCT()
 struct FItemData : public FTableRowBase
 {

@@ -37,7 +37,7 @@ void ALinearSkillshot::SetGameplayEffects(TArray<TSubclassOf<UGameplayEffect>> N
 	GameplayEffects = NewGameplayEffects;
 }
 
-// Called when the game starts or when spawned
+
 void ALinearSkillshot::BeginPlay()
 {
 	Super::BeginPlay();

@@ -7,9 +7,7 @@
 #include "BTS_FearCheck.generated.h"
 
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UBTS_FearCheck : public UBTService
 {

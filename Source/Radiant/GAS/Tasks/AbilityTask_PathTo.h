@@ -8,9 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FPathToSignature, bool);
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UAbilityTask_PathTo : public UAbilityTask
 {

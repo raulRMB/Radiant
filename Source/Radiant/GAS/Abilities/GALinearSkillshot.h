@@ -6,9 +6,7 @@
 #include "GAS/Abilities/GAAnimated.h"
 #include "GALinearSkillshot.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UGALinearSkillshot : public UGAAnimated
 {

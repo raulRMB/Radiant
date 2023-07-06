@@ -7,9 +7,7 @@
 #include "Util/Enums/TeamId.h"
 #include "KingOfTheHillGameState.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API AKingOfTheHillGameState : public ARTGameState
 {

@@ -16,9 +16,7 @@ class UKillable : public UInterface
 };
 
 
-/**
- * 
- */
+
 class RADIANT_API IKillable
 {
 	GENERATED_BODY()

@@ -8,9 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayersUpdatedSignature, class AAvatar*, bool /*bRemoved*/);
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UActorManager final : public UGameInstanceSubsystem
 {

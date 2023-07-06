@@ -6,9 +6,7 @@
 #include "GAS/Abilities/RTAbility.h"
 #include "GAMove.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UGAMove : public URTAbility
 {

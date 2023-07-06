@@ -7,9 +7,7 @@
 #include "GameFramework/SaveGame.h"
 #include "UserSettings.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UUserSettings : public USaveGame
 {

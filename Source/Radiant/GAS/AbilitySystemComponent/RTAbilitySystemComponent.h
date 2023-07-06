@@ -7,9 +7,7 @@
 #include "GAS/Abilities/RTAbility.h"
 #include "RTAbilitySystemComponent.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API URTAbilitySystemComponent : public UAbilitySystemComponent
 {

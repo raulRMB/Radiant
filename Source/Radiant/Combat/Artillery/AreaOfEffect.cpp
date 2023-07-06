@@ -81,7 +81,7 @@ void AAreaOfEffect::ApplyInstantEffects()
 	Destroy();
 }
 
-// Called when the game starts or when spawned
+
 void AAreaOfEffect::BeginPlay()
 {
 	Super::BeginPlay();

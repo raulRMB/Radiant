@@ -15,9 +15,7 @@ class UCarrier : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class RADIANT_API ICarrier
 {
 	GENERATED_BODY()

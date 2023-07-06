@@ -7,9 +7,7 @@
 #include "RTAvatarAttributeSet.generated.h"
 
 
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API URTAvatarAttributeSet : public URTBaseAttributeSet
 {

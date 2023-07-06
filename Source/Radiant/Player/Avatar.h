@@ -107,7 +107,7 @@ public:
 	TMap<FString, TSubclassOf<class AActor>> DebugSpawnableItems;
 
 protected:
-	// Called when the game starts or when spawned
+	
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;

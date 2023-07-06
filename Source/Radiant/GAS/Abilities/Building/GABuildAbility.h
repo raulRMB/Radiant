@@ -8,9 +8,7 @@
 #include "GABuildAbility.generated.h"
 
 class ABuilding;
-/**
- * 
- */
+
 UCLASS()
 class RADIANT_API UGABuildAbility : public URTAbility
 {
