@@ -30,13 +30,16 @@ class RADIANT_API UAbilityWidget : public UUserWidget
 	UPROPERTY(EditAnywhere, Category="Cooldowns")
 	FGameplayTag CooldownTag;
 
+	uint8 bShouldDropItem : 1;
+
 	virtual void NativeConstruct() override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
-	bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-	                  UDragDropOperation* InOperation);
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	                  UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
 	void SetOn(bool On);
 	float GetCooldownPercent(const float TimeRemaining, const float CooldownDuration);
 	bool GetCooldownRemaining(float& TimeRemaining, float& CooldownDuration);
@@ -47,4 +50,6 @@ public:
 	void SetData(UAbilityDataAsset* Data);
 	void UpdateCooldown();
 	void Reset();
+
+	void SetShouldDropItem(const bool ShouldDropItem) { bShouldDropItem = ShouldDropItem; }
 };

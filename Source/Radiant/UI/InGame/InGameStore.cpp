@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Data/ItemData.h"
 #include "Player/Avatar.h"
+#include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
 
 void UInGameStore::UpdateRadianite(float RadianiteAmount)
@@ -41,4 +42,19 @@ void UInGameStore::NativeConstruct()
 			GridPanel->AddChildToGrid(StoreItem, GridPanel->GetChildrenCount() / 5, GridPanel->GetChildrenCount() % 5);
 		}
 	}
+}
+
+void UInGameStore::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
+	if(UAbilityDragDropOperation* DragOp = Cast<UAbilityDragDropOperation>(InOperation))
+		DragOp->WidgetReference->SetShouldDropItem(true);
+}
+
+void UInGameStore::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
+	if(UAbilityDragDropOperation* DragOp = Cast<UAbilityDragDropOperation>(InOperation))
+		DragOp->WidgetReference->SetShouldDropItem(false);
 }

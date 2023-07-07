@@ -26,6 +26,9 @@ class RADIANT_API UInGameStore : public UUserWidget
 
 	virtual void NativeConstruct() override;
 
+	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
 	UFUNCTION()
 	void UpdateRadianite(float RadianiteAmount);
 public:

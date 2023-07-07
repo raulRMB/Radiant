@@ -13,6 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
+#include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
 
 
@@ -130,4 +131,19 @@ void URTInfoPanel::SetFPS(float FPS)
 void URTInfoPanel::SetMS(float MS)
 {
 	MSCounter->SetText(RTPRINTF("MS: %.0f", MS));
+}
+
+void URTInfoPanel::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
+	if(UAbilityDragDropOperation* DragOp = Cast<UAbilityDragDropOperation>(InOperation))
+		DragOp->WidgetReference->SetShouldDropItem(true);
+}
+
+void URTInfoPanel::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
+	if(UAbilityDragDropOperation* DragOp = Cast<UAbilityDragDropOperation>(InOperation))
+		DragOp->WidgetReference->SetShouldDropItem(false);
 }

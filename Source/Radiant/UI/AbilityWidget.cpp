@@ -12,6 +12,7 @@
 #include "Player/RTPlayerController.h"
 #include "Player/RTPlayerState.h"
 #include "Util/AbilityDragDropOperation.h"
+#include "Util/Util.h"
 
 void UAbilityWidget::NativeConstruct()
 {
@@ -29,6 +30,7 @@ void UAbilityWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPo
 	SetVisibility(ESlateVisibility::HitTestInvisible);
 	Ability->SetDesiredSizeOverride(FVector2D(80, 80));
 	DragWidget->DefaultDragVisual = Ability;
+	DragWidget->DefaultDragVisual->SetVisibility(ESlateVisibility::HitTestInvisible);
 	DragWidget->WidgetReference = this;
 	DragWidget->Pivot = EDragPivot::CenterCenter;
 	OutOperation = DragWidget;
@@ -83,6 +85,10 @@ void UAbilityWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 	SetVisibility(ESlateVisibility::Visible);
+	if(bShouldDropItem)
+	{
+		RTPRINT("DROPED");
+	}
 }
 
 void UAbilityWidget::SetOn(bool On)

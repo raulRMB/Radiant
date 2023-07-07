@@ -74,4 +74,8 @@ public:
 	void HideLoadScreen();
 	void SetFPS(float FPS);
 	void SetMS(float MS);
+
+private:
+	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };
