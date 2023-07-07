@@ -26,10 +26,14 @@ class RADIANT_API AWorldItem : public AActor
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemDataTable;
 protected:
+	UPROPERTY(Replicated)
 	FName ItemName;
-public:
-	void InitItem(FName Name);
+
+	UPROPERTY(Replicated)
+	uint32 Amount;
 	
+public:
+	void InitItem(FName NewItemName, uint32 NewAmount);
 	void PickUp(class ICarrier* Carrier);
 public:	
 	AWorldItem();
@@ -37,4 +41,9 @@ public:
 	FName GetItemName() const { return ItemName; }
 protected:
 	virtual void BeginPlay() override;
+	
+	FTimerHandle SetBackroundTimerHandle;
+	void SetBackgroundSize();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

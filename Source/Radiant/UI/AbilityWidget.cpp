@@ -7,7 +7,9 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Data/AbilityDataAsset.h"
+#include "Event/EventBroker.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Player/Avatar.h"
 #include "Player/InventoryComponent.h"
 #include "Player/RTPlayerController.h"
 #include "Player/RTPlayerState.h"
@@ -87,7 +89,10 @@ void UAbilityWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent
 	SetVisibility(ESlateVisibility::Visible);
 	if(bShouldDropItem)
 	{
-		RTPRINT("DROPED");
+		if(AAvatar* Avatar = GetOwningPlayerPawn<AAvatar>())
+		{
+			Avatar->DropItem(FName(*Avatar->GetRTHUD()->GetAbilityDataAsset(HotbarSlot)->Name.ToString()));
+		}
 	}
 }
 

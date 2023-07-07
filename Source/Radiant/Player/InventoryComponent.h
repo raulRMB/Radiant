@@ -31,16 +31,21 @@ class RADIANT_API UInventoryComponent : public UActorComponent
 
 	TMap<FName, FInventoryItem> Items;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AWorldItem> WorldItemClass;
 public:	
 	UInventoryComponent();
 private:
 	UFUNCTION(Client, Reliable)
-	void C_AddItem(const FInventoryItem& Item);
+	void C_ItemChanged(const FInventoryItem& Item);
+public:
+	UFUNCTION(Server, Reliable)
+	void S_DropItem(const FName& ItemName);
+	
 public:
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
 	void AddItem(const FName& ItemName);
 	void RemoveItem(const FName& ItemName);
+	void DropItem(const FName& ItemName);
 };

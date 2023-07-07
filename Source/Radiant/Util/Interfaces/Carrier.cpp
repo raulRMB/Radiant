@@ -12,5 +12,5 @@ void ICarrier::PickUpItem(const FName& ItemName)
 
 void ICarrier::DropItem(const FName& ItemName)
 {
-	GetInventory()->RemoveItem(ItemName);
+	GetInventory()->S_DropItem(ItemName);
 }

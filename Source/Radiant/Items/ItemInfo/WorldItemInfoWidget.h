@@ -18,6 +18,9 @@ class RADIANT_API UWorldItemInfoWidget : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UImage* BackgroundImage;
 
+	UPROPERTY(meta=(BindWidget))
+	class UCanvasPanel* CanvasPanel;
 public:
 	void SetText(FName Name);
+	void SetBackgroundSize();
 };

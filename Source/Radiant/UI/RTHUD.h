@@ -50,7 +50,8 @@ class RADIANT_API ARTHUD : public AHUD
 	uint8 bStoreInitialized : 1;
 
 	uint8 bSettingsOpen : 1;
-	
+
+	UPROPERTY()
 	TMap<EInventorySlot, class UAbilityDataAsset*> HotBarAbilities;
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
@@ -71,13 +72,14 @@ public:
 	void BindUIItems();
 	void Escape();
 
+	UAbilityDataAsset* GetAbilityDataAsset(EInventorySlot Slot) const;
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	struct FGameplayTag GetAbilityTrigger(EInventorySlot Slot) const;
 	void SwapHotbarSlot(EInventorySlot One, EInventorySlot Two);
 private:
 	UFUNCTION()
-	void OnItemAdded(const FInventoryItem& InventoryItem);
-
+	void OnItemChanged(const FInventoryItem& InventoryItem);
 };
 

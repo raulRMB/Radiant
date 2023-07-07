@@ -13,6 +13,7 @@
 #include "Player/Avatar.h"
 #include "Player/InventoryComponent.h"
 #include "Player/RTPlayerController.h"
+#include "Util/Enums/InventorySlot.h"
 #include "Util/Util.h"
 
 void ARTHUD::BeginPlay()
@@ -38,8 +39,7 @@ void ARTHUD::BeginPlay()
 	Minimap->AddToViewport();
 	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
-	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &ARTHUD::OnItemAdded);
-	
+	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &ARTHUD::OnItemChanged);
 }
 
 void ARTHUD::ShowEndScreen(bool won)
@@ -120,6 +120,11 @@ void ARTHUD::Escape()
 	}
 }
 
+UAbilityDataAsset* ARTHUD::GetAbilityDataAsset(EInventorySlot Slot) const
+{
+	return HotBarAbilities.Contains(Slot) ? HotBarAbilities[Slot] : nullptr;
+}
+
 void ARTHUD::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -154,9 +159,17 @@ void ARTHUD::SwapHotbarSlot(EInventorySlot One, EInventorySlot Two)
 	}
 }
 
-void ARTHUD::OnItemAdded(const FInventoryItem& InventoryItem)
+void ARTHUD::OnItemChanged(const FInventoryItem& InventoryItem)
 {
-	for (int i = 0; i <= static_cast<uint32>(EInventorySlot::Six); i++)
+	if(InventoryItem.Amount == 0)
+	{
+		const EInventorySlot* Slot = HotBarAbilities.FindKey(InventoryItem.AbilityData);
+		HotBarAbilities.Remove(*Slot);
+		UpdateAbilities(HotBarAbilities);
+		return;
+	}
+	
+	for (int i = 0; i <= static_cast<uint32>(EInventorySlot::InventoryTwenty); i++)
 	{
 		EInventorySlot Slot = static_cast<EInventorySlot>(i);
 		if(!HotBarAbilities.Contains(Slot))

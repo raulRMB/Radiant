@@ -13,6 +13,14 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+void UInventoryComponent::S_DropItem_Implementation(const FName& ItemName)
+{
+	if(GetOwner()->HasAuthority())
+	{
+		DropItem(ItemName);
+	}
+}
+
 void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 {
 	TArray<FName> RowNames = ItemDataTable->GetRowNames();
@@ -31,7 +39,7 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 void UInventoryComponent::AddItem(const FName& ItemName)
 {
 	Items[ItemName].Amount += 1;
-	C_AddItem(Items[ItemName]);
+	C_ItemChanged(Items[ItemName]);
 }
 
 void UInventoryComponent::RemoveItem(const FName& ItemName)
@@ -39,27 +47,30 @@ void UInventoryComponent::RemoveItem(const FName& ItemName)
 	if(Items[ItemName].Amount > 0)
 	{
 		Items[ItemName].Amount  -= 1;
-		if(Items[ItemName].Amount == 0)
-		{
-			Cast<ICarrier>(GetOwner())->DropItem(ItemName);
-		}
-		if(GetWorld() && WorldItemClass)
-		{
-			if(ICarrier* Carrier = Cast<ICarrier>(GetOwner()))
-			{
-				FVector Offset = FVector::RightVector;
-				Offset.RotateAngleAxis(FMath::RandRange(0, 360), FVector::UpVector);
-				Offset *= 100;
-				FTransform SpawnTransform = FTransform(Carrier->GetCarrierLocation() + Offset);
-				AWorldItem* WorldItem = GetWorld()->SpawnActorDeferred<AWorldItem>(WorldItemClass, SpawnTransform);
-				WorldItem->InitItem(ItemName);
-				WorldItem->FinishSpawning(SpawnTransform);
-			}
-		}
+		C_ItemChanged(Items[ItemName]);
 	}
 }
 
-void UInventoryComponent::C_AddItem_Implementation(const FInventoryItem& Item)
+void UInventoryComponent::DropItem(const FName& ItemName)
+{
+	if(GetWorld() && WorldItemClass)
+	{
+		if(ICarrier* Carrier = Cast<ICarrier>(GetOwner()))
+		{
+			FVector Offset = FVector::RightVector;
+			Offset.RotateAngleAxis(FMath::RandRange(0, 360), FVector::UpVector);
+			Offset *= 100;
+			FTransform SpawnTransform = FTransform(Carrier->GetCarrierLocation() + Offset);
+			AWorldItem* WorldItem = GetWorld()->SpawnActorDeferred<AWorldItem>(WorldItemClass, SpawnTransform);
+			WorldItem->FinishSpawning(SpawnTransform);
+			WorldItem->InitItem(ItemName, Items[ItemName].Amount);
+		}
+	}
+	Items[ItemName].Amount = 0;
+	C_ItemChanged(Items[ItemName]);
+}
+
+void UInventoryComponent::C_ItemChanged_Implementation(const FInventoryItem& Item)
 {
 	UEventBroker::Get(this)->ItemChanged.Broadcast(Item);
 }
