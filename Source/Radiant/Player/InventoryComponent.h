@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Util/Enums/InventorySlot.h"
 #include "InventoryComponent.generated.h"
 
 USTRUCT()
@@ -34,29 +33,14 @@ class RADIANT_API UInventoryComponent : public UActorComponent
 
 	UPROPERTY()
 	TSubclassOf<class AWorldItem> WorldItemClass;
-	
-	UPROPERTY(ReplicatedUsing=OnRepCurrentAbilities, EditAnywhere)
-	TArray<class UAbilityDataAsset*> CurrentAbilities;
-
-	TMap<EInventorySlot, UAbilityDataAsset*> HotBarAbilities;
-
 public:	
 	UInventoryComponent();
-
 private:
-	UFUNCTION()
-	void OnRepCurrentAbilities(TArray<UAbilityDataAsset*> OldAbilities);
-	
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UFUNCTION(Client, Reliable)
+	void C_AddItem(const FInventoryItem& Item);
 public:
-
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
 	void AddItem(const FName& ItemName);
 	void RemoveItem(const FName& ItemName);
-	void SwapHotbarSlot(EInventorySlot One, EInventorySlot Two);
-
-	struct FGameplayTag GetAbilityTrigger(uint32 i) const;
-	const TMap<EInventorySlot, UAbilityDataAsset*>& GetHotBarAbilities() const { return HotBarAbilities; }
-	TArray<UAbilityDataAsset*> GetCurrentAbilities() const;
 };

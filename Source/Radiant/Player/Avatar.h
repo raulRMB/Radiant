@@ -157,6 +157,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void S_CancelAllAbilities();
 
+	class ARTHUD* GetRTHUD();
+
 	UPROPERTY()
 	class URTAvatarAttributeSet* AttributeSetBase;
 

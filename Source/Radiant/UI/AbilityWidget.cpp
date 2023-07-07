@@ -2,11 +2,14 @@
 
 
 #include "UI/AbilityWidget.h"
+
+#include "RTHUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Data/AbilityDataAsset.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Player/InventoryComponent.h"
+#include "Player/RTPlayerController.h"
 #include "Player/RTPlayerState.h"
 #include "Util/AbilityDragDropOperation.h"
 
@@ -59,7 +62,7 @@ bool UAbilityWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 		ARTPlayerState* PS = Cast<ARTPlayerState>(GetOwningPlayerState());
 		if(PS)
 		{
-			PS->GetInventory()->SwapHotbarSlot(DragDropOperation->WidgetReference->HotbarSlot, HotbarSlot);
+			PS->GetRTController()->GetHUD<ARTHUD>()->SwapHotbarSlot(DragDropOperation->WidgetReference->HotbarSlot, HotbarSlot);
 		}
 		UAbilityDataAsset* Temp = AbilityData;
 		SetData(DragDropOperation->WidgetReference->AbilityData);

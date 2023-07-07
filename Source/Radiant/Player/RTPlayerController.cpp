@@ -103,9 +103,9 @@ void ARTPlayerController::SetQueueName_Implementation(const FString& QueueName)
 	GM->SetTeamSize(QueueName);
 }
 
-FGameplayTag ARTPlayerController::GetAbilityTrigger(const uint32 i) const
+FGameplayTag ARTPlayerController::GetAbilityTrigger(const EInventorySlot Slot) const
 {
-	return GetInventory()->GetAbilityTrigger(i);
+	return GetHUD<ARTHUD>()->GetAbilityTrigger(Slot);
 }
 
 ARTPlayerController::ARTPlayerController()

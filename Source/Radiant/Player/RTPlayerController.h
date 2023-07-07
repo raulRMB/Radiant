@@ -7,9 +7,9 @@
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameplayTagContainer.h"
+#include "Util/Enums/InventorySlot.h"
 #include "Util/Interfaces/Carrier.h"
 #include "RTPlayerController.generated.h"
-
 
 DECLARE_MULTICAST_DELEGATE(FOrderAcceptedSignature);
 
@@ -85,7 +85,7 @@ public:
 	/****** End Inventory ******/
 	
 public:
-	FGameplayTag GetAbilityTrigger(uint32 i) const;
+	struct FGameplayTag GetAbilityTrigger(const EInventorySlot Slot) const;
 	ARTPlayerController();
 	
 	UFUNCTION(Server, Reliable)

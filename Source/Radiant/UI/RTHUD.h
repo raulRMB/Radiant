@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilityWidget.h"
 #include "GameFramework/HUD.h"
 #include "Util/Enums/InventorySlot.h"
 #include "RTHUD.generated.h"
@@ -49,6 +50,8 @@ class RADIANT_API ARTHUD : public AHUD
 	uint8 bStoreInitialized : 1;
 
 	uint8 bSettingsOpen : 1;
+	
+	TMap<EInventorySlot, class UAbilityDataAsset*> HotBarAbilities;
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
@@ -69,4 +72,12 @@ public:
 	void Escape();
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	struct FGameplayTag GetAbilityTrigger(EInventorySlot Slot) const;
+	void SwapHotbarSlot(EInventorySlot One, EInventorySlot Two);
+private:
+	UFUNCTION()
+	void OnItemAdded(const FInventoryItem& InventoryItem);
+
 };
+

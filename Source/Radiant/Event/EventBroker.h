@@ -7,15 +7,14 @@
 #include "EventBroker.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FItemChangedSignature, const FName&, int32);
+DECLARE_MULTICAST_DELEGATE_OneParam(FItemChangedSignature, const struct FInventoryItem&);
 
 UCLASS()
 class RADIANT_API UEventBroker : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 public:
-	FItemChangedSignature ItemAdded;
-	FItemChangedSignature ItemRemoved;
+	FItemChangedSignature ItemChanged;
 
 	static UEventBroker* Get(const UObject* WorldContextObject);
 };

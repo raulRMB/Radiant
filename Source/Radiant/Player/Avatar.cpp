@@ -326,40 +326,39 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
 }
 
-void AAvatar::OnAbilityOne(const FInputActionValue& Value)
-{
-	CastAbility(GetInventory()->GetAbilityTrigger(0));
-	GetInventory()->RemoveItem("Fireball");
-}
-
 void AAvatar::S_PlaceGridPiece_Implementation(FGridPiece Piece)
 {
 	GridManager->PlacePieceAtMouse(Piece);	
 }
 
+void AAvatar::OnAbilityOne(const FInputActionValue& Value)
+{
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::One));
+}
+
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
-	CastAbility(GetInventory()->GetAbilityTrigger(1));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Two));
 }
 
 void AAvatar::OnAbilityThree(const FInputActionValue& Value)
 {
-	CastAbility(GetInventory()->GetAbilityTrigger(2));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Three));
 }
 
 void AAvatar::OnAbilityFour(const FInputActionValue& Value)
 {
-	CastAbility(GetInventory()->GetAbilityTrigger(3));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Four));
 }
 
 void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 {
-	CastAbility(GetInventory()->GetAbilityTrigger(4));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Five));
 }
 
 void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
-	CastAbility(GetInventory()->GetAbilityTrigger(5));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Six));
 }
 
 void AAvatar::PossessedBy(AController* NewController)
@@ -463,7 +462,6 @@ void AAvatar::SetHUDIcons(const TMap<EInventorySlot, UAbilityDataAsset*>& Abilit
 	{
 		if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetController()))
 		{
-			auto Ab = GetInventory()->GetHotBarAbilities();
 			PC->GetHUD<ARTHUD>()->UpdateAbilities(AbilityMap);
 		}
 	}
@@ -487,6 +485,15 @@ void AAvatar::GiveInitialAbilities()
 		AbilitySystemComponent->GiveAbility(AbilitySpec);
 	}
 	GiveDeathAbilities();
+}
+
+ARTHUD* AAvatar::GetRTHUD()
+{
+	if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetController()))
+	{
+		return PC->GetHUD<ARTHUD>();
+	}
+	return nullptr;
 }
 
 void AAvatar::S_CancelAllAbilities_Implementation()

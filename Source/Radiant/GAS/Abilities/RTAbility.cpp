@@ -144,7 +144,11 @@ void URTAbility::GetMissingTags(const FGameplayTagContainer& Tags1, const FGamep
 
 FGameplayTag URTAbility::GetTriggerTag() const
 {
-	return AbilityTriggers[0].TriggerTag;
+	if(ensure(AbilityTriggers.Num() > 0))
+	{
+		return AbilityTriggers[0].TriggerTag;
+	}
+	return FGameplayTag();
 }
 
 FGameplayTag URTAbility::GetCooldownTag() const

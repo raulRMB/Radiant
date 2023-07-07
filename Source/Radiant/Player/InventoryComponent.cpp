@@ -2,43 +2,15 @@
 
 
 #include "Player/InventoryComponent.h"
-#include "Avatar.h"
-#include "RTPlayerController.h"
 #include "Data/ItemData.h"
 #include "Engine/DataTable.h"
+#include "Event/EventBroker.h"
 #include "Items/WorldItem.h"
-#include "Net/UnrealNetwork.h"
-#include "GameplayTags/Classes/GameplayTagContainer.h"
 #include "Util/Interfaces/Carrier.h"
 
-// Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-}
-
-void UInventoryComponent::OnRepCurrentAbilities(TArray<UAbilityDataAsset*> OldAbilities)
-{
-	for (int i = 0; i < CurrentAbilities.Num(); i++)
-	{
-		if(!OldAbilities.Contains(CurrentAbilities[i]))
-		{
-			for (int j = 0; j <= static_cast<uint32>(EInventorySlot::Six); j++)
-			{
-				EInventorySlot slot = static_cast<EInventorySlot>(j);
-				if(!HotBarAbilities.Contains(slot))
-				{
-					HotBarAbilities.Add(slot, CurrentAbilities[i]);
-					break;
-				}
-			}
-		}
-	}
-
-	if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetOwner()))
-	{
-		PC->GetPawn<AAvatar>()->SetHUDIcons(HotBarAbilities);
-	}
 }
 
 void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
@@ -58,11 +30,8 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 
 void UInventoryComponent::AddItem(const FName& ItemName)
 {
-	if(Items[ItemName].Amount == 0)
-	{
-		CurrentAbilities.Add(Items[ItemName].AbilityData);
-	}
 	Items[ItemName].Amount += 1;
+	C_AddItem(Items[ItemName]);
 }
 
 void UInventoryComponent::RemoveItem(const FName& ItemName)
@@ -72,7 +41,6 @@ void UInventoryComponent::RemoveItem(const FName& ItemName)
 		Items[ItemName].Amount  -= 1;
 		if(Items[ItemName].Amount == 0)
 		{
-			CurrentAbilities.Remove(Items[ItemName].AbilityData);
 			Cast<ICarrier>(GetOwner())->DropItem(ItemName);
 		}
 		if(GetWorld() && WorldItemClass)
@@ -91,43 +59,9 @@ void UInventoryComponent::RemoveItem(const FName& ItemName)
 	}
 }
 
-void UInventoryComponent::SwapHotbarSlot(EInventorySlot One, EInventorySlot Two)
+void UInventoryComponent::C_AddItem_Implementation(const FInventoryItem& Item)
 {
-	if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
-	{
-		UAbilityDataAsset* Temp = HotBarAbilities[One];
-		HotBarAbilities[One] = HotBarAbilities[Two];
-		HotBarAbilities[Two] = Temp;
-	} else if(HotBarAbilities.Contains(One))
-	{
-		HotBarAbilities.Add(Two, HotBarAbilities[One]);
-		HotBarAbilities.Remove(One);
-	} else if(HotBarAbilities.Contains(Two))
-	{
-		HotBarAbilities.Add(One, HotBarAbilities[Two]);
-		HotBarAbilities.Remove(Two);
-	}
+	UEventBroker::Get(this)->ItemChanged.Broadcast(Item);
 }
 
-FGameplayTag UInventoryComponent::GetAbilityTrigger(uint32 i) const
-{
-	auto Ability = HotBarAbilities.FindRef(static_cast<EInventorySlot>(i));
-	if(Ability)
-	{
-		return Ability->Ability.GetDefaultObject()->GetTriggerTag();
-	}
-	return FGameplayTag();
-}
-
-TArray<UAbilityDataAsset*> UInventoryComponent::GetCurrentAbilities() const
-{
-	return CurrentAbilities;
-}
-
-void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UInventoryComponent, CurrentAbilities);
-}
 
