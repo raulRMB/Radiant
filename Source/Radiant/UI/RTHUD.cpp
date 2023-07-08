@@ -6,6 +6,8 @@
 #include "CaptureAreaBar.h"
 #include "Minimap.h"
 #include "RTInfoPanel.h"
+#include "Data/ItemData.h"
+#include "EnvironmentQuery/EnvQueryDebugHelpers.h"
 #include "Event/EventBroker.h"
 #include "InGame/InGameStore.h"
 #include "Menu/LevelUp.h"
@@ -52,8 +54,8 @@ ARTHUD::ARTHUD()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ARTHUD::UpdateAbilities(const TMap<EInventorySlot, UAbilityDataAsset*>& Abilities)
-{	
+void ARTHUD::UpdateAbilities(const TMap<EInventorySlot, FItemSlotInfo>& Abilities)
+{
 	InfoPanel->UpdateAbilities(Abilities);
 }
 
@@ -122,7 +124,12 @@ void ARTHUD::Escape()
 
 UAbilityDataAsset* ARTHUD::GetAbilityDataAsset(EInventorySlot Slot) const
 {
-	return HotBarAbilities.Contains(Slot) ? HotBarAbilities[Slot] : nullptr;
+	if(HotBarAbilities.Contains(Slot))
+	{
+		UAbilityDataAsset* AbilityDataAsset = ItemTable->FindRow<FItemData>(HotBarAbilities[Slot].ItemName, TEXT("HUD GetAbilityDataAsset"))->AbilityData;
+		return AbilityDataAsset;
+	}
+	return nullptr;
 }
 
 void ARTHUD::Tick(float DeltaSeconds)
@@ -136,7 +143,13 @@ FGameplayTag ARTHUD::GetAbilityTrigger(EInventorySlot Slot) const
 {
 	if(HotBarAbilities.Contains(Slot))
 	{
-		return HotBarAbilities[Slot]->Ability.GetDefaultObject()->GetTriggerTag();
+		if(GetAbilityDataAsset(Slot))
+		{
+			if(GetAbilityDataAsset(Slot)->Ability)
+			{
+				return GetAbilityDataAsset(Slot)->Ability.GetDefaultObject()->GetTriggerTag();
+			}
+		}
 	}
 	return FGameplayTag();
 }
@@ -145,36 +158,45 @@ void ARTHUD::SwapHotbarSlot(EInventorySlot One, EInventorySlot Two)
 {
 	if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
 	{
-		UAbilityDataAsset* Temp = HotBarAbilities[One];
+		FName Temp = HotBarAbilities[One].ItemName;
 		HotBarAbilities[One] = HotBarAbilities[Two];
 		HotBarAbilities[Two] = Temp;
-	} else if(HotBarAbilities.Contains(One))
+	}
+	else if(HotBarAbilities.Contains(One))
 	{
 		HotBarAbilities.Add(Two, HotBarAbilities[One]);
 		HotBarAbilities.Remove(One);
-	} else if(HotBarAbilities.Contains(Two))
+	}
+	else if(HotBarAbilities.Contains(Two))
 	{
 		HotBarAbilities.Add(One, HotBarAbilities[Two]);
 		HotBarAbilities.Remove(Two);
 	}
 }
 
-void ARTHUD::OnItemChanged(const FInventoryItem& InventoryItem)
+void ARTHUD::OnItemChanged(const FName& Name, const uint32 Amount)
 {
-	if(InventoryItem.Amount == 0)
+	if(Amount == 0)
 	{
-		const EInventorySlot* Slot = HotBarAbilities.FindKey(InventoryItem.AbilityData);
-		HotBarAbilities.Remove(*Slot);
+		for(auto& Pair : HotBarAbilities)
+		{
+			if(Pair.Value.ItemName == Name)
+			{
+				HotBarAbilities.Remove(Pair.Key);
+				break;
+			}
+		}
 		UpdateAbilities(HotBarAbilities);
 		return;
 	}
 	
-	for (int i = 0; i <= static_cast<uint32>(EInventorySlot::InventoryTwenty); i++)
+	for (int i = 0; i <= static_cast<uint32>(EInventorySlot::Six); i++)
 	{
 		EInventorySlot Slot = static_cast<EInventorySlot>(i);
 		if(!HotBarAbilities.Contains(Slot))
 		{
-			HotBarAbilities.Add(Slot, InventoryItem.AbilityData);
+			FItemSlotInfo ItemSlotInfo = FItemSlotInfo(Name, Amount);
+			HotBarAbilities.Add(Slot, ItemSlotInfo);
 			break;
 		}
 	}

@@ -4,12 +4,14 @@
 #include "UI/RTInfoPanel.h"
 
 #include "AbilityWidget.h"
+#include "RTHUD.h"
 #include "Player/Avatar.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Data/AbilityDataAsset.h"
+#include "Data/ItemData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
@@ -26,7 +28,7 @@ void URTInfoPanel::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 	UpdateProperties(DeltaTime);
 }
 
-void URTInfoPanel::UpdateProperties(float DeltaTime)
+void URTInfoPanel::UpdateProperties(float DeltaTime) const
 {
 	if(auto State = GetOwningPlayerState<ARTPlayerState>())
 	{
@@ -41,7 +43,7 @@ void URTInfoPanel::UpdateProperties(float DeltaTime)
 	}
 }
 
-void URTInfoPanel::UpdateCooldowns()
+void URTInfoPanel::UpdateCooldowns() const
 {
 	auto Slots = Abilities->GetAllChildren();
 	for(int i = 0; i < Slots.Num(); i++)
@@ -59,23 +61,35 @@ FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 	return FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHealth, MaxHealth));
 }
 
-void URTInfoPanel::UpdateAbilities(TMap<EInventorySlot, UAbilityDataAsset*> AbilityData)
+void URTInfoPanel::UpdateAbilities(TMap<EInventorySlot, FItemSlotInfo> AbilityData) const
 {
-	auto Slots = Abilities->GetAllChildren();
+	TArray<UWidget*> Slots = Abilities->GetAllChildren();
 	for(int i = 0; i <= static_cast<uint32>(EInventorySlot::Six); i++)
 	{
-		auto data = AbilityData.FindRef(EInventorySlot(i));
-		if(i >= Slots.Num())
+		if(AbilityData.Num() <= i)
 		{
 			break;
 		}
-		auto slot = Cast<UAbilityWidget>(Slots[i]);
-		if(data)
+		FName ItemName = AbilityData[static_cast<EInventorySlot>(i)].ItemName;
+		
+		if(FItemData* DataAsset = UUtil::GetItemDataFromName(ItemName))
 		{
-			slot->SetData(data);
-		} else
-		{
-			slot->Reset();
+			if(i >= Slots.Num())
+			{
+				break;
+			}
+			UAbilityWidget* slot = Cast<UAbilityWidget>(Slots[i]);
+			if(DataAsset)
+			{
+				if(DataAsset->AbilityData)
+				{
+					slot->SetData(DataAsset->AbilityData, AbilityData[static_cast<EInventorySlot>(i)].ItemAmount);
+				}
+			}
+			else
+			{
+				slot->Reset();
+			}
 		}
 	}
 }
@@ -85,7 +99,7 @@ void URTInfoPanel::Init()
 	Cast<ARTGameState>(UGameplayStatics::GetGameState(this))->OnHeroDeathDelegate.BindUObject(this, &URTInfoPanel::OnHeroDeath);
 }
 
-void URTInfoPanel::UpdateRadianite(float Amount)
+void URTInfoPanel::UpdateRadianite(float Amount) const
 {
 	Radianite->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Amount)));
 }
@@ -98,13 +112,13 @@ void URTInfoPanel::Bind(ARTPlayerState* PS)
 	}
 }
 
-void URTInfoPanel::OnHeroDeath(uint32 RedScore, uint32 BlueScore)
+void URTInfoPanel::OnHeroDeath(uint32 RedScore, uint32 BlueScore) const
 {
 	RedTeam->SetText(FText::FromString(FString::FromInt(RedScore)));
 	BlueTeam->SetText(FText::FromString(FString::FromInt(BlueScore)));
 }
 
-void URTInfoPanel::ShowEndScreen(bool bWon)
+void URTInfoPanel::ShowEndScreen(bool bWon) const
 {
 	if(bWon)
 	{
@@ -115,7 +129,7 @@ void URTInfoPanel::ShowEndScreen(bool bWon)
 	}
 }
 
-void URTInfoPanel::HideLoadScreen()
+void URTInfoPanel::HideLoadScreen() const
 {
 	if(LoadingScreen)
 	{
@@ -123,12 +137,12 @@ void URTInfoPanel::HideLoadScreen()
 	}
 }
 
-void URTInfoPanel::SetFPS(float FPS)
+void URTInfoPanel::SetFPS(float FPS) const
 {
 	FPSCounter->SetText(FText::FromString(FString::Printf(TEXT("FPS: %.0f"), FPS)));
 }
 
-void URTInfoPanel::SetMS(float MS)
+void URTInfoPanel::SetMS(float MS) const
 {
 	MSCounter->SetText(RTPRINTF("MS: %.0f", MS));
 }

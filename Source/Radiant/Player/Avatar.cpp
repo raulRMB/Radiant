@@ -456,7 +456,7 @@ void AAvatar::OnRep_Controller()
 	}
 }
 
-void AAvatar::SetHUDIcons(const TMap<EInventorySlot, UAbilityDataAsset*>& AbilityMap)
+void AAvatar::SetHUDIcons(const TMap<EInventorySlot, FItemSlotInfo>& AbilityMap)
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{

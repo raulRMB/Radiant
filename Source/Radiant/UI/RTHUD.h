@@ -10,6 +10,22 @@
 
 DECLARE_DELEGATE_OneParam(FGiveAbilityFromButtonSignature, class UAbilityDataAsset*)
 
+USTRUCT()
+struct FItemSlotInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FName ItemName;
+	UPROPERTY()
+	uint32 ItemAmount;
+
+	FItemSlotInfo(const FName& Name = NAME_None, uint32 Amount = 0)
+	{
+		ItemName = Name;
+		ItemAmount = Amount;
+	}
+};
 
 UCLASS()
 class RADIANT_API ARTHUD : public AHUD
@@ -52,7 +68,10 @@ class RADIANT_API ARTHUD : public AHUD
 	uint8 bSettingsOpen : 1;
 
 	UPROPERTY()
-	TMap<EInventorySlot, class UAbilityDataAsset*> HotBarAbilities;
+	TMap<EInventorySlot, FItemSlotInfo> HotBarAbilities;
+
+	UPROPERTY(EditAnywhere)
+	class UDataTable* ItemTable;	
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
@@ -60,7 +79,7 @@ public:
 public:
 	ARTHUD();
 	
-	void UpdateAbilities(const TMap<EInventorySlot, UAbilityDataAsset*>& Abilities);
+	void UpdateAbilities(const TMap<EInventorySlot, FItemSlotInfo>& Abilities);
 	void ShowEndScreen(bool won);
 	void ToggleSettings();
 	void HideLoadScreen();
@@ -78,8 +97,9 @@ public:
 
 	struct FGameplayTag GetAbilityTrigger(EInventorySlot Slot) const;
 	void SwapHotbarSlot(EInventorySlot One, EInventorySlot Two);
+
 private:
 	UFUNCTION()
-	void OnItemChanged(const FInventoryItem& InventoryItem);
+	void OnItemChanged(const FName& Name, uint32 Amount);
 };
 

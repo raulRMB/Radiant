@@ -6,6 +6,7 @@
 #include "EngineUtils.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Data/BuildingTypes.h"
+#include "Data/ItemData.h"
 #include "Player/Avatar.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
@@ -140,5 +141,36 @@ void UUtil::LogServerOrClient(AActor* Actor)
 	{
 		RTLOG("I am the client")
 	}
+}
+
+FItemData* UUtil::GetItemDataFromName(const FName& Name, const FString& ContextString)
+{
+	TArray<UObject*> Objects;
+	FindOrLoadAssetsByPath(TEXT("/Game/Data/ItemData/"), Objects, EngineUtils::ATL_Regular);
+	if(Objects.Num() > 0)
+	{
+		if(UDataTable* ItemTable = Cast<UDataTable>(Objects[0]))
+		{
+			if(FItemData* ItemData = ItemTable->FindRow<FItemData>(Name, ContextString))
+			{
+				return ItemData;
+			}
+		}
+	}
+	return nullptr;
+}
+
+UDataTable* UUtil::GetItemDataTable()
+{
+	TArray<UObject*> Objects;
+	FindOrLoadAssetsByPath(TEXT("/Game/Data/ItemData/"), Objects, EngineUtils::ATL_Regular);
+	if(Objects.Num() > 0)
+	{
+		if(UDataTable* ItemTable = Cast<UDataTable>(Objects[0]))
+		{
+			return ItemTable;
+		}
+	}
+	return nullptr;
 }
 

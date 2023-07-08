@@ -128,8 +128,13 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
 	{
 		return;
 	}
-	GetInventory()->AddItem(AbilityName);
-	AbilitySystemComponent->GiveAbility(ItemData->AbilityData->Ability.GetDefaultObject());
+	int32 AbilityCount = GetInventory()->AddItem(AbilityName);
+
+	if(AbilityCount == 1)
+	{
+		AbilitySystemComponent->GiveAbility(ItemData->AbilityData->Ability.GetDefaultObject());
+	}
+	
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price);
 }
 

@@ -43,4 +43,8 @@ public:
 	static TSubclassOf<class AActor> GetBuildingType(EEnvironmentType Type);
 
 	static void LogServerOrClient(class AActor* Actor);
+
+	static struct FItemData* GetItemDataFromName(const FName& Name, const FString& ContextString = FString(""));
+
+	static class UDataTable* GetItemDataTable();
 };

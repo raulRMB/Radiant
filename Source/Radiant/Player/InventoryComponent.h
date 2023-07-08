@@ -12,7 +12,7 @@ struct FInventoryItem
 	GENERATED_BODY()
 
 	UPROPERTY()
-	uint16 Amount;
+	uint32 Amount;
 	UPROPERTY()
 	class UAbilityDataAsset* AbilityData;
 
@@ -37,7 +37,7 @@ public:
 	UInventoryComponent();
 private:
 	UFUNCTION(Client, Reliable)
-	void C_ItemChanged(const FInventoryItem& Item);
+	void C_ItemChanged(const FName& ItemName, const uint32 Amount);
 public:
 	UFUNCTION(Server, Reliable)
 	void S_DropItem(const FName& ItemName);
@@ -45,7 +45,7 @@ public:
 public:
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
-	void AddItem(const FName& ItemName);
-	void RemoveItem(const FName& ItemName);
+	int32 AddItem(const FName& ItemName);
+	int32 RemoveItem(const FName& ItemName);
 	void DropItem(const FName& ItemName);
 };

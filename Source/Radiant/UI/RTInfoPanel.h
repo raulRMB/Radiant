@@ -56,24 +56,24 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 public:
-	void UpdateProperties(float DeltaTime);
-	void UpdateCooldowns();
+	void UpdateProperties(float DeltaTime) const;
+	void UpdateCooldowns() const;
 	FText FormatText(float CurrentHealth, float MaxHealth) const;
 
 	UFUNCTION(BlueprintCallable)
 	void Init();
-	void UpdateRadianite(float X);
+	void UpdateRadianite(float X) const;
 	void Bind(ARTPlayerState* PS);
 
 	UFUNCTION()
-	void OnHeroDeath(uint32 RedScore, uint32 BlueScore);
+	void OnHeroDeath(uint32 RedScore, uint32 BlueScore) const;
 	
-	void UpdateAbilities(TMap<EInventorySlot, UAbilityDataAsset*> Abilities);
+	void UpdateAbilities(TMap<EInventorySlot, struct FItemSlotInfo> Abilities) const;
 	
-	void ShowEndScreen(bool bWon);
-	void HideLoadScreen();
-	void SetFPS(float FPS);
-	void SetMS(float MS);
+	void ShowEndScreen(bool bWon) const;
+	void HideLoadScreen() const;
+	void SetFPS(float FPS) const;
+	void SetMS(float MS) const;
 
 private:
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;

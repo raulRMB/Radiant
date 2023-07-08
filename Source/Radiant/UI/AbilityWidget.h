@@ -26,6 +26,10 @@ class RADIANT_API UAbilityWidget : public UUserWidget
 	class UImage* Ability;
 	UPROPERTY(meta=(BindWidget))
 	class UImage* AbilityCDMask;
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* AmountText;
+
+	uint32 ItemAmount = 0;
 
 	UPROPERTY(EditAnywhere, Category="Cooldowns")
 	FGameplayTag CooldownTag;
@@ -47,7 +51,7 @@ class RADIANT_API UAbilityWidget : public UUserWidget
 public:
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* Mat;
-	void SetData(UAbilityDataAsset* Data);
+	void SetData(UAbilityDataAsset* Data, uint32 Amount);
 	void UpdateCooldown();
 	void Reset();
 

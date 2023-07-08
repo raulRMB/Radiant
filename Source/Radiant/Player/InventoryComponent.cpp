@@ -13,6 +13,11 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+void UInventoryComponent::C_ItemChanged_Implementation(const FName& ItemName, const uint32 Amount)
+{
+	UEventBroker::Get(this)->ItemChanged.Broadcast(ItemName, Amount);
+}
+
 void UInventoryComponent::S_DropItem_Implementation(const FName& ItemName)
 {
 	if(GetOwner()->HasAuthority())
@@ -36,19 +41,21 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 	}
 }
 
-void UInventoryComponent::AddItem(const FName& ItemName)
+int32 UInventoryComponent::AddItem(const FName& ItemName)
 {
 	Items[ItemName].Amount += 1;
-	C_ItemChanged(Items[ItemName]);
+	C_ItemChanged(ItemName, Items[ItemName].Amount);
+	return Items[ItemName].Amount;
 }
 
-void UInventoryComponent::RemoveItem(const FName& ItemName)
+int32 UInventoryComponent::RemoveItem(const FName& ItemName)
 {
 	if(Items[ItemName].Amount > 0)
 	{
 		Items[ItemName].Amount  -= 1;
-		C_ItemChanged(Items[ItemName]);
+		C_ItemChanged(ItemName, Items[ItemName].Amount);
 	}
+	return Items[ItemName].Amount;
 }
 
 void UInventoryComponent::DropItem(const FName& ItemName)
@@ -67,12 +74,6 @@ void UInventoryComponent::DropItem(const FName& ItemName)
 		}
 	}
 	Items[ItemName].Amount = 0;
-	C_ItemChanged(Items[ItemName]);
+	C_ItemChanged(ItemName, Items[ItemName].Amount);
 }
-
-void UInventoryComponent::C_ItemChanged_Implementation(const FInventoryItem& Item)
-{
-	UEventBroker::Get(this)->ItemChanged.Broadcast(Item);
-}
-
 

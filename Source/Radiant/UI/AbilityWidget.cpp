@@ -6,11 +6,10 @@
 #include "RTHUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "Data/AbilityDataAsset.h"
-#include "Event/EventBroker.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Player/Avatar.h"
-#include "Player/InventoryComponent.h"
 #include "Player/RTPlayerController.h"
 #include "Player/RTPlayerState.h"
 #include "Util/AbilityDragDropOperation.h"
@@ -49,6 +48,8 @@ FReply UAbilityWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, cons
 
 void UAbilityWidget::Reset()
 {
+	AmountText->SetText(FText::FromString(""));
+	AmountText->SetVisibility(ESlateVisibility::Hidden);
 	AbilityData = nullptr;
 	Ability->SetBrushFromTexture(nullptr);
 	Ability->SetToolTipText(FText::FromString(""));
@@ -69,10 +70,10 @@ bool UAbilityWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 			PS->GetRTController()->GetHUD<ARTHUD>()->SwapHotbarSlot(DragDropOperation->WidgetReference->HotbarSlot, HotbarSlot);
 		}
 		UAbilityDataAsset* Temp = AbilityData;
-		SetData(DragDropOperation->WidgetReference->AbilityData);
+		SetData(DragDropOperation->WidgetReference->AbilityData, 0);
 		if(Temp)
 		{
-			DragDropOperation->WidgetReference->SetData(Temp);
+			DragDropOperation->WidgetReference->SetData(Temp, 0);
 			DragDropOperation->WidgetReference->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
@@ -116,8 +117,17 @@ float UAbilityWidget::GetCooldownPercent(const float TimeRemaining, const float 
 	return (CooldownDuration - TimeRemaining) / CooldownDuration;
 }
 
-void UAbilityWidget::SetData(UAbilityDataAsset* Data)
+void UAbilityWidget::SetData(UAbilityDataAsset* Data, uint32 Amount)
 {
+	if(Amount > 0)
+	{
+		AmountText->SetVisibility(ESlateVisibility::Visible);
+		AmountText->SetText(FText::FromString(FString::FromInt(Amount)));
+	}
+	else
+	{
+		AmountText->SetVisibility(ESlateVisibility::Hidden);
+	}
 	AbilityData = Data;
     Ability->SetBrushFromTexture(Data->Icon);
     Ability->SetToolTipText(Data->Tooltip);
