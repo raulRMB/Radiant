@@ -15,7 +15,7 @@
 #include "Player/Avatar.h"
 #include "Player/InventoryComponent.h"
 #include "Player/RTPlayerController.h"
-#include "Util/Enums/InventorySlot.h"
+#include "..\Util\Enums\UISlotID.h"
 #include "Util/Util.h"
 
 void ARTHUD::BeginPlay()
@@ -54,7 +54,7 @@ ARTHUD::ARTHUD()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ARTHUD::UpdateAbilities(const TMap<EInventorySlot, FItemSlotInfo>& Abilities)
+void ARTHUD::UpdateAbilities(const TMap<EUISlotID, FItemSlotInfo>& Abilities)
 {
 	InfoPanel->UpdateAbilities(Abilities);
 }
@@ -122,7 +122,7 @@ void ARTHUD::Escape()
 	}
 }
 
-UAbilityDataAsset* ARTHUD::GetAbilityDataAsset(EInventorySlot Slot) const
+UAbilityDataAsset* ARTHUD::GetAbilityDataAsset(EUISlotID Slot) const
 {
 	if(HotBarAbilities.Contains(Slot))
 	{
@@ -139,7 +139,7 @@ void ARTHUD::Tick(float DeltaSeconds)
 	Minimap->DrawDynamic();
 }
 
-FGameplayTag ARTHUD::GetAbilityTrigger(EInventorySlot Slot) const
+FGameplayTag ARTHUD::GetAbilityTrigger(EUISlotID Slot) const
 {
 	if(HotBarAbilities.Contains(Slot))
 	{
@@ -154,7 +154,7 @@ FGameplayTag ARTHUD::GetAbilityTrigger(EInventorySlot Slot) const
 	return FGameplayTag();
 }
 
-void ARTHUD::SwapHotbarSlot(EInventorySlot One, EInventorySlot Two)
+void ARTHUD::SwapHotbarSlot(EUISlotID One, EUISlotID Two)
 {
 	if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
 	{
@@ -176,29 +176,29 @@ void ARTHUD::SwapHotbarSlot(EInventorySlot One, EInventorySlot Two)
 
 void ARTHUD::OnItemChanged(const FName& Name, const uint32 Amount)
 {
-	if(Amount == 0)
-	{
-		for(auto& Pair : HotBarAbilities)
-		{
-			if(Pair.Value.ItemName == Name)
-			{
-				HotBarAbilities.Remove(Pair.Key);
-				break;
-			}
-		}
-		UpdateAbilities(HotBarAbilities);
-		return;
-	}
-	
-	for (int i = 0; i <= static_cast<uint32>(EInventorySlot::Six); i++)
-	{
-		EInventorySlot Slot = static_cast<EInventorySlot>(i);
-		if(!HotBarAbilities.Contains(Slot))
-		{
-			FItemSlotInfo ItemSlotInfo = FItemSlotInfo(Name, Amount);
-			HotBarAbilities.Add(Slot, ItemSlotInfo);
-			break;
-		}
-	}
-	UpdateAbilities(HotBarAbilities);
+	// if(Amount == 0)
+	// {
+	// 	for(auto& Pair : HotBarAbilities)
+	// 	{
+	// 		if(Pair.Value.ItemName == Name)
+	// 		{
+	// 			HotBarAbilities.Remove(Pair.Key);
+	// 			break;
+	// 		}
+	// 	}
+	// 	UpdateAbilities(HotBarAbilities);
+	// 	return;
+	// }
+	//
+	// for (int i = 0; i <= static_cast<uint32>(EUISlotID::Six); i++)
+	// {
+	// 	EUISlotID Slot = static_cast<EUISlotID>(i);
+	// 	if(!HotBarAbilities.Contains(Slot))
+	// 	{
+	// 		FItemSlotInfo ItemSlotInfo = FItemSlotInfo(Name, Amount);
+	// 		HotBarAbilities.Add(Slot, ItemSlotInfo);
+	// 		break;
+	// 	}
+	// }
+	// UpdateAbilities(HotBarAbilities);
 }

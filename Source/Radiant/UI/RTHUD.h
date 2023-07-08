@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilityWidget.h"
+#include "UISlot.h"
 #include "GameFramework/HUD.h"
-#include "Util/Enums/InventorySlot.h"
+#include "..\Util\Enums\UISlotID.h"
 #include "RTHUD.generated.h"
 
 DECLARE_DELEGATE_OneParam(FGiveAbilityFromButtonSignature, class UAbilityDataAsset*)
@@ -68,7 +68,7 @@ class RADIANT_API ARTHUD : public AHUD
 	uint8 bSettingsOpen : 1;
 
 	UPROPERTY()
-	TMap<EInventorySlot, FItemSlotInfo> HotBarAbilities;
+	TMap<EUISlotID, FItemSlotInfo> HotBarAbilities;
 
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemTable;	
@@ -79,7 +79,7 @@ public:
 public:
 	ARTHUD();
 	
-	void UpdateAbilities(const TMap<EInventorySlot, FItemSlotInfo>& Abilities);
+	void UpdateAbilities(const TMap<EUISlotID, FItemSlotInfo>& Abilities);
 	void ShowEndScreen(bool won);
 	void ToggleSettings();
 	void HideLoadScreen();
@@ -91,12 +91,12 @@ public:
 	void BindUIItems();
 	void Escape();
 
-	UAbilityDataAsset* GetAbilityDataAsset(EInventorySlot Slot) const;
+	UAbilityDataAsset* GetAbilityDataAsset(EUISlotID Slot) const;
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	struct FGameplayTag GetAbilityTrigger(EInventorySlot Slot) const;
-	void SwapHotbarSlot(EInventorySlot One, EInventorySlot Two);
+	struct FGameplayTag GetAbilityTrigger(EUISlotID Slot) const;
+	void SwapHotbarSlot(EUISlotID One, EUISlotID Two);
 
 private:
 	UFUNCTION()

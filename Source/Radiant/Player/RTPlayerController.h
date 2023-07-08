@@ -7,7 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameplayTagContainer.h"
-#include "Util/Enums/InventorySlot.h"
+#include "..\Util\Enums\UISlotID.h"
 #include "Util/Interfaces/Carrier.h"
 #include "RTPlayerController.generated.h"
 
@@ -85,7 +85,7 @@ public:
 	/****** End Inventory ******/
 	
 public:
-	struct FGameplayTag GetAbilityTrigger(const EInventorySlot Slot) const;
+	struct FGameplayTag GetAbilityTrigger(const EUISlotID Slot) const;
 	ARTPlayerController();
 	
 	UFUNCTION(Server, Reliable)

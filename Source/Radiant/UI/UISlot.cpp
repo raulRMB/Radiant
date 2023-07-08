@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "UI/AbilityWidget.h"
+#include "UI/UISlot.h"
 
 #include "RTHUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
@@ -15,7 +15,7 @@
 #include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
 
-void UAbilityWidget::NativeConstruct()
+void UUISlot::NativeConstruct()
 {
 	Super::NativeConstruct();
 	MaterialInstance = UMaterialInstanceDynamic::Create(Mat, this);
@@ -23,41 +23,41 @@ void UAbilityWidget::NativeConstruct()
 	bOn = false;
 }
 
-void UAbilityWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+void UUISlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
 	UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 	UAbilityDragDropOperation* DragWidget = Cast<UAbilityDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UAbilityDragDropOperation::StaticClass()));
 	SetVisibility(ESlateVisibility::HitTestInvisible);
-	Ability->SetDesiredSizeOverride(FVector2D(80, 80));
-	DragWidget->DefaultDragVisual = Ability;
+	Icon->SetDesiredSizeOverride(FVector2D(80, 80));
+	DragWidget->DefaultDragVisual = Icon;
 	DragWidget->DefaultDragVisual->SetVisibility(ESlateVisibility::HitTestInvisible);
 	DragWidget->WidgetReference = this;
 	DragWidget->Pivot = EDragPivot::CenterCenter;
 	OutOperation = DragWidget;
 }
 
-FReply UAbilityWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UUISlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	auto Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-	if(Ability->Brush.GetResourceObject() == nullptr)
+	if(Icon->Brush.GetResourceObject() == nullptr)
 		return Reply;
 	FEventReply ReplyResult = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
 	return ReplyResult.NativeReply;
 }
 
-void UAbilityWidget::Reset()
+void UUISlot::Reset()
 {
 	AmountText->SetText(FText::FromString(""));
 	AmountText->SetVisibility(ESlateVisibility::Hidden);
 	AbilityData = nullptr;
-	Ability->SetBrushFromTexture(nullptr);
-	Ability->SetToolTipText(FText::FromString(""));
+	Icon->SetBrushFromTexture(nullptr);
+	Icon->SetToolTipText(FText::FromString(""));
 	AbilityCDMask->SetToolTipText(FText::FromString(""));
 	CooldownTag = FGameplayTag();
 }
 
-bool UAbilityWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+bool UUISlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
                                   UDragDropOperation* InOperation)
 {
 	UAbilityDragDropOperation* DragDropOperation = Cast<UAbilityDragDropOperation>(InOperation);
@@ -69,11 +69,11 @@ bool UAbilityWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 		{
 			PS->GetRTController()->GetHUD<ARTHUD>()->SwapHotbarSlot(DragDropOperation->WidgetReference->HotbarSlot, HotbarSlot);
 		}
-		UAbilityDataAsset* Temp = AbilityData;
-		SetData(DragDropOperation->WidgetReference->AbilityData, 0);
-		if(Temp)
+		FUISlotData Temp = DragDropOperation->WidgetReference->UISlotData;
+		if(DragDropOperation->WidgetReference->IsEmpty())
 		{
-			DragDropOperation->WidgetReference->SetData(Temp, 0);
+			SetData(DragDropOperation->WidgetReference->UISlotData);
+			DragDropOperation->WidgetReference->SetData(Temp);
 			DragDropOperation->WidgetReference->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
@@ -84,7 +84,7 @@ bool UAbilityWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
 
-void UAbilityWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+void UUISlot::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 	SetVisibility(ESlateVisibility::Visible);
@@ -97,45 +97,46 @@ void UAbilityWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent
 	}
 }
 
-void UAbilityWidget::SetOn(bool On)
+void UUISlot::SetOn(bool On)
 {
 	bOn = On;
 	if(bOn)
-		Ability->SetColorAndOpacity(FLinearColor::Gray);
+		Icon->SetColorAndOpacity(FLinearColor::Gray);
 	else
-		Ability->SetColorAndOpacity(FLinearColor::White);
+		Icon->SetColorAndOpacity(FLinearColor::White);
 	AbilityCDMask->SetVisibility(static_cast<ESlateVisibility>(!bOn));
 }
 
-void UAbilityWidget::SetAbilityCoolDown(const float Percent)
+void UUISlot::SetAbilityCoolDown(const float Percent)
 {
 	MaterialInstance->SetScalarParameterValue("Percent", Percent);
 }
 
-float UAbilityWidget::GetCooldownPercent(const float TimeRemaining, const float CooldownDuration)
+float UUISlot::GetCooldownPercent(const float TimeRemaining, const float CooldownDuration)
 {
 	return (CooldownDuration - TimeRemaining) / CooldownDuration;
 }
 
-void UAbilityWidget::SetData(UAbilityDataAsset* Data, uint32 Amount)
+void UUISlot::SetData(const FUISlotData& Data)
 {
-	if(Amount > 0)
+	UISlotData = Data;
+	
+	if(Data.ItemAmount > 0)
 	{
 		AmountText->SetVisibility(ESlateVisibility::Visible);
-		AmountText->SetText(FText::FromString(FString::FromInt(Amount)));
+		AmountText->SetText(FText::FromString(FString::FromInt(Data.ItemAmount)));
 	}
 	else
 	{
 		AmountText->SetVisibility(ESlateVisibility::Hidden);
 	}
-	AbilityData = Data;
-    Ability->SetBrushFromTexture(Data->Icon);
-    Ability->SetToolTipText(Data->Tooltip);
-    AbilityCDMask->SetToolTipText(Data->Tooltip);
-	CooldownTag = Data->Ability.GetDefaultObject()->GetCooldownTag();
+	Icon->SetBrushFromTexture(Data.Icon);
+	Icon->SetToolTipText(Data.Tooltip);
+	AbilityCDMask->SetToolTipText(Data.Tooltip);
+	CooldownTag = Data.CooldownTag;
 }
 
-void UAbilityWidget::UpdateCooldown()
+void UUISlot::UpdateCooldown()
 {
 	float TimeRemaining = 0.f;
 	float CooldownDuration = 0.f;
@@ -148,7 +149,7 @@ void UAbilityWidget::UpdateCooldown()
 	}
 }
 
-bool UAbilityWidget::GetCooldownRemaining(float& TimeRemaining,
+bool UUISlot::GetCooldownRemaining(float& TimeRemaining,
 	float& CooldownDuration)
 {
 	URTAbilitySystemComponent* AbilitySystemComponent = Cast<URTAbilitySystemComponent>(GetOwningPlayerState<ARTPlayerState>()->GetAbilitySystemComponent());

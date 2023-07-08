@@ -7,10 +7,10 @@
 #include "GameplayEffectTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "GameplayTags/Classes/GameplayTagContainer.h"
-#include "UI/AbilityWidget.h"
+#include "UI/UISlot.h"
 #include "Util/Interfaces/Carrier.h"
 #include "Util/Interfaces/TeamMember.h"
-#include "Util/Enums/InventorySlot.h"
+#include "..\Util\Enums\UISlotID.h"
 #include "RTPlayerState.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);

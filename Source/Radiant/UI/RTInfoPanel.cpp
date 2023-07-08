@@ -3,7 +3,7 @@
 
 #include "UI/RTInfoPanel.h"
 
-#include "AbilityWidget.h"
+#include "UISlot.h"
 #include "RTHUD.h"
 #include "Player/Avatar.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -48,7 +48,7 @@ void URTInfoPanel::UpdateCooldowns() const
 	auto Slots = Abilities->GetAllChildren();
 	for(int i = 0; i < Slots.Num(); i++)
 	{
-		UAbilityWidget* AbilityWidget = Cast<UAbilityWidget>(Slots[i]);
+		UUISlot* AbilityWidget = Cast<UUISlot>(Slots[i]);
 		if(AbilityWidget)
 		{
 			AbilityWidget->UpdateCooldown();
@@ -61,37 +61,37 @@ FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 	return FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHealth, MaxHealth));
 }
 
-void URTInfoPanel::UpdateAbilities(TMap<EInventorySlot, FItemSlotInfo> AbilityData) const
+void URTInfoPanel::UpdateAbilities(TMap<EUISlotID, FItemSlotInfo> AbilityData) const
 {
-	TArray<UWidget*> Slots = Abilities->GetAllChildren();
-	for(int i = 0; i <= static_cast<uint32>(EInventorySlot::Six); i++)
-	{
-		if(AbilityData.Num() <= i)
-		{
-			break;
-		}
-		FName ItemName = AbilityData[static_cast<EInventorySlot>(i)].ItemName;
-		
-		if(FItemData* DataAsset = UUtil::GetItemDataFromName(ItemName))
-		{
-			if(i >= Slots.Num())
-			{
-				break;
-			}
-			UAbilityWidget* slot = Cast<UAbilityWidget>(Slots[i]);
-			if(DataAsset)
-			{
-				if(DataAsset->AbilityData)
-				{
-					slot->SetData(DataAsset->AbilityData, AbilityData[static_cast<EInventorySlot>(i)].ItemAmount);
-				}
-			}
-			else
-			{
-				slot->Reset();
-			}
-		}
-	}
+	// TArray<UWidget*> Slots = Abilities->GetAllChildren();
+	// for(int i = 0; i <= static_cast<uint32>(EUISlotID::HotBarLast); i++)
+	// {
+	// 	if(AbilityData.Num() <= i)
+	// 	{
+	// 		break;
+	// 	}
+	// 	FName ItemName = AbilityData[static_cast<EUISlotID>(i)].ItemName;
+	// 	
+	// 	if(FItemData* DataAsset = UUtil::GetItemDataFromName(ItemName))
+	// 	{
+	// 		if(i >= Slots.Num())
+	// 		{
+	// 			break;
+	// 		}
+	// 		UUISlot* slot = Cast<UUISlot>(Slots[i]);
+	// 		if(DataAsset)
+	// 		{
+	// 			if(DataAsset->AbilityData)
+	// 			{
+	// 				slot->SetData(DataAsset->AbilityData, AbilityData[static_cast<EUISlotID>(i)].ItemAmount);
+	// 			}
+	// 		}
+	// 		else
+	// 		{
+	// 			slot->Reset();
+	// 		}
+	// 	}
+	// }
 }
 
 void URTInfoPanel::Init()

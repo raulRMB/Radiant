@@ -333,32 +333,32 @@ void AAvatar::S_PlaceGridPiece_Implementation(FGridPiece Piece)
 
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::One));
+	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::One));
 }
 
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Two));
+	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Two));
 }
 
 void AAvatar::OnAbilityThree(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Three));
+	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Three));
 }
 
 void AAvatar::OnAbilityFour(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Four));
+	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Four));
 }
 
 void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Five));
+	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Five));
 }
 
 void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EInventorySlot::Six));
+	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Six));
 }
 
 void AAvatar::PossessedBy(AController* NewController)
@@ -456,7 +456,7 @@ void AAvatar::OnRep_Controller()
 	}
 }
 
-void AAvatar::SetHUDIcons(const TMap<EInventorySlot, FItemSlotInfo>& AbilityMap)
+void AAvatar::SetHUDIcons(const TMap<EUISlotID, FItemSlotInfo>& AbilityMap)
 {
 	if(GetLocalRole() == ROLE_AutonomousProxy)
 	{

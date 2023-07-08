@@ -6,24 +6,50 @@
 #include "GameplayTagContainer.h"
 #include "Blueprint/UserWidget.h"
 #include "Data/AbilityDataAsset.h"
-#include "Util/Enums/InventorySlot.h"
-#include "AbilityWidget.generated.h"
+#include "Util/Enums/UISlotID.h"
+#include "UISlot.generated.h"
 
-UCLASS()
-class RADIANT_API UAbilityWidget : public UUserWidget
+USTRUCT()
+struct FUISlotData
 {
 	GENERATED_BODY()
 
+	FName ItemName;
+	uint32 ItemAmount;
+	FGameplayTag AbilityTrigger;
+	FGameplayTag CooldownTag;
+	FText Tooltip;
+	UPROPERTY()
+	class UTexture2D* Icon;
+
+	FUISlotData() :
+		ItemName(NAME_None),
+		ItemAmount(0),
+		AbilityTrigger(FGameplayTag()),
+		CooldownTag(FGameplayTag()),
+		Tooltip(FText::FromString("")),
+		Icon(nullptr) { }
+};
+
+UCLASS()
+class RADIANT_API UUISlot : public UUserWidget
+{
+	GENERATED_BODY()
+	
 	UPROPERTY(EditAnywhere)
-	EInventorySlot HotbarSlot;
+	EUISlotID HotbarSlot;
 	
 	uint8 bOn : 1;
+	uint8 bIsEmpty : 1;
+
+	FUISlotData UISlotData;
+	
 	UPROPERTY()
 	UAbilityDataAsset* AbilityData;
 	UPROPERTY()
 	UMaterialInstanceDynamic* MaterialInstance{};
 	UPROPERTY(meta=(BindWidget))
-	class UImage* Ability;
+	class UImage* Icon;
 	UPROPERTY(meta=(BindWidget))
 	class UImage* AbilityCDMask;
 	UPROPERTY(meta=(BindWidget))
@@ -51,9 +77,13 @@ class RADIANT_API UAbilityWidget : public UUserWidget
 public:
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* Mat;
-	void SetData(UAbilityDataAsset* Data, uint32 Amount);
+	void SetData(const FUISlotData& Data);
 	void UpdateCooldown();
 	void Reset();
 
 	void SetShouldDropItem(const bool ShouldDropItem) { bShouldDropItem = ShouldDropItem; }
+	FName& GetItemName() { return UISlotData.ItemName; }
+
+	void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
+	bool IsEmpty() const { return bIsEmpty; }
 };

@@ -15,6 +15,9 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere)
 	class UAbilityDataAsset* AbilityData;
 
+	UPROPERTY(EditAnywhere)
+	FText Tooltip;
+
 	FItemData()
 	{
 		AbilityData = nullptr;
