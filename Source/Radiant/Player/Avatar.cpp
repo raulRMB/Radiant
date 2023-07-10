@@ -456,17 +456,6 @@ void AAvatar::OnRep_Controller()
 	}
 }
 
-void AAvatar::SetHUDIcons(const TMap<EItemSlotID, FItemSlotInfo>& AbilityMap)
-{
-	if(GetLocalRole() == ROLE_AutonomousProxy)
-	{
-		if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetController()))
-		{
-			PC->GetHUD<ARTHUD>()->UpdateAbilities(AbilityMap);
-		}
-	}
-}
-
 ETeamId AAvatar::GetTeamId() const
 {
 	if(GetPlayerState<ARTPlayerState>())

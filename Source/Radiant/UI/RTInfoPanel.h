@@ -69,8 +69,6 @@ public:
 	UFUNCTION()
 	void OnHeroDeath(uint32 RedScore, uint32 BlueScore) const;
 	
-	void UpdateAbilities(TMap<EItemSlotID, struct FItemSlotInfo> Abilities) const;
-	
 	void ShowEndScreen(bool bWon) const;
 	void HideLoadScreen() const;
 	void SetFPS(float FPS) const;

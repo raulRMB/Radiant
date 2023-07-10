@@ -80,13 +80,11 @@ public:
 public:
 	ARTHUD();
 	
-	void UpdateAbilities(const TMap<EItemSlotID, FItemSlotInfo>& Abilities);
 	void ShowEndScreen(bool won);
 	void ToggleSettings();
 	void HideLoadScreen();
 	void SetFPS(float FPS);
 	void SetMS(float MS);
-	void ShowLevelUpScreen();
 	void ToggleStore();
 	UFUNCTION()
 	void BindUIItems();

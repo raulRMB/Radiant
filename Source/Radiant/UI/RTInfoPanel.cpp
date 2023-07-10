@@ -4,14 +4,10 @@
 #include "UI/RTInfoPanel.h"
 #include "Components/HorizontalBox.h"
 #include "ItemSlot.h"
-#include "RTHUD.h"
 #include "Player/Avatar.h"
-#include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "Data/AbilityDataAsset.h"
-#include "Data/ItemData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
@@ -64,39 +60,6 @@ FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 UHorizontalBox* URTInfoPanel::GetHotbarHorizontalBox()
 {
 	return HotbarHorizontalBox;
-}
-
-void URTInfoPanel::UpdateAbilities(TMap<EItemSlotID, FItemSlotInfo> AbilityData) const
-{
-	// TArray<UWidget*> Slots = Abilities->GetAllChildren();
-	// for(int i = 0; i <= static_cast<uint32>(EUISlotID::HotBarLast); i++)
-	// {
-	// 	if(AbilityData.Num() <= i)
-	// 	{
-	// 		break;
-	// 	}
-	// 	FName ItemName = AbilityData[static_cast<EUISlotID>(i)].ItemName;
-	// 	
-	// 	if(FItemData* DataAsset = UUtil::GetItemDataFromName(ItemName))
-	// 	{
-	// 		if(i >= Slots.Num())
-	// 		{
-	// 			break;
-	// 		}
-	// 		UUISlot* slot = Cast<UUISlot>(Slots[i]);
-	// 		if(DataAsset)
-	// 		{
-	// 			if(DataAsset->AbilityData)
-	// 			{
-	// 				slot->SetData(DataAsset->AbilityData, AbilityData[static_cast<EUISlotID>(i)].ItemAmount);
-	// 			}
-	// 		}
-	// 		else
-	// 		{
-	// 			slot->Reset();
-	// 		}
-	// 	}
-	// }
 }
 
 void URTInfoPanel::Init()

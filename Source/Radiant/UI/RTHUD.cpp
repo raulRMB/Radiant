@@ -48,11 +48,6 @@ ARTHUD::ARTHUD()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ARTHUD::UpdateAbilities(const TMap<EItemSlotID, FItemSlotInfo>& Abilities)
-{
-	InfoPanel->UpdateAbilities(Abilities);
-}
-
 void ARTHUD::ToggleSettings()
 {
 	SettingsPanel->RefreshKeybindList();
