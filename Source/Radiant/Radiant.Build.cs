@@ -26,8 +26,10 @@ public class Radiant : ModuleRules
 			"Slate",
 			"SlateCore",
 			"AIModule",
-			"NavigationSystem"
+			"NavigationSystem",
+			"PFSDK"
 		});
+		bEnableUndefinedIdentifierWarnings = false;
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  "GameplayAbilities", "GameplayTags", "GameplayTasks" });
 		

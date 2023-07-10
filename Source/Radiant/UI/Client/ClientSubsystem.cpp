@@ -12,6 +12,11 @@
 #include "Core/PlayFabMultiplayerAPI.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "PFSDK/Include/PFEntityKey.h"
+#include "PFSDK/Include/PFMultiplayer.h"
+#include "PFSDK/Include/PFMatchmaking.h"
+#include "PFSDK/Include/PFLobby.h"
+
 void UClientSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -166,6 +171,34 @@ void UClientSubsystem::OnLoginSuccess(const PlayFab::ClientModels::FLoginResult&
 	clientAPI->GetAccountInfo(request,
 		PlayFab::UPlayFabClientAPI::FGetAccountInfoDelegate::CreateUObject(this, &UClientSubsystem::OnGetUserDataSuccess),
 		PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnError));
+
+
+}
+
+void UClientSubsystem::InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult &Result)
+{
+	static PFMultiplayerHandle g_pfmHandle = nullptr;
+	HRESULT hr = S_OK;
+	// Initialize the PFMultiplayer library.
+	hr = PFMultiplayerInitialize("DAAB1", &g_pfmHandle);
+	if (FAILED(hr))
+	{
+		// handle initialize failure
+	}
+
+	// Set an entity token for a local user. The token is used to authenticate PlayFab operations on behalf of this user. 
+	// Tokens can expire, and this API token should be called again when this token is refreshed.
+	PFEntityKey entityKey;
+	char* result = TCHAR_TO_ANSI(*Result.EntityToken.Get()->Entity.Get()->Id);
+	entityKey.id = result;
+	result = TCHAR_TO_ANSI(*Result.EntityToken.Get()->Entity.Get()->Type);
+	entityKey.type = result;
+	
+	hr = PFMultiplayerSetEntityToken(g_pfmHandle, &entityKey, TCHAR_TO_ANSI(*Result.EntityToken.Get()->EntityToken));
+	if (FAILED(hr))
+	{
+		// handle set entity token failure
+	}
 }
 
 void UClientSubsystem::Logout()

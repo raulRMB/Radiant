@@ -84,6 +84,7 @@ public:
 private:
 	void OnGetUserDataSuccess(const PlayFab::ClientModels::FGetAccountInfoResult& GetAccountInfoResult);
 	void OnLoginSuccess(const PlayFab::ClientModels::FLoginResult& Result);
+	void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult &Result);
 
 	void OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result);
 
