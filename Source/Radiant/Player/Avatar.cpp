@@ -15,6 +15,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Data/AbilityDataAsset.h"
+#include "Event/EventBroker.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/Abilities/RTAbility.h"
@@ -130,6 +131,23 @@ void AAvatar::GameEnding_Implementation(bool Won)
 }
 
 
+void AAvatar::SetIsDraggingFalse()
+{
+	bIsDragging = false;
+}
+
+void AAvatar::OnDragStatusChanged(bool status)
+{
+	if(status)
+	{
+		bIsDragging = true;
+	} else
+	{
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAvatar::SetIsDraggingFalse, 0.2f, false);
+	}
+}
+
 void AAvatar::BeginPlay()
 {
 	Super::BeginPlay();
@@ -174,9 +192,7 @@ void AAvatar::BeginPlay()
 	}
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::ShowStats, 0.3f, true);
-	
-	// SetHUDIcons();
-
+	UEventBroker::Get(this)->DragStatusChanged.AddUObject(this, &AAvatar::OnDragStatusChanged);
 	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
 }
 
@@ -728,7 +744,7 @@ void AAvatar::MoveCamera(FVector Dir)
 
 void AAvatar::HandleCamera(float DeltaSeconds)
 {
-	if(!bCameraLocked)
+	if(!bCameraLocked && !bIsDragging)
 	{
 		FVector2D MousePosition = GetMousePosition();
 		FVector2D ViewportSize;

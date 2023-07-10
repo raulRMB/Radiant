@@ -41,6 +41,7 @@ public:
 	FVector Destination;
 	
 	uint8 bAtDestination : 1;
+	uint8 bIsDragging : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	class AActor* Target;
@@ -107,7 +108,8 @@ public:
 	TMap<FString, TSubclassOf<class AActor>> DebugSpawnableItems;
 
 protected:
-	
+	void SetIsDraggingFalse();
+	void OnDragStatusChanged(bool bArg);
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;

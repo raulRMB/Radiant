@@ -8,6 +8,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Data/AbilityDataAsset.h"
+#include "Event/EventBroker.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Player/Avatar.h"
 #include "Player/RTPlayerController.h"
@@ -36,6 +37,7 @@ void UItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointer
 	DragWidget->WidgetReference = this;
 	DragWidget->Pivot = EDragPivot::CenterCenter;
 	OutOperation = DragWidget;
+	UEventBroker::Get(this)->DragStatusChanged.Broadcast(true);
 }
 
 FReply UItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -89,6 +91,7 @@ bool UItemSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& 
 	{
 		SwapWith(DragDropOperation->WidgetReference);
 	}
+	UEventBroker::Get(this)->DragStatusChanged.Broadcast(false);
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
 
@@ -103,6 +106,7 @@ void UItemSlot::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDr
 			Avatar->DropItem(FName(*Avatar->GetRTHUD()->GetAbilityDataAsset(SlotID)->Name.ToString()));
 		}
 	}
+	UEventBroker::Get(this)->DragStatusChanged.Broadcast(false);
 }
 
 void UItemSlot::SetOn(bool On)
