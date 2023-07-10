@@ -40,9 +40,6 @@ class RADIANT_API ARTHUD : public AHUD
 	TSubclassOf<class UUserWidget> SettingsPanelClass;
 
 	UPROPERTY(EditAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UUserWidget> LevelUpClass;
-
-	UPROPERTY(EditAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UUserWidget> CaptureAreaBarClass;
 
 	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
@@ -52,8 +49,6 @@ class RADIANT_API ARTHUD : public AHUD
 	URTInfoPanel* InfoPanel;
 	UPROPERTY()
 	class USettings* SettingsPanel;
-	UPROPERTY()
-	UUserWidget* LevelUpPanel;
 
 	UPROPERTY()
 	class USlotManager* SlotManager;
@@ -102,10 +97,5 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	struct FGameplayTag GetAbilityTrigger(EItemSlotID Slot) const;
-	void SwapHotbarSlot(EItemSlotID One, EItemSlotID Two);
-
-private:
-	UFUNCTION()
-	void OnItemChanged(const FName& Name, uint32 Amount);
 };
 

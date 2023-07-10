@@ -7,15 +7,11 @@
 #include "Minimap.h"
 #include "RTInfoPanel.h"
 #include "Data/ItemData.h"
-#include "EnvironmentQuery/EnvQueryDebugHelpers.h"
-#include "Event/EventBroker.h"
 #include "InGame/InGameStore.h"
-#include "Menu/LevelUp.h"
 #include "Menu/Settings.h"
 #include "Player/Avatar.h"
-#include "Player/InventoryComponent.h"
 #include "Player/RTPlayerController.h"
-#include "..\Util\Enums\ItemSlotID.h"
+#include "Util/Enums/ItemSlotID.h"
 #include "InGame/SlotManager/SlotManager.h"
 #include "Util/Util.h"
 
@@ -27,9 +23,6 @@ void ARTHUD::BeginPlay()
 	InfoPanel->Init();
 	SettingsPanel = CreateWidget<USettings>(GetWorld(), SettingsPanelClass);
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
-	LevelUpPanel = CreateWidget<UUserWidget>(GetWorld(), LevelUpClass);
-	LevelUpPanel->SetVisibility(ESlateVisibility::Hidden);
-	LevelUpPanel->AddToViewport();
 	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
 	check(CaptureAreaBar)
 	CaptureAreaBar->AddToViewport();
@@ -85,18 +78,6 @@ void ARTHUD::SetMS(float MS)
 	InfoPanel->SetMS(MS);
 }
 
-void ARTHUD::ShowLevelUpScreen()
-{
-	if(ULevelUp* LevelUp = Cast<ULevelUp>(LevelUpPanel))
-	{
-		if(LevelUp->ShouldShow())
-		{
-			LevelUp->RefreshList();
-			LevelUp->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		}
-	}
-}
-
 void ARTHUD::ToggleStore()
 {
 	bStoreOpen = !bStoreOpen;
@@ -147,65 +128,4 @@ FGameplayTag ARTHUD::GetAbilityTrigger(EItemSlotID Slot) const
 		return SlotManager->GetAbilityTrigger(Slot);
 	}
 	return FGameplayTag();
-}
-
-// void USlotManager::SwapHotbarSlot(EItemSlotID One, EItemSlotID Two)
-// {
-// 	// if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
-// 	// {
-// 	// 	FName Temp = HotBarAbilities[One].ItemName;
-// 	// 	HotBarAbilities[One] = HotBarAbilities[Two];
-// 	// 	HotBarAbilities[Two] = Temp;
-// 	// }
-// 	// else if(HotBarAbilities.Contains(One))
-// 	// {
-// 	// 	HotBarAbilities.Add(Two, HotBarAbilities[One]);
-// 	// 	HotBarAbilities.Remove(One);
-// 	// }
-// 	// else if(HotBarAbilities.Contains(Two))
-// 	// {
-// 	// 	HotBarAbilities.Add(One, HotBarAbilities[Two]);
-// 	// 	HotBarAbilities.Remove(Two);
-// 	// }
-// 	//
-// 	// FItemSlotData Temp = DragDropOperation->WidgetReference->ItemSlotData;
-// 	// if(DragDropOperation->WidgetReference->IsEmpty())
-// 	// {
-// 	// 	SetData(DragDropOperation->WidgetReference->ItemSlotData);
-// 	// 	DragDropOperation->WidgetReference->SetData(Temp);
-// 	// 	DragDropOperation->WidgetReference->SetVisibility(ESlateVisibility::Visible);
-// 	// }
-// 	// else
-// 	// {
-// 	// 	DragDropOperation->WidgetReference->Reset();	
-// 	// }
-// }
-
-void ARTHUD::OnItemChanged(const FName& Name, const uint32 Amount)
-{
-	// if(Amount == 0)
-	// {
-	// 	for(auto& Pair : HotBarAbilities)
-	// 	{
-	// 		if(Pair.Value.ItemName == Name)
-	// 		{
-	// 			HotBarAbilities.Remove(Pair.Key);
-	// 			break;
-	// 		}
-	// 	}
-	// 	UpdateAbilities(HotBarAbilities);
-	// 	return;
-	// }
-	//
-	// for (int i = 0; i <= static_cast<uint32>(EUISlotID::Six); i++)
-	// {
-	// 	EUISlotID Slot = static_cast<EUISlotID>(i);
-	// 	if(!HotBarAbilities.Contains(Slot))
-	// 	{
-	// 		FItemSlotInfo ItemSlotInfo = FItemSlotInfo(Name, Amount);
-	// 		HotBarAbilities.Add(Slot, ItemSlotInfo);
-	// 		break;
-	// 	}
-	// }
-	// UpdateAbilities(HotBarAbilities);
 }
