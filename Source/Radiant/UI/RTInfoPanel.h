@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/HorizontalBox.h"
 #include "Components/Image.h"
 #include "Player/RTPlayerState.h"
+#include "Components/HorizontalBox.h"
 #include "RTInfoPanel.generated.h"
 
 UCLASS()
@@ -16,7 +15,7 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(meta=(BindWidget))
-	UHorizontalBox* Abilities;
+	UHorizontalBox* HotbarHorizontalBox;
 
 	UPROPERTY(meta=(BindWidget))
 	class UImage* LoadingScreen;
@@ -60,6 +59,8 @@ public:
 	void UpdateCooldowns() const;
 	FText FormatText(float CurrentHealth, float MaxHealth) const;
 
+	UHorizontalBox* GetHotbarHorizontalBox();
+	
 	UFUNCTION(BlueprintCallable)
 	void Init();
 	void UpdateRadianite(float X) const;
@@ -68,7 +69,7 @@ public:
 	UFUNCTION()
 	void OnHeroDeath(uint32 RedScore, uint32 BlueScore) const;
 	
-	void UpdateAbilities(TMap<EUISlotID, struct FItemSlotInfo> Abilities) const;
+	void UpdateAbilities(TMap<EItemSlotID, struct FItemSlotInfo> Abilities) const;
 	
 	void ShowEndScreen(bool bWon) const;
 	void HideLoadScreen() const;

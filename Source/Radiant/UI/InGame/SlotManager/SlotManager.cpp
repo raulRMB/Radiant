@@ -2,21 +2,35 @@
 
 
 #include "UI/InGame/SlotManager/SlotManager.h"
-
+#include "Components/HorizontalBox.h"
+#include "Components/HorizontalBoxSlot.h"
+#include "Components/UniformGridPanel.h"
+#include "Components/UniformGridSlot.h"
 #include "Data/ItemData.h"
-#include "UI/UISlot.h"
+#include "UI/ItemSlot.h"
 #include "Util/Util.h"
 
 void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
 {
-	UUISlot* UISlot = GetSlot(Name);
+	UItemSlot* UISlot = GetSlot(Name);
 	if(IsValid(UISlot))
 	{
 		UISlot->SetData(CreateSlotData(Name, Amount));
 	}
 }
 
-UUISlot* USlotManager::GetSlot(const FName& Name) const
+void USlotManager::InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass)
+{
+	HotbarHorizontalBox = HorizontalBox;
+	InventoryGridPanel = GridPanel;
+	
+	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::InventoryLast); i++)
+	{
+		CreateNewSlot(static_cast<EItemSlotID>(i), ItemSlotClass);
+	}
+}
+
+UItemSlot* USlotManager::GetSlot(const FName& Name) const
 {
 	for(auto& Pair : Slots)
 	{
@@ -28,7 +42,7 @@ UUISlot* USlotManager::GetSlot(const FName& Name) const
 	return FindEmptySlot();
 }
 
-UUISlot* USlotManager::GetSlot(EUISlotID UISlotID) const
+UItemSlot* USlotManager::GetSlot(EItemSlotID UISlotID) const
 {
 	if(Slots.Contains(UISlotID))
 	{
@@ -37,24 +51,24 @@ UUISlot* USlotManager::GetSlot(EUISlotID UISlotID) const
 	return nullptr;
 }
 
-UUISlot* USlotManager::FindEmptySlot() const
+UItemSlot* USlotManager::FindEmptySlot() const
 {
-	for (uint32 i = static_cast<uint32>(EUISlotID::HotBarFirst); i <= static_cast<uint32>(EUISlotID::InventoryLast); i++)
+	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::InventoryLast); i++)
 	{
-		if(Slots.Contains(static_cast<EUISlotID>(i)))
+		if(Slots.Contains(static_cast<EItemSlotID>(i)))
 		{
-			if(Slots[static_cast<EUISlotID>(i)]->IsEmpty())
+			if(Slots[static_cast<EItemSlotID>(i)]->IsEmpty())
 			{
-				return Slots[static_cast<EUISlotID>(i)];
+				return Slots[static_cast<EItemSlotID>(i)];
 			}
 		}
 	}
 	return nullptr;
 }
 
-FUISlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) const
+FItemSlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) const
 {
-	FUISlotData UISlotData;
+	FItemSlotData UISlotData;
 	FItemData* ItemData = UUtil::GetItemDataFromName(Name, FString("SlotManager::OnSlotChanged"));		
 	if(ItemData)
 	{
@@ -72,4 +86,33 @@ FUISlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) const
 		}
 	}
 	return UISlotData;
+}
+
+UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<UItemSlot> ItemSlotClass)
+{
+	UItemSlot* ItemSlot = CreateWidget<UItemSlot>(GetWorld(), ItemSlotClass);
+	ItemSlot->SetSlotID(UISlotID);
+	Slots.Add(UISlotID, ItemSlot);
+	if(HotbarHorizontalBox && InventoryGridPanel)
+	{
+		if(UISlotID >= EItemSlotID::HotBarFirst && UISlotID <= EItemSlotID::HotBarLast)
+		{
+			if(UHorizontalBoxSlot* Slot = Cast<UHorizontalBoxSlot>(HotbarHorizontalBox->AddChild(ItemSlot)))
+			{
+				Slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
+				Slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+				Slot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+				Slot->SetPadding({5.f, 0.f, 5.f, 0.f});
+			}
+		}
+		else if(UISlotID >= EItemSlotID::InventoryFirst && UISlotID <= EItemSlotID::InventoryLast)
+		{
+			if(UUniformGridSlot* Slot = Cast<UUniformGridSlot>(InventoryGridPanel->AddChildToUniformGrid(ItemSlot, InventoryGridPanel->GetChildrenCount() / 5, InventoryGridPanel->GetChildrenCount() % 5)))
+			{
+				Slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
+				Slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+			}
+		}
+	}
+	return ItemSlot;
 }

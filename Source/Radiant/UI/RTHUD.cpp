@@ -15,7 +15,8 @@
 #include "Player/Avatar.h"
 #include "Player/InventoryComponent.h"
 #include "Player/RTPlayerController.h"
-#include "..\Util\Enums\UISlotID.h"
+#include "..\Util\Enums\ItemSlotID.h"
+#include "InGame/SlotManager/SlotManager.h"
 #include "Util/Util.h"
 
 void ARTHUD::BeginPlay()
@@ -40,6 +41,8 @@ void ARTHUD::BeginPlay()
 	Minimap = Cast<UMinimap>(CreateWidget<UMinimap>(GetWorld(), MinimapClass));
 	Minimap->AddToViewport();
 	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
+	SlotManager->InitSlots(InfoPanel->GetHotbarHorizontalBox(), StoreUI->GetInventoryGrid(), ItemSlotClass);
 
 	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &ARTHUD::OnItemChanged);
 }
@@ -54,7 +57,7 @@ ARTHUD::ARTHUD()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ARTHUD::UpdateAbilities(const TMap<EUISlotID, FItemSlotInfo>& Abilities)
+void ARTHUD::UpdateAbilities(const TMap<EItemSlotID, FItemSlotInfo>& Abilities)
 {
 	InfoPanel->UpdateAbilities(Abilities);
 }
@@ -122,7 +125,7 @@ void ARTHUD::Escape()
 	}
 }
 
-UAbilityDataAsset* ARTHUD::GetAbilityDataAsset(EUISlotID Slot) const
+UAbilityDataAsset* ARTHUD::GetAbilityDataAsset(EItemSlotID Slot) const
 {
 	if(HotBarAbilities.Contains(Slot))
 	{
@@ -139,7 +142,7 @@ void ARTHUD::Tick(float DeltaSeconds)
 	Minimap->DrawDynamic();
 }
 
-FGameplayTag ARTHUD::GetAbilityTrigger(EUISlotID Slot) const
+FGameplayTag ARTHUD::GetAbilityTrigger(EItemSlotID Slot) const
 {
 	if(HotBarAbilities.Contains(Slot))
 	{
@@ -154,7 +157,7 @@ FGameplayTag ARTHUD::GetAbilityTrigger(EUISlotID Slot) const
 	return FGameplayTag();
 }
 
-void ARTHUD::SwapHotbarSlot(EUISlotID One, EUISlotID Two)
+void ARTHUD::SwapHotbarSlot(EItemSlotID One, EItemSlotID Two)
 {
 	if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
 	{

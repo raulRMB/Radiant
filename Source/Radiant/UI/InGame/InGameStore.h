@@ -13,10 +13,13 @@ class RADIANT_API UInGameStore : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(meta=(BindWidget))
-	class UGridPanel* GridPanel;
+	class UGridPanel* StoreGrid;
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* RadianiteText;
+
+	UPROPERTY(meta=(BindWidget))
+	class UUniformGridPanel* InventoryGrid;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UStoreItem> StoreItemClass;
@@ -33,4 +36,6 @@ class RADIANT_API UInGameStore : public UUserWidget
 	void UpdateRadianite(float RadianiteAmount);
 public:
 	void Init(class ARTPlayerState* PS);
+
+	UUniformGridPanel* GetInventoryGrid() const;
 };

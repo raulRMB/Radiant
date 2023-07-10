@@ -13,5 +13,5 @@ class RADIANT_API UAbilityDragDropOperation : public UDragDropOperation
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UUISlot* WidgetReference;
+	class UItemSlot* WidgetReference;
 };

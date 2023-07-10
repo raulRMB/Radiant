@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "UISlotID.generated.h"
+#include "ItemSlotID.generated.h"
 
 UENUM(BlueprintType)
-enum class EUISlotID : uint8
+enum class EItemSlotID : uint8
 {
 	HotBarFirst = 0,
 	HotBarTwo,

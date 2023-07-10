@@ -24,11 +24,16 @@ void UInGameStore::Init(ARTPlayerState* PS)
 	}
 }
 
+UUniformGridPanel* UInGameStore::GetInventoryGrid() const
+{
+	return InventoryGrid;
+}
+
 void UInGameStore::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	if (ItemTable && GridPanel)
+	if (ItemTable && StoreGrid)
 	{
 		static const FString ContextString(TEXT("Store Item Button Native Construct"));
 		for (FName RowName : ItemTable->GetRowNames())
@@ -39,7 +44,7 @@ void UInGameStore::NativeConstruct()
 			{
 				StoreItem->Init(RowName);
 			}
-			GridPanel->AddChildToGrid(StoreItem, GridPanel->GetChildrenCount() / 5, GridPanel->GetChildrenCount() % 5);
+			StoreGrid->AddChildToGrid(StoreItem, StoreGrid->GetChildrenCount() / 5, StoreGrid->GetChildrenCount() % 5);
 		}
 	}
 }

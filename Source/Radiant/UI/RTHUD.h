@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UISlot.h"
+#include "ItemSlot.h"
 #include "GameFramework/HUD.h"
-#include "..\Util\Enums\UISlotID.h"
+#include "..\Util\Enums\ItemSlotID.h"
 #include "RTHUD.generated.h"
 
 DECLARE_DELEGATE_OneParam(FGiveAbilityFromButtonSignature, class UAbilityDataAsset*)
@@ -56,6 +56,9 @@ class RADIANT_API ARTHUD : public AHUD
 	UUserWidget* LevelUpPanel;
 
 	UPROPERTY()
+	class USlotManager* SlotManager;
+	
+	UPROPERTY()
 	class UMinimap* Minimap;
 
 	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
@@ -68,10 +71,13 @@ class RADIANT_API ARTHUD : public AHUD
 	uint8 bSettingsOpen : 1;
 
 	UPROPERTY()
-	TMap<EUISlotID, FItemSlotInfo> HotBarAbilities;
+	TMap<EItemSlotID, FItemSlotInfo> HotBarAbilities;
 
 	UPROPERTY(EditAnywhere)
-	class UDataTable* ItemTable;	
+	class UDataTable* ItemTable;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UItemSlot> ItemSlotClass;
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
@@ -79,7 +85,7 @@ public:
 public:
 	ARTHUD();
 	
-	void UpdateAbilities(const TMap<EUISlotID, FItemSlotInfo>& Abilities);
+	void UpdateAbilities(const TMap<EItemSlotID, FItemSlotInfo>& Abilities);
 	void ShowEndScreen(bool won);
 	void ToggleSettings();
 	void HideLoadScreen();
@@ -91,12 +97,12 @@ public:
 	void BindUIItems();
 	void Escape();
 
-	UAbilityDataAsset* GetAbilityDataAsset(EUISlotID Slot) const;
+	UAbilityDataAsset* GetAbilityDataAsset(EItemSlotID Slot) const;
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	struct FGameplayTag GetAbilityTrigger(EUISlotID Slot) const;
-	void SwapHotbarSlot(EUISlotID One, EUISlotID Two);
+	struct FGameplayTag GetAbilityTrigger(EItemSlotID Slot) const;
+	void SwapHotbarSlot(EItemSlotID One, EItemSlotID Two);
 
 private:
 	UFUNCTION()

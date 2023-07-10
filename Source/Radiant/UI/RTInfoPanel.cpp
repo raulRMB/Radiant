@@ -2,8 +2,8 @@
 
 
 #include "UI/RTInfoPanel.h"
-
-#include "UISlot.h"
+#include "Components/HorizontalBox.h"
+#include "ItemSlot.h"
 #include "RTHUD.h"
 #include "Player/Avatar.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -45,10 +45,10 @@ void URTInfoPanel::UpdateProperties(float DeltaTime) const
 
 void URTInfoPanel::UpdateCooldowns() const
 {
-	auto Slots = Abilities->GetAllChildren();
+	auto Slots = HotbarHorizontalBox->GetAllChildren();
 	for(int i = 0; i < Slots.Num(); i++)
 	{
-		UUISlot* AbilityWidget = Cast<UUISlot>(Slots[i]);
+		UItemSlot* AbilityWidget = Cast<UItemSlot>(Slots[i]);
 		if(AbilityWidget)
 		{
 			AbilityWidget->UpdateCooldown();
@@ -61,7 +61,12 @@ FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 	return FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHealth, MaxHealth));
 }
 
-void URTInfoPanel::UpdateAbilities(TMap<EUISlotID, FItemSlotInfo> AbilityData) const
+UHorizontalBox* URTInfoPanel::GetHotbarHorizontalBox()
+{
+	return HotbarHorizontalBox;
+}
+
+void URTInfoPanel::UpdateAbilities(TMap<EItemSlotID, FItemSlotInfo> AbilityData) const
 {
 	// TArray<UWidget*> Slots = Abilities->GetAllChildren();
 	// for(int i = 0; i <= static_cast<uint32>(EUISlotID::HotBarLast); i++)

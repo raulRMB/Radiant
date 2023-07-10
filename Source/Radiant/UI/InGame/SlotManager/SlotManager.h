@@ -3,25 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "Util/Enums/UISlotID.h"
-#include "UI/UISlot.h"
+#include "Util/Enums/ItemSlotID.h"
+#include "UI/ItemSlot.h"
+#include "UI/RTInfoPanel.h"
+#include "UI/InGame/InGameStore.h"
 #include "SlotManager.generated.h"
 
 UCLASS()
-class RADIANT_API USlotManager : public UUserWidget
+class RADIANT_API USlotManager : public UObject
 {
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TMap<EUISlotID, class UUISlot*> Slots;
-	
+	TMap<EItemSlotID, class UItemSlot*> Slots;
+
+	UPROPERTY()
+	class UUniformGridPanel* InventoryGridPanel;
+
+	UPROPERTY()
+	class UHorizontalBox* HotbarHorizontalBox;
+
 public:
 	UFUNCTION()
 	void OnSlotChanged(const FName& Name, uint32 Amount) const;
+	void InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass);
+
 private:
-	UUISlot* GetSlot(const FName& Name) const;
-	UUISlot* GetSlot(EUISlotID UISlotID) const;
-	UUISlot* FindEmptySlot() const;
-	FUISlotData CreateSlotData(const FName& Name, uint32 Amount) const;
+	UItemSlot* GetSlot(const FName& Name) const;
+	UItemSlot* GetSlot(EItemSlotID UISlotID) const;
+	UItemSlot* FindEmptySlot() const;
+	FItemSlotData CreateSlotData(const FName& Name, uint32 Amount) const;
+	UItemSlot* CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<UItemSlot> ItemSlotClass);
 };
