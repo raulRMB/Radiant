@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "Blueprint/UserWidget.h"
 #include "Data/AbilityDataAsset.h"
+#include "Util/AbilityDragDropOperation.h"
 #include "Util/Enums/ItemSlotID.h"
 #include "ItemSlot.generated.h"
 
@@ -42,7 +43,7 @@ class RADIANT_API UItemSlot : public UUserWidget
 	uint8 bOn : 1;
 	uint8 bIsEmpty : 1;
 
-	FItemSlotData UISlotData;
+	FItemSlotData ItemSlotData;
 	
 	UPROPERTY()
 	UAbilityDataAsset* AbilityData;
@@ -57,8 +58,8 @@ class RADIANT_API UItemSlot : public UUserWidget
 
 	uint32 ItemAmount = 0;
 
-	UPROPERTY(EditAnywhere, Category="Cooldowns")
 	FGameplayTag CooldownTag;
+	FGameplayTag Trigger;
 
 	uint8 bShouldDropItem : 1;
 
@@ -66,8 +67,10 @@ class RADIANT_API UItemSlot : public UUserWidget
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+	bool SwapWith(UItemSlot* ItemSlot);
+	
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-	                  UDragDropOperation* InOperation) override;
+	                          UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 	void SetOn(bool On);
@@ -81,11 +84,14 @@ public:
 	void UpdateCooldown();
 	void Reset();
 
+	FItemSlotData& GetItemSlotData() { return ItemSlotData; }
+
 	void SetShouldDropItem(const bool ShouldDropItem) { bShouldDropItem = ShouldDropItem; }
-	FName& GetItemName() { return UISlotData.ItemName; }
+	FName& GetItemName() { return ItemSlotData.ItemName; }
 
 	void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
 	bool IsEmpty() const { return bIsEmpty; }
 
 	void SetSlotID(const EItemSlotID& ID) { SlotID = ID; }
+	FGameplayTag GetAbilityTrigger();
 };

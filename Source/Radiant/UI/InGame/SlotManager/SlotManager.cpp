@@ -7,20 +7,24 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
 #include "Data/ItemData.h"
+#include "Event/EventBroker.h"
 #include "UI/ItemSlot.h"
 #include "Util/Util.h"
 
 void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
 {
-	UItemSlot* UISlot = GetSlot(Name);
-	if(IsValid(UISlot))
+	UItemSlot* ItemSlot = GetSlot(Name);
+	if(IsValid(ItemSlot))
 	{
-		UISlot->SetData(CreateSlotData(Name, Amount));
+		ItemSlot->SetData(CreateSlotData(Name, Amount));
+		ItemSlot->SetEmpty(false);
 	}
 }
 
 void USlotManager::InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass)
 {
+	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &USlotManager::OnSlotChanged);
+	
 	HotbarHorizontalBox = HorizontalBox;
 	InventoryGridPanel = GridPanel;
 	
@@ -28,6 +32,15 @@ void USlotManager::InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* G
 	{
 		CreateNewSlot(static_cast<EItemSlotID>(i), ItemSlotClass);
 	}
+}
+
+FGameplayTag USlotManager::GetAbilityTrigger(EItemSlotID Slot)
+{
+	if(Slots.Contains(Slot))
+	{
+		return Slots[Slot]->GetAbilityTrigger();
+	}
+	return FGameplayTag();
 }
 
 UItemSlot* USlotManager::GetSlot(const FName& Name) const
@@ -68,29 +81,32 @@ UItemSlot* USlotManager::FindEmptySlot() const
 
 FItemSlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) const
 {
-	FItemSlotData UISlotData;
+	FItemSlotData ItemSlotData;
 	FItemData* ItemData = UUtil::GetItemDataFromName(Name, FString("SlotManager::OnSlotChanged"));		
 	if(ItemData)
 	{
-		UISlotData.ItemName = Name;
-		UISlotData.ItemAmount = Amount;
+		ItemSlotData.ItemName = Name;
+		ItemSlotData.ItemAmount = Amount;
 		if(ItemData->AbilityData)
 		{
-			UISlotData.AbilityTrigger = ItemData->AbilityData->Ability.GetDefaultObject()->GetTriggerTag();
-			UISlotData.CooldownTag = ItemData->AbilityData->Ability.GetDefaultObject()->GetCooldownTag();
-			UISlotData.Tooltip = ItemData->AbilityData->Tooltip;
+			ItemSlotData.AbilityTrigger = ItemData->AbilityData->Ability.GetDefaultObject()->GetTriggerTag();
+			ItemSlotData.CooldownTag = ItemData->AbilityData->Ability.GetDefaultObject()->GetCooldownTag();
+			ItemSlotData.Tooltip = ItemData->AbilityData->Tooltip;
+			ItemSlotData.Icon = ItemData->AbilityData->Icon;
 		}
 		else
 		{
-			UISlotData.Tooltip = ItemData->Tooltip;
+			ItemSlotData.Tooltip = ItemData->Tooltip;
+			ItemSlotData.Icon = ItemData->Icon;
 		}
 	}
-	return UISlotData;
+	return ItemSlotData;
 }
 
 UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<UItemSlot> ItemSlotClass)
 {
 	UItemSlot* ItemSlot = CreateWidget<UItemSlot>(GetWorld(), ItemSlotClass);
+	ItemSlot->SetEmpty(true);
 	ItemSlot->SetSlotID(UISlotID);
 	Slots.Add(UISlotID, ItemSlot);
 	if(HotbarHorizontalBox && InventoryGridPanel)

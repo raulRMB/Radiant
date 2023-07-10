@@ -20,6 +20,7 @@ void UItemSlot::NativeConstruct()
 	Super::NativeConstruct();
 	MaterialInstance = UMaterialInstanceDynamic::Create(Mat, this);
 	CooldownMask->SetBrushResourceObject(MaterialInstance);
+	CooldownMask->SetVisibility(ESlateVisibility::Hidden);
 	bOn = false;
 }
 
@@ -46,6 +47,24 @@ FReply UItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPo
 	return ReplyResult.NativeReply;
 }
 
+bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
+{
+	if(ItemSlot)
+	{
+		FItemSlotData TempItemSlotData = ItemSlot->ItemSlotData;
+		ItemSlot->SetData(ItemSlotData);
+		SetData(TempItemSlotData);
+
+		bool bTempIsEmpty = ItemSlot->bIsEmpty;
+		ItemSlot->SetEmpty(bIsEmpty);
+		SetEmpty(bTempIsEmpty);
+		
+		return true;
+	}
+	
+	return false;
+}
+
 void UItemSlot::Reset()
 {
 	AmountText->SetText(FText::FromString(""));
@@ -57,29 +76,18 @@ void UItemSlot::Reset()
 	CooldownTag = FGameplayTag();
 }
 
+FGameplayTag UItemSlot::GetAbilityTrigger()
+{
+	return Trigger;
+}
+
 bool UItemSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-                                  UDragDropOperation* InOperation)
+                             UDragDropOperation* InOperation)
 {
 	UAbilityDragDropOperation* DragDropOperation = Cast<UAbilityDragDropOperation>(InOperation);
-	if(DragDropOperation && DragDropOperation->WidgetReference != nullptr && DragDropOperation->WidgetReference->AbilityData != nullptr)
+	if(DragDropOperation && DragDropOperation->WidgetReference != nullptr)
 	{
-
-		ARTPlayerState* PS = Cast<ARTPlayerState>(GetOwningPlayerState());
-		if(PS)
-		{
-			PS->GetRTController()->GetHUD<ARTHUD>()->SwapHotbarSlot(DragDropOperation->WidgetReference->SlotID, SlotID);
-		}
-		FItemSlotData Temp = DragDropOperation->WidgetReference->UISlotData;
-		if(DragDropOperation->WidgetReference->IsEmpty())
-		{
-			SetData(DragDropOperation->WidgetReference->UISlotData);
-			DragDropOperation->WidgetReference->SetData(Temp);
-			DragDropOperation->WidgetReference->SetVisibility(ESlateVisibility::Visible);
-		}
-		else
-		{
-			DragDropOperation->WidgetReference->Reset();	
-		}
+		SwapWith(DragDropOperation->WidgetReference);
 	}
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
@@ -119,7 +127,7 @@ float UItemSlot::GetCooldownPercent(const float TimeRemaining, const float Coold
 
 void UItemSlot::SetData(const FItemSlotData& Data)
 {
-	UISlotData = Data;
+	ItemSlotData = Data;
 	
 	if(Data.ItemAmount > 0)
 	{
@@ -134,6 +142,7 @@ void UItemSlot::SetData(const FItemSlotData& Data)
 	Icon->SetToolTipText(Data.Tooltip);
 	CooldownMask->SetToolTipText(Data.Tooltip);
 	CooldownTag = Data.CooldownTag;
+	Trigger = Data.AbilityTrigger;
 }
 
 void UItemSlot::UpdateCooldown()

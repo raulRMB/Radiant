@@ -18,8 +18,13 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere)
 	FText Tooltip;
 
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* Icon;
+
 	FItemData()
 	{
 		AbilityData = nullptr;
+		Tooltip = FText::FromString("");
+		Icon = nullptr;
 	}
 };

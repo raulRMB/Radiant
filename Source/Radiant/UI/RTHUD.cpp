@@ -43,8 +43,6 @@ void ARTHUD::BeginPlay()
 	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
 	SlotManager->InitSlots(InfoPanel->GetHotbarHorizontalBox(), StoreUI->GetInventoryGrid(), ItemSlotClass);
-
-	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &ARTHUD::OnItemChanged);
 }
 
 void ARTHUD::ShowEndScreen(bool won)
@@ -144,38 +142,44 @@ void ARTHUD::Tick(float DeltaSeconds)
 
 FGameplayTag ARTHUD::GetAbilityTrigger(EItemSlotID Slot) const
 {
-	if(HotBarAbilities.Contains(Slot))
+	if(SlotManager)
 	{
-		if(GetAbilityDataAsset(Slot))
-		{
-			if(GetAbilityDataAsset(Slot)->Ability)
-			{
-				return GetAbilityDataAsset(Slot)->Ability.GetDefaultObject()->GetTriggerTag();
-			}
-		}
+		return SlotManager->GetAbilityTrigger(Slot);
 	}
 	return FGameplayTag();
 }
 
-void ARTHUD::SwapHotbarSlot(EItemSlotID One, EItemSlotID Two)
-{
-	if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
-	{
-		FName Temp = HotBarAbilities[One].ItemName;
-		HotBarAbilities[One] = HotBarAbilities[Two];
-		HotBarAbilities[Two] = Temp;
-	}
-	else if(HotBarAbilities.Contains(One))
-	{
-		HotBarAbilities.Add(Two, HotBarAbilities[One]);
-		HotBarAbilities.Remove(One);
-	}
-	else if(HotBarAbilities.Contains(Two))
-	{
-		HotBarAbilities.Add(One, HotBarAbilities[Two]);
-		HotBarAbilities.Remove(Two);
-	}
-}
+// void USlotManager::SwapHotbarSlot(EItemSlotID One, EItemSlotID Two)
+// {
+// 	// if(HotBarAbilities.Contains(One) && HotBarAbilities.Contains(Two))
+// 	// {
+// 	// 	FName Temp = HotBarAbilities[One].ItemName;
+// 	// 	HotBarAbilities[One] = HotBarAbilities[Two];
+// 	// 	HotBarAbilities[Two] = Temp;
+// 	// }
+// 	// else if(HotBarAbilities.Contains(One))
+// 	// {
+// 	// 	HotBarAbilities.Add(Two, HotBarAbilities[One]);
+// 	// 	HotBarAbilities.Remove(One);
+// 	// }
+// 	// else if(HotBarAbilities.Contains(Two))
+// 	// {
+// 	// 	HotBarAbilities.Add(One, HotBarAbilities[Two]);
+// 	// 	HotBarAbilities.Remove(Two);
+// 	// }
+// 	//
+// 	// FItemSlotData Temp = DragDropOperation->WidgetReference->ItemSlotData;
+// 	// if(DragDropOperation->WidgetReference->IsEmpty())
+// 	// {
+// 	// 	SetData(DragDropOperation->WidgetReference->ItemSlotData);
+// 	// 	DragDropOperation->WidgetReference->SetData(Temp);
+// 	// 	DragDropOperation->WidgetReference->SetVisibility(ESlateVisibility::Visible);
+// 	// }
+// 	// else
+// 	// {
+// 	// 	DragDropOperation->WidgetReference->Reset();	
+// 	// }
+// }
 
 void ARTHUD::OnItemChanged(const FName& Name, const uint32 Amount)
 {

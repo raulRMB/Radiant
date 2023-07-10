@@ -333,32 +333,32 @@ void AAvatar::S_PlaceGridPiece_Implementation(FGridPiece Piece)
 
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
-	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::One));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFirst));
 }
 
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
-	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Two));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarTwo));
 }
 
 void AAvatar::OnAbilityThree(const FInputActionValue& Value)
 {
-	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Three));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarThree));
 }
 
 void AAvatar::OnAbilityFour(const FInputActionValue& Value)
 {
-	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Four));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFour));
 }
 
 void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 {
-	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Five));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFive));
 }
 
 void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
-	//CastAbility(GetRTHUD()->GetAbilityTrigger(EUISlotID::Six));
+	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarLast));
 }
 
 void AAvatar::PossessedBy(AController* NewController)
