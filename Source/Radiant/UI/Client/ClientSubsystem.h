@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PFEntityKey.h"
 #include "PlayFab.h"
 #include "PlayFabClientDataModels.h"
 #include "PlayFabMultiplayerDataModels.h"
@@ -84,8 +85,7 @@ public:
 private:
 	void OnGetUserDataSuccess(const PlayFab::ClientModels::FGetAccountInfoResult& GetAccountInfoResult);
 	void OnLoginSuccess(const PlayFab::ClientModels::FLoginResult& Result);
-	void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult &Result);
-
+	
 	void OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result);
 
 	void OnCreateMatchmakingTicketSuccess(const PlayFab::MultiplayerModels::FCreateMatchmakingTicketResult& Result);
@@ -97,4 +97,10 @@ private:
 	void OnCancelAllMatchmakingTicketsForPlayerSuccess(const PlayFab::MultiplayerModels::FCancelAllMatchmakingTicketsForPlayerResult& Result);
 	
 	void OnError(const PlayFab::FPlayFabCppError& ErrorResult);
+
+	/********************************* C++ API ***************************************/
+	
+	void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult &Result);
+	
+	/********************************* C++ API END ***********************************/
 };
