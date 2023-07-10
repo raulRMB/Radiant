@@ -16,6 +16,12 @@ void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
 	UItemSlot* ItemSlot = GetSlot(Name);
 	if(IsValid(ItemSlot))
 	{
+		if(Amount == 0)
+		{
+			ItemSlot->Reset();
+			return;
+		}
+			
 		ItemSlot->SetData(CreateSlotData(Name, Amount));
 		ItemSlot->SetEmpty(false);
 	}

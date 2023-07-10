@@ -13,6 +13,20 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+void UInventoryComponent::S_ItemUsed_Implementation(const FName& ItemName)
+{
+	if(GetOwner()->HasAuthority())
+	{
+		if(Items.Contains(ItemName))
+		{
+			if(Items[ItemName].Amount > 0)
+			{
+				RemoveItem(ItemName);
+			}
+		}
+	}
+}
+
 void UInventoryComponent::C_ItemChanged_Implementation(const FName& ItemName, const uint32 Amount)
 {
 	UEventBroker::Get(this)->ItemChanged.Broadcast(ItemName, Amount);
@@ -39,6 +53,7 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 			Items.Add(RowName, InventoryItem);
 		}
 	}
+	UEventBroker::Get(this)->ItemUsed.AddUObject(this, &UInventoryComponent::S_ItemUsed);
 }
 
 int32 UInventoryComponent::AddItem(const FName& ItemName)
@@ -77,3 +92,15 @@ void UInventoryComponent::DropItem(const FName& ItemName)
 	C_ItemChanged(ItemName, Items[ItemName].Amount);
 }
 
+void UInventoryComponent::UseItem(const FGameplayAbilitySpecHandle& Handle)
+{
+	if(HandleToItemName.Contains(Handle))
+	{
+		S_ItemUsed(HandleToItemName[Handle]);
+	}
+}
+
+void UInventoryComponent::AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name)
+{
+	HandleToItemName.Add(Handle, Name);
+}

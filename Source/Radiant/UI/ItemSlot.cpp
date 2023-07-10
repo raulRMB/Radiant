@@ -22,7 +22,7 @@ void UItemSlot::NativeConstruct()
 	MaterialInstance = UMaterialInstanceDynamic::Create(Mat, this);
 	CooldownMask->SetBrushResourceObject(MaterialInstance);
 	CooldownMask->SetVisibility(ESlateVisibility::Hidden);
-	bOn = false;
+	bIsOnCooldown = false;
 }
 
 void UItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
@@ -69,13 +69,15 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 
 void UItemSlot::Reset()
 {
+	bIsEmpty = true;
 	AmountText->SetText(FText::FromString(""));
 	AmountText->SetVisibility(ESlateVisibility::Hidden);
-	AbilityData = nullptr;
 	Icon->SetBrushFromTexture(nullptr);
 	Icon->SetToolTipText(FText::FromString(""));
 	CooldownMask->SetToolTipText(FText::FromString(""));
+	ItemSlotData = FItemSlotData();
 	CooldownTag = FGameplayTag();
+	Trigger = FGameplayTag();
 }
 
 FGameplayTag UItemSlot::GetAbilityTrigger()
@@ -103,7 +105,7 @@ void UItemSlot::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDr
 	{
 		if(AAvatar* Avatar = GetOwningPlayerPawn<AAvatar>())
 		{
-			Avatar->DropItem(FName(*Avatar->GetRTHUD()->GetAbilityDataAsset(SlotID)->Name.ToString()));
+			Avatar->DropItem(ItemSlotData.ItemName);
 		}
 	}
 	UEventBroker::Get(this)->DragStatusChanged.Broadcast(false);
@@ -111,12 +113,12 @@ void UItemSlot::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDr
 
 void UItemSlot::SetOn(bool On)
 {
-	bOn = On;
-	if(bOn)
+	bIsOnCooldown = On;
+	if(bIsOnCooldown)
 		Icon->SetColorAndOpacity(FLinearColor::Gray);
 	else
 		Icon->SetColorAndOpacity(FLinearColor::White);
-	CooldownMask->SetVisibility(static_cast<ESlateVisibility>(!bOn));
+	CooldownMask->SetVisibility(static_cast<ESlateVisibility>(!bIsOnCooldown));
 }
 
 void UItemSlot::SetAbilityCoolDown(const float Percent)

@@ -31,4 +31,9 @@ public:
 	                           FGameplayTagContainer* OptionalRelevantTags);
 	FGameplayTag GetTriggerTag() const;
 	FGameplayTag GetCooldownTag() const;
+	
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+protected:
+	void UseItem(const FGameplayAbilitySpecHandle& Handle);
 };

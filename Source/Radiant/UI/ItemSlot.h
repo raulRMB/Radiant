@@ -40,13 +40,11 @@ class RADIANT_API UItemSlot : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	EItemSlotID SlotID;
 	
-	uint8 bOn : 1;
+	uint8 bIsOnCooldown : 1;
 	uint8 bIsEmpty : 1;
 
 	FItemSlotData ItemSlotData;
 	
-	UPROPERTY()
-	UAbilityDataAsset* AbilityData;
 	UPROPERTY()
 	UMaterialInstanceDynamic* MaterialInstance{};
 	UPROPERTY(meta=(BindWidget))

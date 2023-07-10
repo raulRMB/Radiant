@@ -95,6 +95,8 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	SetMouseWorldLocation(HitResult.Location);
 	
 	BindAnimations();
+
+	UseItem(Handle);
 }
 
 void UGAAnimated::ReturnToDefault() const

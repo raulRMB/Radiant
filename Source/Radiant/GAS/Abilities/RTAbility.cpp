@@ -3,7 +3,9 @@
 
 #include "GAS/Abilities/RTAbility.h"
 
+#include "Event/EventBroker.h"
 #include "Player/Avatar.h"
+#include "Player/InventoryComponent.h"
 #include "Util/Util.h"
 
 void URTAbility::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -158,4 +160,22 @@ FGameplayTag URTAbility::GetCooldownTag() const
 		return GetCooldownGameplayEffect()->InheritableOwnedTagsContainer.Added.First();
 	}
 	return FGameplayTag();
+}
+
+void URTAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+                                 const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	UseItem(Handle);
+}
+
+void URTAbility::UseItem(const FGameplayAbilitySpecHandle& Handle)
+{
+	if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
+	{
+		if(Avatar->GetInventory())
+		{
+			Avatar->GetInventory()->UseItem(Handle);
+		}
+	}
 }
