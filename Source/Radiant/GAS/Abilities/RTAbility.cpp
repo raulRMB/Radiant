@@ -162,21 +162,28 @@ FGameplayTag URTAbility::GetCooldownTag() const
 	return FGameplayTag();
 }
 
-void URTAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-                                 const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
-{
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	UseItem(Handle);
-}
-
 void URTAbility::UseItem(const FGameplayAbilitySpecHandle& Handle)
 {
-	if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
+	if(HasAuthority(&CurrentActivationInfo))
 	{
-		if(Avatar->GetInventory())
+		AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
+		if(Avatar)
 		{
-			Avatar->GetInventory()->UseItem(Handle);
+			if(Avatar->GetInventory())
+			{
+				Avatar->GetInventory()->UseItem(Handle);
+			}
 		}
+	}
+}
+
+void URTAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{	
+	if(!bItemWasUsed && HasAuthority(&ActivationInfo))
+	{
+		UseItem(Handle);
+		bItemWasUsed = true;
 	}
 }
 

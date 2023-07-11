@@ -80,6 +80,8 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                   const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                   const FGameplayEventData* TriggerEventData)
 {
+	UseItem(Handle);
+	
 	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
 	ARTPlayerState* Owner = Cast<ARTPlayerState>(GetOwningActorFromActorInfo());
 
@@ -95,8 +97,6 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	SetMouseWorldLocation(HitResult.Location);
 	
 	BindAnimations();
-
-	UseItem(Handle);
 }
 
 void UGAAnimated::ReturnToDefault() const

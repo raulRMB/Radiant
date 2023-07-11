@@ -135,7 +135,6 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
 		FGameplayAbilitySpec AbilitySpec = ItemData->AbilityData->Ability.GetDefaultObject();
 		FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(AbilitySpec);
 		GetInventory()->AddHandleToName(Handle, AbilityName);
-				
 	}
 	
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price);

@@ -43,12 +43,11 @@ public:
 private:
 	UFUNCTION(Client, Reliable)
 	void C_ItemChanged(const FName& ItemName, const uint32 Amount);
-	UFUNCTION(Server, Reliable)
-	void S_ItemUsed(const FName& ItemName);
 public:
 	UFUNCTION(Server, Reliable)
 	void S_DropItem(const FName& ItemName);
-	
+	UFUNCTION(Server, Reliable)
+	void S_ItemUsed(const FName& ItemName);
 public:
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
@@ -57,4 +56,6 @@ public:
 	void DropItem(const FName& ItemName);
 	void UseItem(const FGameplayAbilitySpecHandle& Handle);
 	void AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name);
+
+	FName GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle);
 };

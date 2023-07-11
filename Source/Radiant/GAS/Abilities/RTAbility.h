@@ -13,6 +13,9 @@ class RADIANT_API URTAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 	FVector MouseWorldLocation;
+
+	uint8 bItemWasUsed : 1;
+	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
@@ -32,10 +35,9 @@ public:
 	FGameplayTag GetTriggerTag() const;
 	FGameplayTag GetCooldownTag() const;
 	
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-
+	class AAvatar* GetAvatar();
 protected:
 	void UseItem(const FGameplayAbilitySpecHandle& Handle);
 
-	class AAvatar* GetAvatar();
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

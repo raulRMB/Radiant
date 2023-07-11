@@ -50,8 +50,6 @@ class RADIANT_API AGridManager : public AActor
 public:
 	AGridManager();
 	
-
-	
 	void InitGrid(int Width, int Height);
 	
 	uint32 CellSize = 200;

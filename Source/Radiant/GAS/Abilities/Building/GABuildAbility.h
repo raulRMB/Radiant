@@ -17,13 +17,24 @@ class RADIANT_API UGABuildAbility : public URTAbility
 	UPROPERTY(EditAnywhere)
 	EEnvironmentType EnvironmentType;
 
+	FDelegateHandle OrderAcceptedHandle;
+
+	FGameplayAbilitySpecHandle ChildSpecHandle;
+
 	UPROPERTY(EditAnywhere)
-	FGameplayTag BuildingAbilityTag;
+	FName ItemName;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URTAbility> BuildAcceptAbility;
 	
 public:
 	UGABuildAbility();
 
 	UFUNCTION()
 	void OnOrderAccepted();
+	
+	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
 };

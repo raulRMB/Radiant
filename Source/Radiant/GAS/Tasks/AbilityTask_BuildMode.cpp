@@ -34,7 +34,10 @@ void UAbilityTask_BuildMode::Activate()
 
 void UAbilityTask_BuildMode::OnDestroy(bool AbilityEnded)
 {
-	Actor->Destroy();
+	if(IsValid(Actor))
+	{
+		Actor->Destroy();
+	}
 	Super::OnDestroy(AbilityEnded);
 }
 

@@ -104,3 +104,12 @@ void UInventoryComponent::AddHandleToName(FGameplayAbilitySpecHandle Handle, FNa
 {
 	HandleToItemName.Add(Handle, Name);
 }
+
+FName UInventoryComponent::GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle)
+{
+	if(HandleToItemName.Contains(Handle))
+	{
+		return HandleToItemName[Handle];
+	}
+	return NAME_None;
+}
