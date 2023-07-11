@@ -23,6 +23,9 @@ class RADIANT_API AHeatSeeking : public AArtillery
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSetTarget(AActor* NewTarget);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Ability", meta = (AllowPrivateAccess = "true"))
+	uint8 bConsumeOnHit : 1;
 
 	FGameplayEffectSpecHandle EffectSpecHandle;
 public:

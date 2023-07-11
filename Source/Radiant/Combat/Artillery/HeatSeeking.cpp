@@ -67,7 +67,8 @@ void AHeatSeeking::OnOvelapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 				UGameplayEffect* Effect = GameplayEffect.GetDefaultObject();
 				SourceASC->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(Effect, TargetASC->GetAbilitySystemComponent());
 			}
-			Destroy();
+			if(bConsumeOnHit || OtherActor == Target)
+				Destroy();
 		}
 	}
 }
