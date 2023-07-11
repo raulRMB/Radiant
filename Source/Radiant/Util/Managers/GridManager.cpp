@@ -41,8 +41,8 @@ void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
 		{
 			return;
 		}
-		
-		if(Cells[Piece.Position.X + Piece.Position.Y * GridSize.Y])
+		auto Pos = Piece.Position.X + Piece.Position.Y * GridSize.Y;
+		if(Cells.Num() < Pos || Cells[Pos])
 		{
 			return;
 		}
