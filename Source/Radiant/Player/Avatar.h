@@ -142,6 +142,9 @@ public:
 	void ReleaseHoldCamera(const FInputActionValue& InputActionValue);
 	void AttackMove(const FInputActionValue& Value);
 	void MoveCamera(FVector Dir);
+	void Demolish();
+	UFUNCTION(Server, Reliable)
+	void S_Demolish(ABuilding* Building);
 
 	ARTPlayerState* GetRTPlayerState() const { return GetPlayerState<ARTPlayerState>(); }
 

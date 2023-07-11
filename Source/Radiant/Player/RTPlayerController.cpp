@@ -156,6 +156,7 @@ void ARTPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(ToggleStoreAction, ETriggerEvent::Triggered, this, &ARTPlayerController::ToggleStore);
 		EnhancedInputComponent->BindAction(EscapeAction, ETriggerEvent::Triggered, this, &ARTPlayerController::Escape);
 		EnhancedInputComponent->BindAction(AcceptOrderAction, ETriggerEvent::Triggered, this, &ARTPlayerController::AcceptOrder);
+		EnhancedInputComponent->BindAction(DemolishAction, ETriggerEvent::Started, this, &ARTPlayerController::Demolish);
 	}
 }
 
@@ -246,4 +247,9 @@ void ARTPlayerController::Escape(const FInputActionValue& Value)
 void ARTPlayerController::AcceptOrder(const FInputActionValue& Value)
 {
 	OrderAccepted.Broadcast();
+}
+
+void ARTPlayerController::Demolish(const FInputActionValue& Value)
+{
+	GetPawn<AAvatar>()->Demolish();
 }

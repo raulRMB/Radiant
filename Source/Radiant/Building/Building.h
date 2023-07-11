@@ -40,11 +40,16 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
 	class UBuildingAttributeSet* AttributeSet;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AActor> DestroyParticles;
 	
 	virtual void BeginPlay() override;
 	void GiveInitialAbilities();
 	
 	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
 	ABuilding();
@@ -56,6 +61,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void S_SetTeamId(ETeamId NewTeamId);
+	UFUNCTION(Server, Reliable)
+	void S_Demolish();
 
 private:
 	void OnHealthChanged(const FOnAttributeChangeData& Data);

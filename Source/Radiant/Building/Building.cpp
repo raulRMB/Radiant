@@ -76,6 +76,14 @@ void ABuilding::S_SetTeamId_Implementation(ETeamId NewTeamId)
 	TeamId = NewTeamId;
 }
 
+void ABuilding::S_Demolish_Implementation()
+{
+	if(HasAuthority())
+	{
+		Destroy();
+	}
+}
+
 void ABuilding::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	if(HasAuthority())
@@ -100,6 +108,22 @@ void ABuilding::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 void ABuilding::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+}
+
+void ABuilding::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if(HasAuthority())
+	{
+		if(DestroyParticles)
+		{
+			if(GetWorld())
+			{
+				GetWorld()->SpawnActor(DestroyParticles, &GetActorTransform());
+			}
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
 }
 
 void ABuilding::SetHealthBarColor()

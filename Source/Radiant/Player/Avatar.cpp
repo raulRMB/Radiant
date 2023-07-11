@@ -742,6 +742,29 @@ void AAvatar::MoveCamera(FVector Dir)
 	}
 }
 
+void AAvatar::Demolish()
+{
+	FHitResult HitResult = GetMousePositionInWorld();
+	if(ABuilding* Building = Cast<ABuilding>(HitResult.GetActor()))
+	{
+		if(Building->GetTeamId() == GetPlayerState<ARTPlayerState>()->GetTeamId())
+		{
+			S_Demolish(Building);
+		}
+	}
+}
+
+void AAvatar::S_Demolish_Implementation(ABuilding* Building)
+{
+	if(HasAuthority())
+	{
+		if(IsValid(Building))
+		{
+			Building->Destroy();
+		}
+	}
+}
+
 void AAvatar::HandleCamera(float DeltaSeconds)
 {
 	if(!bCameraLocked && !bIsDragging)

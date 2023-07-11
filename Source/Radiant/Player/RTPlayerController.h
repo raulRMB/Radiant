@@ -65,7 +65,11 @@ class RADIANT_API ARTPlayerController : public APlayerController, public ICarrie
 	class UInputAction* AcceptOrderAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
+	class UInputAction* DemolishAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory, meta = (AllowPrivateAccess = true))
 	class UInventoryComponent* InventoryComponent;
@@ -158,4 +162,7 @@ protected:
 
 	UFUNCTION()
 	void AcceptOrder(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void Demolish(const FInputActionValue& Value);
 }; 
