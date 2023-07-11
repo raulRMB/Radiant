@@ -37,13 +37,13 @@ protected:
 	UPROPERTY()
 	class ARTCharacter* SourceCharacter;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
-	TArray<class ARTCharacter*> EffectTargets;
+	TArray<class ITeamMember*> EffectTargets;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void SetSourceCharacter(class ARTCharacter* NewChracter) { SourceCharacter = NewChracter; }
-	void SetEffectTargets(TArray<ARTCharacter*> NewEffectTargets) const { NewEffectTargets = EffectTargets; }
+	void SetEffectTargets(TArray<ITeamMember*> NewEffectTargets) const { NewEffectTargets = EffectTargets; }
 
 	void ApplyInstantEffects();
 };

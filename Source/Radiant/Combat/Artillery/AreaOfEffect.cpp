@@ -34,17 +34,20 @@ void AAreaOfEffect::ApplyGameplayEffects()
 {
 	if(HasAuthority())
 	{
-		for(ARTCharacter* Character : EffectTargets)
+		for(ITeamMember* TeamMember : EffectTargets)
 		{
-			if(UAbilitySystemComponent* AbilitySystemComponent = Character->GetAbilitySystemComponent())
+			if(auto ASC = Cast<IAbilitySystemInterface>(TeamMember))
 			{
-				for(auto GameplayEffect : GameplayEffects)
+				if(UAbilitySystemComponent* AbilitySystemComponent = ASC->GetAbilitySystemComponent())
 				{
-					FGameplayEffectContextHandle EffectContext = SourceCharacter->GetAbilitySystemComponent()->MakeEffectContext();
-					FGameplayEffectSpecHandle NewHandle = SourceCharacter->GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
-					if(NewHandle.IsValid())
+					for(auto GameplayEffect : GameplayEffects)
 					{
-						SourceCharacter->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
+						FGameplayEffectContextHandle EffectContext = SourceCharacter->GetAbilitySystemComponent()->MakeEffectContext();
+						FGameplayEffectSpecHandle NewHandle = SourceCharacter->GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
+						if(NewHandle.IsValid())
+						{
+							SourceCharacter->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
+						}
 					}
 				}
 			}
@@ -63,9 +66,9 @@ void AAreaOfEffect::ApplyInstantEffects()
 		auto Actor = Component->GetAttachmentRootActor();
 		if(ShouldHit(Actor))
 		{
-			if(ARTCharacter* Character = Cast<ARTCharacter>(Actor))
+			if(ITeamMember* TeamMember = Cast<ITeamMember>(Actor))
 			{
-				EffectTargets.AddUnique(Character);
+				EffectTargets.AddUnique(TeamMember);
 			}
 		}
 	}
