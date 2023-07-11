@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "ItemSlot.h"
 #include "GameFramework/HUD.h"
-#include "..\Util\Enums\ItemSlotID.h"
+#include "Enums\ItemSlotID.h"
 #include "RTHUD.generated.h"
 
 DECLARE_DELEGATE_OneParam(FGiveAbilityFromButtonSignature, class UAbilityDataAsset*)

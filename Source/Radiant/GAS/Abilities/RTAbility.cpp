@@ -179,3 +179,8 @@ void URTAbility::UseItem(const FGameplayAbilitySpecHandle& Handle)
 		}
 	}
 }
+
+AAvatar* URTAbility::GetAvatar()
+{
+	return Cast<AAvatar>(GetAvatarActorFromActorInfo());
+}

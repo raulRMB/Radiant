@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Util/Enums/TeamId.h"
+#include "Enums/TeamId.h"
 #include "TeamMember.generated.h"
 
 // This class does not need to be modified.

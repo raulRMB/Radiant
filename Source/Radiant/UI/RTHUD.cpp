@@ -11,7 +11,7 @@
 #include "Menu/Settings.h"
 #include "Player/Avatar.h"
 #include "Player/RTPlayerController.h"
-#include "Util/Enums/ItemSlotID.h"
+#include "Enums/ItemSlotID.h"
 #include "InGame/SlotManager/SlotManager.h"
 #include "Util/Util.h"
 

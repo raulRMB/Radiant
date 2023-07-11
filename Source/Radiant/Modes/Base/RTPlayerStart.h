@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerStart.h"
-#include "Util/Enums/TeamId.h"
+#include "Enums/TeamId.h"
 #include "RTPlayerStart.generated.h"
 
 

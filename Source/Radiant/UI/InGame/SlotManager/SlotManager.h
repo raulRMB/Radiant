@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Util/Enums/ItemSlotID.h"
+#include "Enums/ItemSlotID.h"
 #include "UI/ItemSlot.h"
 #include "UI/RTInfoPanel.h"
 #include "UI/InGame/InGameStore.h"

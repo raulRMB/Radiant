@@ -3,19 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Util/Enums/TeamId.h"
+#include "Enums/TeamId.h"
+#include "Enums/EnvironmentType.h"
 #include "GameFramework/Actor.h"
 #include "GridManager.generated.h"
-
-UENUM(BlueprintType)
-enum class EEnvironmentType : uint8
-{	
-	EEnvironmentType_Empty = 0,
-	EEnvironmentType_Wall,
-	EEnvironmentType_Tower,
-	EEnvironmentType_Tree,
-	EEnvironmentType_Rock
-};
 
 USTRUCT()
 struct FGridPiece

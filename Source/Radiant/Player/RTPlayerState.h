@@ -10,7 +10,6 @@
 #include "UI/ItemSlot.h"
 #include "Util/Interfaces/Carrier.h"
 #include "Util/Interfaces/TeamMember.h"
-#include "..\Util\Enums\ItemSlotID.h"
 #include "RTPlayerState.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);

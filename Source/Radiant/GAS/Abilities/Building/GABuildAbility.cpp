@@ -17,19 +17,8 @@ UGABuildAbility::UGABuildAbility()
 
 void UGABuildAbility::OnOrderAccepted()
 {
+	GetAvatar()->CastAbility(BuildingAbilityTag);
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
-
-	if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
-	{
-		FGridPiece GridPiece;
-		GridPiece.TeamId = Cast<ITeamMember>(GetOwningActorFromActorInfo())->GetTeamId();
-		GridPiece.Type = EnvironmentType;
-		FVector Mouse = UUtil::GetMousePosition(this, {});
-		Mouse.X = FMath::RoundToInt(Mouse.X / 200);
-		Mouse.Y = FMath::RoundToInt(Mouse.Y / 200);
-		GridPiece.Position = FIntVector2(Mouse.X, Mouse.Y);
-		Avatar->S_PlaceGridPiece(GridPiece);
-	}
 }
 
 void UGABuildAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

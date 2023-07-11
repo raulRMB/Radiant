@@ -4,26 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GAS/Abilities/RTAbility.h"
-#include "Util/Managers/GridManager.h"
-#include "GABuildAbility.generated.h"
-
-class ABuilding;
+#include "Enums/EnvironmentType.h"
+#include "GABuildAccept.generated.h"
 
 UCLASS()
-class RADIANT_API UGABuildAbility : public URTAbility
+class RADIANT_API UGABuildAccept : public URTAbility
 {
 	GENERATED_BODY()
-
+	
 	UPROPERTY(EditAnywhere)
 	EEnvironmentType EnvironmentType;
-
-	UPROPERTY(EditAnywhere)
-	FGameplayTag BuildingAbilityTag;
 	
 public:
-	UGABuildAbility();
-
-	UFUNCTION()
-	void OnOrderAccepted();
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

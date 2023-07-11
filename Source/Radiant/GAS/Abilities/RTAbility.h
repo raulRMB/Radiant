@@ -36,4 +36,6 @@ public:
 
 protected:
 	void UseItem(const FGameplayAbilitySpecHandle& Handle);
+
+	class AAvatar* GetAvatar();
 };

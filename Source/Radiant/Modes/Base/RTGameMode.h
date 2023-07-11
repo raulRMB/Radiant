@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
 #include "Player/RTPlayerController.h"
-#include "Util/Enums/TeamId.h"
+#include "Enums/TeamId.h"
 #include "RTGameMode.generated.h"
 
 

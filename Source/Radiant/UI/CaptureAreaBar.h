@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Util/Enums/TeamId.h"
+#include "Enums/TeamId.h"
 #include "CaptureAreaBar.generated.h"
 
 

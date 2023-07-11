@@ -7,7 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Data/AbilityDataAsset.h"
 #include "Util/AbilityDragDropOperation.h"
-#include "Util/Enums/ItemSlotID.h"
+#include "Enums/ItemSlotID.h"
 #include "ItemSlot.generated.h"
 
 USTRUCT()

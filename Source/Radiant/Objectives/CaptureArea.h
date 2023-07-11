@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Util/Enums/TeamId.h"
+#include "Enums/TeamId.h"
 #include "CaptureArea.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUpdatePlayersInAreaSignature, ETeamId, bool);

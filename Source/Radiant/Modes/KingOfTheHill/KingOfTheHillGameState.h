@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Modes/Base/RTGameState.h"
-#include "Util/Enums/TeamId.h"
+#include "Enums/TeamId.h"
 #include "KingOfTheHillGameState.generated.h"
 
 

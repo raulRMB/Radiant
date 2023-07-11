@@ -7,7 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameplayTagContainer.h"
-#include "..\Util\Enums\ItemSlotID.h"
+#include "Enums/ItemSlotID.h"
 #include "Util/Interfaces/Carrier.h"
 #include "RTPlayerController.generated.h"
 
