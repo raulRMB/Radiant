@@ -23,6 +23,9 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	class UWidgetComponent* InfoBarWidgetComponent;
 	
 	FGridPiece GridPiece;
+
+	UPROPERTY(EditAnywhere)
+	uint8 bHideLevel : 1;
 protected:
 	UPROPERTY()
 	class UAIInfoBar* InfoBar;

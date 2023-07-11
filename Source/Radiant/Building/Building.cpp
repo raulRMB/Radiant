@@ -47,6 +47,7 @@ void ABuilding::BeginPlay()
 			InfoBar = Cast<UAIInfoBar>(InfoBarWidgetComponent->GetUserWidgetObject());
 			if(InfoBar)
 			{
+				InfoBar->ShowLevel(!bHideLevel);
 				InfoBar->SetHealthPercent(1.f);
 			}
 		}
@@ -54,6 +55,8 @@ void ABuilding::BeginPlay()
 	}
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ABuilding::OnHealthChanged);
+
+	
 }
 
 
