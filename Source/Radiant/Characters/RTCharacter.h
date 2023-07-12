@@ -20,9 +20,8 @@ class RADIANT_API ARTCharacter : public ACharacter, public IKillable, public ITa
 	UPROPERTY(Replicated, EditAnywhere)
 	ETeamId TeamId;
 
-	UPROPERTY(EditAnywhere, Category=Death)
-	TArray<TSubclassOf<class UGameplayAbility>> DeathAbilities;
-
+	UPROPERTY(Replicated, EditAnywhere)
+	uint8 bIsDead : 1;
 protected:
 	UPROPERTY()
 	class URTAbilitySystemComponent* AbilitySystemComponent;
@@ -35,11 +34,14 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	virtual TArray<TSubclassOf<class UGameplayAbility>> GetDeathAbilities() const override;
-
 	virtual ETeamId GetTeamId() const override { return TeamId; }
 
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void M_SetIgnoreWalls(const bool bIgnoreWalls);
+
+	virtual bool GetIsDead() const override { return bIsDead; }
+	virtual void SetIsDead(const bool NewIsDead) override;
+	UFUNCTION(NetMulticast, Reliable)
+	void M_NotifyOnDeath();
 };

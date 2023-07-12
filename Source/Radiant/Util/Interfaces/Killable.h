@@ -15,8 +15,6 @@ class UKillable : public UInterface
 	GENERATED_BODY()
 };
 
-
-
 class RADIANT_API IKillable
 {
 	GENERATED_BODY()
@@ -24,7 +22,6 @@ class RADIANT_API IKillable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	FUnitDiedSignature OnUnitDied;
-	virtual TArray<TSubclassOf<class UGameplayAbility>> GetDeathAbilities() const = 0;
-	virtual void Die();
-	virtual void GiveDeathAbilities();
+	virtual void SetIsDead( const bool bIsDead );
+	virtual bool GetIsDead() const = 0;
 };

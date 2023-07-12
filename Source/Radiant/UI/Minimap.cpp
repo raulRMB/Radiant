@@ -10,6 +10,7 @@
 #include "Kismet/KismetMaterialLibrary.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Player/Avatar.h"
+#include "Player/RTPlayerState.h"
 #include "Util/Managers/ActorManager.h"
 
 void UMinimap::DrawDynamic()

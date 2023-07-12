@@ -166,8 +166,8 @@ void AAvatar::BeginPlay()
 	{
 		OverHeadInfoBar->SetHealthPercent(1.f);
 		OverHeadInfoBar->SetManaPercent(1.f);
-		auto PS = GetRTPlayerState();
-		if (PS)
+		ARTPlayerState* PS = GetRTPS();
+		if(PS)
 		{
 			auto AS = PS->GetAttributeSetBase();
 			if (AS)
@@ -304,10 +304,27 @@ UInventoryComponent* AAvatar::GetInventory() const
 
 bool AAvatar::CheckShouldAttack()
 {
-	if (!Target || bShouldActivateBuffer)
+	if(bShouldActivateBuffer)
 	{
 		bIsAttacking = false;
 		return false;
+	}
+
+	if(!IsValid(Target))
+	{
+		bIsAttacking = false;
+		Target = nullptr;
+		return false;
+	}
+
+	if(IKillable* Killable = Cast<IKillable>(Target))
+	{
+		if(Killable->GetIsDead())
+		{
+			bIsAttacking = false;
+			Target = nullptr;
+			return false;
+		}
 	}
 
 	FVector dir = Target->GetActorLocation() - GetActorLocation();
@@ -318,16 +335,16 @@ bool AAvatar::CheckShouldAttack()
 	{
 		Interface->GetAbilitySystemComponent()->GetOwnedGameplayTags(OwnedTags);
 	}
-
-	if (OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Dead"))))
+	
+	BasicAttack();
+	
+	if(GetIsDead())
 	{
 		Target = nullptr;
 		FGameplayTagContainer TagContainer;
 		TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack")));
 		GetAbilitySystemComponent()->CancelAbilities(&TagContainer);
 	}
-
-	BasicAttack();
 
 	return true;
 }
@@ -385,6 +402,11 @@ void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
 	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarLast));
+}
+
+ARTPlayerState* AAvatar::GetRTPS() const
+{
+	return GetPlayerState<ARTPlayerState>();
 }
 
 void AAvatar::PossessedBy(AController* NewController)
@@ -498,12 +520,17 @@ ETeamId AAvatar::GetTeamId() const
 
 void AAvatar::GiveInitialAbilities()
 {
-	for (auto AbilityData : GetRTPlayerState()->GetInnateAbilities())
-	{
+	for(UAbilityDataAsset* AbilityData : GetRTPS()->GetInnateAbilities())
+	{	
 		FGameplayAbilitySpec AbilitySpec = AbilityData->Ability.GetDefaultObject();
 		AbilitySystemComponent->GiveAbility(AbilitySpec);
 	}
-	GiveDeathAbilities();
+}
+
+void AAvatar::SetIsDead(const bool NewIsDead)
+{
+	Super::SetIsDead(NewIsDead);
+	GetRTPS()->SetIsDead(NewIsDead);
 }
 
 ARTHUD* AAvatar::GetRTHUD()
@@ -742,8 +769,6 @@ void AAvatar::AttackMove(const FInputActionValue& Value)
 			}
 		}
 	}
-
-	CheckShouldAttack();
 
 	FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.PathTo"));
 	CastAbility(Tag);

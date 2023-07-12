@@ -2,12 +2,12 @@
 
 
 #include "Player/RTPlayerState.h"
-
 #include "InventoryComponent.h"
 #include "RTPlayerController.h"
 #include "Data/AbilityDataAsset.h"
 #include "Data/ItemData.h"
-#include "Engine/ActorChannel.h"
+#include "Modes/Base/RTGameState.h"
+#include "Modes/Base/RTGameMode.h"
 #include "Player/Avatar.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
@@ -21,6 +21,7 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, TeamId);
 	DOREPLIFETIME(ARTPlayerState, Username);
 	DOREPLIFETIME(ARTPlayerState, InnateAbilities);
+	DOREPLIFETIME(ARTPlayerState, bIsDead);
 }
 
 FVector ARTPlayerState::GetCarrierLocation() const
@@ -121,6 +122,55 @@ FString ARTPlayerState::GetUsername()
 {
 	return Username;
 }
+
+#pragma region Killable
+
+void ARTPlayerState::S_SetIsDead_Implementation(bool bNewIsDead)
+{
+	bIsDead = bNewIsDead;
+}
+
+void ARTPlayerState::SetIsDead(const bool NewIsDead)
+{
+	IKillable::SetIsDead(NewIsDead);
+	S_SetIsDead(NewIsDead);
+}
+
+#pragma endregion Killable
+
+#pragma region ConvenienceGetters
+
+ARTPlayerController* ARTPlayerState::GetRTPC() const
+{
+	return Cast<ARTPlayerController>(GetPlayerController());
+}
+
+
+AAvatar* ARTPlayerState::GetAvatar() const
+{
+	return GetPawn<AAvatar>();
+}
+
+ARTGameMode* ARTPlayerState::GetRTGM() const
+{
+	if(GetWorld())
+	{
+		return GetWorld()->GetAuthGameMode<ARTGameMode>();
+	}
+	return nullptr;
+}
+
+ARTGameState* ARTPlayerState::GetRTGS() const
+{
+	if(GetWorld())
+	{
+		return GetWorld()->GetGameState<ARTGameState>();
+	}
+	return nullptr;
+}
+
+#pragma endregion ConvenienceGetters
+
 
 void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
 {

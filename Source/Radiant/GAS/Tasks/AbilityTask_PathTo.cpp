@@ -11,6 +11,8 @@
 UAbilityTask_PathTo::UAbilityTask_PathTo()
 {
 	bTickingTask = true;
+	bCanMove = true;
+	bSimulatedTask = true;
 }
 
 UAbilityTask_PathTo* UAbilityTask_PathTo::PathTo(UGameplayAbility* OwningAbility, FName TaskInstanceName,
@@ -20,13 +22,21 @@ UAbilityTask_PathTo* UAbilityTask_PathTo::PathTo(UGameplayAbility* OwningAbility
 
 	MyTask->Target = HitResult.GetActor();
 	MyTask->Location = HitResult.Location;
-	MyTask->bFollow = static_cast<bool>(Cast<AAvatar>(HitResult.GetActor()));
+	MyTask->bFollow = static_cast<bool>(Cast<ITargetable>(HitResult.GetActor()));
 
 	return MyTask;
 }
 
 void UAbilityTask_PathTo::OnUnitDied()
 {
+	if(AAvatar* Avatar = Cast<AAvatar>(Ability->GetAvatarActorFromActorInfo()))
+	{
+		if(AController* Controller = Avatar->GetController())
+		{
+			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, Avatar->GetActorLocation());
+		}
+	}
+	bCanMove = false;
 	EndTask();
 	if(ShouldBroadcastAbilityTaskDelegates())
 	{
@@ -42,13 +52,27 @@ void UAbilityTask_PathTo::Activate()
 	{		
 		Killable->OnUnitDied.AddUObject(this, &UAbilityTask_PathTo::OnUnitDied);
 	}
+	if(IKillable* KillableTarget = Cast<IKillable>(Target))
+	{
+		KillableTarget->OnUnitDied.AddUObject(this, &UAbilityTask_PathTo::OnUnitDied);
+	}
 }
 
 void UAbilityTask_PathTo::TickTask(float DeltaTime)
 {
 	Super::TickTask(DeltaTime);
+
+	if(!bCanMove)
+	{
+		EndTask();
+		if(ShouldBroadcastAbilityTaskDelegates())
+		{
+			OnPathToComplete.Broadcast(false);
+		}
+		return;	
+	}
 	
-	if(bFollow && !Target)
+	if(bFollow && !IsValid(Target))
 	{
 		EndTask();
 		if(ShouldBroadcastAbilityTaskDelegates())
@@ -78,7 +102,9 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 				if(Dist < Avatar->AttackRange)
 				{
 					if(Avatar->CheckShouldAttack())
+					{
 						return;
+					}
 				}
 			}
 			
@@ -99,7 +125,7 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 			}
 			
 			if(auto Controller = Avatar->GetController())
-			{				
+			{
 				if(bFollow)
 				{
 					UAIBlueprintHelperLibrary::SimpleMoveToActor(Controller, Target);
@@ -123,12 +149,18 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 
 void UAbilityTask_PathTo::OnDestroy(bool AbilityEnded)
 {
-	if(AAvatar* Avatar = Cast<AAvatar>(Ability->GetAvatarActorFromActorInfo()))
+	if(IsValid(Ability))
 	{
-		Avatar->CheckShouldAttack();
-		if(AController* Controller = Avatar->GetController())
+		if(Ability->GetAvatarActorFromActorInfo())
 		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, Avatar->GetActorLocation());
+			if(AAvatar* Avatar = Cast<AAvatar>(Ability->GetAvatarActorFromActorInfo()))
+			{
+				Avatar->CheckShouldAttack();
+				if(AController* Controller = Avatar->GetController())
+				{
+					UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, Avatar->GetActorLocation());
+				}
+			}
 		}
 	}
 	Super::OnDestroy(AbilityEnded);

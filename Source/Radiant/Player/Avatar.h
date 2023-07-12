@@ -7,10 +7,10 @@
 #include "InputActionValue.h"
 #include "Characters/RTCharacter.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
-#include "Player/RTPlayerState.h"
 #include "Util/Interfaces/Carrier.h"
 #include "Util/Managers/GridManager.h"
 #include "Avatar.generated.h"
+
 
 UCLASS()
 class RADIANT_API AAvatar : public ARTCharacter, public ICarrier
@@ -146,18 +146,18 @@ public:
 	UFUNCTION(Server, Reliable)
 	void S_Demolish(ABuilding* Building);
 
-	ARTPlayerState* GetRTPlayerState() const { return GetPlayerState<ARTPlayerState>(); }
-
+	class ARTPlayerState* GetRTPS() const;
+	
 	virtual void PossessedBy(AController* NewController) override;
 	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData);
-	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData) const;
 	virtual void OnRep_PlayerState() override;
 	virtual void OnRep_Controller() override;
-	void SetHUDIcons(const TMap<EItemSlotID, struct FItemSlotInfo>& AbilityMap);
 
 	virtual ETeamId GetTeamId() const override;
 	void GiveInitialAbilities();
+
+	virtual void SetIsDead(const bool NewIsDead) override;
 
 	UFUNCTION(Server, Reliable)
 	void S_CancelAllAbilities();

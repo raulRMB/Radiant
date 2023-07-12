@@ -19,7 +19,7 @@ void URTBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCall
 		{
 			if(IKillable* Killable = Cast<IKillable>(GetOwningActor()))
 			{
-				Killable->Die();
+				Killable->SetIsDead(true);
 			}
 		}
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));

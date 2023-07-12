@@ -17,11 +17,22 @@ void ARTCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ARTCharacter, TeamId);
+	DOREPLIFETIME(ARTCharacter, bIsDead);
 }
 
-TArray<TSubclassOf<UGameplayAbility>> ARTCharacter::GetDeathAbilities() const
+void ARTCharacter::SetIsDead(const bool NewIsDead)
 {
-	return DeathAbilities;
+	IKillable::SetIsDead(NewIsDead);
+	bIsDead = NewIsDead;
+	if(NewIsDead)
+	{
+		M_NotifyOnDeath();
+	}
+}
+
+void ARTCharacter::M_NotifyOnDeath_Implementation()
+{
+	OnUnitDied.Broadcast();
 }
 
 void ARTCharacter::M_SetIgnoreWalls_Implementation(const bool bIgnoreWalls)

@@ -34,7 +34,7 @@ public:
 
 	UNPCAttributeSet* GetAttributeSet() const;
 	
-	virtual void Die() override;
+	virtual void SetIsDead(const bool NewIsDead) override;
 
 	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
 protected:

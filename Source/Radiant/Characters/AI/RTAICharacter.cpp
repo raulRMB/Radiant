@@ -41,11 +41,14 @@ UNPCAttributeSet* ARTAICharacter::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void ARTAICharacter::Die()
+void ARTAICharacter::SetIsDead(const bool NewIsDead)
 {
 	OnUnitDied.Broadcast();
-	GetWorld()->SpawnActor<APickUp>(PickUpClass, GetActorTransform());
-	Destroy();
+	if(NewIsDead)
+	{
+		GetWorld()->SpawnActor<APickUp>(PickUpClass, GetActorTransform());
+		Destroy();
+	}
 }
 
 void ARTAICharacter::OnHealthChanged(const FOnAttributeChangeData& OnAttributeChangeData)

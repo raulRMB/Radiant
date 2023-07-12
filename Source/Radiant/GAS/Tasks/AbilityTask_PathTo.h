@@ -14,6 +14,7 @@ class RADIANT_API UAbilityTask_PathTo : public UAbilityTask
 {
 	GENERATED_BODY()
 
+	uint8 bCanMove : 1;
 public:
 	UAbilityTask_PathTo();
 	

@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/Avatar.h"
+#include "Player/RTPlayerState.h"
 #include "UI/AIInfoBar.h"
 
 ABuilding::ABuilding()

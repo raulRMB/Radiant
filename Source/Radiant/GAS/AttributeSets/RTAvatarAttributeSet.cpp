@@ -23,10 +23,7 @@ void URTAvatarAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCa
 				Cast<ARTGameState>(GetWorld()->GetGameState())->OnHeroDeath(Hero);
 			}
 			Hero->S_StopMovement();
-			
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.State.Death")));
-			GetOwningAbilitySystemComponentChecked()->TryActivateAbilitiesByTag(TagContainer);
+			Hero->SetIsDead(true);
 		}
 	}
 	else if (Data.EvaluatedData.Attribute == GetManaAttribute())
