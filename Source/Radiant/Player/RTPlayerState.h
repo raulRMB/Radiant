@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayEffectTypes.h"
 #include "RTPlayerController.h"
+#include "Data/ItemData.h"
 #include "GameFramework/PlayerState.h"
 #include "UI/ItemSlot.h"
 #include "Util/Interfaces/Carrier.h"
@@ -46,6 +47,7 @@ protected:
 public:
 	virtual FVector GetCarrierLocation() const override;
 	virtual class UInventoryComponent* GetInventory() const override;
+	void RemoveAbility(FGameplayAbilitySpecHandle Handle);
 	class ARTPlayerController* GetRTController() const;
 
 	virtual void BeginPlay() override;
@@ -78,6 +80,7 @@ public:
 
 	UPROPERTY(Replicated, EditAnywhere)
 	TArray<class UAbilityDataAsset*> InnateAbilities;
+	FGameplayAbilitySpecHandle GiveAbility(FItemData* ItemData);
 	TArray<class UAbilityDataAsset*> GetInnateAbilities() const;
 
 #pragma region Killable

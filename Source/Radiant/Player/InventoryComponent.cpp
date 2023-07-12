@@ -2,6 +2,8 @@
 
 
 #include "Player/InventoryComponent.h"
+
+#include "RTPlayerState.h"
 #include "Data/ItemData.h"
 #include "Engine/DataTable.h"
 #include "Event/EventBroker.h"
@@ -56,11 +58,26 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 	UEventBroker::Get(this)->ItemUsed.AddUObject(this, &UInventoryComponent::S_ItemUsed);
 }
 
+int32 UInventoryComponent::AddItem(const FName& ItemName, FItemData* ItemData)
+{
+	if (!FindHandle(ItemName))
+	{
+		auto Handle = GetPlayerState()->GiveAbility(ItemData);
+		AddHandleToName(Handle, ItemName);
+	}
+	return AddItem(ItemName);
+}
+
 int32 UInventoryComponent::AddItem(const FName& ItemName)
 {
 	Items[ItemName].Amount += 1;
 	C_ItemChanged(ItemName, Items[ItemName].Amount);
 	return Items[ItemName].Amount;
+}
+
+ARTPlayerState* UInventoryComponent::GetPlayerState()
+{
+	return Cast<ARTPlayerController>(GetOuter())->GetPlayerState<ARTPlayerState>();
 }
 
 int32 UInventoryComponent::RemoveItem(const FName& ItemName)
@@ -69,6 +86,12 @@ int32 UInventoryComponent::RemoveItem(const FName& ItemName)
 	{
 		Items[ItemName].Amount -= 1;
 		C_ItemChanged(ItemName, Items[ItemName].Amount);
+	}
+	if(Items[ItemName].Amount == 0)
+	{
+		const auto Handle = FindHandle(ItemName);
+		GetPlayerState()->RemoveAbility(*Handle);
+		HandleToItemName.Remove(*Handle);
 	}
 	return Items[ItemName].Amount;
 }
@@ -103,6 +126,11 @@ void UInventoryComponent::UseItem(const FGameplayAbilitySpecHandle& Handle)
 void UInventoryComponent::AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name)
 {
 	HandleToItemName.Add(Handle, Name);
+}
+
+const FGameplayAbilitySpecHandle* UInventoryComponent::FindHandle(FName Name)
+{
+	return HandleToItemName.FindKey(Name);
 }
 
 FName UInventoryComponent::GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle)

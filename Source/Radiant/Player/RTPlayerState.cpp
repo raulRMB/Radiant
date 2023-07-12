@@ -42,6 +42,14 @@ UInventoryComponent* ARTPlayerState::GetInventory() const
 	return nullptr;
 }
 
+void ARTPlayerState::RemoveAbility(FGameplayAbilitySpecHandle Handle)
+{
+	if(AbilitySystemComponent)
+	{
+		AbilitySystemComponent->ClearAbility(Handle);
+	}
+}
+
 ARTPlayerController* ARTPlayerState::GetRTController() const
 {
 	return Cast<ARTPlayerController>(GetPlayerController());
@@ -204,16 +212,15 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
 	{
 		return;
 	}
-	int32 AbilityCount = GetInventory()->AddItem(AbilityName);
-
-	if (AbilityCount == 1)
-	{
-		FGameplayAbilitySpec AbilitySpec = ItemData->AbilityData->Ability.GetDefaultObject();
-		FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(AbilitySpec);
-		GetInventory()->AddHandleToName(Handle, AbilityName);
-	}
+	GetInventory()->AddItem(AbilityName, ItemData);
 
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price);
+}
+
+FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(FItemData* ItemData)
+{
+	FGameplayAbilitySpec AbilitySpec = ItemData->AbilityData->Ability.GetDefaultObject();
+	return AbilitySystemComponent->GiveAbility(AbilitySpec);
 }
 
 TArray<class UAbilityDataAsset*> ARTPlayerState::GetInnateAbilities() const

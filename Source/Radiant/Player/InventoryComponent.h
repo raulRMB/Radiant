@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayAbilitySpecHandle.h"
+#include "RTPlayerState.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
@@ -55,11 +56,14 @@ public:
 public:
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
+	int32 AddItem(const FName& ItemName, FItemData* ItemData);
 	int32 AddItem(const FName& ItemName);
+	ARTPlayerState* GetPlayerState();
 	int32 RemoveItem(const FName& ItemName);
 	void DropItem(const FName& ItemName);
 	void UseItem(const FGameplayAbilitySpecHandle& Handle);
 	void AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name);
+	const FGameplayAbilitySpecHandle* FindHandle(FName Name);
 
 	FName GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle);
 };
