@@ -64,6 +64,7 @@ void URTBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxXP, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, Level, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxLevel, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, AttackSpeed, COND_None, REPNOTIFY_Always);
 }
 
 void URTBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
@@ -110,6 +111,11 @@ void URTBaseAttributeSet::OnRep_Level(const FGameplayAttributeData& OldLevel)
 void URTBaseAttributeSet::OnRep_MaxLevel(const FGameplayAttributeData& OldMaxLevel)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, MaxLevel, OldMaxLevel);
+}
+
+void URTBaseAttributeSet::OnRep_AttackSpeed(const FGameplayAttributeData& OldAttackSpeed)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, AttackSpeed, OldAttackSpeed);
 }
 
 void URTBaseAttributeSet::UpdateMovementSpeed()

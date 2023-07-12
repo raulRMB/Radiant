@@ -109,6 +109,17 @@ void UGAAnimated::ReturnToDefault() const
 	}
 }
 
+void UGAAnimated::BindAnimations(float PlayRate)
+{
+	UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage,SpawnTags, PlayRate * MontagePlayRate, NAME_None, false, 1.0f);
+	Task->OnCompleted.AddDynamic(this, &UGAAnimated::OnCompleted);
+	Task->OnCancelled.AddDynamic(this, &UGAAnimated::OnCancelled);
+	Task->OnInterrupted.AddDynamic(this, &UGAAnimated::OnInterrupted);
+	Task->OnBlendOut.AddDynamic(this, &UGAAnimated::OnBlendOut);
+	Task->EventReceived.AddDynamic(this, &UGAAnimated::OnEventReceived);
+	Task->ReadyForActivation();
+}
+
 void UGAAnimated::BindAnimations()
 {
 	UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage,SpawnTags, MontagePlayRate, NAME_None, false, 1.0f);

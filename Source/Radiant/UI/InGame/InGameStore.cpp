@@ -10,6 +10,7 @@
 #include "Player/Avatar.h"
 #include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
+#include "Player/RTPlayerState.h"
 
 void UInGameStore::UpdateRadianite(float RadianiteAmount)
 {

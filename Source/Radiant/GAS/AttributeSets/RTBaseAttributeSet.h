@@ -58,6 +58,10 @@ public:
 	FGameplayAttributeData MaxLevel;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxLevel)
 
+	UPROPERTY(BlueprintReadOnly, Category = "AttackSpeed", ReplicatedUsing = OnRep_AttackSpeed)
+	FGameplayAttributeData AttackSpeed;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AttackSpeed)
+	
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
@@ -91,6 +95,9 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MaxLevel(const FGameplayAttributeData& OldMaxLevel);
+
+	UFUNCTION()
+	virtual void OnRep_AttackSpeed(const FGameplayAttributeData& OldAttackSpeed);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

@@ -7,6 +7,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Player/Avatar.h"
 #include "GAS/Tasks/PlayMontageAndWaitForEvent.h"
+#include "Player/RTPlayerState.h"
 #include "Util/Util.h"
 
 void UBasicAttack::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -79,6 +80,7 @@ void UBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	UAbilityTask_WaitGameplayEvent* WaitEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, FGameplayTag::RequestGameplayTag("Notify.Uncancellable"));
 	WaitEvent->EventReceived.AddDynamic(this, &UBasicAttack::OnUncancellableEventRecieved);
 	WaitEvent->ReadyForActivation();
-	
-	BindAnimations();
+
+	float AS = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSetBase()->GetAttackSpeed();
+	BindAnimations(AS);
 }
