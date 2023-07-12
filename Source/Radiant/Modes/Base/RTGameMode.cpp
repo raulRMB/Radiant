@@ -259,6 +259,8 @@ void ARTGameMode::Respawn(ARTPlayerController* PlayerController)
 				Hero->FinishSpawning(PlayerController->GetPlayerStart()->GetTransform());
 				if (Hero)
 				{
+					PlayerController->GetPlayerState<ARTPlayerState>()->SetIsDead(false);
+					
 					PlayerController->Possess(Hero);
 					Manager->AddPlayer(Hero);
 				}

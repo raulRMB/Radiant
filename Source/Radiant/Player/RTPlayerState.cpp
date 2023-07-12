@@ -131,6 +131,10 @@ void ARTPlayerState::S_SetIsDead_Implementation(bool bNewIsDead)
 	FGameplayTag DeadTag = FGameplayTag::RequestGameplayTag("States.Dead");
 	GetAbilitySystemComponent()->SetLooseGameplayTagCount(DeadTag, bNewIsDead ? 1 : 0);
 	GetAbilitySystemComponent()->SetReplicatedLooseGameplayTagCount(DeadTag, bNewIsDead ? 1 : 0);
+	if(bIsDead && HasAuthority())
+	{
+		StartRespawnTimer();
+	}
 }
 
 void ARTPlayerState::SetIsDead(const bool NewIsDead)
@@ -139,9 +143,27 @@ void ARTPlayerState::SetIsDead(const bool NewIsDead)
 	S_SetIsDead(NewIsDead);
 }
 
+
+void ARTPlayerState::StartRespawnTimer()
+{
+	if(GetWorld())
+	{
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, this, &ARTPlayerState::Respawn, AttributeSet->GetCurrentRespawnTime(), false);
+	}
+}
+
+void ARTPlayerState::Respawn()
+{
+	GetRTGM()->Respawn(GetRTPC());
+	AttributeSet->SetHealth(AttributeSet->GetMaxHealth());
+	AttributeSet->SetMana(AttributeSet->GetMaxMana());
+}
+
 #pragma endregion Killable
 
 #pragma region ConvenienceGetters
+
 
 ARTPlayerController* ARTPlayerState::GetRTPC() const
 {

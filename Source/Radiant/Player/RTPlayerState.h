@@ -29,7 +29,6 @@ protected:
 
 	UPROPERTY()
 	class URTAvatarAttributeSet* AttributeSet;
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(Replicated, VisibleAnywhere)
@@ -87,6 +86,9 @@ public:
 	void S_SetIsDead(bool bNewIsDead);
 	virtual void SetIsDead(const bool bIsDead) override;
 	virtual bool GetIsDead() const override { return bIsDead; }
+	void StartRespawnTimer();
+	UFUNCTION()
+	void Respawn();
 
 #pragma endregion Killable
 	
