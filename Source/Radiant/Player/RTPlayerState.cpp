@@ -46,7 +46,7 @@ void ARTPlayerState::RemoveAbility(FGameplayAbilitySpecHandle Handle)
 {
 	if(AbilitySystemComponent)
 	{
-		AbilitySystemComponent->ClearAbility(Handle);
+		AbilitySystemComponent->SetRemoveAbilityOnEnd(Handle);
 	}
 }
 
