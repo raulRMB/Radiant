@@ -241,9 +241,7 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	FHitResult HitResult = GetMousePositionInWorld();
 	ITargetable* Targetable = Cast<ITargetable>(HitResult.GetActor());
 	ITeamMember* TeamMember = Cast<ITeamMember>(HitResult.GetActor());
-	IKillable* Killable = Cast<IKillable>(HitResult.GetActor());
-	if (Targetable && TeamMember->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId()
-		&& Killable && !Killable->GetIsDead())
+	if (Targetable && TeamMember->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId())
 	{
 		Target = HitResult.GetActor();
 		GetPlayerState<ARTPlayerState>()->S_SetTarget(HitResult.GetActor());
