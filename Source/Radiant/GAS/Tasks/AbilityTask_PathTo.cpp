@@ -49,7 +49,16 @@ void UAbilityTask_PathTo::Activate()
 	Super::Activate();
 	
 	if(IKillable* Killable = Cast<IKillable>(GetAvatarActor()))
-	{		
+	{
+		if(Killable->GetIsDead())
+		{
+			EndTask();
+			if(ShouldBroadcastAbilityTaskDelegates())
+			{
+				OnPathToComplete.Broadcast(false);
+			}
+			return;
+		}
 		Killable->OnUnitDied.AddUObject(this, &UAbilityTask_PathTo::OnUnitDied);
 	}
 	if(IKillable* KillableTarget = Cast<IKillable>(Target))
@@ -61,7 +70,7 @@ void UAbilityTask_PathTo::Activate()
 void UAbilityTask_PathTo::TickTask(float DeltaTime)
 {
 	Super::TickTask(DeltaTime);
-
+	
 	if(!bCanMove)
 	{
 		EndTask();

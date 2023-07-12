@@ -353,6 +353,11 @@ bool AAvatar::CheckShouldAttack()
 
 void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 {
+	if(GetIsDead())
+	{
+		return;
+	}
+	
 	TArray<AActor*> Actors;
 	FGameplayEventData EventData;
 	FGameplayAbilityTargetData_SingleTargetHit* MousePosData = new FGameplayAbilityTargetData_SingleTargetHit();
