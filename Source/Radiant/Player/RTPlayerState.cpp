@@ -128,6 +128,9 @@ FString ARTPlayerState::GetUsername()
 void ARTPlayerState::S_SetIsDead_Implementation(bool bNewIsDead)
 {
 	bIsDead = bNewIsDead;
+	FGameplayTag DeadTag = FGameplayTag::RequestGameplayTag("States.Dead");
+	GetAbilitySystemComponent()->SetLooseGameplayTagCount(DeadTag, bNewIsDead ? 1 : 0);
+	GetAbilitySystemComponent()->SetReplicatedLooseGameplayTagCount(DeadTag, bNewIsDead ? 1 : 0);
 }
 
 void ARTPlayerState::SetIsDead(const bool NewIsDead)
