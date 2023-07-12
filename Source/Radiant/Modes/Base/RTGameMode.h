@@ -13,15 +13,15 @@ UCLASS()
 class RADIANT_API ARTGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+
 	uint8 bMatchIsOver : 1;
-	
+
 public:
 	ARTGameMode();
 	void SetTeamSize(FString QueueName);
 	uint32 TeamSize = UINT_MAX;
 	uint32 TeamCount = 2;
-	
+
 	uint32 PlayersLoaded = 0;
 
 	void PlayerLoaded();
@@ -31,10 +31,11 @@ public:
 	void SpawnAvatar(class ARTPlayerController* PlayerController);
 
 	UPROPERTY(EditAnywhere, Category="Gameplay")
-	TSubclassOf<class AAvatar> HeroClass;	
+	TSubclassOf<class AAvatar> HeroClass;
+
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
-	void HandleMatchHasEnded() override;
+	virtual void HandleMatchHasEnded() override;
 	void EndGame();
 	void PlayersAreLoaded() const;
 	void NotifyMatchEnd(ETeamId WinningTeam);
@@ -44,14 +45,16 @@ protected:
 	void StartGame();
 
 	virtual bool ReadyToStartMatch_Implementation() override;
+
 private:
-	bool ReadyToEndMatch_Implementation();
+	virtual bool ReadyToEndMatch_Implementation() override;
 	mutable bool bInitialPlayerLoad = false;
 	bool TeamSizeSet = false;
 	virtual void HandleMatchHasStarted() override;
 	ETeamId WinningTeam = ETeamId::Neutral;
 
 	class ARTPlayerStart* FindTeamStartTransform(ETeamId TeamId);
+
 public:
 	void Respawn(class ARTPlayerController* PlayerController);
 };

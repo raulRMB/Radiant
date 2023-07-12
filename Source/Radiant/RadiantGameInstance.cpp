@@ -10,7 +10,7 @@ void URadiantGameInstance::Init()
 {
 	Super::Init();
 
-	if(IsDedicatedServerInstance())
+	if (IsDedicatedServerInstance())
 	{
 		FOnGSDKShutdown_Dyn OnGsdkShutdown;
 		OnGsdkShutdown.BindDynamic(this, &URadiantGameInstance::OnGSDKShutdown);
@@ -29,14 +29,14 @@ void URadiantGameInstance::Init()
 #if UE_SERVER
 	UGSDKUtils::SetDefaultServerHostPort();
 #endif
-	
+
 	UAbilitySystemGlobals::Get().InitGlobalData();
 }
 
 void URadiantGameInstance::OnStart()
 {
 	Super::OnStart();
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("Reached onStart!"));
 	UGSDKUtils::ReadyForPlayers();
 }

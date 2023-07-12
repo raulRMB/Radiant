@@ -26,9 +26,9 @@ void URTInfoPanel::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 
 void URTInfoPanel::UpdateProperties(float DeltaTime) const
 {
-	if(auto State = GetOwningPlayerState<ARTPlayerState>())
+	if (auto State = GetOwningPlayerState<ARTPlayerState>())
 	{
-		if(URTAvatarAttributeSet* Attributes = State->GetAttributeSetBase())
+		if (URTAvatarAttributeSet* Attributes = State->GetAttributeSetBase())
 		{
 			UpdateCooldowns();
 			HealthBar->SetPercent(Attributes->GetHealth() / Attributes->GetMaxHealth());
@@ -42,10 +42,10 @@ void URTInfoPanel::UpdateProperties(float DeltaTime) const
 void URTInfoPanel::UpdateCooldowns() const
 {
 	auto Slots = HotbarHorizontalBox->GetAllChildren();
-	for(int i = 0; i < Slots.Num(); i++)
+	for (int i = 0; i < Slots.Num(); i++)
 	{
 		UItemSlot* AbilityWidget = Cast<UItemSlot>(Slots[i]);
-		if(AbilityWidget)
+		if (AbilityWidget)
 		{
 			AbilityWidget->UpdateCooldown();
 		}
@@ -64,7 +64,8 @@ UHorizontalBox* URTInfoPanel::GetHotbarHorizontalBox()
 
 void URTInfoPanel::Init()
 {
-	Cast<ARTGameState>(UGameplayStatics::GetGameState(this))->OnHeroDeathDelegate.BindUObject(this, &URTInfoPanel::OnHeroDeath);
+	Cast<ARTGameState>(UGameplayStatics::GetGameState(this))->OnHeroDeathDelegate.BindUObject(
+		this, &URTInfoPanel::OnHeroDeath);
 }
 
 void URTInfoPanel::UpdateRadianite(float Amount) const
@@ -88,10 +89,11 @@ void URTInfoPanel::OnHeroDeath(uint32 RedScore, uint32 BlueScore) const
 
 void URTInfoPanel::ShowEndScreen(bool bWon) const
 {
-	if(bWon)
+	if (bWon)
 	{
 		Victory->SetVisibility(ESlateVisibility::Visible);
-	} else
+	}
+	else
 	{
 		Defeat->SetVisibility(ESlateVisibility::Visible);
 	}
@@ -99,7 +101,7 @@ void URTInfoPanel::ShowEndScreen(bool bWon) const
 
 void URTInfoPanel::HideLoadScreen() const
 {
-	if(LoadingScreen)
+	if (LoadingScreen)
 	{
 		LoadingScreen->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -118,14 +120,18 @@ void URTInfoPanel::SetMS(float MS) const
 void URTInfoPanel::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
-	if(UAbilityDragDropOperation* DragOp = Cast<UAbilityDragDropOperation>(InOperation))
+	if (UAbilityDragDropOperation* DragOp = Cast<UAbilityDragDropOperation>(InOperation))
+	{
 		DragOp->WidgetReference->SetShouldDropItem(true);
+	}
 }
 
 void URTInfoPanel::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-	UDragDropOperation* InOperation)
+                                     UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
-	if(UAbilityDragDropOperation* DragOp = Cast<UAbilityDragDropOperation>(InOperation))
+	if (UAbilityDragDropOperation* DragOp = Cast<UAbilityDragDropOperation>(InOperation))
+	{
 		DragOp->WidgetReference->SetShouldDropItem(false);
+	}
 }

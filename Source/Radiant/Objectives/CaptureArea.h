@@ -13,30 +13,32 @@ UCLASS()
 class RADIANT_API ACaptureArea : public AActor
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta = (AllowPrivateAccess=true))
 	class UBoxComponent* HitBox;
-public:	
+
+public:
 	ACaptureArea();
 
 	FOnUpdatePlayersInAreaSignature OnUpdatePlayersInArea;
+
 protected:
-	
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-public:	
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 private:
 	UFUNCTION()
 	void BeingOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor,
-                					  class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-					  const FHitResult& SweepResult);
+	                  class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                  const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void EndOverlap(class UPrimitiveComponent* OverlappedComponent, class AActor* OtherActor,
-					class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	                class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	void CheckCapture();
 };

@@ -14,10 +14,10 @@ struct FInventoryItem
 
 	UPROPERTY()
 	uint32 Amount;
-	
+
 	UPROPERTY()
 	class UAbilityDataAsset* AbilityData;
-	
+
 	FInventoryItem()
 	{
 		Amount = 0;
@@ -25,7 +25,7 @@ struct FInventoryItem
 	}
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RADIANT_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -38,16 +38,20 @@ class RADIANT_API UInventoryComponent : public UActorComponent
 
 	UPROPERTY()
 	TMap<FGameplayAbilitySpecHandle, FName> HandleToItemName;
-public:	
+
+public:
 	UInventoryComponent();
+
 private:
 	UFUNCTION(Client, Reliable)
 	void C_ItemChanged(const FName& ItemName, const uint32 Amount);
+
 public:
 	UFUNCTION(Server, Reliable)
 	void S_DropItem(const FName& ItemName);
 	UFUNCTION(Server, Reliable)
 	void S_ItemUsed(const FName& ItemName);
+
 public:
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);

@@ -12,11 +12,11 @@
 // Sets default values
 AHeatSeeking::AHeatSeeking()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
-    AActor::SetReplicateMovement(true);
+	AActor::SetReplicateMovement(true);
 
 	HitBox = CreateDefaultSubobject<USphereComponent>(TEXT("HitBox"));
 	HitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -35,8 +35,10 @@ void AHeatSeeking::MulticastSetTarget_Implementation(AActor* NewTarget)
 void AHeatSeeking::BeginPlay()
 {
 	Super::BeginPlay();
-	if(HasAuthority())
+	if (HasAuthority())
+	{
 		MulticastSetTarget(Target);
+	}
 }
 
 void AHeatSeeking::OnConstruction(const FTransform& Transform)
@@ -53,22 +55,26 @@ void AHeatSeeking::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 }
 
 void AHeatSeeking::OnOvelapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                 const FHitResult& SweepResult)
 {
 	IAbilitySystemInterface* SourceASC = Cast<IAbilitySystemInterface>(GetOwner());
 	IAbilitySystemInterface* TargetASC = Cast<IAbilitySystemInterface>(OtherActor);
 
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		if(ShouldHit(OtherActor))
+		if (ShouldHit(OtherActor))
 		{
-			for(TSubclassOf<UGameplayEffect> GameplayEffect : GameplayEffects)
+			for (TSubclassOf<UGameplayEffect> GameplayEffect : GameplayEffects)
 			{
 				UGameplayEffect* Effect = GameplayEffect.GetDefaultObject();
-				SourceASC->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(Effect, TargetASC->GetAbilitySystemComponent());
+				SourceASC->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(
+					Effect, TargetASC->GetAbilitySystemComponent());
 			}
-			if(bConsumeOnHit || OtherActor == Target)
+			if (bConsumeOnHit || OtherActor == Target)
+			{
 				Destroy();
+			}
 		}
 	}
 }
@@ -78,17 +84,19 @@ void AHeatSeeking::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(IsValid(Target))
+	if (IsValid(Target))
 	{
 		FVector Direction = Target->GetActorLocation() - GetActorLocation();
 		SetActorRotation(Direction.Rotation());
 		SetActorLocation(GetActorLocation() + (Direction.GetSafeNormal() * Speed * DeltaTime));
-		if(UAbilitySystemComponent* ASC = Cast<IAbilitySystemInterface>(Target)->GetAbilitySystemComponent())
+		if (UAbilitySystemComponent* ASC = Cast<IAbilitySystemInterface>(Target)->GetAbilitySystemComponent())
 		{
-			FGameplayTagContainer OwnedTags;			
+			FGameplayTagContainer OwnedTags;
 			ASC->GetOwnedGameplayTags(OwnedTags);
-			if(OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Dead"))))
+			if (OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Dead"))))
+			{
 				Destroy();
+			}
 		}
 	}
 	else
@@ -96,4 +104,3 @@ void AHeatSeeking::Tick(float DeltaTime)
 		Destroy();
 	}
 }
-

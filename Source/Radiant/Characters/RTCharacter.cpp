@@ -28,4 +28,3 @@ void ARTCharacter::M_SetIgnoreWalls_Implementation(const bool bIgnoreWalls)
 {
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, bIgnoreWalls ? ECR_Ignore : ECR_Block);
 }
-

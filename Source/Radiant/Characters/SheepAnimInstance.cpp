@@ -6,6 +6,8 @@ void USheepAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if(TryGetPawnOwner())
+	if (TryGetPawnOwner())
+	{
 		MovementSpeed = TryGetPawnOwner()->GetVelocity().Size();
+	}
 }

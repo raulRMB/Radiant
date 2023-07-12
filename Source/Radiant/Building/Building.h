@@ -21,11 +21,12 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UWidgetComponent* InfoBarWidgetComponent;
-	
+
 	FGridPiece GridPiece;
 
 	UPROPERTY(EditAnywhere)
 	uint8 bHideLevel : 1;
+
 protected:
 	UPROPERTY()
 	class UAIInfoBar* InfoBar;
@@ -43,10 +44,10 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AActor> DestroyParticles;
-	
+
 	virtual void BeginPlay() override;
 	void GiveInitialAbilities();
-	
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

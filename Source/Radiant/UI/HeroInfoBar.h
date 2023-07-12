@@ -11,7 +11,7 @@ UCLASS()
 class RADIANT_API UHeroInfoBar : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HealthBar;
 	UPROPERTY(meta = (BindWidget))
@@ -22,6 +22,7 @@ class RADIANT_API UHeroInfoBar : public UUserWidget
 	class UTextBlock* Level;
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Username;
+
 public:
 	UPROPERTY()
 	UMaterialInstanceDynamic* MaterialInstance;

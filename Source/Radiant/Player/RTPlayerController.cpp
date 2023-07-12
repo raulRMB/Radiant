@@ -26,12 +26,12 @@ void ARTPlayerController::PlayerLoaded_Implementation()
 
 void ARTPlayerController::S_SetPlayerStart_Implementation(ARTPlayerStart* NewPlayerStart)
 {
-	PlayerStart = NewPlayerStart;	
+	PlayerStart = NewPlayerStart;
 }
 
 void ARTPlayerController::Connected_Implementation()
 {
-	if(UClientSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UClientSubsystem>())
+	if (UClientSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UClientSubsystem>())
 	{
 		SetQueueName(Subsystem->QueueName);
 	}
@@ -51,13 +51,14 @@ void ARTPlayerController::BeginPlay()
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(InputMode);
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+		GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(MappingContext, 0);
 		LoadUserSettings(Subsystem);
 	}
 
-	if(InventoryComponent)
+	if (InventoryComponent)
 	{
 		InventoryComponent->InitInventory(ItemDataTable);
 	}
@@ -65,7 +66,7 @@ void ARTPlayerController::BeginPlay()
 
 FVector ARTPlayerController::GetCarrierLocation() const
 {
-	if(GetPawn())
+	if (GetPawn())
 	{
 		return GetPawn()->GetActorLocation();
 	}
@@ -81,10 +82,10 @@ void ARTPlayerController::DropItem(const FName& ItemName)
 
 void ARTPlayerController::LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem)
 {
-	if(UGameplayStatics::DoesSaveGameExist("UserSettings", 0))
+	if (UGameplayStatics::DoesSaveGameExist("UserSettings", 0))
 	{
 		UUserSettings* Save = Cast<UUserSettings>(UGameplayStatics::LoadGameFromSlot("UserSettings", 0));
-		for(FEnhancedActionKeyMapping& Mapping : Save->Mappings)
+		for (FEnhancedActionKeyMapping& Mapping : Save->Mappings)
 		{
 			Subsystem->AddPlayerMappedKey(Mapping.PlayerMappableOptions.Name, Mapping.Key);
 		}
@@ -112,7 +113,7 @@ ARTPlayerController::ARTPlayerController()
 {
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
-	if(InventoryComponent)
+	if (InventoryComponent)
 	{
 		InventoryComponent->SetIsReplicated(true);
 	}
@@ -120,10 +121,12 @@ ARTPlayerController::ARTPlayerController()
 
 void ARTPlayerController::SaveUserSettings()
 {
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+		GetLocalPlayer()))
 	{
 		UUserSettings* Save;
-		if(UGameplayStatics::DoesSaveGameExist("UserSettings", 0)) {
+		if (UGameplayStatics::DoesSaveGameExist("UserSettings", 0))
+		{
 			Save = Cast<UUserSettings>(UGameplayStatics::LoadGameFromSlot("UserSettings", 0));
 		}
 		else
@@ -139,24 +142,38 @@ void ARTPlayerController::SaveUserSettings()
 void ARTPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &ARTPlayerController::OnClick);
-		EnhancedInputComponent->BindAction(AbilityOneAction, ETriggerEvent::Started, this, &ARTPlayerController::OnAbilityOne);
-		EnhancedInputComponent->BindAction(AbilityTwoAction, ETriggerEvent::Started, this, &ARTPlayerController::OnAbilityTwo);
-		EnhancedInputComponent->BindAction(AbilityThreeAction, ETriggerEvent::Started, this, &ARTPlayerController::OnAbilityThree);
-		EnhancedInputComponent->BindAction(AbilityFourAction, ETriggerEvent::Started, this, &ARTPlayerController::OnAbilityFour);
-		EnhancedInputComponent->BindAction(AbilityFiveAction, ETriggerEvent::Started, this, &ARTPlayerController::OnAbilityFive);
-		EnhancedInputComponent->BindAction(AbilitySixAction, ETriggerEvent::Started, this, &ARTPlayerController::OnAbilitySix);
-		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this, &ARTPlayerController::ToggleCameraBool);
-		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this, &ARTPlayerController::HoldCamera);
-		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this, &ARTPlayerController::ReleaseHoldCamera);
-		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this, &ARTPlayerController::AttackMove);
-		EnhancedInputComponent->BindAction(CameraMoveAction, ETriggerEvent::Triggered, this, &ARTPlayerController::CameraMove);
-		EnhancedInputComponent->BindAction(ToggleStoreAction, ETriggerEvent::Triggered, this, &ARTPlayerController::ToggleStore);
+		EnhancedInputComponent->BindAction(AbilityOneAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::OnAbilityOne);
+		EnhancedInputComponent->BindAction(AbilityTwoAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::OnAbilityTwo);
+		EnhancedInputComponent->BindAction(AbilityThreeAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::OnAbilityThree);
+		EnhancedInputComponent->BindAction(AbilityFourAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::OnAbilityFour);
+		EnhancedInputComponent->BindAction(AbilityFiveAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::OnAbilityFive);
+		EnhancedInputComponent->BindAction(AbilitySixAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::OnAbilitySix);
+		EnhancedInputComponent->BindAction(CameraToggleAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::ToggleCameraBool);
+		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::HoldCamera);
+		EnhancedInputComponent->BindAction(CameraHoldAction, ETriggerEvent::Completed, this,
+		                                   &ARTPlayerController::ReleaseHoldCamera);
+		EnhancedInputComponent->BindAction(AttackMoveAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::AttackMove);
+		EnhancedInputComponent->BindAction(CameraMoveAction, ETriggerEvent::Triggered, this,
+		                                   &ARTPlayerController::CameraMove);
+		EnhancedInputComponent->BindAction(ToggleStoreAction, ETriggerEvent::Triggered, this,
+		                                   &ARTPlayerController::ToggleStore);
 		EnhancedInputComponent->BindAction(EscapeAction, ETriggerEvent::Triggered, this, &ARTPlayerController::Escape);
-		EnhancedInputComponent->BindAction(AcceptOrderAction, ETriggerEvent::Triggered, this, &ARTPlayerController::AcceptOrder);
-		EnhancedInputComponent->BindAction(DemolishAction, ETriggerEvent::Started, this, &ARTPlayerController::Demolish);
+		EnhancedInputComponent->BindAction(AcceptOrderAction, ETriggerEvent::Triggered, this,
+		                                   &ARTPlayerController::AcceptOrder);
+		EnhancedInputComponent->BindAction(DemolishAction, ETriggerEvent::Started, this,
+		                                   &ARTPlayerController::Demolish);
 	}
 }
 

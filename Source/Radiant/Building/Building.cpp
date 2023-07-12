@@ -32,7 +32,7 @@ void ABuilding::BeginPlay()
 	{
 		AttributeSet = NewObject<UBuildingAttributeSet>(this);
 	}
-	
+
 	GiveInitialAbilities();
 	AttributeSet->InitMaxHealth(MaxHealth);
 	AttributeSet->InitHealth(MaxHealth);
@@ -40,12 +40,12 @@ void ABuilding::BeginPlay()
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-	if(!HasAuthority())
+	if (!HasAuthority())
 	{
-		if(ensureMsgf(InfoBarWidgetComponent, TEXT("No info widget component")))
+		if (ensureMsgf(InfoBarWidgetComponent, TEXT("No info widget component")))
 		{
 			InfoBar = Cast<UAIInfoBar>(InfoBarWidgetComponent->GetUserWidgetObject());
-			if(InfoBar)
+			if (InfoBar)
 			{
 				InfoBar->ShowLevel(!bHideLevel);
 				InfoBar->SetHealthPercent(1.f);
@@ -54,17 +54,16 @@ void ABuilding::BeginPlay()
 		SetHealthBarColor();
 	}
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ABuilding::OnHealthChanged);
-
-	
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(
+		this, &ABuilding::OnHealthChanged);
 }
 
 
 void ABuilding::GiveInitialAbilities()
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		for(auto Ability : Abilities)
+		for (auto Ability : Abilities)
 		{
 			AbilitySystemComponent->GiveAbility(Ability);
 		}
@@ -78,7 +77,7 @@ void ABuilding::S_SetTeamId_Implementation(ETeamId NewTeamId)
 
 void ABuilding::S_Demolish_Implementation()
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
 		Destroy();
 	}
@@ -86,14 +85,14 @@ void ABuilding::S_Demolish_Implementation()
 
 void ABuilding::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		if(Data.NewValue <= 0)
+		if (Data.NewValue <= 0)
 		{
 			Destroy();
 		}
 	}
-	else if(AttributeSet)
+	else if (AttributeSet)
 	{
 		InfoBar->SetHealthPercent(Data.NewValue / AttributeSet->GetMaxHealth());
 	}
@@ -112,33 +111,33 @@ void ABuilding::Tick(float DeltaSeconds)
 
 void ABuilding::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		if(DestroyParticles)
+		if (DestroyParticles)
 		{
-			if(GetWorld())
+			if (GetWorld())
 			{
 				GetWorld()->SpawnActor(DestroyParticles, &GetActorTransform());
 			}
 		}
 	}
-	
+
 	Super::EndPlay(EndPlayReason);
 }
 
 void ABuilding::SetHealthBarColor()
 {
-	if(AController* PC = UGameplayStatics::GetPlayerController(this, 0))
+	if (AController* PC = UGameplayStatics::GetPlayerController(this, 0))
 	{
-		if(ARTPlayerState* PS = PC->GetPlayerState<ARTPlayerState>())
+		if (ARTPlayerState* PS = PC->GetPlayerState<ARTPlayerState>())
 		{
-			if(TeamId == PS->GetTeamId())
+			if (TeamId == PS->GetTeamId())
 			{
 				InfoBar->SetColor(FColor::Green);
 			}
 			else
 			{
-				InfoBar->SetColor(FColor::Red);	
+				InfoBar->SetColor(FColor::Red);
 			}
 		}
 	}
@@ -153,5 +152,3 @@ UBuildingAttributeSet* ABuilding::GetAttributeSet() const
 {
 	return AttributeSet;
 }
-
-

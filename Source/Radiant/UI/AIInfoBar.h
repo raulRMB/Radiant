@@ -17,6 +17,7 @@ class RADIANT_API UAIInfoBar : public UUserWidget
 	class UTextBlock* Level;
 	UPROPERTY(meta = (BindWidget))
 	class UImage* LevelBg;
+
 public:
 	void ShowLevel(bool Value);
 	void SetHealthPercent(float Percent);

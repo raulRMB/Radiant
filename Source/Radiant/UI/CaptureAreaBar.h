@@ -8,7 +8,6 @@
 #include "CaptureAreaBar.generated.h"
 
 
-
 UCLASS()
 class RADIANT_API UCaptureAreaBar : public UUserWidget
 {
@@ -22,13 +21,13 @@ class RADIANT_API UCaptureAreaBar : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UProgressBar* BlueBar;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* Panel;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	float Percent = 0.5f;
-	
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetTeamPercent(ETeamId Team, float NewPercent);

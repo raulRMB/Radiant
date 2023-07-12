@@ -14,10 +14,10 @@ UCLASS()
 class RADIANT_API URegisterMenu : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(meta = (BindWidget))
 	class UEditableTextBox* EmailTextBox;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	class UEditableTextBox* UserNameTextBox;
 
@@ -26,7 +26,7 @@ class RADIANT_API URegisterMenu : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* RegisterButton;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BackButton;
 
@@ -42,9 +42,11 @@ class RADIANT_API URegisterMenu : public UUserWidget
 
 	UFUNCTION()
 	void OnBackButtonClicked();
+
 public:
 	FRegisterSuccessSignature OnRegisterSuccess;
+
 private:
 	UFUNCTION()
-		void OnRegisterSuccessCallback();
+	void OnRegisterSuccessCallback();
 };

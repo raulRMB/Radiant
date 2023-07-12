@@ -88,7 +88,7 @@ void ARTHUD::BindUIItems()
 
 void ARTHUD::Escape()
 {
-	if(bStoreOpen)
+	if (bStoreOpen)
 	{
 		bStoreOpen = false;
 		StoreUI->SetVisibility(ESlateVisibility::Hidden);
@@ -101,9 +101,10 @@ void ARTHUD::Escape()
 
 UAbilityDataAsset* ARTHUD::GetAbilityDataAsset(EItemSlotID Slot) const
 {
-	if(HotBarAbilities.Contains(Slot))
+	if (HotBarAbilities.Contains(Slot))
 	{
-		UAbilityDataAsset* AbilityDataAsset = ItemTable->FindRow<FItemData>(HotBarAbilities[Slot].ItemName, TEXT("HUD GetAbilityDataAsset"))->AbilityData;
+		UAbilityDataAsset* AbilityDataAsset = ItemTable->FindRow<FItemData>(
+			HotBarAbilities[Slot].ItemName, TEXT("HUD GetAbilityDataAsset"))->AbilityData;
 		return AbilityDataAsset;
 	}
 	return nullptr;
@@ -112,13 +113,13 @@ UAbilityDataAsset* ARTHUD::GetAbilityDataAsset(EItemSlotID Slot) const
 void ARTHUD::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
+
 	Minimap->DrawDynamic();
 }
 
 FGameplayTag ARTHUD::GetAbilityTrigger(EItemSlotID Slot) const
 {
-	if(SlotManager)
+	if (SlotManager)
 	{
 		return SlotManager->GetAbilityTrigger(Slot);
 	}

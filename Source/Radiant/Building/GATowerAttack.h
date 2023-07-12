@@ -13,6 +13,8 @@ class RADIANT_API UGATowerAttack : public URTAbility
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Gameplay, meta=(AllowPrivateAccess=true))
 	TSubclassOf<class AHeatSeeking> ProjectileClass;
-	
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	                             const FGameplayAbilityActivationInfo ActivationInfo,
+	                             const FGameplayEventData* TriggerEventData) override;
 };

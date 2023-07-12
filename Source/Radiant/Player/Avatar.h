@@ -16,7 +16,7 @@ UCLASS()
 class RADIANT_API AAvatar : public ARTCharacter, public ICarrier
 {
 	GENERATED_BODY()
-	
+
 public:
 	AAvatar();
 
@@ -39,13 +39,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;
-	
+
 	uint8 bAtDestination : 1;
 	uint8 bIsDragging : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	class AActor* Target;
-	
+
 	UPROPERTY(EditAnywhere)
 	class USoundBase* WinSound;
 
@@ -60,22 +60,22 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float RotationSpeed = 20.f;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	uint8 bRotationLocked : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	uint8 bCameraLocked : 1;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	uint8 bCameraHeld : 1;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector TargetDirection;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	float AttackRange;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	class UCapsuleComponent* HitBox;
 
@@ -84,13 +84,13 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* MainCamera;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class USpringArmComponent* SpringArm;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TArray<TSubclassOf<class UGameplayEffect>> InitialEffects;
-	
+
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* SystemTemplate;
 
@@ -113,20 +113,20 @@ protected:
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld() const;
-	
+
 	UFUNCTION(Server, Reliable)
 	void S_SpawnActorAtMouse(const FString& PieceName, const uint32 Amount, const FVector& Location);
 
 	UFUNCTION(Exec)
 	void SpawnActorAtMouse(const FString& PieceName, const uint32 Amount);
-	
+
 public:
 	UFUNCTION(Server, Reliable)
 	void S_PlaceGridPiece(FGridPiece Piece);
 
 	virtual UInventoryComponent* GetInventory() const override;
 	virtual FVector GetCarrierLocation() const override { return GetActorLocation(); }
-	
+
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();
 	void CastAbility(const FGameplayTag& AbilityTag);
@@ -185,11 +185,11 @@ public:
 	FGameplayEventData BufferAbility;
 	bool bShouldActivateBuffer = false;
 	void ShowStats();
-	
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void SetRotationLock(bool RotationLocked, FVector TargetDir = FVector::ZeroVector);
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -212,8 +212,8 @@ public:
 	FVector GetHalfHeightVector();
 
 	void BasicAttack();
+
 private:
-	
 	void HandleCamera(float DeltaSeconds);
 
 	virtual void Restart() override;

@@ -12,7 +12,7 @@ USTRUCT()
 struct FTeam
 {
 	GENERATED_BODY()
-	
+
 	uint8 TeamID : 1;
 	int Score;
 	UPROPERTY()
@@ -29,23 +29,24 @@ class RADIANT_API ARTGameState : public AGameState
 	FTeam RedTeam;
 	UPROPERTY(VisibleAnywhere)
 	FTeam BlueTeam;
+
 public:
 	ARTGameState();
-	
+
 	UPROPERTY(Replicated, VisibleInstanceOnly)
 	uint32 RedScore;
 	UPROPERTY(Replicated, VisibleInstanceOnly)
 	uint32 BlueScore;
-	
+
 	UFUNCTION(Server, Reliable)
 	void OnHeroDeath(AAvatar* Hero);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void NotifyHeroDeath(uint32 Score1, uint32 Score2);
-	
+
 	FOnHeroDeath OnHeroDeathDelegate;
-	
-	virtual void GetLifetimeReplicatedProps (TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	virtual void BeginPlay() override;

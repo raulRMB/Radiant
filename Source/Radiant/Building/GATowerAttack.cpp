@@ -8,7 +8,8 @@
 #include "Util/Util.h"
 
 void UGATowerAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                     const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+                                     const FGameplayAbilityActorInfo* ActorInfo,
+                                     const FGameplayAbilityActivationInfo ActivationInfo,
                                      const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -18,10 +19,12 @@ void UGATowerAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = GetOwningActorFromActorInfo();
 		ATower* Tower = Cast<ATower>(GetAvatarActorFromActorInfo());
-		AHeatSeeking* Projectile = GetWorld()->SpawnActorDeferred<AHeatSeeking>(ProjectileClass, Tower->GetGemTransform(), GetOwningActorFromActorInfo(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		AHeatSeeking* Projectile = GetWorld()->SpawnActorDeferred<AHeatSeeking>(
+			ProjectileClass, Tower->GetGemTransform(), GetOwningActorFromActorInfo(), nullptr,
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		Projectile->SetTarget(Tower->GetTarget());
 		Projectile->FinishSpawning(Tower->GetGemTransform());
 	}
-	
+
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 }

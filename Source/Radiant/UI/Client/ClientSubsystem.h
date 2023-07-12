@@ -22,6 +22,7 @@ UCLASS()
 class RADIANT_API UClientSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+
 public:
 	FMatchmakingStatus OnMatchmakingStatusChanged;
 	FPlayFabLoginErrorMessage OnLoginErrorMessage;
@@ -30,6 +31,7 @@ public:
 	FWidgetSwitchPage OnWidgetSwitchPage;
 	FString Username;
 	FString QueueName = "1v1";
+
 private:
 	PlayFabClientPtr clientAPI = nullptr;
 	PlayFabMultiplayerPtr multiplayerAPI = nullptr;
@@ -46,61 +48,64 @@ private:
 	UPROPERTY()
 	class AWidgetManager* WidgetManager = nullptr;
 	FTimerHandle HGetTicketResult;
+
 protected:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 public:
 	void Setup();
 	UFUNCTION(BlueprintCallable)
-		void SetQueueName(const FString& QueueName);
+	void SetQueueName(const FString& QueueName);
 	UFUNCTION(BlueprintCallable)
-		bool IsUserMatchmaking();
+	bool IsUserMatchmaking();
 	void OnLoginError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	UFUNCTION()
-		void LoginUser(const FString& Username, const FString& Password);
+	void LoginUser(const FString& Username, const FString& Password);
 
 	void OnRegisterError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	UFUNCTION()
-		void RegisterUser(const FString& Email, const FString& Username, const FString& Password);
+	void RegisterUser(const FString& Email, const FString& Username, const FString& Password);
 
 	void OnLobbyError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	UFUNCTION(Exec)
-		void StartMatchmaking();
+	void StartMatchmaking();
 
 	UFUNCTION()
-		void CancelMatchmaking();
-	
+	void CancelMatchmaking();
+
 	UFUNCTION()
-		void GetMatchmakingTicketResult();
+	void GetMatchmakingTicketResult();
 	void SwitchPage(FString PageName);
 
 	UFUNCTION()
-		void Logout();
+	void Logout();
 
 	bool GetIsMatchMaking() const { return bIsMatchmaking; }
 	void SetIsMatchMaking(bool IsMatchmaking) { bIsMatchmaking = IsMatchmaking; }
 
 	bool GetIsLoggedIn() const { return bIsLoggedIn; }
 	void SetIsLoggedIn(bool IsLoggedIn) { bIsLoggedIn = IsLoggedIn; }
+
 private:
 	void OnGetUserDataSuccess(const PlayFab::ClientModels::FGetAccountInfoResult& GetAccountInfoResult);
 	void OnLoginSuccess(const PlayFab::ClientModels::FLoginResult& Result);
-	
+
 	void OnRegisterSuccess(const PlayFab::ClientModels::FRegisterPlayFabUserResult& Result);
 
 	void OnCreateMatchmakingTicketSuccess(const PlayFab::MultiplayerModels::FCreateMatchmakingTicketResult& Result);
-	
+
 	void OnGetMatchmakingTicketSuccess(const PlayFab::MultiplayerModels::FGetMatchmakingTicketResult& Result);
 
 	void OnGetMatchSuccess(const PlayFab::MultiplayerModels::FGetMatchResult& Result);
 
-	void OnCancelAllMatchmakingTicketsForPlayerSuccess(const PlayFab::MultiplayerModels::FCancelAllMatchmakingTicketsForPlayerResult& Result);
-	
+	void OnCancelAllMatchmakingTicketsForPlayerSuccess(
+		const PlayFab::MultiplayerModels::FCancelAllMatchmakingTicketsForPlayerResult& Result);
+
 	void OnError(const PlayFab::FPlayFabCppError& ErrorResult);
 
 	/********************************* C++ API ***************************************/
-	
-	void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult &Result);
-	
+
+	void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult& Result);
+
 	/********************************* C++ API END ***********************************/
 };

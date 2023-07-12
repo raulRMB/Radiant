@@ -17,11 +17,11 @@
 
 
 UCLASS()
-class RADIANT_API UUtil :  public UBlueprintFunctionLibrary
+class RADIANT_API UUtil : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UFUNCTION(BlueprintCallable)
 	static FVector GetMousePosition(class UObject* WorldContext, TArray<AActor*> IgnoredActors);
 

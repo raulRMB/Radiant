@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "ItemSlot.h"
 #include "GameFramework/HUD.h"
-#include "Enums\ItemSlotID.h"
+#include "Enums/ItemSlotID.h"
 #include "RTHUD.generated.h"
 
 DECLARE_DELEGATE_OneParam(FGiveAbilityFromButtonSignature, class UAbilityDataAsset*)
@@ -52,7 +52,7 @@ class RADIANT_API ARTHUD : public AHUD
 
 	UPROPERTY()
 	class USlotManager* SlotManager;
-	
+
 	UPROPERTY()
 	class UMinimap* Minimap;
 
@@ -73,13 +73,15 @@ class RADIANT_API ARTHUD : public AHUD
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UItemSlot> ItemSlotClass;
+
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
 	FGiveAbilityFromButtonSignature GiveAbilityFromButton;
+
 public:
 	ARTHUD();
-	
+
 	void ShowEndScreen(bool won);
 	void ToggleSettings();
 	void HideLoadScreen();
@@ -96,4 +98,3 @@ public:
 
 	struct FGameplayTag GetAbilityTrigger(EItemSlotID Slot) const;
 };
-

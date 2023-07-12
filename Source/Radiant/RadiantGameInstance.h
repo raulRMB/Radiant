@@ -11,12 +11,12 @@ UCLASS()
 class RADIANT_API URadiantGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-public:
 
+public:
 	virtual void Init() override;
 	virtual void OnStart() override;
-protected:
 
+protected:
 	UFUNCTION()
 	void OnGSDKShutdown();
 

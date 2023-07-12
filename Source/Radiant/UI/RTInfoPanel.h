@@ -19,13 +19,13 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UImage* LoadingScreen;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* RedTeam;
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* BlueTeam;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	class UProgressBar* HealthBar;
 
@@ -34,7 +34,7 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* Radianite;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	class UProgressBar* ManaBar;
 
@@ -54,13 +54,14 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	class UTextBlock* MSCounter;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
+
 public:
 	void UpdateProperties(float DeltaTime) const;
 	void UpdateCooldowns() const;
 	FText FormatText(float CurrentHealth, float MaxHealth) const;
 
 	UHorizontalBox* GetHotbarHorizontalBox();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void Init();
 	void UpdateRadianite(float X) const;
@@ -68,13 +69,14 @@ public:
 
 	UFUNCTION()
 	void OnHeroDeath(uint32 RedScore, uint32 BlueScore) const;
-	
+
 	void ShowEndScreen(bool bWon) const;
 	void HideLoadScreen() const;
 	void SetFPS(float FPS) const;
 	void SetMS(float MS) const;
 
 private:
-	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	                               UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

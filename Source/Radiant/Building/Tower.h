@@ -19,7 +19,7 @@ class RADIANT_API ATower : public ABuilding
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Stats, meta=(AllowPrivateAccess=true, MakeEditWidget))
 	FVector GemOffset = FVector(0.f, 0.f, 0.f);
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
 	class UStaticMeshComponent* Mesh;
 
@@ -32,12 +32,13 @@ class RADIANT_API ATower : public ABuilding
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Combat, meta=(AllowPrivateAccess=true))
 	TObjectPtr<class AActor> Target;
 
-public:	
+public:
 	ATower();
+
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 	FTransform GetGemTransform() const;
 	TObjectPtr<class AActor> GetTarget() const;

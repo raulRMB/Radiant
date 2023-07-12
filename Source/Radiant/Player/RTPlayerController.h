@@ -18,10 +18,10 @@ UCLASS()
 class RADIANT_API ARTPlayerController : public APlayerController, public ICarrier
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = true))
 	class ARTPlayerStart* PlayerStart;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* ClickAction;
 
@@ -30,25 +30,25 @@ class RADIANT_API ARTPlayerController : public APlayerController, public ICarrie
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* CameraToggleAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* CameraHoldAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* AbilityOneAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* AbilityTwoAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* AbilityThreeAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* AbilityFourAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* AbilityFiveAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* AbilitySixAction;
 
@@ -63,10 +63,10 @@ class RADIANT_API ARTPlayerController : public APlayerController, public ICarrie
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* AcceptOrderAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* DemolishAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
 
@@ -79,7 +79,7 @@ class RADIANT_API ARTPlayerController : public APlayerController, public ICarrie
 
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemDataTable;
-	
+
 public:
 	virtual UInventoryComponent* GetInventory() const override { return InventoryComponent; }
 	virtual FVector GetCarrierLocation() const override;
@@ -87,11 +87,11 @@ public:
 	virtual void DropItem(const FName& ItemName) override;
 
 	/****** End Inventory ******/
-	
+
 public:
 	struct FGameplayTag GetAbilityTrigger(const EItemSlotID Slot) const;
 	ARTPlayerController();
-	
+
 	UFUNCTION(Server, Reliable)
 	void PlayerLoaded();
 
@@ -109,18 +109,18 @@ public:
 
 	FOrderAcceptedSignature OrderAccepted;
 
-protected:	
+protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void BeginPlay() override;
 	void LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem);
-	
+
 	virtual void SetupInputComponent() override;
 	virtual void OnRep_Pawn() override;
 
 	UFUNCTION()
 	void OnClick(const FInputActionValue& Value);
-	
+
 	UFUNCTION()
 	void OnAbilityOne(const FInputActionValue& Value);
 
@@ -145,7 +145,7 @@ protected:
 	UFUNCTION()
 	void HoldCamera(const FInputActionValue& Value);
 
-	UFUNCTION()	
+	UFUNCTION()
 	void ReleaseHoldCamera(const FInputActionValue& InputActionValue);
 
 	UFUNCTION()
@@ -165,4 +165,4 @@ protected:
 
 	UFUNCTION()
 	void Demolish(const FInputActionValue& Value);
-}; 
+};

@@ -25,7 +25,7 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 FVector ARTPlayerState::GetCarrierLocation() const
 {
-	if(GetRTController())
+	if (GetRTController())
 	{
 		return GetRTController()->GetCarrierLocation();
 	}
@@ -34,7 +34,7 @@ FVector ARTPlayerState::GetCarrierLocation() const
 
 UInventoryComponent* ARTPlayerState::GetInventory() const
 {
-	if(GetRTController())
+	if (GetRTController())
 	{
 		return GetRTController()->GetInventory();
 	}
@@ -60,14 +60,14 @@ ARTPlayerState::ARTPlayerState()
 {
 	bReplicates = true;
 	bReplicateUsingRegisteredSubObjectList = true;
-	
+
 	// Create ability system component, and set it to be explicitly replicated
 	AbilitySystemComponent = CreateDefaultSubobject<URTAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 
 	// Mixed mode means we only are replicated the GEs to ourself, not the GEs to simulated proxies. If another GDPlayerState (Hero) receives a GE,
 	// we won't be told about it by the Server. Attributes, GameplayTags, and GameplayCues will still replicate to us.
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);	
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
 	AttributeSet = CreateDefaultSubobject<URTAvatarAttributeSet>(TEXT("AttributeSet"));
 
@@ -85,7 +85,8 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSet->InitMaxXP(100.f);
 	AttributeSet->InitLevel(1.f);
 	AttributeSet->InitRadianite(0.f);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetRadianiteAttribute()).AddUObject(this, &ARTPlayerState::OnRadianiteChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetRadianiteAttribute()).AddUObject(
+		this, &ARTPlayerState::OnRadianiteChanged);
 }
 
 void ARTPlayerState::SetPlayerStats()
@@ -108,7 +109,7 @@ void ARTPlayerState::S_SetTarget_Implementation(AActor* NewTargetId)
 
 UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;	
+	return AbilitySystemComponent;
 }
 
 URTAvatarAttributeSet* ARTPlayerState::GetAttributeSetBase() const
@@ -124,19 +125,19 @@ FString ARTPlayerState::GetUsername()
 void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
 {
 	FItemData* ItemData = ItemDataTable->FindRow<FItemData>(AbilityName, FString("BuyAbility"));
-	if(AttributeSet->GetRadianite() < ItemData->AbilityData->Price || InnateAbilities.Contains(ItemData->AbilityData))
+	if (AttributeSet->GetRadianite() < ItemData->AbilityData->Price || InnateAbilities.Contains(ItemData->AbilityData))
 	{
 		return;
 	}
 	int32 AbilityCount = GetInventory()->AddItem(AbilityName);
 
-	if(AbilityCount == 1)
+	if (AbilityCount == 1)
 	{
 		FGameplayAbilitySpec AbilitySpec = ItemData->AbilityData->Ability.GetDefaultObject();
 		FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(AbilitySpec);
 		GetInventory()->AddHandleToName(Handle, AbilityName);
 	}
-	
+
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price);
 }
 

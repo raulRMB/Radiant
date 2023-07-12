@@ -25,20 +25,21 @@ class RADIANT_API AAreaOfEffect : public AArtillery
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag CueTag;
-public:	
+
+public:
 	AAreaOfEffect();
 
 	virtual void OnConstruction(const FTransform& Transform) override;
-	
+
 protected:
-	
 	virtual void BeginPlay() override;
 	void ApplyGameplayEffects();
 	UPROPERTY()
 	class ARTCharacter* SourceCharacter;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	TArray<class ITeamMember*> EffectTargets;
-public:	
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

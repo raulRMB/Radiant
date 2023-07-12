@@ -15,7 +15,7 @@ void UHeroInfoBar::NativeConstruct()
 
 void UHeroInfoBar::InitXPMaterial()
 {
-	if(XPBar && Interface)
+	if (XPBar && Interface)
 	{
 		MaterialInstance = UMaterialInstanceDynamic::Create(Interface, this);
 		XPBar->SetBrushResourceObject(MaterialInstance);
@@ -25,7 +25,7 @@ void UHeroInfoBar::InitXPMaterial()
 
 void UHeroInfoBar::SetOverheadText(const FString& String)
 {
-	if(Username)
+	if (Username)
 	{
 		Username->SetText(FText::FromString(String));
 	}
@@ -48,7 +48,7 @@ void UHeroInfoBar::SetHealthColor(const FLinearColor& Color)
 
 void UHeroInfoBar::SetXPPercent(const float Percent)
 {
-	if(MaterialInstance)
+	if (MaterialInstance)
 	{
 		MaterialInstance->SetScalarParameterValue("Percent", Percent);
 	}

@@ -11,6 +11,7 @@ UCLASS()
 class RADIANT_API AClientPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
 protected:
 	virtual void BeginPlay() override;
 };

@@ -24,14 +24,16 @@ void AKingOfTheHillGameState::BeginPlay()
 	Super::BeginPlay();
 
 	CaptureArea = Cast<ACaptureArea>(UGameplayStatics::GetActorOfClass(this, ACaptureArea::StaticClass()));
-	if(!HasAuthority())
+	if (!HasAuthority())
 	{
 		CaptureAreaBar = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<ARTHUD>()->CaptureAreaBar;
 	}
 	else
 	{
-		if(CaptureArea)
+		if (CaptureArea)
+		{
 			CaptureArea->OnUpdatePlayersInArea.AddUObject(this, &AKingOfTheHillGameState::OnCaptureAreaUpdate);
+		}
 	}
 }
 
@@ -39,7 +41,7 @@ void AKingOfTheHillGameState::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if(!bGameOver)
+	if (!bGameOver)
 	{
 		UpdateCaptureAreaPercent(DeltaSeconds);
 	}
@@ -63,12 +65,12 @@ void AKingOfTheHillGameState::OnCaptureAreaUpdate(ETeamId TeamId, bool bEntered)
 	default:
 		break;
 	}
-	
-	if(RedTeamInArea == 0 && BlueTeamInArea > 0)
+
+	if (RedTeamInArea == 0 && BlueTeamInArea > 0)
 	{
 		CaptureAreaTeam = ETeamId::Blue;
 	}
-	else if(BlueTeamInArea == 0 && RedTeamInArea > 0)
+	else if (BlueTeamInArea == 0 && RedTeamInArea > 0)
 	{
 		CaptureAreaTeam = ETeamId::Red;
 	}
@@ -80,16 +82,16 @@ void AKingOfTheHillGameState::OnCaptureAreaUpdate(ETeamId TeamId, bool bEntered)
 
 void AKingOfTheHillGameState::UpdateCaptureAreaPercent(float DeltaSeconds)
 {
-	if(RedTeamInArea == 0)
+	if (RedTeamInArea == 0)
 	{
 		CaptureAreaPercent += 0.025f * DeltaSeconds * BlueTeamInArea;
 	}
-	else if(BlueTeamInArea == 0)
+	else if (BlueTeamInArea == 0)
 	{
 		CaptureAreaPercent -= 0.025f * DeltaSeconds * RedTeamInArea;
 	}
-	
-	if(CaptureAreaBar)
+
+	if (CaptureAreaBar)
 	{
 		CaptureAreaBar->SetTeamPercent(CaptureAreaTeam, CaptureAreaPercent);
 	}

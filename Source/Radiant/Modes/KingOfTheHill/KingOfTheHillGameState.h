@@ -12,7 +12,7 @@ UCLASS()
 class RADIANT_API AKingOfTheHillGameState : public ARTGameState
 {
 	GENERATED_BODY()
-	
+
 	TObjectPtr<class ACaptureArea> CaptureArea;
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
@@ -26,10 +26,10 @@ class RADIANT_API AKingOfTheHillGameState : public ARTGameState
 	uint8 BlueTeamInArea = 0;
 	UPROPERTY(Replicated)
 	uint8 bGameOver : 1;
-	
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
 	virtual void BeginPlay() override;
 
 public:
@@ -38,6 +38,7 @@ public:
 	float GetCaptureAreaPercent() const { return CaptureAreaPercent; }
 
 	void MatchEnded();
+
 private:
 	UFUNCTION()
 	void OnCaptureAreaUpdate(ETeamId TeamId, bool bEntered);

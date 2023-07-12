@@ -10,7 +10,7 @@
 // Sets default values
 ACaptureArea::ACaptureArea()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	HitBox = CreateDefaultSubobject<UBoxComponent>(FName("HitBox"));
@@ -38,12 +38,13 @@ void ACaptureArea::Tick(float DeltaTime)
 }
 
 void ACaptureArea::BeingOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                const FHitResult& SweepResult)
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
 		ITeamMember* TeamMember = Cast<ITeamMember>(OtherActor);
-		if(TeamMember)
+		if (TeamMember)
 		{
 			OnUpdatePlayersInArea.Broadcast(TeamMember->GetTeamId(), true);
 		}
@@ -51,15 +52,14 @@ void ACaptureArea::BeingOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 }
 
 void ACaptureArea::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
 		ITeamMember* TeamMember = Cast<ITeamMember>(OtherActor);
-		if(TeamMember)
+		if (TeamMember)
 		{
 			OnUpdatePlayersInArea.Broadcast(TeamMember->GetTeamId(), false);
 		}
 	}
 }
-

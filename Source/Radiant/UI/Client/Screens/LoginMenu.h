@@ -8,7 +8,6 @@
 #include "LoginMenu.generated.h"
 
 
-
 UCLASS()
 class RADIANT_API ULoginMenu : public UUserWidget
 {
@@ -43,7 +42,6 @@ public:
 	void OnLoginButtonClicked();
 
 private:
-
 	UFUNCTION()
 	void OnRegisterButtonClicked();
 	UFUNCTION()

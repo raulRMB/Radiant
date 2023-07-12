@@ -12,6 +12,7 @@ UCLASS()
 class RADIANT_API UUserSettings : public USaveGame
 {
 	GENERATED_BODY()
+
 public:
 	UUserSettings();
 	UPROPERTY()

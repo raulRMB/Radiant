@@ -32,7 +32,7 @@ void ULoginMenu::ResetPage()
 
 void ULoginMenu::OnEnterPressed(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	if(CommitMethod == ETextCommit::OnEnter)
+	if (CommitMethod == ETextCommit::OnEnter)
 	{
 		OnLoginButtonClicked();
 	}
@@ -40,13 +40,15 @@ void ULoginMenu::OnEnterPressed(const FText& Text, ETextCommit::Type CommitMetho
 
 void ULoginMenu::OnLoginButtonClicked()
 {
-	GetGameInstance()->GetSubsystem<UClientSubsystem>()->LoginUser(UserNameTextBox->GetText().ToString(), PasswordTextBox->GetText().ToString());
+	GetGameInstance()->GetSubsystem<UClientSubsystem>()->LoginUser(UserNameTextBox->GetText().ToString(),
+	                                                               PasswordTextBox->GetText().ToString());
 	OnLoginButtonClicked_BP();
 }
 
 void ULoginMenu::OnRegisterButtonClicked()
 {
-	if(auto WidgetManager = Cast<AWidgetManager>(UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass())))
+	if (auto WidgetManager = Cast<AWidgetManager>(
+		UGameplayStatics::GetActorOfClass(this, AWidgetManager::StaticClass())))
 	{
 		WidgetManager->SwitchTo(FString("RegisterMenu"));
 	}
@@ -69,13 +71,12 @@ void ULoginMenu::QuitGame()
 
 void ULoginMenu::HandleError(const PlayFab::FPlayFabCppError& Error)
 {
-	if(Error.ErrorCode == 1000)
+	if (Error.ErrorCode == 1000)
 	{
-		ErrorMessage->SetText(FText::FromString("Login Failed. Please check your username and password."));	
+		ErrorMessage->SetText(FText::FromString("Login Failed. Please check your username and password."));
 	}
 	else
 	{
-		ErrorMessage->SetText(FText::FromString(Error.ErrorMessage));	
+		ErrorMessage->SetText(FText::FromString(Error.ErrorMessage));
 	}
 }
-

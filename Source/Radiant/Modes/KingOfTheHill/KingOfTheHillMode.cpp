@@ -7,12 +7,12 @@
 bool AKingOfTheHillMode::ReadyToEndMatch_Implementation()
 {
 	AKingOfTheHillGameState* State = GetWorld()->GetGameState<AKingOfTheHillGameState>();
-	if(State->GetCaptureAreaPercent() <= 0.0f)
+	if (State->GetCaptureAreaPercent() <= 0.0f)
 	{
 		NotifyMatchEnd(ETeamId::Red);
 		return true;
 	}
-	if(State->GetCaptureAreaPercent() >= 1.0f)
+	if (State->GetCaptureAreaPercent() >= 1.0f)
 	{
 		NotifyMatchEnd(ETeamId::Blue);
 		return true;
@@ -26,5 +26,4 @@ void AKingOfTheHillMode::HandleMatchHasEnded()
 
 	AKingOfTheHillGameState* State = GetWorld()->GetGameState<AKingOfTheHillGameState>();
 	State->MatchEnded();
-	
 }

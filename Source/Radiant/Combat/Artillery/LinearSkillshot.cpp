@@ -13,12 +13,12 @@
 // Sets default values
 ALinearSkillshot::ALinearSkillshot()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
-	
-	
+
+
 	HitBox = CreateDefaultSubobject<USphereComponent>(FName("HitBox"));
 	HitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	HitBox->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -44,13 +44,14 @@ void ALinearSkillshot::BeginPlay()
 
 	ProjectileMovement->Velocity = GetActorForwardVector() * Speed;
 
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		if(bUseRange)
+		if (bUseRange)
+		{
 			LifeSpan = Range / Speed;
+		}
 		SetLifeSpan(LifeSpan);
 	}
-
 }
 
 void ALinearSkillshot::OnConstruction(const FTransform& Transform)
@@ -63,25 +64,28 @@ void ALinearSkillshot::OnConstruction(const FTransform& Transform)
 void ALinearSkillshot::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                      const FHitResult& SweepResult)
 {
-	if(!HasAuthority() || !ShouldHit(OtherActor))
-		return;
-	
-	if(auto Character = Cast<ARTCharacter>(OtherActor))
+	if (!HasAuthority() || !ShouldHit(OtherActor))
 	{
-		for(auto Effect : GameplayEffects)
+		return;
+	}
+
+	if (auto Character = Cast<ARTCharacter>(OtherActor))
+	{
+		for (auto Effect : GameplayEffects)
 		{
-			if(!AffectedActors.Contains(OtherActor))
+			if (!AffectedActors.Contains(OtherActor))
 			{
 				UGameplayEffect* NewEffect = NewObject<UGameplayEffect>(GetTransientPackage(), Effect);
-				if(ARTCharacter* Projectile_Instigator = Cast<ARTCharacter>(GetInstigator()))
+				if (ARTCharacter* Projectile_Instigator = Cast<ARTCharacter>(GetInstigator()))
 				{
-					Projectile_Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(NewEffect, Character->GetAbilitySystemComponent(),1.f);
+					Projectile_Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(
+						NewEffect, Character->GetAbilitySystemComponent(), 1.f);
 				}
 				AffectedActors.AddUnique(OtherActor);
 			}
@@ -94,14 +98,15 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 	}
 
 	OverlapStart(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-	
-	if(bConsumeOnHit)
+
+	if (bConsumeOnHit)
+	{
 		Destroy();
+	}
 }
 
 void ALinearSkillshot::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	OverlapEnd(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 }
-

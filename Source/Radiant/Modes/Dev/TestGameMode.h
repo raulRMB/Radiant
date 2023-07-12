@@ -17,7 +17,7 @@ class RADIANT_API ATestGameMode : public ARTGameMode
 
 	UPROPERTY(EditAnywhere)
 	int32 TestTeamCount = 1;
-	
-	
+
+
 	virtual void BeginPlay() override;
 };

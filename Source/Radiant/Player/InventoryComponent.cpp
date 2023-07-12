@@ -15,11 +15,11 @@ UInventoryComponent::UInventoryComponent()
 
 void UInventoryComponent::S_ItemUsed_Implementation(const FName& ItemName)
 {
-	if(GetOwner()->HasAuthority())
+	if (GetOwner()->HasAuthority())
 	{
-		if(Items.Contains(ItemName))
+		if (Items.Contains(ItemName))
 		{
-			if(Items[ItemName].Amount > 0)
+			if (Items[ItemName].Amount > 0)
 			{
 				RemoveItem(ItemName);
 			}
@@ -34,7 +34,7 @@ void UInventoryComponent::C_ItemChanged_Implementation(const FName& ItemName, co
 
 void UInventoryComponent::S_DropItem_Implementation(const FName& ItemName)
 {
-	if(GetOwner()->HasAuthority())
+	if (GetOwner()->HasAuthority())
 	{
 		DropItem(ItemName);
 	}
@@ -43,9 +43,9 @@ void UInventoryComponent::S_DropItem_Implementation(const FName& ItemName)
 void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 {
 	TArray<FName> RowNames = ItemDataTable->GetRowNames();
-	for(FName RowName : RowNames)
+	for (FName RowName : RowNames)
 	{
-		if(FItemData* ItemData = ItemDataTable->FindRow<FItemData>(RowName, "InitInventory"))
+		if (FItemData* ItemData = ItemDataTable->FindRow<FItemData>(RowName, "InitInventory"))
 		{
 			FInventoryItem InventoryItem;
 			InventoryItem.Amount = 0;
@@ -65,9 +65,9 @@ int32 UInventoryComponent::AddItem(const FName& ItemName)
 
 int32 UInventoryComponent::RemoveItem(const FName& ItemName)
 {
-	if(Items[ItemName].Amount > 0)
+	if (Items[ItemName].Amount > 0)
 	{
-		Items[ItemName].Amount  -= 1;
+		Items[ItemName].Amount -= 1;
 		C_ItemChanged(ItemName, Items[ItemName].Amount);
 	}
 	return Items[ItemName].Amount;
@@ -75,9 +75,9 @@ int32 UInventoryComponent::RemoveItem(const FName& ItemName)
 
 void UInventoryComponent::DropItem(const FName& ItemName)
 {
-	if(GetWorld() && WorldItemClass)
+	if (GetWorld() && WorldItemClass)
 	{
-		if(ICarrier* Carrier = Cast<ICarrier>(GetOwner()))
+		if (ICarrier* Carrier = Cast<ICarrier>(GetOwner()))
 		{
 			FVector Offset = FVector::RightVector;
 			Offset.RotateAngleAxis(FMath::RandRange(0, 360), FVector::UpVector);
@@ -94,7 +94,7 @@ void UInventoryComponent::DropItem(const FName& ItemName)
 
 void UInventoryComponent::UseItem(const FGameplayAbilitySpecHandle& Handle)
 {
-	if(HandleToItemName.Contains(Handle))
+	if (HandleToItemName.Contains(Handle))
 	{
 		S_ItemUsed(HandleToItemName[Handle]);
 	}
@@ -107,7 +107,7 @@ void UInventoryComponent::AddHandleToName(FGameplayAbilitySpecHandle Handle, FNa
 
 FName UInventoryComponent::GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle)
 {
-	if(HandleToItemName.Contains(Handle))
+	if (HandleToItemName.Contains(Handle))
 	{
 		return HandleToItemName[Handle];
 	}

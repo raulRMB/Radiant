@@ -10,8 +10,8 @@
 UCLASS()
 class RADIANT_API USheepAnimInstance : public UAnimInstance
 {
-GENERATED_BODY()
-	
+	GENERATED_BODY()
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float MovementSpeed;
 

@@ -7,12 +7,13 @@ public class Radiant : ModuleRules
 	public Radiant(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(new string[] { 
-			"Core", 
-			"CoreUObject", 
-			"Engine", 
-			"InputCore", 
+
+		PublicDependencyModuleNames.AddRange(new[]
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
 			"EnhancedInput",
 			"PlayFabGSDK",
 			"PlayFab",
@@ -31,13 +32,13 @@ public class Radiant : ModuleRules
 		});
 		bEnableUndefinedIdentifierWarnings = false;
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  "GameplayAbilities", "GameplayTags", "GameplayTasks" });
-		
+		PrivateDependencyModuleNames.AddRange(new[] { "GameplayAbilities", "GameplayTags", "GameplayTasks" });
+
 		PublicIncludePaths.Add("Radiant/");
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
+
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 

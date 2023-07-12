@@ -10,17 +10,17 @@
 
 void ABase::OnBaseHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		if(Data.NewValue <= 0.f)
+		if (Data.NewValue <= 0.f)
 		{
-			if(ARTGameMode* GM = Cast<ARTGameMode>(UGameplayStatics::GetGameMode(this)))
+			if (ARTGameMode* GM = Cast<ARTGameMode>(UGameplayStatics::GetGameMode(this)))
 			{
-				if(TeamId == ETeamId::Red)
+				if (TeamId == ETeamId::Red)
 				{
 					GM->SetMatchOver(ETeamId::Blue);
 				}
-				else if(TeamId == ETeamId::Blue)
+				else if (TeamId == ETeamId::Blue)
 				{
 					GM->SetMatchOver(ETeamId::Red);
 				}
@@ -43,9 +43,10 @@ void ABase::BeginPlay()
 {
 	Super::BeginPlay();
 	Gem = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Diamond")));
-	if(InfoBar)
+	if (InfoBar)
 	{
 		InfoBar->ShowLevel(false);
 	}
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ABase::OnBaseHealthChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(
+		this, &ABase::OnBaseHealthChanged);
 }

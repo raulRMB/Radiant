@@ -19,13 +19,13 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CancelMatchmakingButton;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* LogoutButton;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* CancelButtonText;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	class UComboBoxString* QueueSelector;
 
@@ -37,7 +37,7 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* Welcome;
-	
+
 	UFUNCTION()
 	void OnFindMatchButtonHovered();
 	UFUNCTION()
@@ -49,7 +49,7 @@ class RADIANT_API ULobbyMenu : public UUserWidget
 	void OnQueueSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 	virtual void NativeConstruct() override;
 	void ResetPage();
-	
+
 	UFUNCTION()
 	void OnFindMatchButtonClicked();
 

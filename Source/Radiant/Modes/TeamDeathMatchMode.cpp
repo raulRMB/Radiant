@@ -7,12 +7,12 @@
 bool ATeamDeathMatchMode::ReadyToStartMatch_Implementation()
 {
 	ARTGameState* State = Cast<ARTGameState>(GetWorld()->GetGameState());
-	if(State->RedScore >= KillsToWin * TeamSize)
+	if (State->RedScore >= KillsToWin * TeamSize)
 	{
 		NotifyMatchEnd(ETeamId::Red);
 		return true;
 	}
-	if(State->BlueScore >= KillsToWin * TeamSize)
+	if (State->BlueScore >= KillsToWin * TeamSize)
 	{
 		NotifyMatchEnd(ETeamId::Blue);
 		return true;

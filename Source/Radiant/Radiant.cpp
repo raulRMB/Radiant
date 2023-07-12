@@ -3,4 +3,4 @@
 #include "Radiant.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Radiant, "Radiant" );
+IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, Radiant, "Radiant");
