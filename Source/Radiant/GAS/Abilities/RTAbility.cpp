@@ -177,14 +177,21 @@ void URTAbility::UseItem(const FGameplayAbilitySpecHandle& Handle)
 	}
 }
 
-void URTAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
-{	
+bool URTAbility::CommitAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, FGameplayTagContainer* OptionalRelevantTags)
+{
 	if(!bItemWasUsed && HasAuthority(&ActivationInfo))
 	{
 		UseItem(Handle);
 		bItemWasUsed = true;
 	}
+	return Super::CommitAbility(Handle, ActorInfo, ActivationInfo, OptionalRelevantTags);
+}
+
+void URTAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+                                 const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{	
+	
 }
 
 AAvatar* URTAbility::GetAvatar()
