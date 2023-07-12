@@ -107,6 +107,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TESTING)
 	TMap<FString, TSubclassOf<class AActor>> DebugSpawnableItems;
 
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* DeathMontage;
 protected:
 	void SetIsDraggingFalse();
 	void OnDragStatusChanged(bool bArg);
@@ -159,6 +161,9 @@ public:
 
 	virtual void SetIsDead(const bool NewIsDead) override;
 
+	UFUNCTION(NetMulticast, Reliable)
+	void M_PlayDeathMontage();
+	
 	UFUNCTION(Server, Reliable)
 	void S_CancelAllAbilities();
 

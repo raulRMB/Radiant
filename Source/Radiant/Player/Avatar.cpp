@@ -538,6 +538,16 @@ void AAvatar::SetIsDead(const bool NewIsDead)
 {
 	Super::SetIsDead(NewIsDead);
 	GetRTPS()->SetIsDead(NewIsDead);
+	if(NewIsDead)
+	{
+		M_PlayDeathMontage();
+	}
+}
+
+void AAvatar::M_PlayDeathMontage_Implementation()
+{
+	GetCapsuleComponent()->SetCollisionObjectType(ECC_PhysicsBody);
+	PlayAnimMontage(DeathMontage);
 }
 
 ARTHUD* AAvatar::GetRTHUD()
