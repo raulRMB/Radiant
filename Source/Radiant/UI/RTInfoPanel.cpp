@@ -77,6 +77,7 @@ void URTInfoPanel::Bind(ARTPlayerState* PS)
 {
 	if (PS)
 	{
+		UpdateRadianite(PS->GetAttributeSetBase()->GetRadianite());
 		PS->OnUpdateRadianite.AddUObject(this, &URTInfoPanel::UpdateRadianite);
 	}
 }

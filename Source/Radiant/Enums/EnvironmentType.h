@@ -10,5 +10,6 @@ enum class EEnvironmentType : uint8
 	EEnvironmentType_Wall,
 	EEnvironmentType_Tower,
 	EEnvironmentType_Tree,
-	EEnvironmentType_Rock
+	EEnvironmentType_Rock,
+	EEvironmentType_MobSpawner,
 };
