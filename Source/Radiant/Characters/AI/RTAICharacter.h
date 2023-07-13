@@ -26,15 +26,10 @@ class RADIANT_API ARTAICharacter : public ARTCharacter
 	class UAIInfoBar* OverHeadInfoBar;
 
 public:
-	UFUNCTION()
-	void OnDeath();
 	ARTAICharacter();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
 	class UWidgetComponent* OverHeadInfoBarWidgetComponent;
-
-	UPROPERTY(EditAnywhere)
-	USoundBase* DeathSound;
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 

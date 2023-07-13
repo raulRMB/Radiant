@@ -72,15 +72,6 @@ void ARTAICharacter::BeginPlay()
 	}
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ARTAICharacter::OnHealthChanged);
-	OnUnitDied.AddUObject(this, &ARTAICharacter::OnDeath);
-}
-
-void ARTAICharacter::OnDeath()
-{
-	if(DeathSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
-	}
 }
 
 

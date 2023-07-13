@@ -33,9 +33,11 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void BeginPlay() override;
 
 	virtual ETeamId GetTeamId() const override { return TeamId; }
-
+	UFUNCTION()
+	void OnDeath();
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void M_SetIgnoreWalls(const bool bIgnoreWalls);
@@ -44,4 +46,7 @@ public:
 	virtual void SetIsDead(const bool NewIsDead) override;
 	UFUNCTION(NetMulticast, Reliable)
 	void M_NotifyOnDeath();
+	UPROPERTY(EditAnywhere)
+	USoundBase* DeathSound;
+
 };
