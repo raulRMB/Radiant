@@ -95,6 +95,8 @@ void AAreaOfEffect::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CashedTimerScale = TimerDisplay->GetRelativeScale3D();
+	
 	if (TimerDisplay)
 	{
 		TimerDisplay->SetRelativeScale3D(FVector::ZeroVector);
@@ -118,6 +120,6 @@ void AAreaOfEffect::Tick(float DeltaTime)
 	if (TimerDisplay)
 	{
 		TimerDisplay->SetRelativeScale3D(
-			FVector(1.f, 1.f, 1.f) * (GetWorld()->GetTimerManager().GetTimerElapsed(TimerHandle) / LifeSpan) * 1.3f);
+			CashedTimerScale * (GetWorld()->GetTimerManager().GetTimerElapsed(TimerHandle) / LifeSpan));
 	}
 }

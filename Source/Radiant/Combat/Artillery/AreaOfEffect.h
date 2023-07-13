@@ -23,8 +23,10 @@ class RADIANT_API AAreaOfEffect : public AArtillery
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TimerDisplay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag CueTag;
+
+	FVector CashedTimerScale;
 
 public:
 	AAreaOfEffect();

@@ -52,6 +52,10 @@ void UGAAreaOfEffect::SpawnAreaOfEffect()
 
 		AreaOfEffect->SetSourceCharacter(Cast<AAvatar>(Avatar));
 		AreaOfEffect->FinishSpawning(SpawnTransform);
+		FAttachmentTransformRules TransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
+		TransformRules.RotationRule = EAttachmentRule::KeepWorld;
+		if(bAttachToAvatar)
+			AreaOfEffect->AttachToActor(Avatar, TransformRules);
 	}
 	CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
 }

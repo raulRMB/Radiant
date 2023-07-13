@@ -693,6 +693,10 @@ FVector AAvatar::GetHalfHeightVector()
 
 void AAvatar::BasicAttack()
 {
+	if(HasTag(FString("State.Uncancellable")))
+	{
+		return;
+	}
 	if (IsLocallyControlled() && bIsAttacking)
 	{
 		FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack"));
