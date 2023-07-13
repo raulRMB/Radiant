@@ -76,7 +76,7 @@ public:
 	void SetUsername(const FString& String);
 	FString GetUsername();
 	UFUNCTION(Server, Reliable)
-	void S_BuyAbility(const FName& AbilityName);
+	void S_BuyAbility(const FName& AbilityName, int32 Amount);
 
 	UPROPERTY(Replicated, EditAnywhere)
 	TArray<class UAbilityDataAsset*> InnateAbilities;

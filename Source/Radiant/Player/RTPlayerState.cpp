@@ -206,16 +206,16 @@ ARTGameState* ARTPlayerState::GetRTGS() const
 #pragma endregion ConvenienceGetters
 
 
-void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName)
+void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32 Amount)
 {
 	FItemData* ItemData = ItemDataTable->FindRow<FItemData>(AbilityName, FString("BuyAbility"));
-	if (AttributeSet->GetRadianite() < ItemData->AbilityData->Price || InnateAbilities.Contains(ItemData->AbilityData))
+	if (AttributeSet->GetRadianite() < ItemData->AbilityData->Price * Amount || InnateAbilities.Contains(ItemData->AbilityData))
 	{
 		return;
 	}
-	GetInventory()->AddItem(AbilityName, ItemData);
+	GetInventory()->AddItem(AbilityName, ItemData, Amount);
 
-	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price);
+	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price * Amount);
 }
 
 FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(FItemData* ItemData)

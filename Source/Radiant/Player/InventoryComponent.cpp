@@ -23,7 +23,7 @@ void UInventoryComponent::S_ItemUsed_Implementation(const FName& ItemName)
 		{
 			if (Items[ItemName].Amount > 0)
 			{
-				RemoveItem(ItemName);
+				RemoveItem(ItemName, 1);
 			}
 		}
 	}
@@ -58,19 +58,19 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 	UEventBroker::Get(this)->ItemUsed.AddUObject(this, &UInventoryComponent::S_ItemUsed);
 }
 
-int32 UInventoryComponent::AddItem(const FName& ItemName, FItemData* ItemData)
+int32 UInventoryComponent::AddItem(const FName& ItemName, FItemData* ItemData, int32 Amount)
 {
 	if (!FindHandle(ItemName))
 	{
 		auto Handle = GetPlayerState()->GiveAbility(ItemData);
 		AddHandleToName(Handle, ItemName);
 	}
-	return AddItem(ItemName);
+	return AddItem(ItemName, Amount);
 }
 
-int32 UInventoryComponent::AddItem(const FName& ItemName)
+int32 UInventoryComponent::AddItem(const FName& ItemName, int32 Amount)
 {
-	Items[ItemName].Amount += 1;
+	Items[ItemName].Amount += Amount;
 	C_ItemChanged(ItemName, Items[ItemName].Amount);
 	return Items[ItemName].Amount;
 }
@@ -80,11 +80,11 @@ ARTPlayerState* UInventoryComponent::GetPlayerState()
 	return Cast<ARTPlayerController>(GetOuter())->GetPlayerState<ARTPlayerState>();
 }
 
-int32 UInventoryComponent::RemoveItem(const FName& ItemName)
+int32 UInventoryComponent::RemoveItem(const FName& ItemName, int32 Amount)
 {
 	if (Items[ItemName].Amount > 0)
 	{
-		Items[ItemName].Amount -= 1;
+		Items[ItemName].Amount -= Amount;
 		C_ItemChanged(ItemName, Items[ItemName].Amount);
 	}
 	if(Items[ItemName].Amount == 0)

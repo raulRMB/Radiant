@@ -23,6 +23,6 @@ public:
 	virtual class UInventoryComponent* GetInventory() const = 0;
 	virtual FVector GetCarrierLocation() const = 0;
 	
-	void PickUpItem(const FName& ItemName);
+	void PickUpItem(const FName& ItemName, const uint32 Amount);
 	virtual void DropItem(const FName& ItemName);
 };

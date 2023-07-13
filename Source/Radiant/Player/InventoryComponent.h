@@ -56,10 +56,10 @@ public:
 public:
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
-	int32 AddItem(const FName& ItemName, FItemData* ItemData);
-	int32 AddItem(const FName& ItemName);
+	int32 AddItem(const FName& ItemName, FItemData* ItemData, int32 Amount);
+	int32 AddItem(const FName& ItemName, int32 Amount);
 	ARTPlayerState* GetPlayerState();
-	int32 RemoveItem(const FName& ItemName);
+	int32 RemoveItem(const FName& ItemName, int32 Amount);
 	void DropItem(const FName& ItemName);
 	void UseItem(const FGameplayAbilitySpecHandle& Handle);
 	void AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name);
