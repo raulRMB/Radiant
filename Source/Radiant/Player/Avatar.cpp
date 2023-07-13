@@ -293,6 +293,18 @@ void AAvatar::SpawnActorAtMouse(const FString& PieceName, const uint32 Amount)
 	}
 }
 
+void AAvatar::SpawnActorAtSelf(const FString& PieceName, const uint32 Amount)
+{
+	if (DebugSpawnableItems.Contains(PieceName))
+	{
+		S_SpawnActorAtMouse(PieceName, Amount, GetActorLocation());
+	}
+	else
+	{
+		RTPRINTP("Error: Invalid PieceName: %s", *PieceName);
+	}
+}
+
 UInventoryComponent* AAvatar::GetInventory() const
 {
 	if (GetController<ARTPlayerController>())

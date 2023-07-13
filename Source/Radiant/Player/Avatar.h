@@ -121,6 +121,8 @@ protected:
 
 	UFUNCTION(Exec)
 	void SpawnActorAtMouse(const FString& PieceName, const uint32 Amount);
+	UFUNCTION(Exec)
+	void SpawnActorAtSelf(const FString& PieceName, const uint32 Amount);
 
 public:
 	UFUNCTION(Server, Reliable)
