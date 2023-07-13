@@ -47,12 +47,9 @@ public:
 	virtual void SetIsDead(const bool NewIsDead) override;
 	UFUNCTION(NetMulticast, Reliable)
 	void M_NotifyOnDeath();
-<<<<<<< Updated upstream
+
 	UPROPERTY(EditAnywhere)
 	USoundBase* DeathSound;
 
-=======
-
 	virtual FHookSocketInfo GetHookSocketInfo() const override;
->>>>>>> Stashed changes
 };
