@@ -7,6 +7,7 @@
 #include "Components/WidgetComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/NPCAttributeSet.h"
+#include "Kismet/GameplayStatics.h"
 #include "UI/AIInfoBar.h"
 
 ARTAICharacter::ARTAICharacter()
@@ -47,6 +48,7 @@ void ARTAICharacter::SetIsDead(const bool NewIsDead)
 	if(NewIsDead)
 	{
 		GetWorld()->SpawnActor<APickUp>(PickUpClass, GetActorTransform());
+		M_NotifyOnDeath();
 		Destroy();
 	}
 }
@@ -70,6 +72,15 @@ void ARTAICharacter::BeginPlay()
 	}
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ARTAICharacter::OnHealthChanged);
+	OnUnitDied.AddUObject(this, &ARTAICharacter::OnDeath);
+}
+
+void ARTAICharacter::OnDeath()
+{
+	if(DeathSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
 }
 
 
