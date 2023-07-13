@@ -45,6 +45,14 @@ void ARTCharacter::SetIsDead(const bool NewIsDead)
 	}
 }
 
+FHookSocketInfo ARTCharacter::GetHookSocketInfo() const
+{
+	FHookSocketInfo SocketInfo;
+	SocketInfo.SocketName = TEXT("HookSocket");
+	SocketInfo.Component = GetMesh();
+	return SocketInfo;
+}
+
 void ARTCharacter::M_NotifyOnDeath_Implementation()
 {
 	OnUnitDied.Broadcast();
@@ -52,5 +60,5 @@ void ARTCharacter::M_NotifyOnDeath_Implementation()
 
 void ARTCharacter::M_SetIgnoreWalls_Implementation(const bool bIgnoreWalls)
 {
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, bIgnoreWalls ? ECR_Ignore : ECR_Block);
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(bIgnoreWalls ? ECR_Ignore : ECR_Block);
 }

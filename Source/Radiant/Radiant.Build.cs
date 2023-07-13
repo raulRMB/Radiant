@@ -28,7 +28,8 @@ public class Radiant : ModuleRules
 			"SlateCore",
 			"AIModule",
 			"NavigationSystem",
-			"PFSDK"
+			"PFSDK",
+			"CableComponent"
 		});
 		bEnableUndefinedIdentifierWarnings = false;
 

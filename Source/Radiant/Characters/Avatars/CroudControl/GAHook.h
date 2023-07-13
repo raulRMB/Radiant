@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GAS/Abilities/GALinearSkillshot.h"
-#include "GAJook.generated.h"
+#include "GAHook.generated.h"
 
 
 UCLASS()
-class RADIANT_API UGAJook : public UGALinearSkillshot
+class RADIANT_API UGAHook : public UGALinearSkillshot
 {
 	GENERATED_BODY()
 

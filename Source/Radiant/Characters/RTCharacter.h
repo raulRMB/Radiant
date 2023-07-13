@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Util/Interfaces/Hooker.h"
 #include "Util/Interfaces/Killable.h"
 #include "Util/Interfaces/Targetable.h"
 #include "Util/Interfaces/TeamMember.h"
@@ -13,7 +14,7 @@
 
 UCLASS()
 class RADIANT_API ARTCharacter : public ACharacter, public IKillable, public ITargetable, public ITeamMember,
-                                 public IAbilitySystemInterface
+                                 public IAbilitySystemInterface, public IHooker
 {
 	GENERATED_BODY()
 
@@ -46,7 +47,12 @@ public:
 	virtual void SetIsDead(const bool NewIsDead) override;
 	UFUNCTION(NetMulticast, Reliable)
 	void M_NotifyOnDeath();
+<<<<<<< Updated upstream
 	UPROPERTY(EditAnywhere)
 	USoundBase* DeathSound;
 
+=======
+
+	virtual FHookSocketInfo GetHookSocketInfo() const override;
+>>>>>>> Stashed changes
 };

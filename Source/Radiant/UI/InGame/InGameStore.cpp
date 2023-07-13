@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Data/ItemData.h"
 #include "Player/Avatar.h"
+#include "Player/RTPlayerState.h"
 #include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
 #include "Player/RTPlayerState.h"

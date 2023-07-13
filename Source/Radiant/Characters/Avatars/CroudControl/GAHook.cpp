@@ -1,16 +1,16 @@
 // Copyright Radiant Studios
 
 
-#include "Characters/Avatars/CroudControl/GAJook.h"
+#include "Characters/Avatars/CroudControl/GAHook.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
-#include "Jook.h"
+#include "Hook.h"
 #include "Characters/RTCharacter.h"
 #include "GAS/Tasks/AbilityTask_DisplaceTarget.h"
 #include "Util/Util.h"
 
-void UGAJook::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+void UGAHook::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                               const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -18,7 +18,7 @@ void UGAJook::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 	SetCanBeCanceled(false);
 }
 
-void UGAJook::OnTargetHit(AActor* NewTarget)
+void UGAHook::OnTargetHit(AActor* NewTarget)
 {
 	Target = NewTarget;
 	
@@ -43,13 +43,13 @@ void UGAJook::OnTargetHit(AActor* NewTarget)
 				Interface->GetAbilitySystemComponent()->AddReplicatedLooseGameplayTag(FGameplayTag::RequestGameplayTag("States.Movement.Stopped"));
 			}
 		}
-		Task->OnTimedOut.AddDynamic(this, &UGAJook::OnFinished);
-		Task->OnTimedOutAndDestinationReached.AddDynamic(this, &UGAJook::OnFinished);
+		Task->OnTimedOut.AddDynamic(this, &UGAHook::OnFinished);
+		Task->OnTimedOutAndDestinationReached.AddDynamic(this, &UGAHook::OnFinished);
 		Task->ReadyForActivation();
 	}
 }
 
-void UGAJook::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGAHook::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	if(HasAuthority(&CurrentActivationInfo))
 	{
@@ -62,38 +62,42 @@ void UGAJook::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData Even
 		FRotator Rotation = (TargetLocation - Avatar->GetActorLocation()).Rotation();
 		FTransform SpawnTransform = FTransform(Rotation, SpawnLocation);
 		
-		AJook* Jook = GetWorld()->SpawnActorDeferred<AJook>(
+		AHook* Hook = GetWorld()->SpawnActorDeferred<AHook>(
 			SpawnClass,
 			SpawnTransform,
 			GetOwningActorFromActorInfo(),
 			Cast<APawn>(Avatar)
 			);
-		Jook->SetAbility(this);
-		Jook->FinishSpawning(SpawnTransform);
+		Hook->SetAbility(this);
+		if(Cast<IHooker>(Avatar))
+		{
+			Hook->AttachToHooker(Avatar);
+		}
+		Hook->FinishSpawning(SpawnTransform);
 	}
 }
 
-void UGAJook::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGAHook::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	ReturnToDefault();
 }
 
-void UGAJook::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGAHook::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	ReturnToDefault();
 }
 
-void UGAJook::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGAHook::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	ReturnToDefault();
 }
 
-void UGAJook::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGAHook::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	ReturnToDefault();
 }
 
-void UGAJook::OnFinished()
+void UGAHook::OnFinished()
 {	
 	ReturnToDefaultAndEndAbility();
 	if(IAbilitySystemInterface* Interface = Cast<IAbilitySystemInterface>(Target))
