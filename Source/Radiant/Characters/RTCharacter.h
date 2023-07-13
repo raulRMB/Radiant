@@ -47,7 +47,7 @@ public:
 	virtual void SetIsDead(const bool NewIsDead) override;
 	UFUNCTION(NetMulticast, Reliable)
 	void M_NotifyOnDeath();
-
+	
 	UPROPERTY(EditAnywhere)
 	USoundBase* DeathSound;
 

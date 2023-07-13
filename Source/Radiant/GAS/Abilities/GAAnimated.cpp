@@ -16,42 +16,39 @@ UGAAnimated::UGAAnimated()
 void UGAAnimated::SetSelfTags(const bool bApply) const
 {
 	FGameplayTag Casting = FGameplayTag::RequestGameplayTag("States.Casting");
-	if(GetAvatarActorFromActorInfo()->GetLocalRole() == ROLE_AutonomousProxy)
+	if(bApply)
 	{
-		if(bApply)
+		FGameplayTagContainer Tags;
+		GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
+		for(auto SelfTag : SelfTags)
 		{
-			FGameplayTagContainer Tags;
-			GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
-			for(auto SelfTag : SelfTags)
+			if(!Tags.HasTag(SelfTag))
 			{
-				if(!Tags.HasTag(SelfTag))
-				{
-					GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(SelfTag);
-					GetAbilitySystemComponentFromActorInfo()->AddReplicatedLooseGameplayTag(SelfTag);
-				}
+				GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(SelfTag);
+				GetAbilitySystemComponentFromActorInfo()->AddReplicatedLooseGameplayTag(SelfTag);
 			}
 		}
-		else
+	}
+	else
+	{
+		FGameplayTagContainer Tags;
+		GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
+		for(auto SelfTag : SelfTags)
 		{
-			FGameplayTagContainer Tags;
-			GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
-			for(auto SelfTag : SelfTags)
+			if(SelfTag == Casting)
 			{
-				if(SelfTag == Casting)
-				{
-					continue;
-				}
-				if(Tags.HasTag(SelfTag))
-				{
-					GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(SelfTag);
-					GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(SelfTag);
-				}
+				continue;
 			}
-			if(Tags.HasTag(Casting))
+			if(Tags.HasTag(SelfTag))
 			{
-				GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(Casting);
-				GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(Casting);
+				GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(SelfTag);
+				GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(SelfTag);
 			}
+		}
+		if(Tags.HasTag(Casting))
+		{
+			GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(Casting);
+			GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(Casting);
 		}
 	}
 }
@@ -99,13 +96,10 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void UGAAnimated::ReturnToDefault() const
 {
-	if(GetAvatarActorFromActorInfo()->GetLocalRole() == ROLE_AutonomousProxy)
+	if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
 	{
-		if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
-		{
-			Avatar->SetRotationLock(false);
-			SetSelfTags(false);
-		}
+		Avatar->C_SetRotationLock(false);
+		SetSelfTags(false);
 	}
 }
 

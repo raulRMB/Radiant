@@ -589,6 +589,11 @@ void AAvatar::SetRotationLock(bool RotationLocked, FVector TargetDir)
 	S_SetRotationLock(RotationLocked, TargetDir);
 }
 
+void AAvatar::C_SetRotationLock_Implementation(bool RotationLocked, FVector TargetDir)
+{
+	SetRotationLock(RotationLocked, TargetDir);
+}
+
 void AAvatar::ResetDestination()
 {
 	Destination = GetActorLocation();

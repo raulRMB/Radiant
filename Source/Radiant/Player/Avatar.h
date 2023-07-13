@@ -199,7 +199,9 @@ public:
 	void SetRotationLock(bool RotationLocked, FVector TargetDir = FVector::ZeroVector);
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void S_SetRotationLock(bool RotationLocked, FVector TargetDir);
-
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void C_SetRotationLock(bool RotationLocked, FVector TargetDir = FVector::ZeroVector);
+	
 	void ResetDestination();
 
 	UFUNCTION(BlueprintCallable)
