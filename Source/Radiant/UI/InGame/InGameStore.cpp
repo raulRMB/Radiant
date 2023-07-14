@@ -63,7 +63,13 @@ void UInGameStore::NativeConstruct()
 	if (ItemTable && StoreGrid)
 	{
 		static const FString ContextString(TEXT("Store Item Button Native Construct"));
-		for (FName RowName : ItemTable->GetRowNames())
+		auto Rows = ItemTable->GetRowNames();
+		Rows.Sort([this](const FName& One, const FName& Two) {
+				FItemData* OneData = ItemTable->FindRow<FItemData>(One, ContextString);
+				FItemData* TwoData = ItemTable->FindRow<FItemData>(Two, ContextString);
+				return OneData->AbilityData->Price < TwoData->AbilityData->Price;
+			});
+		for (FName RowName : Rows)
 		{
 			UStoreItem* StoreItem = CreateWidget<UStoreItem>(this, StoreItemClass);
 			FItemData* ItemData = ItemTable->FindRow<FItemData>(RowName, ContextString);
