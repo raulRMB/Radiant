@@ -32,13 +32,13 @@ void UMinimap::DrawDynamic()
 	UGameplayStatics::GetAllActorsOfClass(this, AAvatar::StaticClass(), Players);
 	if(ARTPlayerState* PS = UGameplayStatics::GetPlayerController(this, 0)->GetPlayerState<ARTPlayerState>())
 	{
-		float MapSize = 12000.f;
+		float MapSize = 12600.f;
 		for(AActor* Player : Players)
 		{
 			if(Player)
 			{
-				float X = Player->GetActorLocation().Y + MapSize / 2.f;
-				float Y = Player->GetActorLocation().X + MapSize / 2.f;
+				float X = Player->GetActorLocation().Y;
+				float Y = Player->GetActorLocation().X;
 
 				X = X / MapSize * Size.X;
 				Y = Size.Y - Y / MapSize * Size.Y;
