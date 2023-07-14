@@ -33,6 +33,7 @@ void AMobSpawner::StartSpawning()
 {
 	if(HasAuthority())
 	{
+		Spawn();	
 		GetWorld()->GetTimerManager().SetTimer(Handle, this, &AMobSpawner::Spawn, SpawnRate, true);
 	}
 }
