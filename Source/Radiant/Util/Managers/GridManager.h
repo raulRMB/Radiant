@@ -39,7 +39,6 @@ class RADIANT_API AGridManager : public AActor
 {
 	GENERATED_BODY()
 
-	FIntVector2 GridSize;
 	UPROPERTY()
 	TArray<class ABuilding*> Pieces;
 	UPROPERTY(Replicated)
@@ -47,10 +46,13 @@ class RADIANT_API AGridManager : public AActor
 
 	UPROPERTY(EditAnywhere)
 	TMap<EEnvironmentType, TSubclassOf<class ABuilding>> BuildingTypes;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess=true))
+	FIntVector2 GridSize;
 public:
 	AGridManager();
 	
-	void InitGrid(int Width, int Height);
+	void InitGrid();
 	
 	uint32 CellSize = 200;
 	uint32 CellHalfSize = CellSize / 2;

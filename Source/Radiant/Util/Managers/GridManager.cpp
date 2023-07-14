@@ -12,25 +12,25 @@ AGridManager::AGridManager()
 	bReplicates = true;
 }
 
-void AGridManager::InitGrid(int Width, int Height)
+void AGridManager::InitGrid()
 {
-	GridSize = FIntVector2(Width, Height);
 	Cells.Init(false, GridSize.X * GridSize.Y);
-	// if(GetWorld() && HasAuthority())
-	// {
-	// 	for(int i = 0; i < Cells.Num(); i++)
-	// 	{
-	// 		double X = static_cast<double>(i % GridSize.X) / static_cast<double>(GridSize.X);
-	// 		double Y = static_cast<double>(i / GridSize.Y) / static_cast<double>(GridSize.Y);
-	// 		FVector2D Vec = FVector2D(X, Y);
-	// 		
-	// 		// RTLOGP("%s", *Vec.ToString());
-	// 		if(FMath::PerlinNoise2D(Vec) > .425f)
-	// 		{
-	// 			GetWorld()->SpawnActor<ABuilding>(BuildingTypes[EEnvironmentType::EEnvironmentType_Tree], FTransform(FVector(i % GridSize.X, i / GridSize.Y, 0.f) * CellSize));
-	// 		}
-	// 	}
-	// }
+
+	for(int x = 3; x < 6; x++)
+	{
+		for(int y = 3; y < 6; y++)
+		{
+			Cells[x + y * GridSize.Y] = true;
+		}
+	}
+
+	for(int x = Cells.Num() - 4; x < Cells.Num() - 7; x--)
+	{
+		for(int y = Cells.Num() - 4; y < Cells.Num() - 7; y--)
+		{
+			Cells[x + y * GridSize.Y] = true;
+		}
+	}
 }
 
 void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
@@ -63,7 +63,7 @@ void AGridManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitGrid(128, 128);
+	InitGrid();
 }
 
 void AGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

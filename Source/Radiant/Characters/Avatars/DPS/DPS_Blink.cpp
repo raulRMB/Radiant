@@ -18,3 +18,8 @@ void UDPS_Blink::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	CueParameters.Location = GetRangeBasedMouseLocation();
 	GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(BlinkEndCue, CueParameters);
 }
+
+UDPS_Blink::UDPS_Blink()
+{
+	bIsCancelable = false;
+}

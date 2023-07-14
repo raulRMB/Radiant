@@ -19,4 +19,7 @@ class RADIANT_API UDPS_Blink : public UGADash
 	FGameplayTag BlinkEndCue;
 	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+public:
+	UDPS_Blink();
 };
