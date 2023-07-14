@@ -4,6 +4,7 @@
 #include "UI/InGame/StoreItem.h"
 
 #include "AbilitySystemComponent.h"
+#include "InGameStore.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -19,8 +20,13 @@ void UStoreItem::OnClicked()
 {
 	if(ARTPlayerController* PC = Cast<ARTPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
-		PC->GetPlayerState<ARTPlayerState>()->S_BuyAbility(FName(ItemName), 1);
+		PC->GetPlayerState<ARTPlayerState>()->S_BuyAbility(FName(ItemName), Store->BuyAmount);
 	}
+}
+
+void UStoreItem::SetStore(UInGameStore* InStore)
+{
+	Store = InStore;
 }
 
 void UStoreItem::Init(const FName& Name)

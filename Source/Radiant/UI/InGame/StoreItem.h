@@ -23,13 +23,17 @@ class RADIANT_API UStoreItem : public UUserWidget
 	
 	UPROPERTY()
 	FString ItemName;
+
+	UPROPERTY()
+	class UInGameStore* Store;
 	
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemTable;
 private:
 	UFUNCTION()
 	void OnClicked();
-	
+
 public:
 	void Init(const FName& Name);
+	void SetStore(UInGameStore* InStore);
 };

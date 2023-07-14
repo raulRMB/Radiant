@@ -4,6 +4,7 @@
 #include "InGameStore.h"
 
 #include "StoreItem.h"
+#include "Components/Button.h"
 #include "Components/GridPanel.h"
 #include "Components/TextBlock.h"
 #include "Data/ItemData.h"
@@ -31,6 +32,30 @@ UUniformGridPanel* UInGameStore::GetInventoryGrid() const
 	return InventoryGrid;
 }
 
+void UInGameStore::OnBuyIncrement()
+{
+	BuyAmount++;
+	BuyAmountText->SetText(FText::FromString(FString::FromInt(BuyAmount)));
+}
+
+void UInGameStore::OnBuyIncrementBig()
+{
+	BuyAmount += 5;
+	BuyAmountText->SetText(FText::FromString(FString::FromInt(BuyAmount)));
+}
+
+void UInGameStore::OnBuyDecrement()
+{
+	BuyAmount = FMath::Max(1, BuyAmount - 1);
+	BuyAmountText->SetText(FText::FromString(FString::FromInt(BuyAmount)));
+}
+
+void UInGameStore::OnBuyDecrementBig()
+{
+	BuyAmount = FMath::Max(1, BuyAmount - 5);
+	BuyAmountText->SetText(FText::FromString(FString::FromInt(BuyAmount)));
+}
+
 void UInGameStore::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -45,10 +70,15 @@ void UInGameStore::NativeConstruct()
 			if(ItemData->AbilityData)
 			{
 				StoreItem->Init(RowName);
+				StoreItem->SetStore(this);
 			}
 			StoreGrid->AddChildToGrid(StoreItem, StoreGrid->GetChildrenCount() / 5, StoreGrid->GetChildrenCount() % 5);
 		}
 	}
+	BuyIncrement->OnClicked.AddDynamic(this, &UInGameStore::OnBuyIncrement);
+	BuyIncrementBig->OnClicked.AddDynamic(this, &UInGameStore::OnBuyIncrementBig);
+	BuyDecrement->OnClicked.AddDynamic(this, &UInGameStore::OnBuyDecrement);
+	BuyDecrementBig->OnClicked.AddDynamic(this, &UInGameStore::OnBuyDecrementBig);
 }
 
 void UInGameStore::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)

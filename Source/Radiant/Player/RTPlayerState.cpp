@@ -232,12 +232,15 @@ void ARTPlayerState::GameReady_Implementation()
 void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32 Amount)
 {
 	FItemData* ItemData = ItemDataTable->FindRow<FItemData>(AbilityName, FString("BuyAbility"));
-	if (AttributeSet->GetRadianite() < ItemData->AbilityData->Price * Amount || InnateAbilities.Contains(ItemData->AbilityData))
+	if(ItemData->AbilityData->Price * Amount > AttributeSet->GetRadianite())
+	{
+		Amount = AttributeSet->GetRadianite() / ItemData->AbilityData->Price;
+	}
+	if (Amount <= 0 || InnateAbilities.Contains(ItemData->AbilityData))
 	{
 		return;
 	}
 	GetInventory()->AddItem(AbilityName, ItemData, Amount);
-
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price * Amount);
 }
 

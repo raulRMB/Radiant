@@ -27,6 +27,31 @@ class RADIANT_API UInGameStore : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemTable;
 
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* BuyAmountText;
+
+	UPROPERTY(meta=(BindWidget))
+	class UButton* BuyIncrement;
+
+	UPROPERTY(meta=(BindWidget))
+	class UButton* BuyIncrementBig;
+
+	UPROPERTY(meta=(BindWidget))
+	class UButton* BuyDecrement;
+	
+	UPROPERTY(meta=(BindWidget))
+	class UButton* BuyDecrementBig;
+
+
+	
+	UFUNCTION()
+	void OnBuyIncrement();
+	UFUNCTION()
+	void OnBuyIncrementBig();
+	UFUNCTION()
+	void OnBuyDecrement();
+	UFUNCTION()
+	void OnBuyDecrementBig();
 	virtual void NativeConstruct() override;
 
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
@@ -36,6 +61,6 @@ class RADIANT_API UInGameStore : public UUserWidget
 	void UpdateRadianite(float RadianiteAmount);
 public:
 	void Init(class ARTPlayerState* PS);
-
+	int32 BuyAmount = 1;
 	UUniformGridPanel* GetInventoryGrid() const;
 };
