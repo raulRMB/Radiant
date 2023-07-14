@@ -61,25 +61,6 @@ AAvatar::AAvatar()
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
 }
 
-void AAvatar::GameReadyUnicast_Implementation()
-{
-	auto SS = GetGameInstance()->GetSubsystem<UClientSubsystem>();
-	if (SS)
-	{
-		FString Username = GetGameInstance()->GetSubsystem<UClientSubsystem>()->Username;
-		if (!Username.IsEmpty())
-		{
-			GetPlayerState<ARTPlayerState>()->SetUsername(Username);
-		}
-	}
-	AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AAvatar::OnAbilityFailed);
-	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")),
-	                                                 EGameplayTagEventType::NewOrRemoved).AddUObject(
-		this, &AAvatar::CastingTagChanged);
-	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->HideLoadScreen();
-	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->BindUIItems();
-}
-
 void AAvatar::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags)
 {
 	FGameplayTagContainer OwnedTags;
@@ -177,11 +158,6 @@ void AAvatar::BeginPlay()
 			}
 		}
 	}
-	if (!HasAuthority())
-	{
-		auto PC = Cast<ARTPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		PC->PlayerLoaded();
-	}
 	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
 	if (PS)
 	{
@@ -199,9 +175,10 @@ void AAvatar::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::ShowStats, 0.3f, true);
 	UEventBroker::Get(this)->DragStatusChanged.AddUObject(this, &AAvatar::OnDragStatusChanged);
 	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
+	UEventBroker::Get(this)->GameIsReady.AddUObject(this, &AAvatar::GameReady);
 }
 
-void AAvatar::GameReady_Implementation()
+void AAvatar::GameReady()
 {
 	SetOwnHealthBarColor();
 }
@@ -468,11 +445,18 @@ void AAvatar::OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData
 
 void AAvatar::ApplyInitialEffects()
 {
-	for (auto Effect : InitialEffects)
+	if(HasAuthority())
 	{
-		UGameplayEffect* EffectInstance = NewObject<UGameplayEffect>(this, Effect);
-		AbilitySystemComponent->ApplyGameplayEffectToSelf(EffectInstance, 1,
-		                                                  AbilitySystemComponent->MakeEffectContext());
+		for (auto Effect : InitialEffects)
+		{
+			UGameplayEffect* EffectInstance = NewObject<UGameplayEffect>(this, Effect);
+			AbilitySystemComponent->ApplyGameplayEffectToSelf(EffectInstance, 1,
+															  AbilitySystemComponent->MakeEffectContext());
+		}
+		AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AAvatar::OnAbilityFailed);
+		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("States.Casting")),
+														 EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this, &AAvatar::CastingTagChanged);
 	}
 }
 

@@ -78,6 +78,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void S_BuyAbility(const FName& AbilityName, int32 Amount);
 
+	UFUNCTION(Client, Reliable)
+	void GameReady();
+	
 	UPROPERTY(Replicated, EditAnywhere)
 	TArray<class UAbilityDataAsset*> InnateAbilities;
 	FGameplayAbilitySpecHandle GiveAbility(FItemData* ItemData);

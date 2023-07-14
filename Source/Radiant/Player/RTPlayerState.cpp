@@ -6,12 +6,15 @@
 #include "RTPlayerController.h"
 #include "Data/AbilityDataAsset.h"
 #include "Data/ItemData.h"
+#include "Event/EventBroker.h"
 #include "Modes/Base/RTGameState.h"
 #include "Modes/Base/RTGameMode.h"
 #include "Player/Avatar.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "UI/RTHUD.h"
+#include "UI/Client/ClientSubsystem.h"
 
 void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -205,6 +208,26 @@ ARTGameState* ARTPlayerState::GetRTGS() const
 
 #pragma endregion ConvenienceGetters
 
+
+void ARTPlayerState::GameReady_Implementation()
+{
+	auto SS = GetGameInstance()->GetSubsystem<UClientSubsystem>();
+	if (SS)
+	{
+		FString CUsername = GetGameInstance()->GetSubsystem<UClientSubsystem>()->Username;
+		if (!CUsername.IsEmpty())
+		{
+			SetUsername(CUsername);
+		}
+	}
+	ARTPlayerController* PC = Cast<ARTPlayerController>(GetPlayerController());
+	if(PC)
+	{
+		PC->GetHUD<ARTHUD>()->HideLoadScreen();
+		PC->GetHUD<ARTHUD>()->BindUIItems();
+	}
+	UEventBroker::Get(this)->GameIsReady.Broadcast();
+}
 
 void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32 Amount)
 {

@@ -13,6 +13,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FDragStatus, bool);
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FItemUsedSignature, const class FName&);
 
+DECLARE_MULTICAST_DELEGATE(FGameIsReady);
+
 UCLASS()
 class RADIANT_API UEventBroker : public UGameInstanceSubsystem
 {
@@ -21,5 +23,6 @@ public:
 	FItemChangedSignature ItemChanged;
 	FDragStatus DragStatusChanged;
 	FItemUsedSignature ItemUsed;
+	FGameIsReady GameIsReady;
 	static UEventBroker* Get(const UObject* WorldContextObject);
 };

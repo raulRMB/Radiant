@@ -84,7 +84,7 @@ void ARTGameMode::PlayerLoaded()
 	{
 		PlayersLoaded++;
 		uint32 players = (TeamSize * TeamCount);
-		if (PlayersLoaded >= players * players)
+		if (PlayersLoaded >= players)
 		{
 			bInitialPlayerLoad = true;
 			FTimerHandle Handle;
@@ -129,13 +129,9 @@ void ARTGameMode::PlayersAreLoaded() const
 		APlayerController* PlayerController = Iterator->Get();
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
+			PlayerController->GetPlayerState<ARTPlayerState>()->GameReady();
 			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
-			Hero->GameReady();
-			Hero->GameReadyUnicast();
-			if (HasAuthority())
-			{
-				Hero->ApplyInitialEffects();
-			}
+			Hero->ApplyInitialEffects();
 		}
 	}
 }

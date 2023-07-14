@@ -62,6 +62,10 @@ void ARTPlayerController::BeginPlay()
 	{
 		InventoryComponent->InitInventory(ItemDataTable);
 	}
+	if (!HasAuthority())
+	{
+		PlayerLoaded();
+	}
 }
 
 FVector ARTPlayerController::GetCarrierLocation() const
