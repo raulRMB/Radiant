@@ -267,6 +267,11 @@ void ARTPlayerController::Escape(const FInputActionValue& Value)
 
 void ARTPlayerController::AcceptOrder(const FInputActionValue& Value)
 {
+	if(GetPawn<AAvatar>()->TryPickupItem())
+	{
+		return;
+	}
+	
 	OrderAccepted.Broadcast();
 }
 

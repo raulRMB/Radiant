@@ -42,7 +42,8 @@ void AWorldItem::PickUp(ICarrier* Carrier)
 	{
 		if(OverlappingActors.Contains(CarrierActor))
 		{
-			Carrier->PickUpItem(ItemName, 1);
+			Carrier->PickUpItem(ItemName, Amount);
+			Destroy();
 		}
 	}
 }

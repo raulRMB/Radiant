@@ -33,6 +33,7 @@ public:
 	UFUNCTION(Client, Reliable)
 	void LevelUp(float GetLevel);
 	void SetOverheadBarText(const FString& String);
+	bool TryPickupItem();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;
@@ -111,7 +112,7 @@ protected:
 	void OnDragStatusChanged(bool bArg);
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
-	FHitResult GetMousePositionInWorld() const;
+	FHitResult GetMousePositionInWorld(bool bIgnoreSelf = false) const;
 
 	UFUNCTION(Server, Reliable)
 	void S_SpawnActorAtMouse(const FString& PieceName, const uint32 Amount, const FVector& Location);
@@ -124,13 +125,15 @@ protected:
 public:
 	UFUNCTION(Server, Reliable)
 	void S_PlaceGridPiece(FGridPiece Piece);
+	UFUNCTION(Server, Reliable)
+	void S_PickUpItem(class AWorldItem* WorldItem);
 
 	virtual UInventoryComponent* GetInventory() const override;
 	virtual FVector GetCarrierLocation() const override { return GetActorLocation(); }
 
 	bool CheckShouldAttack();
 	void ApplyInitialEffects();
-	void CastAbility(const FGameplayTag& AbilityTag);
+	void CastAbility(const FGameplayTag& AbilityTag, bool bIgnoreSelf = false);
 	void OnUpdateTarget(const FInputActionValue& Value);
 	void OnAbilityOne(const FInputActionValue& Value);
 	void OnAbilityTwo(const FInputActionValue& Value);

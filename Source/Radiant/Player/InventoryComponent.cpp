@@ -103,9 +103,9 @@ void UInventoryComponent::DropItem(const FName& ItemName)
 		if (ICarrier* Carrier = Cast<ICarrier>(GetOwner()))
 		{
 			FVector Offset = FVector::RightVector;
-			Offset.RotateAngleAxis(FMath::RandRange(0, 360), FVector::UpVector);
-			Offset *= 100;
-			FTransform SpawnTransform = FTransform(Carrier->GetCarrierLocation() + Offset);
+			Offset = Offset.RotateAngleAxis(FMath::RandRange(0.0f, 360.0f), FVector::UpVector);
+			Offset *= 100.0f;
+			FTransform SpawnTransform = FTransform((Carrier->GetCarrierLocation() + Offset) * FVector(1.f,1.f,0.f));
 			AWorldItem* WorldItem = GetWorld()->SpawnActorDeferred<AWorldItem>(WorldItemClass, SpawnTransform);
 			WorldItem->FinishSpawning(SpawnTransform);
 			WorldItem->InitItem(ItemName, Items[ItemName].Amount);

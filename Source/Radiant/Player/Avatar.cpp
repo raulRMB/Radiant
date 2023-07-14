@@ -21,6 +21,7 @@
 #include "GAS/Abilities/RTAbility.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
+#include "Items/WorldItem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -100,6 +101,20 @@ void AAvatar::SetOverheadBarText(const FString& String)
 	{
 		OverHeadInfoBar->SetOverheadText(String);
 	}
+}
+
+bool AAvatar::TryPickupItem()
+{
+	FHitResult HitResult = GetMousePositionInWorld(true);
+	if (HitResult.GetActor())
+	{
+		if (AWorldItem* WorldItem = Cast<AWorldItem>(HitResult.GetActor()))
+		{
+			S_PickUpItem(WorldItem);
+			return true;
+		}
+	}
+	return false;
 }
 
 void AAvatar::LevelUp_Implementation(float GetLevel)
@@ -193,7 +208,7 @@ FVector2D AAvatar::GetMousePosition()
 	return MousePosition;
 }
 
-FHitResult AAvatar::GetMousePositionInWorld() const
+FHitResult AAvatar::GetMousePositionInWorld(bool bIgnoreSelf) const
 {
 	FVector2D MousePosition = GetMousePosition();
 	FVector WorldPosition;
@@ -204,6 +219,10 @@ FHitResult AAvatar::GetMousePositionInWorld() const
 	FHitResult PlayerHitResult;
 	FHitResult GroundHitResult;
 	FCollisionQueryParams CollisionQueryParams;
+	if (bIgnoreSelf)
+	{
+		CollisionQueryParams.AddIgnoredActor(this);
+	}
 	GetWorld()->LineTraceSingleByChannel(PlayerHitResult, WorldPosition, WorldPosition + WorldDirection * 1000000,
 	                                     ECC_GameTraceChannel1, CollisionQueryParams);
 	GetWorld()->LineTraceSingleByChannel(GroundHitResult, WorldPosition, WorldPosition + WorldDirection * 1000000,
@@ -215,10 +234,10 @@ FHitResult AAvatar::GetMousePositionInWorld() const
 
 void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 {
-	FHitResult HitResult = GetMousePositionInWorld();
+	FHitResult HitResult = GetMousePositionInWorld(true);
 	ITargetable* Targetable = Cast<ITargetable>(HitResult.GetActor());
 	ITeamMember* TeamMember = Cast<ITeamMember>(HitResult.GetActor());
-	if (Targetable && TeamMember->GetTeamId() != GetPlayerState<ARTPlayerState>()->GetTeamId())
+	if (Targetable && TeamMember->GetTeamId() != GetTeamId())
 	{
 		Target = HitResult.GetActor();
 		GetPlayerState<ARTPlayerState>()->S_SetTarget(HitResult.GetActor());
@@ -232,9 +251,10 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	{
 		S_CancelAllAbilities();
 	}
+	
 
 	FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.PathTo"));
-	CastAbility(Tag);
+	CastAbility(Tag, true);
 }
 
 void AAvatar::S_SpawnActorAtMouse_Implementation(const FString& PieceName, const uint32 Amount, const FVector& Location)
@@ -279,6 +299,14 @@ void AAvatar::SpawnActorAtSelf(const FString& PieceName, const uint32 Amount)
 	else
 	{
 		RTPRINTP("Error: Invalid PieceName: %s", *PieceName);
+	}
+}
+
+void AAvatar::S_PickUpItem_Implementation(AWorldItem* WorldItem)
+{
+	if(WorldItem)
+	{
+		WorldItem->PickUp(this);
 	}
 }
 
@@ -338,7 +366,7 @@ bool AAvatar::CheckShouldAttack()
 	return true;
 }
 
-void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
+void AAvatar::CastAbility(const FGameplayTag& AbilityTag, bool bIgnoreSelf)
 {
 	if(GetIsDead())
 	{
@@ -349,7 +377,7 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag)
 	FGameplayEventData EventData;
 	FGameplayAbilityTargetData_SingleTargetHit* MousePosData = new FGameplayAbilityTargetData_SingleTargetHit();
 
-	FHitResult HitResult = GetMousePositionInWorld();
+	FHitResult HitResult = GetMousePositionInWorld(bIgnoreSelf);
 	MousePosData->HitResult = HitResult;
 
 	FGameplayAbilityTargetDataHandle TargetData;
