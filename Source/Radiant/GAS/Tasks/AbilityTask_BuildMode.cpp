@@ -2,8 +2,6 @@
 
 
 #include "GAS/Tasks/AbilityTask_BuildMode.h"
-#include "Building/Building.h"
-#include "Player/RTPlayerController.h"
 #include "Player/RTPlayerState.h"
 #include "Util/Util.h"
 
@@ -13,10 +11,10 @@ UAbilityTask_BuildMode::UAbilityTask_BuildMode(const FObjectInitializer& ObjectI
 }
 
 UAbilityTask_BuildMode* UAbilityTask_BuildMode::BuildModeTask(UGameplayAbility* OwningAbility, FName TaskInstanceName,
-                                                              EEnvironmentType Type)
+                                                              TSubclassOf<class AActor> NewBuildingType)
 {
 	UAbilityTask_BuildMode* Task = NewAbilityTask<UAbilityTask_BuildMode>(OwningAbility, TaskInstanceName);
-	Task->Type = Type;
+	Task->BuildingType = NewBuildingType;
 	return Task;
 }
 
@@ -28,7 +26,7 @@ void UAbilityTask_BuildMode::Activate()
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		Actor = GetWorld()->SpawnActor<AActor>(UUtil::GetBuildingType(Type), FTransform(FVector(0.f, 0.f, 0.f)), SpawnParams);
+		Actor = GetWorld()->SpawnActor<AActor>(BuildingType, FTransform(FVector(0.f, 0.f, 0.f)), SpawnParams);
 	}
 }
 

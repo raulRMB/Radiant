@@ -54,7 +54,7 @@ void UGABuildAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {	
 	if(!HasAuthority(&CurrentActivationInfo))
 	{
-		UAbilityTask_BuildMode* Task = UAbilityTask_BuildMode::BuildModeTask(this, FName("BuildModeTask"), EnvironmentType);
+		UAbilityTask_BuildMode* Task = UAbilityTask_BuildMode::BuildModeTask(this, FName("BuildModeTask"), BuildingType);
 		Task->ReadyForActivation();
 	}
 	

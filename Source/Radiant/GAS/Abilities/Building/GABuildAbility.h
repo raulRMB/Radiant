@@ -15,7 +15,7 @@ class RADIANT_API UGABuildAbility : public URTAbility
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	EEnvironmentType EnvironmentType;
+	TSubclassOf<class AActor> BuildingType;
 
 	FDelegateHandle OrderAcceptedHandle;
 
