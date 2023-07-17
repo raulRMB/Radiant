@@ -226,9 +226,7 @@ private:
 	void HandleCamera(float DeltaSeconds);
 
 	virtual void Restart() override;
-
 	virtual void PostInitializeComponents() override;
-
 	virtual void PostLoad() override;
 	float FPS;
 };

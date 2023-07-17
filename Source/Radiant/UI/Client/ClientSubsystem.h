@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PFEntityKey.h"
+// #include "PFEntityKey.h"
 #include "PlayFab.h"
 #include "PlayFabClientDataModels.h"
 #include "PlayFabMultiplayerDataModels.h"
@@ -105,7 +105,7 @@ private:
 
 	/********************************* C++ API ***************************************/
 
-	void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult& Result);
+	// void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult& Result);
 
 	/********************************* C++ API END ***********************************/
 };

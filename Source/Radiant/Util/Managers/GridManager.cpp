@@ -15,22 +15,6 @@ AGridManager::AGridManager()
 void AGridManager::InitGrid()
 {
 	Cells.Init(false, GridSize.X * GridSize.Y);
-
-	for(int x = 3; x < 6; x++)
-	{
-		for(int y = 3; y < 6; y++)
-		{
-			Cells[x + y * GridSize.Y] = true;
-		}
-	}
-
-	for(int x = Cells.Num() - 4; x < Cells.Num() - 7; x--)
-	{
-		for(int y = Cells.Num() - 4; y < Cells.Num() - 7; y--)
-		{
-			Cells[x + y * GridSize.Y] = true;
-		}
-	}
 }
 
 void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
@@ -54,9 +38,19 @@ void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
 	}
 }
 
-bool AGridManager::CheckCanPlace(const FGridPiece Piece)
+bool AGridManager::CheckCanPlace(const FIntVector2 Position)
 {
-	return Cells[Piece.Position.X + Piece.Position.Y * GridSize.Y];
+	if(Position.X < 0 || Position.Y < 0 || Position.X >= GridSize.X || Position.Y >= GridSize.Y)
+	{
+		return false;
+	}
+	int32 Pos = Position.X + Position.Y * GridSize.Y;
+	if(Cells.Num() < Pos || Cells[Pos])
+	{
+		return false;
+	}
+	
+	return Cells[Position.X + Position.Y * GridSize.Y];
 }
 
 void AGridManager::BeginPlay()

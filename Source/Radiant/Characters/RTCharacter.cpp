@@ -60,5 +60,5 @@ void ARTCharacter::M_NotifyOnDeath_Implementation()
 
 void ARTCharacter::M_SetIgnoreWalls_Implementation(const bool bIgnoreWalls)
 {
-	GetCapsuleComponent()->SetCollisionResponseToAllChannels(bIgnoreWalls ? ECR_Ignore : ECR_Block);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, bIgnoreWalls ? ECR_Ignore : ECR_Block);
 }

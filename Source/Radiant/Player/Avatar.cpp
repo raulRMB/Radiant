@@ -18,6 +18,8 @@
 #include "Event/EventBroker.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GAS/Abilities/BasicAttack.h"
+#include "GAS/Abilities/GAMove.h"
 #include "GAS/Abilities/RTAbility.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
@@ -66,14 +68,18 @@ void AAvatar::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGa
 {
 	FGameplayTagContainer OwnedTags;
 	AbilitySystemComponent->GetOwnedGameplayTags(OwnedTags);
+
 	if (OwnedTags.HasTag(FGameplayTag::RequestGameplayTag(FName("States.Casting"))))
 	{
 		bShouldActivateBuffer = true;
 	}
-	else if (!GameplayAbility->GetName().Contains("BasicAttack"))
+	const UGAMove* MoveAbility = Cast<UGAMove>(GameplayAbility);
+	const UBasicAttack* BasicAttackAbility = Cast<UBasicAttack>(GameplayAbility);
+	if (MoveAbility || BasicAttackAbility)
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), FailedSound, 0.5, 1.5);
+		return;
 	}
+	UGameplayStatics::PlaySound2D(GetWorld(), FailedSound, 0.5, 1.5);
 }
 
 void AAvatar::CastingTagChanged(FGameplayTag GameplayTag, int I)
@@ -705,10 +711,6 @@ FVector AAvatar::GetHalfHeightVector()
 
 void AAvatar::BasicAttack()
 {
-	if(HasTag(FString("State.Uncancellable")))
-	{
-		return;
-	}
 	if (IsLocallyControlled() && bIsAttacking)
 	{
 		FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.BasicAttack"));

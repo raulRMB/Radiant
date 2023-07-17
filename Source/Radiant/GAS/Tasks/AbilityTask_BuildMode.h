@@ -23,8 +23,6 @@ public:
 	static UAbilityTask_BuildMode* BuildModeTask(UGameplayAbility* OwningAbility, FName TaskInstanceName, EEnvironmentType Type);
 
 	virtual void Activate() override;
-
 	virtual void OnDestroy(bool AbilityEnded) override;
-	
 	virtual void TickTask(float DeltaTime) override;
 };

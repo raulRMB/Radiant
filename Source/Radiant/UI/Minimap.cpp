@@ -3,7 +3,6 @@
 
 #include "UI/Minimap.h"
 
-#include "CookerSettings.h"
 #include "Components/Image.h"
 #include "Engine/Canvas.h"
 #include "Kismet/GameplayStatics.h"

@@ -58,7 +58,7 @@ public:
 	uint32 CellHalfSize = CellSize / 2;
 
 	void PlacePieceAtMouse(FGridPiece Piece);
-	bool CheckCanPlace(const FGridPiece Piece);
+	bool CheckCanPlace(const FIntVector2 Piece);
 
 	virtual void BeginPlay() override;
 

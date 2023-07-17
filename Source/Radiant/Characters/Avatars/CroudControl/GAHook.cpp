@@ -24,7 +24,9 @@ void UGAHook::OnTargetHit(AActor* NewTarget)
 	
 	FDisplaceTargetData DisplaceTargetData;	
 	DisplaceTargetData.Target = Target;
-	DisplaceTargetData.Location = GetAvatarActorFromActorInfo()->GetActorLocation();
+	FVector TargetLocation = GetAvatarActorFromActorInfo()->GetActorForwardVector() * 225.f;
+	TargetLocation += GetAvatarActorFromActorInfo()->GetActorLocation();
+	DisplaceTargetData.Location = TargetLocation;
 	DisplaceTargetData.Duration = FVector::Dist(Target->GetActorLocation(), GetAvatarActorFromActorInfo()->GetActorLocation()) / DisplaceSpeed;
 	
 	UAbilityTask_DisplaceTarget* Task = UAbilityTask_DisplaceTarget::DisplaceTarget(this,"DisplaceTarget", DisplaceTargetData);
@@ -33,7 +35,6 @@ void UGAHook::OnTargetHit(AActor* NewTarget)
 	{
 		Character->M_SetIgnoreWalls(true);
 	}
-	
 	if(IsValid(this))
 	{
 		if(IAbilitySystemInterface* Interface =Cast<IAbilitySystemInterface>(Target))
@@ -53,6 +54,7 @@ void UGAHook::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData Even
 {
 	if(HasAuthority(&CurrentActivationInfo))
 	{
+		SetCanBeCanceled(true);
 		CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
 
 		AActor* Avatar = GetAvatarActorFromActorInfo();
@@ -79,27 +81,30 @@ void UGAHook::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData Even
 
 void UGAHook::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	SetCanBeCanceled(true);
 	ReturnToDefault();
 }
 
 void UGAHook::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	SetCanBeCanceled(true);
 	ReturnToDefault();
 }
 
 void UGAHook::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	SetCanBeCanceled(true);
 	ReturnToDefault();
 }
 
 void UGAHook::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	SetCanBeCanceled(true);
 	ReturnToDefault();
 }
 
 void UGAHook::OnFinished()
 {	
-	ReturnToDefaultAndEndAbility();
 	if(IAbilitySystemInterface* Interface = Cast<IAbilitySystemInterface>(Target))
 	{
 		if(HasAuthority(&CurrentActivationInfo))
@@ -111,6 +116,7 @@ void UGAHook::OnFinished()
 			}
 		}
 	}
+	ReturnToDefaultAndEndAbility();
 }
 
 
