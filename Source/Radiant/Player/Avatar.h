@@ -53,9 +53,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	uint8 bIsAttacking : 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-	uint8 bCanAttack : 1;
-
 	UPROPERTY(EditAnywhere)
 	float RotationSpeed = 20.f;
 

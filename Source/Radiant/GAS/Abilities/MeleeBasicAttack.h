@@ -3,19 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Combat/Artillery/HeatSeeking.h"
 #include "GAS/Abilities/GAAnimated.h"
-#include "BasicAttack.generated.h"
+#include "MeleeBasicAttack.generated.h"
 
-
+/**
+ * 
+ */
 UCLASS()
-class RADIANT_API UBasicAttack : public UGAAnimated
+class RADIANT_API UMeleeBasicAttack : public UGAAnimated
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category="Projectile")
-	TSubclassOf<AHeatSeeking> ProjectileClass;
-
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class UGameplayEffect>> Effects;
+	
 	virtual void OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	virtual void OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	virtual void OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) override;

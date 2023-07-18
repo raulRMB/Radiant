@@ -18,8 +18,9 @@
 #include "Event/EventBroker.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "GAS/Abilities/BasicAttack.h"
+#include "GAS/Abilities/RangedBasicAttack.h"
 #include "GAS/Abilities/GAMove.h"
+#include "GAS/Abilities/MeleeBasicAttack.h"
 #include "GAS/Abilities/RTAbility.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
@@ -74,8 +75,9 @@ void AAvatar::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGa
 		bShouldActivateBuffer = true;
 	}
 	const UGAMove* MoveAbility = Cast<UGAMove>(GameplayAbility);
-	const UBasicAttack* BasicAttackAbility = Cast<UBasicAttack>(GameplayAbility);
-	if (MoveAbility || BasicAttackAbility)
+	const URangedBasicAttack* BasicAttackAbility = Cast<URangedBasicAttack>(GameplayAbility);
+	const UMeleeBasicAttack* MeleeBasicAttackAbility = Cast<UMeleeBasicAttack>(GameplayAbility);
+	if (MoveAbility || BasicAttackAbility || MeleeBasicAttackAbility)
 	{
 		return;
 	}

@@ -1,8 +1,6 @@
 // Copyright Radiant Studios
 
-
-#include "GAS/Abilities/BasicAttack.h"
-
+#include "MeleeBasicAttack.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Player/Avatar.h"
@@ -10,53 +8,61 @@
 #include "Player/RTPlayerState.h"
 #include "Util/Util.h"
 
-void UBasicAttack::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+void UMeleeBasicAttack::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
 	Super::OnAnimCancelled(EventTag, EventData);
 }
 
-void UBasicAttack::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+void UMeleeBasicAttack::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
 	Super::OnAnimCompleted(EventTag, EventData);
 }
 
-void UBasicAttack::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
+void UMeleeBasicAttack::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
 	Super::OnAnimInterrupted(EventTag, EventData);
 }
 
-void UBasicAttack::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+void UMeleeBasicAttack::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
 	Super::OnAnimBlendOut(EventTag, EventData);
 }
 
-void UBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+void UMeleeBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnAnimEventReceived(EventTag, EventData);
 
 	if(HasAuthority(&CurrentActivationInfo))
 	{
-		AAvatar* Hero = Cast<AAvatar>(GetAvatarActorFromActorInfo());
-		FTransform Transform = FTransform(Hero->GetMesh()->GetSocketLocation(FName("LeftHandSocket")));
-		AHeatSeeking* Projectile = GetWorld()->SpawnActorDeferred<AHeatSeeking>(ProjectileClass, Transform, GetOwningActorFromActorInfo(), Hero);
-		AActor* Target = Hero->GetPlayerState<ARTPlayerState>()->GetTarget();
-		Projectile->SetTarget(Target);
-		Projectile->FinishSpawning(Transform);
+		if(ARTPlayerState* PlayerState = Cast<ARTPlayerState>(GetOwningActorFromActorInfo()))
+		{
+			if(IAbilitySystemInterface* ASI = Cast<IAbilitySystemInterface>(PlayerState->GetTarget()))
+			{
+				if(UAbilitySystemComponent* ASC = ASI->GetAbilitySystemComponent())
+				{
+					for(TSubclassOf<UGameplayEffect>& EffectClass : Effects)
+					{
+						UGameplayEffect* Effect = EffectClass.GetDefaultObject();
+						PlayerState->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(Effect, ASC, 1.f, PlayerState->GetAbilitySystemComponent()->MakeEffectContext());
+					}
+				}
+			}
+		}
 	}
 	
 	ReturnToDefault();
 }
 
-void UBasicAttack::OnUncancellableEventRecieved(FGameplayEventData EventData)
+void UMeleeBasicAttack::OnUncancellableEventRecieved(FGameplayEventData EventData)
 {
 	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
 }
 
-void UBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+void UMeleeBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
@@ -78,9 +84,9 @@ void UBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	SetMouseWorldLocation(Target->GetActorLocation());
 
 	UAbilityTask_WaitGameplayEvent* WaitEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, FGameplayTag::RequestGameplayTag("Notify.Uncancellable"));
-	WaitEvent->EventReceived.AddDynamic(this, &UBasicAttack::OnUncancellableEventRecieved);
+	WaitEvent->EventReceived.AddDynamic(this, &UMeleeBasicAttack::OnUncancellableEventRecieved);
 	WaitEvent->ReadyForActivation();
 
-	float AS = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSetBase()->GetAttackSpeed();
-	BindAnimations(AS);
+	float AttackSpeed = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSetBase()->GetAttackSpeed();
+	BindAnimations(AttackSpeed);
 }
