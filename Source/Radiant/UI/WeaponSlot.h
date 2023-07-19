@@ -19,6 +19,6 @@ class RADIANT_API UWeaponSlot : public UItemSlot
 
 	virtual void SetEmpty(const bool Empty) override;
 public:
-	static bool CheckCanSwapWith(UItemSlot* ItemSlot);
+	bool CheckCanSwapWith(UItemSlot* ItemSlot);
 	virtual void SetData(const FItemSlotData& Data) override;
 };

@@ -108,7 +108,7 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 			if(Target)
 			{
 				float Dist = Avatar->GetDistanceTo(Target);
-				if(Dist < Avatar->AttackRange)
+				if(Dist < Avatar->AttributeSet->GetAttackRange())
 				{
 					if(Avatar->CheckShouldAttack())
 					{

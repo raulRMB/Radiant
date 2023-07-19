@@ -61,7 +61,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "AttackSpeed", ReplicatedUsing = OnRep_AttackSpeed)
 	FGameplayAttributeData AttackSpeed;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AttackSpeed)
-	
+
+	UPROPERTY(BlueprintReadOnly, Category = "AttackRange", ReplicatedUsing = OnRep_AttackRange)
+	FGameplayAttributeData AttackRange;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AttackRange)
+
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
@@ -98,6 +102,9 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_AttackSpeed(const FGameplayAttributeData& OldAttackSpeed);
+
+	UFUNCTION()
+	virtual void OnRep_AttackRange(const FGameplayAttributeData& OldAttackRange);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

@@ -86,8 +86,10 @@ public:
 	UPROPERTY(Replicated, EditAnywhere)
 	TArray<class UAbilityDataAsset*> InnateAbilities;
 	UFUNCTION(Server, Reliable)
-	void S_EquipWeapon(class UAbilityDataAsset* AbilityData);
-	FGameplayAbilitySpecHandle GiveAbility(FItemData* ItemData);
+	void S_EquipWeapon(const FName& WeaponName);
+	UFUNCTION(Server, Reliable)
+	void S_UnequipWeapon();
+	FGameplayAbilitySpecHandle GiveAbility(const FItemData* ItemData) const;
 	TArray<class UAbilityDataAsset*> GetInnateAbilities() const;
 
 #pragma region Killable

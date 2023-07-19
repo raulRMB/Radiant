@@ -353,7 +353,7 @@ bool AAvatar::CheckShouldAttack()
 	}
 
 	FVector dir = Target->GetActorLocation() - GetActorLocation();
-	bIsAttacking = dir.Size() < AttackRange;
+	bIsAttacking = dir.Size() < AttributeSet->GetAttackRange();
 
 	FGameplayTagContainer OwnedTags;
 	if (IAbilitySystemInterface* Interface = Cast<IAbilitySystemInterface>(Target))
@@ -448,7 +448,7 @@ void AAvatar::PossessedBy(AController* NewController)
 		AbilitySystemComponent = Cast<URTAbilitySystemComponent>(PS->GetAbilitySystemComponent());
 		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
 
-		AttributeSetBase = PS->GetAttributeSetBase();
+		AttributeSet = PS->GetAttributeSetBase();
 	}
 	GiveInitialAbilities();
 
@@ -505,14 +505,14 @@ void AAvatar::OnRep_PlayerState()
 		AbilitySystemComponent = Cast<URTAbilitySystemComponent>(PS->GetAbilitySystemComponent());
 		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
 
-		AttributeSetBase = PS->GetAttributeSetBase();
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).
+		AttributeSet = PS->GetAttributeSetBase();
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).
 		                        AddUObject(this, &AAvatar::OnHealthChanged);
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetXPAttribute()).AddUObject(
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetXPAttribute()).AddUObject(
 			this, &AAvatar::OnXPChanged);
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetLevelAttribute()).
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetLevelAttribute()).
 		                        AddUObject(this, &AAvatar::OnLevelChanged);
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetManaAttribute()).
 		                        AddUObject(this, &AAvatar::OnManaChanged);
 	}
 
@@ -596,18 +596,18 @@ void AAvatar::S_CancelAllAbilities_Implementation()
 
 void AAvatar::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if (Data.Attribute == AttributeSetBase->GetHealthAttribute())
+	if (Data.Attribute == AttributeSet->GetHealthAttribute())
 	{
-		float Percent = AttributeSetBase->GetHealth() / AttributeSetBase->GetMaxHealth();
+		float Percent = AttributeSet->GetHealth() / AttributeSet->GetMaxHealth();
 		OverHeadInfoBar->SetHealthPercent(Percent);
 	}
 }
 
 void AAvatar::OnManaChanged(const FOnAttributeChangeData& Data)
 {
-	if (Data.Attribute == AttributeSetBase->GetManaAttribute())
+	if (Data.Attribute == AttributeSet->GetManaAttribute())
 	{
-		float Percent = AttributeSetBase->GetMana() / AttributeSetBase->GetMaxMana();
+		float Percent = AttributeSet->GetMana() / AttributeSet->GetMaxMana();
 		OverHeadInfoBar->SetManaPercent(Percent);
 	}
 }

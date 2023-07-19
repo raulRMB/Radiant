@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "GAS/Abilities/RTAbility.h"
 #include "AbilityDataAsset.generated.h"

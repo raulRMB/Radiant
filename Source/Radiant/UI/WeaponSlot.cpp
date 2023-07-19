@@ -23,7 +23,10 @@ bool UWeaponSlot::CheckCanSwapWith(UItemSlot* ItemSlot)
 		return false;
 
 	if(ItemSlot->IsEmpty())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_UnequipWeapon();
 		return true;
+	}
 	
 	const FItemSlotData& SlotData = ItemSlot->GetItemSlotData();
 	return SlotData.bIsWeapon;
@@ -35,9 +38,6 @@ void UWeaponSlot::SetData(const FItemSlotData& Data)
 
 	if(Data.bIsWeapon)
 	{
-		if(FItemData* ItemData = UUtil::GetItemDataFromName(ItemSlotData.ItemName))
-		{
-			GetOwningPlayerState<ARTPlayerState>()->S_EquipWeapon(ItemData->AbilityData);
-		}
+		GetOwningPlayerState<ARTPlayerState>()->S_EquipWeapon(ItemSlotData.ItemName);
 	}
 }

@@ -6,6 +6,7 @@
 #include "RTPlayerController.h"
 #include "Data/AbilityDataAsset.h"
 #include "Data/ItemData.h"
+#include "Data/WeaponDataAsset.h"
 #include "Event/EventBroker.h"
 #include "Modes/Base/RTGameState.h"
 #include "Modes/Base/RTGameMode.h"
@@ -245,16 +246,34 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price * Amount);
 }
 
-void ARTPlayerState::S_EquipWeapon_Implementation(UAbilityDataAsset* AbilityData)
+void ARTPlayerState::S_EquipWeapon_Implementation(const FName& WeaponName)
 {
+	const FItemData* WeaponData = UUtil::GetItemDataFromName(WeaponName);
+	const UWeaponDataAsset* WeaponDataAsset = Cast<UWeaponDataAsset>(WeaponData->AbilityData);
+	
+	if(!WeaponData || !WeaponDataAsset)
+	{
+		return;
+	}
 	if(WeaponAbilityHandle.IsValid())
 	{
 		AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
 	}
-	WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(AbilityData->Ability.GetDefaultObject());
+	
+	AttributeSet->SetAttackRange(WeaponDataAsset->AttackRange);
+	WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(WeaponDataAsset->Ability.GetDefaultObject());
 }
 
-FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(FItemData* ItemData)
+void ARTPlayerState::S_UnequipWeapon_Implementation()
+{
+	if(WeaponAbilityHandle.IsValid())
+	{
+		AttributeSet->SetAttackRange(200.f);
+		AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
+	}
+}
+
+FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(const FItemData* ItemData) const
 {
 	if(ItemData->bIsWeapon)
 		return FGameplayAbilitySpecHandle();

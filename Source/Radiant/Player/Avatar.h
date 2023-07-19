@@ -68,9 +68,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector TargetDirection;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-	float AttackRange;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	class UCapsuleComponent* HitBox;
 
@@ -169,7 +166,7 @@ public:
 	class ARTHUD* GetRTHUD();
 
 	UPROPERTY()
-	class URTAvatarAttributeSet* AttributeSetBase;
+	class URTAvatarAttributeSet* AttributeSet;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
 	class UWidgetComponent* OverHeadInfoBarWidgetComponent;
