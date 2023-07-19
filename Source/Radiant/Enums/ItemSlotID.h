@@ -32,5 +32,6 @@ enum class EItemSlotID : uint8
 	InventoryEighteen,
 	InventoryNineteen,
 	InventoryLast,
+	WeaponSlot,
 	SlotAmount,
 };

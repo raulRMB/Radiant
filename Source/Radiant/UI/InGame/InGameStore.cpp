@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/GridPanel.h"
 #include "Components/TextBlock.h"
+#include "Components/UniformGridPanel.h"
 #include "Data/ItemData.h"
 #include "Player/Avatar.h"
 #include "Player/RTPlayerState.h"
@@ -30,6 +31,28 @@ void UInGameStore::Init(ARTPlayerState* PS)
 UUniformGridPanel* UInGameStore::GetInventoryGrid() const
 {
 	return InventoryGrid;
+}
+
+UItemSlot* UInGameStore::GetWeaponSlot() const
+{
+	return WeaponSlot;
+}
+
+void UInGameStore::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	for(UWidget* Widget : InventoryGrid->GetAllChildren())
+	{
+		if (UItemSlot* ItemSlot = Cast<UItemSlot>(Widget))
+		{
+			ItemSlot->UpdateCooldown();
+		}
+	}
+	if(WeaponSlot)
+	{
+		WeaponSlot->UpdateCooldown();
+	}
 }
 
 void UInGameStore::OnBuyIncrement()
@@ -63,7 +86,7 @@ void UInGameStore::NativeConstruct()
 	if (ItemTable && StoreGrid)
 	{
 		static const FString ContextString(TEXT("Store Item Button Native Construct"));
-		auto Rows = ItemTable->GetRowNames();
+		TArray<FName> Rows = ItemTable->GetRowNames();
 		Rows.Sort([this](const FName& One, const FName& Two) {
 				FItemData* OneData = ItemTable->FindRow<FItemData>(One, ContextString);
 				FItemData* TwoData = ItemTable->FindRow<FItemData>(Two, ContextString);

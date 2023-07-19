@@ -9,7 +9,7 @@
 #include "UI/InGame/InGameStore.h"
 #include "SlotManager.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class RADIANT_API USlotManager : public UObject
 {
 	GENERATED_BODY()
@@ -23,10 +23,12 @@ class RADIANT_API USlotManager : public UObject
 	UPROPERTY()
 	class UHorizontalBox* HotbarHorizontalBox;
 
+	UPROPERTY()
+	class UItemSlot* WeaponSlot;
 public:
 	UFUNCTION()
 	void OnSlotChanged(const FName& Name, uint32 Amount) const;
-	void InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass);
+	void InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass, UItemSlot* ItemSlot);
 	FGameplayTag GetAbilityTrigger(EItemSlotID Slot);
 
 private:

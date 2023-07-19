@@ -27,14 +27,15 @@ void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
 	}
 }
 
-void USlotManager::InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass)
+void USlotManager::InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass, UItemSlot* ItemSlot)
 {
 	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &USlotManager::OnSlotChanged);
 	
 	HotbarHorizontalBox = HorizontalBox;
 	InventoryGridPanel = GridPanel;
+	WeaponSlot = ItemSlot;
 	
-	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::InventoryLast); i++)
+	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::WeaponSlot); i++)
 	{
 		CreateNewSlot(static_cast<EItemSlotID>(i), ItemSlotClass);
 	}
@@ -115,7 +116,7 @@ UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<
 	ItemSlot->SetEmpty(true);
 	ItemSlot->SetSlotID(UISlotID);
 	Slots.Add(UISlotID, ItemSlot);
-	if(HotbarHorizontalBox && InventoryGridPanel)
+	if(HotbarHorizontalBox && InventoryGridPanel && WeaponSlot)
 	{
 		if(UISlotID >= EItemSlotID::HotBarFirst && UISlotID <= EItemSlotID::HotBarLast)
 		{
@@ -134,6 +135,13 @@ UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<
 				Slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
 				Slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
 			}
+		}
+		else if(UISlotID == EItemSlotID::WeaponSlot)
+		{
+			WeaponSlot->SetEmpty(true);
+			WeaponSlot->SetSlotID(UISlotID);
+			Slots[UISlotID] = WeaponSlot;
+			return WeaponSlot;
 		}
 	}
 	return ItemSlot;

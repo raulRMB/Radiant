@@ -3,6 +3,7 @@
 
 #include "GAS/Abilities/RTAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Event/EventBroker.h"
 #include "Player/Avatar.h"
 #include "Player/InventoryComponent.h"
@@ -190,8 +191,10 @@ bool URTAbility::CommitAbility(const FGameplayAbilitySpecHandle Handle, const FG
 
 void URTAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                  const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
-{	
+{
 	
+	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
+	SetMouseWorldLocation(HitResult.Location);
 }
 
 AAvatar* URTAbility::GetAvatar()

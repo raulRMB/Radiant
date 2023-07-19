@@ -35,7 +35,7 @@ void ARTHUD::BeginPlay()
 	Minimap->AddToViewport();
 	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
-	SlotManager->InitSlots(InfoPanel->GetHotbarHorizontalBox(), StoreUI->GetInventoryGrid(), ItemSlotClass);
+	SlotManager->InitSlots(InfoPanel->GetHotbarHorizontalBox(), StoreUI->GetInventoryGrid(), ItemSlotClass, StoreUI->GetWeaponSlot());
 }
 
 void ARTHUD::ShowEndScreen(bool won)

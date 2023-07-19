@@ -41,13 +41,11 @@ void URTInfoPanel::UpdateProperties(float DeltaTime) const
 
 void URTInfoPanel::UpdateCooldowns() const
 {
-	auto Slots = HotbarHorizontalBox->GetAllChildren();
-	for (int i = 0; i < Slots.Num(); i++)
+	for(UWidget* Widget : HotbarHorizontalBox->GetAllChildren())
 	{
-		UItemSlot* AbilityWidget = Cast<UItemSlot>(Slots[i]);
-		if (AbilityWidget)
+		if (UItemSlot* ItemSlot = Cast<UItemSlot>(Widget))
 		{
-			AbilityWidget->UpdateCooldown();
+			ItemSlot->UpdateCooldown();
 		}
 	}
 }

@@ -73,7 +73,6 @@ class RADIANT_API ARTHUD : public AHUD
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UItemSlot> ItemSlotClass;
-
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
