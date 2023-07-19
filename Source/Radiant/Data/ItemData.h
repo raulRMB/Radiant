@@ -21,10 +21,14 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* Icon;
 
+	UPROPERTY(EditAnywhere)
+	uint8 bIsWeapon : 1;
+
 	FItemData()
 	{
 		AbilityData = nullptr;
 		Tooltip = FText::FromString("");
 		Icon = nullptr;
+		bIsWeapon = false;
 	}
 };

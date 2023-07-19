@@ -15,6 +15,7 @@
 #include "Net/UnrealNetwork.h"
 #include "UI/RTHUD.h"
 #include "UI/Client/ClientSubsystem.h"
+#include "Util/Util.h"
 
 void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -244,8 +245,19 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32
 	AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price * Amount);
 }
 
+void ARTPlayerState::S_EquipWeapon_Implementation(UAbilityDataAsset* AbilityData)
+{
+	if(WeaponAbilityHandle.IsValid())
+	{
+		AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
+	}
+	WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(AbilityData->Ability.GetDefaultObject());
+}
+
 FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(FItemData* ItemData)
 {
+	if(ItemData->bIsWeapon)
+		return FGameplayAbilitySpecHandle();
 	FGameplayAbilitySpec AbilitySpec = ItemData->AbilityData->Ability.GetDefaultObject();
 	return AbilitySystemComponent->GiveAbility(AbilitySpec);
 }

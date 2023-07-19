@@ -94,6 +94,7 @@ FItemSlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) con
 	{
 		ItemSlotData.ItemName = Name;
 		ItemSlotData.ItemAmount = Amount;
+		ItemSlotData.bIsWeapon = ItemData->bIsWeapon;
 		if(ItemData->AbilityData)
 		{
 			ItemSlotData.AbilityTrigger = ItemData->AbilityData->Ability.GetDefaultObject()->GetTriggerTag();

@@ -62,7 +62,7 @@ int32 UInventoryComponent::AddItem(const FName& ItemName, FItemData* ItemData, i
 {
 	if (!FindHandle(ItemName))
 	{
-		auto Handle = GetPlayerState()->GiveAbility(ItemData);
+		FGameplayAbilitySpecHandle Handle = GetPlayerState()->GiveAbility(ItemData);
 		AddHandleToName(Handle, ItemName);
 	}
 	return AddItem(ItemName, Amount);

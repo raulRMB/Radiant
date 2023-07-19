@@ -4,6 +4,7 @@
 #include "UI/ItemSlot.h"
 
 #include "RTHUD.h"
+#include "WeaponSlot.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -53,6 +54,20 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 {
 	if(ItemSlot)
 	{
+		if(UWeaponSlot* WeaponSlot = Cast<UWeaponSlot>(ItemSlot))
+		{
+			if(!WeaponSlot->CheckCanSwapWith(this))
+			{
+				return false;
+			}
+		}
+		if(UWeaponSlot* MyWeaponSlot = Cast<UWeaponSlot>(this))
+		{
+			if(!MyWeaponSlot->CheckCanSwapWith(ItemSlot))
+			{
+				return false;
+			}
+		}
 		FItemSlotData TempItemSlotData = ItemSlot->ItemSlotData;
 		ItemSlot->SetData(ItemSlotData);
 		SetData(TempItemSlotData);
@@ -60,7 +75,7 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 		bool bTempIsEmpty = ItemSlot->bIsEmpty;
 		ItemSlot->SetEmpty(bIsEmpty);
 		SetEmpty(bTempIsEmpty);
-		
+				
 		return true;
 	}
 	

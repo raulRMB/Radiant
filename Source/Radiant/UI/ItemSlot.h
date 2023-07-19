@@ -22,6 +22,7 @@ struct FItemSlotData
 	FText Tooltip;
 	UPROPERTY()
 	class UTexture2D* Icon;
+	uint8 bIsWeapon : 1;
 
 	FItemSlotData() :
 		ItemName(NAME_None),
@@ -29,14 +30,16 @@ struct FItemSlotData
 		AbilityTrigger(FGameplayTag()),
 		CooldownTag(FGameplayTag()),
 		Tooltip(FText::FromString("")),
-		Icon(nullptr) { }
+		Icon(nullptr),
+		bIsWeapon(false) { }
 };
 
 UCLASS()
 class RADIANT_API UItemSlot : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+protected:
 	UPROPERTY(EditAnywhere)
 	EItemSlotID SlotID;
 	
@@ -78,7 +81,7 @@ class RADIANT_API UItemSlot : public UUserWidget
 public:
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* Mat;
-	void SetData(const FItemSlotData& Data);
+	virtual void SetData(const FItemSlotData& Data);
 	void UpdateCooldown();
 	void Reset();
 
@@ -87,7 +90,7 @@ public:
 	void SetShouldDropItem(const bool ShouldDropItem) { bShouldDropItem = ShouldDropItem; }
 	FName& GetItemName() { return ItemSlotData.ItemName; }
 
-	void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
+	virtual void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
 	bool IsEmpty() const { return bIsEmpty; }
 
 	void SetSlotID(const EItemSlotID& ID) { SlotID = ID; }

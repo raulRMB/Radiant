@@ -56,6 +56,8 @@ public:
 	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	ARTPlayerState();
 
+	FGameplayAbilitySpecHandle WeaponAbilityHandle;
+
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerStats();
 
@@ -83,6 +85,8 @@ public:
 	
 	UPROPERTY(Replicated, EditAnywhere)
 	TArray<class UAbilityDataAsset*> InnateAbilities;
+	UFUNCTION(Server, Reliable)
+	void S_EquipWeapon(class UAbilityDataAsset* AbilityData);
 	FGameplayAbilitySpecHandle GiveAbility(FItemData* ItemData);
 	TArray<class UAbilityDataAsset*> GetInnateAbilities() const;
 
