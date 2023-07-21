@@ -1,7 +1,9 @@
 ﻿#include "CraftingNode.h"
 
+#include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "UI/RTHUD.h"
 
 FGraphNode::~FGraphNode()
 {
@@ -23,11 +25,29 @@ void FGraphNode::InitPosition(float RootHalfWidth, int32 Count)
 
 void UCraftingNode::Init(UTexture2D* Texture, uint8 Amount) const
 {
-	Icon->SetBrushFromTexture(Texture);
-	if(Amount < 1)
+	if(Icon)
+	{
+		Icon->SetBrushFromTexture(Texture);
+	}
+	if(Amount < 2)
 	{
 		AmountTextBlock->SetVisibility(ESlateVisibility::Hidden);
 		return;
 	}
-	AmountTextBlock->SetText(FText::FromString(FString::FromInt(Amount)));
+	if(AmountTextBlock)
+	{
+		AmountTextBlock->SetText(FText::FromString(FString::FromInt(Amount)));
+	}
+}
+
+void UCraftingNode::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	Button->OnClicked.AddUniqueDynamic(this, &UCraftingNode::OnButtonClicked);
+}
+
+void UCraftingNode::OnButtonClicked()
+{
+	GetOwningPlayer()->GetHUD<ARTHUD>()->ReloadCraftingPanel(CraftingItemDataName);
 }

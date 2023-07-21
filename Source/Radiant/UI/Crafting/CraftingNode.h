@@ -53,6 +53,19 @@ class UCraftingNode : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* AmountTextBlock;
+
+	UPROPERTY(meta=(BindWidget))
+	class UButton* Button;
+
+	UPROPERTY()
+	FName CraftingItemDataName;
 public:	
 	void Init(class UTexture2D* Texture, uint8 Amount) const;
+
+	void SetCraftingItemDataName(const FName InCraftingItemDataName) { CraftingItemDataName = InCraftingItemDataName; }
+
+	virtual void NativeConstruct() override;
+	
+	UFUNCTION()
+	void OnButtonClicked();
 };

@@ -102,4 +102,5 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	struct FGameplayTag GetAbilityTrigger(EItemSlotID Slot) const;
+	void ReloadCraftingPanel(FName ItemName);
 };

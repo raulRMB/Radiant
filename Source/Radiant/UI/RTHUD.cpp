@@ -129,3 +129,8 @@ FGameplayTag ARTHUD::GetAbilityTrigger(EItemSlotID Slot) const
 	}
 	return FGameplayTag();
 }
+
+void ARTHUD::ReloadCraftingPanel(FName ItemName)
+{
+	CraftingPanel->LoadCraftingItem(ItemName);
+}
