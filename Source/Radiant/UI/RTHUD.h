@@ -45,6 +45,9 @@ class RADIANT_API ARTHUD : public AHUD
 	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
 	TSubclassOf<class UUserWidget> MinimapClass;
 
+	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
+	TSubclassOf<class UUserWidget> CraftingPanelClass;
+
 	UPROPERTY()
 	URTInfoPanel* InfoPanel;
 	UPROPERTY()
@@ -59,10 +62,13 @@ class RADIANT_API ARTHUD : public AHUD
 	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
 	TSubclassOf<class UUserWidget> StoreUIClass;
 	UPROPERTY()
-	class UInGameStore* StoreUI;
+	class UInGameStore* StoreUI;	
 	uint8 bStoreOpen : 1;
 	uint8 bStoreInitialized : 1;
 
+	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
+	class UCraftingPanel* CraftingPanel;
+	
 	uint8 bSettingsOpen : 1;
 
 	UPROPERTY()

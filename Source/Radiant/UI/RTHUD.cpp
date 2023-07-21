@@ -6,6 +6,7 @@
 #include "CaptureAreaBar.h"
 #include "Minimap.h"
 #include "RTInfoPanel.h"
+#include "Crafting/CraftingPanel.h"
 #include "Data/ItemData.h"
 #include "InGame/InGameStore.h"
 #include "Menu/Settings.h"
@@ -34,6 +35,9 @@ void ARTHUD::BeginPlay()
 	Minimap = Cast<UMinimap>(CreateWidget<UMinimap>(GetWorld(), MinimapClass));
 	Minimap->AddToViewport();
 	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	CraftingPanel = CreateWidget<UCraftingPanel>(GetWorld(), CraftingPanelClass);
+	CraftingPanel->Init();
+	CraftingPanel->AddToViewport();
 	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
 	SlotManager->InitSlots(InfoPanel->GetHotbarHorizontalBox(), StoreUI->GetInventoryGrid(), ItemSlotClass, StoreUI->GetWeaponSlot());
 }
