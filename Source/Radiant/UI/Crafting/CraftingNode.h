@@ -28,7 +28,7 @@ public:
 		{}
 	
 	~FGraphNode();
-	void Grow() { Width++; }
+	void Grow();
 	void AddChild(FGraphNode* Child) { Children.Add(Child); }
 	FGraphNode* GetParent() const { return Parent; }
 	int32 GetWidth() const { return Width; }
@@ -59,10 +59,21 @@ class UCraftingNode : public UUserWidget
 
 	UPROPERTY()
 	FName CraftingItemDataName;
+
+	uint8 bIsLeaf : 1;
+
+	UPROPERTY()
+	class UCraftingNode* ParentNode;
 public:	
 	void Init(class UTexture2D* Texture, uint8 Amount) const;
 
 	void SetCraftingItemDataName(const FName InCraftingItemDataName) { CraftingItemDataName = InCraftingItemDataName; }
+	
+	bool IsLeaf() const { return bIsLeaf; }
+	void SetIsLeaf(bool IsLeaf) { bIsLeaf = IsLeaf; }
+
+	UCraftingNode* GetParentNode() const { return ParentNode; }
+	void SetParentNode(UCraftingNode* InParentNode) { ParentNode = InParentNode; }
 
 	virtual void NativeConstruct() override;
 	

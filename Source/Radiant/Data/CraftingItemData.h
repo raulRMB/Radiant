@@ -10,5 +10,5 @@ struct FCraftingItemData : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	class UCraftingNodeDataAsset* CraftingNodeDataAsset;
+	class UCraftingNodeDataAsset* CraftingNodeDataAsset = nullptr;
 };

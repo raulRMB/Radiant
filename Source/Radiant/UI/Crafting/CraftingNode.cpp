@@ -13,6 +13,15 @@ FGraphNode::~FGraphNode()
 	}
 }
 
+void FGraphNode::Grow()
+{
+	if(Parent)
+	{
+		Parent->Grow();
+	}
+	Width++;
+}
+
 void FGraphNode::InitPosition(float RootHalfWidth, int32 Count)
 {
 	float Offset = 0.f;
@@ -49,5 +58,8 @@ void UCraftingNode::NativeConstruct()
 
 void UCraftingNode::OnButtonClicked()
 {
-	GetOwningPlayer()->GetHUD<ARTHUD>()->ReloadCraftingPanel(CraftingItemDataName);
+	if(CraftingItemDataName.IsValid())
+	{
+		GetOwningPlayer()->GetHUD<ARTHUD>()->ReloadCraftingPanel(CraftingItemDataName);
+	}
 }
