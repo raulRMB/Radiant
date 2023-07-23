@@ -9,6 +9,7 @@
 #include "InventoryComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Event/EventBroker.h"
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameMode.h"
 #include "Navigation/PathFollowingComponent.h"
@@ -198,6 +199,7 @@ void ARTPlayerController::OnRep_Pawn()
 void ARTPlayerController::OnClick(const FInputActionValue& Value)
 {
 	GetPawn<AAvatar>()->OnUpdateTarget(Value);
+	UEventBroker::Get(this)->RightMouseButtonClicked.Broadcast();
 }
 
 void ARTPlayerController::OnAbilityOne(const FInputActionValue& Value)

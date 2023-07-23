@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Data/CraftingNodeDataAsset.h"
+#include "Event/EventBroker.h"
 #include "CraftingNode.generated.h"
 
 class FGraphNode
@@ -64,6 +65,9 @@ class UCraftingNode : public UUserWidget
 
 	UPROPERTY()
 	class UCraftingNode* ParentNode;
+	
+	FDelegateHandle HoveredHandle;
+
 public:	
 	void Init(class UTexture2D* Texture, uint8 Amount) const;
 
@@ -74,9 +78,17 @@ public:
 
 	UCraftingNode* GetParentNode() const { return ParentNode; }
 	void SetParentNode(UCraftingNode* InParentNode) { ParentNode = InParentNode; }
-
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION()
 	void OnButtonClicked();
+
+	UFUNCTION()
+	void OnButtonHovered();
+
+	UFUNCTION()
+	void OnButtonUnhovered();
+
+	UFUNCTION()
+	void OnMouseRightClick();
 };

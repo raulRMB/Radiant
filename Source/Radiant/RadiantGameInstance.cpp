@@ -5,10 +5,37 @@
 #include "PlayFabGSDK.h"
 #include "GSDKUtils.h"
 #include "AbilitySystemGlobals.h"
+#include "EngineUtils.h"
+#include "Data/CraftingItemData.h"
+#include "Data/CraftingNodeDataAsset.h"
 
 void URadiantGameInstance::Init()
 {
 	Super::Init();
+
+	TArray<UObject*> DataAssets;
+	FindOrLoadAssetsByPath(TEXT("/Game/Data/CraftingData/NodeData"), DataAssets, EngineUtils::ATL_Regular);
+	for(UObject* Object : DataAssets)
+	{
+		if (UCraftingNodeDataAsset* DataAsset = Cast<UCraftingNodeDataAsset>(Object))
+		{
+			FCraftingItemData CraftingItemData = FCraftingItemData();
+			CraftingItemData.CraftingNodeName = DataAsset->Name;
+			CraftingItemData.CraftingNodeDataAsset = DataAsset;
+			CraftingItemDataTable->AddRow(DataAsset->Name, CraftingItemData);
+		}
+	}
+	
+	if(CraftingItemDataTable)
+	{
+		for(TPair<FName, uint8*> Row : CraftingItemDataTable->GetRowMap())
+		{
+			if(FCraftingItemData* CraftingItemData = reinterpret_cast<FCraftingItemData*>(Row.Value))
+			{
+				CraftingItemData->CraftingNodeDataAsset->AddAggregatesToMaterials();
+			}
+		}
+	}
 
 	if (IsDedicatedServerInstance())
 	{
@@ -31,6 +58,8 @@ void URadiantGameInstance::Init()
 #endif
 
 	UAbilitySystemGlobals::Get().InitGlobalData();
+
+	
 }
 
 void URadiantGameInstance::OnStart()

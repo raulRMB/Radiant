@@ -3,7 +3,12 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Event/EventBroker.h"
+#include "Kismet/KismetArrayLibrary.h"
+#include "Kismet/KismetInputLibrary.h"
+#include "Player/RTPlayerState.h"
 #include "UI/RTHUD.h"
+#include "Util/Util.h"
 
 FGraphNode::~FGraphNode()
 {
@@ -54,6 +59,8 @@ void UCraftingNode::NativeConstruct()
 	Super::NativeConstruct();
 
 	Button->OnClicked.AddUniqueDynamic(this, &UCraftingNode::OnButtonClicked);
+	Button->OnHovered.AddDynamic(this, &UCraftingNode::OnButtonHovered);
+	Button->OnUnhovered.AddDynamic(this, &UCraftingNode::OnButtonUnhovered);
 }
 
 void UCraftingNode::OnButtonClicked()
@@ -63,3 +70,20 @@ void UCraftingNode::OnButtonClicked()
 		GetOwningPlayer()->GetHUD<ARTHUD>()->ReloadCraftingPanel(CraftingItemDataName);
 	}
 }
+
+void UCraftingNode::OnButtonHovered()
+{
+	HoveredHandle = UEventBroker::Get(this)->RightMouseButtonClicked.AddUObject(this, &UCraftingNode::OnMouseRightClick);
+}
+
+void UCraftingNode::OnButtonUnhovered()
+{
+	UEventBroker::Get(this)->RightMouseButtonClicked.Remove(HoveredHandle);
+}
+
+void UCraftingNode::OnMouseRightClick()
+{
+	GetOwningPlayerState<ARTPlayerState>()->S_BuyAbility(CraftingItemDataName, 1);
+	UEventBroker::Get(this)->RightMouseButtonClicked.Remove(HoveredHandle);
+}
+

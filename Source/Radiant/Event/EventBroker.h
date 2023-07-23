@@ -15,6 +15,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FItemUsedSignature, const class FName&);
 
 DECLARE_MULTICAST_DELEGATE(FGameIsReady);
 
+DECLARE_MULTICAST_DELEGATE(FRightMouseButtonClickedSignature);
+
 UCLASS()
 class RADIANT_API UEventBroker : public UGameInstanceSubsystem
 {
@@ -24,5 +26,6 @@ public:
 	FDragStatus DragStatusChanged;
 	FItemUsedSignature ItemUsed;
 	FGameIsReady GameIsReady;
+	FRightMouseButtonClickedSignature RightMouseButtonClicked;
 	static UEventBroker* Get(const UObject* WorldContextObject);
 };

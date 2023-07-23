@@ -70,7 +70,6 @@ class RADIANT_API ARTPlayerController : public APlayerController, public ICarrie
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory, meta = (AllowPrivateAccess = true))
 	class UInventoryComponent* InventoryComponent;
 

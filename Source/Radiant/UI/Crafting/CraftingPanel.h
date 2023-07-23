@@ -16,6 +16,9 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* ButtonCanvasPanel;
+
+	UPROPERTY(meta=(BindWidget))
+	class UGridPanel* AggregateList;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCraftingNode> CraftingNodeClass;

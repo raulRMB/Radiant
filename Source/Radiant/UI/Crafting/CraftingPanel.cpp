@@ -4,8 +4,13 @@
 #include "CraftingPanel.h"
 #include "CraftingNode.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/GridPanel.h"
+#include "Components/GridSlot.h"
+#include "Components/SizeBox.h"
+#include "Components/UniformGridPanel.h"
 #include "Data/CraftingItemData.h"
 #include "Data/CraftingNodeDataAsset.h"
 #include "Engine/DataTable.h"
@@ -22,6 +27,8 @@ void UCraftingPanel::Init()
 				if(CraftingItemData->CraftingNodeDataAsset)
 				{
 					UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass);
+					CraftingItemData->CraftingNodeName = It.Key;
+					CraftingItemData->CraftingNodeDataAsset->Name = It.Key;
 					CraftingNode->SetCraftingItemDataName(It.Key);
 					CraftingNode->Init(CraftingItemData->CraftingNodeDataAsset->Icon, 1);
 					if(UCanvasPanelSlot* PanelSlot = ButtonCanvasPanel->AddChildToCanvas(CraftingNode))
@@ -29,7 +36,9 @@ void UCraftingPanel::Init()
 						PanelSlot->SetAnchors(FAnchors(.2f, .0f, .2f, .0f));
 						PanelSlot->SetSize(FVector2D(100.f));
 						PanelSlot->SetAlignment(FVector2D(.5f));
-						PanelSlot->SetPosition(FVector2D(0.f, ButtonCanvasPanel->GetChildrenCount() * 120.f));
+						FVector2D Position = FVector2D((ButtonCanvasPanel->GetChildrenCount() - 1) % 5, (ButtonCanvasPanel->GetChildrenCount() - 1) / 5);
+						Position.Y += 1.3f;
+						PanelSlot->SetPosition(Position * 120.f);
 					}
 				}
 			}
@@ -40,7 +49,8 @@ void UCraftingPanel::Init()
 void UCraftingPanel::LoadCraftingItem(const FName ItemName)
 {
 	CurrentNodeCount = 0;
-	CraftingCanvasPanel->ClearChildren();	
+	CraftingCanvasPanel->ClearChildren();
+	AggregateList->ClearChildren();
 	if(!CraftingItemDataTable)
 		return;
 	
@@ -51,7 +61,26 @@ void UCraftingPanel::LoadCraftingItem(const FName ItemName)
 		{
 			return;
 		}
-	
+
+		for(int32 i = 0 ; i < CraftingNodeDataAsset->Aggregates.Num(); i++)
+		{
+			if(UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass))
+			{
+				CraftingNode->Init(CraftingNodeDataAsset->Aggregates[i]->Icon, 1);
+				CraftingNode->SetCraftingItemDataName(CraftingNodeDataAsset->Aggregates[i]->Name);
+				if(USizeBox* SizeBox = WidgetTree->ConstructWidget<USizeBox>())
+				{
+					SizeBox->AddChild(CraftingNode);
+					SizeBox->SetWidthOverride(100.f);
+					SizeBox->SetHeightOverride(100.f);
+					if(UGridSlot* GridSlot = AggregateList->AddChildToGrid(SizeBox, i, 0))
+					{
+						GridSlot->SetPadding(FMargin(20.f, 20.f, 0.f, 0.f));
+					}
+				}
+			}
+		}
+		
 		FGraphNode* Root = new FGraphNode(nullptr, CraftingNodeDataAsset, 1, 0, 1, 0);
 		int32 Depth = 0;
 		AddGraphNode(CraftingNodeDataAsset, Root, Depth);
@@ -64,7 +93,7 @@ void UCraftingPanel::LoadCraftingItem(const FName ItemName)
 		{
 			RootNodeWidthScale = 1.f;
 		}
-		
+
 		TraverseInitPositions(static_cast<float>(Root->GetWidth()) * .5f, Root);
 		TraverseCreateNode(nullptr, Root);
 		
@@ -78,6 +107,7 @@ UCraftingNode* UCraftingPanel::CreateCraftingNode(UCraftingNode* InParentNode, F
 	{
 		CraftingNode->Init(Node->GetDataAsset()->Icon, Node->GetAmount());
 		CraftingNode->SetIsLeaf(Node->GetChildCount() < 1);
+		CraftingNode->SetCraftingItemDataName(Node->GetDataAsset()->Name);
 		CraftingNode->SetParentNode(InParentNode);
 		if(UCanvasPanelSlot* PanelSlot = CraftingCanvasPanel->AddChildToCanvas(CraftingNode))
 		{
