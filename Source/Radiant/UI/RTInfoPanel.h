@@ -4,9 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/Image.h"
-#include "Player/RTPlayerState.h"
-#include "Components/HorizontalBox.h"
 #include "RTInfoPanel.generated.h"
 
 UCLASS()
@@ -15,7 +12,7 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(meta=(BindWidget))
-	UHorizontalBox* HotbarHorizontalBox;
+	class UHorizontalBox* HotbarHorizontalBox;
 
 	UPROPERTY(meta=(BindWidget))
 	class UImage* LoadingScreen;
@@ -53,6 +50,9 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* MSCounter;
 
+	UPROPERTY(meta=(BindWidget))
+	class UWeaponSlot* WeaponSlot;
+
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
 public:
@@ -60,12 +60,12 @@ public:
 	void UpdateCooldowns() const;
 	FText FormatText(float CurrentHealth, float MaxHealth) const;
 
-	UHorizontalBox* GetHotbarHorizontalBox();
+	class UHorizontalBox* GetHotbarHorizontalBox();
 
 	UFUNCTION(BlueprintCallable)
 	void Init();
 	void UpdateRadianite(float X) const;
-	void Bind(ARTPlayerState* PS);
+	void Bind(class ARTPlayerState* PS);
 
 	UFUNCTION()
 	void OnHeroDeath(uint32 RedScore, uint32 BlueScore) const;
@@ -74,7 +74,7 @@ public:
 	void HideLoadScreen() const;
 	void SetFPS(float FPS) const;
 	void SetMS(float MS) const;
-
+	class UWeaponSlot* GetWeaponSlot() const;
 private:
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	                               UDragDropOperation* InOperation) override;

@@ -28,7 +28,7 @@ class RADIANT_API USlotManager : public UObject
 public:
 	UFUNCTION()
 	void OnSlotChanged(const FName& Name, uint32 Amount) const;
-	void InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass, UItemSlot* ItemSlot);
+	void InitSlots(class URTInfoPanel* InfoPanel, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass);
 	FGameplayTag GetAbilityTrigger(EItemSlotID Slot);
 
 private:

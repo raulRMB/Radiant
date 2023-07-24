@@ -26,8 +26,11 @@ public:
 
 inline void UCraftingNodeDataAsset::AddAggregatesToMaterials()
 {
-	for(TPair<UCraftingNodeDataAsset*, uint8> It : Materials)
+	if(IsValid(this))
 	{
-		It.Key->Aggregates.AddUnique(this);
+		for(TPair<UCraftingNodeDataAsset*, uint8> It : Materials)
+		{
+			It.Key->Aggregates.AddUnique(this);
+		}
 	}
 }

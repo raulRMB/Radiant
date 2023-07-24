@@ -41,9 +41,9 @@ class RADIANT_API UInGameStore : public UUserWidget
 	
 	UPROPERTY(meta=(BindWidget))
 	class UButton* BuyDecrementBig;
-	
+
 	UPROPERTY(meta=(BindWidget))
-	class UItemSlot* WeaponSlot;
+	class UCraftingPanel* CraftingPanel;
 	
 	UFUNCTION()
 	void OnBuyIncrement();
@@ -64,6 +64,6 @@ public:
 	void Init(class ARTPlayerState* PS);
 	int32 BuyAmount = 1;
 	UUniformGridPanel* GetInventoryGrid() const;
-	UItemSlot* GetWeaponSlot() const;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	UCraftingPanel* GetCraftingPanel() const;
 };

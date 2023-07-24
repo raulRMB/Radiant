@@ -61,13 +61,15 @@ class RADIANT_API ARTHUD : public AHUD
 
 	UPROPERTY(EditAnywhere, Category=UI, meta=(AllowPrivateAccess=true))
 	TSubclassOf<class UUserWidget> StoreUIClass;
-	UPROPERTY()
-	class UInGameStore* StoreUI;	
+	
 	uint8 bStoreOpen : 1;
 	uint8 bStoreInitialized : 1;
 
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
 	class UCraftingPanel* CraftingPanel;
+
+	UPROPERTY(meta=(BindWidget))
+	class UWeaponSlot* WeaponSlotWidget;
 	
 	uint8 bSettingsOpen : 1;
 
@@ -83,6 +85,8 @@ public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 
 	FGiveAbilityFromButtonSignature GiveAbilityFromButton;
+
+	UWeaponSlot* GetWeaponSlot() const { return WeaponSlotWidget; }
 
 public:
 	ARTHUD();

@@ -14,6 +14,7 @@
 #include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
 #include "Player/RTPlayerState.h"
+#include "UI/Crafting/CraftingPanel.h"
 
 void UInGameStore::UpdateRadianite(float RadianiteAmount)
 {
@@ -26,16 +27,13 @@ void UInGameStore::Init(ARTPlayerState* PS)
 	{
 		PS->OnUpdateRadianite.AddUObject(this, &UInGameStore::UpdateRadianite);
 	}
+
+	CraftingPanel->Init();
 }
 
 UUniformGridPanel* UInGameStore::GetInventoryGrid() const
 {
 	return InventoryGrid;
-}
-
-UItemSlot* UInGameStore::GetWeaponSlot() const
-{
-	return WeaponSlot;
 }
 
 void UInGameStore::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -49,10 +47,11 @@ void UInGameStore::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			ItemSlot->UpdateCooldown();
 		}
 	}
-	if(WeaponSlot)
-	{
-		WeaponSlot->UpdateCooldown();
-	}
+}
+
+UCraftingPanel* UInGameStore::GetCraftingPanel() const
+{
+	return CraftingPanel;
 }
 
 void UInGameStore::OnBuyIncrement()

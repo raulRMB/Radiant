@@ -2,13 +2,17 @@
 
 
 #include "UI/InGame/SlotManager/SlotManager.h"
+
+#include "Blueprint/WidgetTree.h"
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
+#include "Components/SizeBox.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
 #include "Data/ItemData.h"
 #include "Event/EventBroker.h"
 #include "UI/ItemSlot.h"
+#include "UI/WeaponSlot.h"
 #include "Util/Util.h"
 
 void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
@@ -27,13 +31,13 @@ void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
 	}
 }
 
-void USlotManager::InitSlots(UHorizontalBox* HorizontalBox, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass, UItemSlot* ItemSlot)
+void USlotManager::InitSlots(URTInfoPanel* InfoPanel, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass)
 {
 	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &USlotManager::OnSlotChanged);
 	
-	HotbarHorizontalBox = HorizontalBox;
+	HotbarHorizontalBox = InfoPanel->GetHotbarHorizontalBox();
 	InventoryGridPanel = GridPanel;
-	WeaponSlot = ItemSlot;
+	WeaponSlot = InfoPanel->GetWeaponSlot();
 	
 	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::WeaponSlot); i++)
 	{
@@ -131,11 +135,12 @@ UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<
 		}
 		else if(UISlotID >= EItemSlotID::InventoryFirst && UISlotID <= EItemSlotID::InventoryLast)
 		{
-			if(UUniformGridSlot* Slot = Cast<UUniformGridSlot>(InventoryGridPanel->AddChildToUniformGrid(ItemSlot, InventoryGridPanel->GetChildrenCount() / 5, InventoryGridPanel->GetChildrenCount() % 5)))
-			{
-				Slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
-				Slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
-			}
+			USizeBox* SizeBox = ItemSlot->WidgetTree->ConstructWidget<USizeBox>(USizeBox::StaticClass());
+			SizeBox->SetWidthOverride(100.f);
+			SizeBox->SetHeightOverride(100.f);
+			SizeBox->AddChild(ItemSlot);
+			
+			Cast<UUniformGridSlot>(InventoryGridPanel->AddChildToUniformGrid(SizeBox, InventoryGridPanel->GetChildrenCount() / 11, InventoryGridPanel->GetChildrenCount() % 11));
 		}
 		else if(UISlotID == EItemSlotID::WeaponSlot)
 		{

@@ -4,6 +4,7 @@
 #include "UI/RTInfoPanel.h"
 #include "Components/HorizontalBox.h"
 #include "ItemSlot.h"
+#include "WeaponSlot.h"
 #include "Player/Avatar.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
@@ -14,14 +15,16 @@
 #include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
 
-
-class ARTPlayerState;
-
 void URTInfoPanel::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
 	Super::NativeTick(MyGeometry, DeltaTime);
 
 	UpdateProperties(DeltaTime);
+
+	if(WeaponSlot)
+	{
+		WeaponSlot->UpdateCooldown();
+	}
 }
 
 void URTInfoPanel::UpdateProperties(float DeltaTime) const
@@ -114,6 +117,11 @@ void URTInfoPanel::SetFPS(float FPS) const
 void URTInfoPanel::SetMS(float MS) const
 {
 	MSCounter->SetText(RTPRINTF("MS: %.0f", MS));
+}
+
+UWeaponSlot* URTInfoPanel::GetWeaponSlot() const
+{
+	return WeaponSlot;
 }
 
 void URTInfoPanel::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)

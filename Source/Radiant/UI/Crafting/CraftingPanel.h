@@ -12,13 +12,16 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	GENERATED_BODY()
 
 	UPROPERTY(meta=(BindWidget))
-	class UCanvasPanel* CraftingCanvasPanel;
+	class UCanvasPanel* RecipeTree;
 
 	UPROPERTY(meta=(BindWidget))
-	class UCanvasPanel* ButtonCanvasPanel;
+	class UCanvasPanel* RecipeList;
 
 	UPROPERTY(meta=(BindWidget))
-	class UGridPanel* AggregateList;
+	class UUniformGridPanel* AggregateList;
+
+	UPROPERTY(meta=(BindWidget))
+	class UUniformGridPanel* InventoryGrid;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCraftingNode> CraftingNodeClass;
@@ -44,8 +47,12 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	int32 MaximumNodeWidth = 5;
 	float RootNodeWidthScale = 1.f;
-	
+
+	UPROPERTY(EditAnywhere)
+	FVector2D RootTreeAnchor;
+
 public:
+	UUniformGridPanel* GetInventoryGrid() const { return InventoryGrid; }
 	void Init();
 	void LoadCraftingItem(const FName ItemName);
 	UCraftingNode* CreateCraftingNode(class UCraftingNode* InParentCraftingNode, class FGraphNode* Node);
@@ -53,4 +60,7 @@ public:
 	void TraverseInitPositions(float RootHalfWidth, FGraphNode* Node);
 	void TraverseCreateNode(class UCraftingNode* InParentCraftingNode, class FGraphNode* Node);
 	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	                       UDragDropOperation* InOperation) override;
 };

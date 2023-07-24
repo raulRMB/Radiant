@@ -8,9 +8,8 @@
 #include "RTInfoPanel.h"
 #include "Crafting/CraftingPanel.h"
 #include "Data/ItemData.h"
-#include "InGame/InGameStore.h"
+#include "Player/RTPlayerState.h"
 #include "Menu/Settings.h"
-#include "Player/Avatar.h"
 #include "Player/RTPlayerController.h"
 #include "Enums/ItemSlotID.h"
 #include "InGame/SlotManager/SlotManager.h"
@@ -24,22 +23,21 @@ void ARTHUD::BeginPlay()
 	InfoPanel->Init();
 	SettingsPanel = CreateWidget<USettings>(GetWorld(), SettingsPanelClass);
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
+	SettingsPanel->AddToViewport();
 	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
-	check(CaptureAreaBar)
 	CaptureAreaBar->AddToViewport();
 	CaptureAreaBar->SetVisibility(ESlateVisibility::Hidden);
-	SettingsPanel->AddToViewport();
-	StoreUI = CreateWidget<UInGameStore>(GetWorld(), StoreUIClass);
-	StoreUI->AddToViewport();
-	StoreUI->SetVisibility(ESlateVisibility::Hidden);
+	// StoreUI = CreateWidget<UInGameStore>(GetWorld(), StoreUIClass);
+	// StoreUI->AddToViewport();
+	// StoreUI->SetVisibility(ESlateVisibility::Hidden);
+	CraftingPanel = CreateWidget<UCraftingPanel>(GetWorld(), CraftingPanelClass);
+	CraftingPanel->AddToViewport();
+	CraftingPanel->Init();
 	Minimap = Cast<UMinimap>(CreateWidget<UMinimap>(GetWorld(), MinimapClass));
 	Minimap->AddToViewport();
 	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	CraftingPanel = CreateWidget<UCraftingPanel>(GetWorld(), CraftingPanelClass);
-	CraftingPanel->Init();
-	CraftingPanel->AddToViewport();
 	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
-	SlotManager->InitSlots(InfoPanel->GetHotbarHorizontalBox(), StoreUI->GetInventoryGrid(), ItemSlotClass, StoreUI->GetWeaponSlot());
+	SlotManager->InitSlots(InfoPanel, CraftingPanel->GetInventoryGrid(), ItemSlotClass);
 }
 
 void ARTHUD::ShowEndScreen(bool won)
@@ -80,13 +78,13 @@ void ARTHUD::SetMS(float MS)
 void ARTHUD::ToggleStore()
 {
 	bStoreOpen = !bStoreOpen;
-	StoreUI->SetVisibility(bStoreOpen ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Hidden);
+	CraftingPanel->SetVisibility(bStoreOpen ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Hidden);
 }
 
 void ARTHUD::BindUIItems()
 {
 	auto PS = GetOwningPlayerController()->GetPlayerState<ARTPlayerState>();
-	StoreUI->Init(PS);
+	// StoreUI->Init(PS);
 	InfoPanel->Bind(PS);
 }
 
@@ -95,7 +93,7 @@ void ARTHUD::Escape()
 	if (bStoreOpen)
 	{
 		bStoreOpen = false;
-		StoreUI->SetVisibility(ESlateVisibility::Hidden);
+		CraftingPanel->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{

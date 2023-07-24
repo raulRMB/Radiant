@@ -182,6 +182,10 @@ void UItemSlot::UpdateCooldown()
 bool UItemSlot::GetCooldownRemaining(float& TimeRemaining,
 	float& CooldownDuration)
 {
+	if(!GetOwningPlayerState())
+	{
+		return false;
+	}
 	URTAbilitySystemComponent* AbilitySystemComponent = Cast<URTAbilitySystemComponent>(GetOwningPlayerState<ARTPlayerState>()->GetAbilitySystemComponent());
 	if (AbilitySystemComponent && CooldownTag.IsValid())
 	{
