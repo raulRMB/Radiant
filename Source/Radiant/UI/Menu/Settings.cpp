@@ -52,7 +52,6 @@ void USettings::RefreshKeybindList()
 			{
 				Key->SetMapping(Mapping);
 				KeyList->AddChild(Key);
-				Key->AddToViewport();
 			}
 		}
 	}
