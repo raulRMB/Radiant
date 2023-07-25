@@ -49,8 +49,6 @@ void URadiantGameInstance::Init()
 #endif
 
 	UAbilitySystemGlobals::Get().InitGlobalData();
-
-	
 }
 
 void URadiantGameInstance::OnStart()

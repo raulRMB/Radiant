@@ -105,6 +105,9 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	UFUNCTION()
+	void InitCraftingPanel(class UInventoryComponent* Inventory) const;
+
 	struct FGameplayTag GetAbilityTrigger(EItemSlotID Slot) const;
 	void ReloadCraftingPanel(FName ItemName);
 };

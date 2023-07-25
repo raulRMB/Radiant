@@ -51,9 +51,14 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	FVector2D RootTreeAnchor;
 
+	UPROPERTY(VisibleAnywhere)
+	TMap<FName, class UCraftingNode*> NodeMap;
+
+	UPROPERTY(EditAnywhere)
+	class UInventoryComponent* InventoryComponent;
 public:
 	UUniformGridPanel* GetInventoryGrid() const { return InventoryGrid; }
-	void Init();
+	void Init(class UInventoryComponent* Inventory);
 	void LoadCraftingItem(const FName ItemName);
 	UCraftingNode* CreateCraftingNode(class UCraftingNode* InParentCraftingNode, class FGraphNode* Node);
 	void AddGraphNode(class UCraftingNodeDataAsset* CNDA, class FGraphNode* Node, int32& Depth);

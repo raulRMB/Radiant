@@ -66,4 +66,5 @@ public:
 	const FGameplayAbilitySpecHandle* FindHandle(FName Name);
 
 	FName GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle);
+	uint32 GetItemAmount(const FName Key) const;
 };

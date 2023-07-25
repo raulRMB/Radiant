@@ -275,7 +275,7 @@ void ARTPlayerState::S_UnequipWeapon_Implementation()
 
 FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(const FItemData* ItemData) const
 {
-	if(ItemData->bIsWeapon)
+	if(ItemData->bIsWeapon || !ItemData->AbilityData)
 		return FGameplayAbilitySpecHandle();
 	FGameplayAbilitySpec AbilitySpec = ItemData->AbilityData->Ability.GetDefaultObject();
 	return AbilitySystemComponent->GiveAbility(AbilitySpec);

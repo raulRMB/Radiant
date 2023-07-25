@@ -27,8 +27,6 @@ void UInGameStore::Init(ARTPlayerState* PS)
 	{
 		PS->OnUpdateRadianite.AddUObject(this, &UInGameStore::UpdateRadianite);
 	}
-
-	CraftingPanel->Init();
 }
 
 UUniformGridPanel* UInGameStore::GetInventoryGrid() const

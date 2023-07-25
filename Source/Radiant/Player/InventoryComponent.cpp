@@ -8,6 +8,7 @@
 #include "Engine/DataTable.h"
 #include "Event/EventBroker.h"
 #include "Items/WorldItem.h"
+#include "Util/Util.h"
 #include "Util/Interfaces/Carrier.h"
 
 UInventoryComponent::UInventoryComponent()
@@ -31,6 +32,9 @@ void UInventoryComponent::S_ItemUsed_Implementation(const FName& ItemName)
 
 void UInventoryComponent::C_ItemChanged_Implementation(const FName& ItemName, const uint32 Amount)
 {
+	Items[ItemName].Amount = Amount;
+	RTLOGP2("%s: %u", *ItemName.ToString(), Amount);
+	
 	UEventBroker::Get(this)->ItemChanged.Broadcast(ItemName, Amount);
 }
 
@@ -140,4 +144,16 @@ FName UInventoryComponent::GetItemNameFormHandle(const FGameplayAbilitySpecHandl
 		return HandleToItemName[Handle];
 	}
 	return NAME_None;
+}
+
+uint32 UInventoryComponent::GetItemAmount(const FName Key) const
+{
+	if(Items.Num() > 0)
+	{
+		if(Items.Contains(Key))
+		{
+			return Items[Key].Amount;
+		}
+	}
+	return 0;
 }

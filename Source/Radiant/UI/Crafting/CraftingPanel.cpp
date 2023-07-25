@@ -7,21 +7,20 @@
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
-#include "Components/GridPanel.h"
-#include "Components/GridSlot.h"
 #include "Components/SizeBox.h"
 #include "Components/UniformGridPanel.h"
-#include "Components/UniformGridSlot.h"
-#include "Data/CraftingItemData.h"
 #include "Data/CraftingNodeDataAsset.h"
 #include "Data/ItemData.h"
 #include "Engine/DataTable.h"
+#include "Player/RTPlayerState.h"
 #include "UI/ItemSlot.h"
 #include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
 
-void UCraftingPanel::Init()
+void UCraftingPanel::Init(UInventoryComponent* Inventory)
 {
+	InventoryComponent = Inventory;
+	
 	if(ItemTable)
 	{
 		for(TPair<FName, uint8*> It : ItemTable->GetRowMap())
@@ -32,8 +31,9 @@ void UCraftingPanel::Init()
 				{
 					UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass);
 					ItemData->CraftingNodeData->Name = It.Key;
+					CraftingNode->Init(ItemData->CraftingNodeData->Icon, 1, InventoryComponent);
 					CraftingNode->SetCraftingItemDataName(It.Key);
-					CraftingNode->Init(ItemData->CraftingNodeData->Icon, 1);
+					NodeMap.Add(It.Key, CraftingNode);
 					if(UCanvasPanelSlot* PanelSlot = RecipeList->AddChildToCanvas(CraftingNode))
 					{
 						PanelSlot->SetAnchors(FAnchors(.0f));
@@ -69,7 +69,7 @@ void UCraftingPanel::LoadCraftingItem(const FName ItemName)
 		{
 			if(UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass))
 			{
-				CraftingNode->Init(CraftingNodeDataAsset->Aggregates[i]->Icon, 1);
+				CraftingNode->Init(CraftingNodeDataAsset->Aggregates[i]->Icon, 1, InventoryComponent);
 				CraftingNode->SetCraftingItemDataName(CraftingNodeDataAsset->Aggregates[i]->Name);
 				if(USizeBox* SizeBox = WidgetTree->ConstructWidget<USizeBox>())
 				{
@@ -105,7 +105,7 @@ UCraftingNode* UCraftingPanel::CreateCraftingNode(UCraftingNode* InParentNode, F
 {
 	if(UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass))
 	{
-		CraftingNode->Init(Node->GetDataAsset()->Icon, Node->GetAmount());
+		CraftingNode->Init(Node->GetDataAsset()->Icon, Node->GetAmount(), InventoryComponent);
 		CraftingNode->SetIsLeaf(Node->GetChildCount() < 1);
 		CraftingNode->SetCraftingItemDataName(Node->GetDataAsset()->Name);
 		CraftingNode->SetParentNode(InParentNode);

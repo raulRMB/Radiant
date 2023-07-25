@@ -68,16 +68,30 @@ class UCraftingNode : public UUserWidget
 	
 	FDelegateHandle HoveredHandle;
 
-public:	
-	void Init(class UTexture2D* Texture, uint8 Amount) const;
+	UPROPERTY()
+	TMap<FName, uint32> IngredientList;
 
-	void SetCraftingItemDataName(const FName InCraftingItemDataName) { CraftingItemDataName = InCraftingItemDataName; }
+	UPROPERTY()
+	class UInventoryComponent* InventoryComponent;
+
+	UFUNCTION()
+	void OnItemChanged(const FName& Name, uint32 Amount);
+
+public:	
+	void Init(class UTexture2D* Texture, uint8 Amount, class UInventoryComponent* NewInventoryComponent);
+
+	void InitIngredientList(class UCraftingNodeDataAsset* DataAsset);
+	
+	void SetCraftingItemDataName(const FName InCraftingItemDataName);
+	void SetInventoryComponent(class UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
 	
 	bool IsLeaf() const { return bIsLeaf; }
 	void SetIsLeaf(bool IsLeaf) { bIsLeaf = IsLeaf; }
 
 	UCraftingNode* GetParentNode() const { return ParentNode; }
 	void SetParentNode(UCraftingNode* InParentNode) { ParentNode = InParentNode; }
+
+	bool CheckHasMaterials();
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION()

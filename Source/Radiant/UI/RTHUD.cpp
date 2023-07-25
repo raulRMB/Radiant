@@ -18,24 +18,30 @@
 void ARTHUD::BeginPlay()
 {
 	Super::BeginPlay();
-	InfoPanel = CreateWidget<URTInfoPanel>(GetWorld(), InfoPanelClass);
+	InfoPanel = CreateWidget<URTInfoPanel>(GetOwningPlayerController(), InfoPanelClass);
 	InfoPanel->AddToViewport(1000);
 	InfoPanel->Init();
-	SettingsPanel = CreateWidget<USettings>(GetWorld(), SettingsPanelClass);
+	SettingsPanel = CreateWidget<USettings>(GetOwningPlayerController(), SettingsPanelClass);
 	SettingsPanel->SetVisibility(ESlateVisibility::Hidden);
 	SettingsPanel->AddToViewport();
-	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetWorld(), CaptureAreaBarClass);
+	CaptureAreaBar = CreateWidget<UCaptureAreaBar>(GetOwningPlayerController(), CaptureAreaBarClass);
 	CaptureAreaBar->AddToViewport();
 	CaptureAreaBar->SetVisibility(ESlateVisibility::Hidden);
 	// StoreUI = CreateWidget<UInGameStore>(GetWorld(), StoreUIClass);
 	// StoreUI->AddToViewport();
 	// StoreUI->SetVisibility(ESlateVisibility::Hidden);
-	CraftingPanel = CreateWidget<UCraftingPanel>(GetWorld(), CraftingPanelClass);
-	CraftingPanel->AddToViewport();
-	CraftingPanel->Init();
+	CraftingPanel = CreateWidget<UCraftingPanel>(GetOwningPlayerController(), CraftingPanelClass);
+	CraftingPanel->AddToViewport();	
 	Minimap = Cast<UMinimap>(CreateWidget<UMinimap>(GetWorld(), MinimapClass));
 	Minimap->AddToViewport();
 	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+	if(ARTPlayerController* RTPC = Cast<ARTPlayerController>(GetOwningPlayerController()))
+	{
+		CraftingPanel->Init(RTPC->GetInventory());
+	}
+	
+	
 	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
 	SlotManager->InitSlots(InfoPanel, CraftingPanel->GetInventoryGrid(), ItemSlotClass);
 }
@@ -117,6 +123,11 @@ void ARTHUD::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	Minimap->DrawDynamic();
+}
+
+void ARTHUD::InitCraftingPanel(UInventoryComponent* Inventory) const
+{
+	CraftingPanel->Init(Inventory);
 }
 
 FGameplayTag ARTHUD::GetAbilityTrigger(EItemSlotID Slot) const
