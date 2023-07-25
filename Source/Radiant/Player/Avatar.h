@@ -35,6 +35,9 @@ public:
 	void SetOverheadBarText(const FString& String);
 	bool TryPickupItem();
 
+	UFUNCTION(Exec)
+	void GiveItem(const FName& ItemName, int32 Amount);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Destination;
 

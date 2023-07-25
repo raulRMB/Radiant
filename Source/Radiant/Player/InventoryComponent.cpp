@@ -18,8 +18,10 @@ UInventoryComponent::UInventoryComponent()
 
 void UInventoryComponent::C_ItemChanged_Implementation(const FName& ItemName, const uint32 Amount)
 {
-	Items[ItemName].Amount = Amount;
-	RTLOGP2("%s: %u", *ItemName.ToString(), Amount);
+	if(Items.Contains(ItemName))
+	{
+		Items[ItemName].Amount = Amount;
+	}
 	
 	UEventBroker::Get(this)->ItemChanged.Broadcast(ItemName, Amount);
 }
@@ -44,6 +46,11 @@ void UInventoryComponent::S_ItemUsed_Implementation(const FName& ItemName, const
 			}
 		}
 	}
+}
+
+void UInventoryComponent::S_AddItem_Implementation(const FName& ItemName, const uint32 Amount)
+{
+	AddItem(ItemName, Amount);
 }
 
 void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
@@ -93,9 +100,11 @@ int32 UInventoryComponent::RemoveItem(const FName& ItemName, int32 Amount)
 	}
 	if(Items[ItemName].Amount == 0)
 	{
-		const auto Handle = FindHandle(ItemName);
-		GetPlayerState()->RemoveAbility(*Handle);
-		HandleToItemName.Remove(*Handle);
+		if(const auto Handle = FindHandle(ItemName))
+		{
+			GetPlayerState()->RemoveAbility(*Handle);
+			HandleToItemName.Remove(*Handle);
+		}
 	}
 	return Items[ItemName].Amount;
 }

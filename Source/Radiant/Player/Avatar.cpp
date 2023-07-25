@@ -125,6 +125,11 @@ bool AAvatar::TryPickupItem()
 	return false;
 }
 
+void AAvatar::GiveItem(const FName& ItemName, int32 Amount)
+{
+	GetInventory()->S_AddItem(ItemName, Amount);
+}
+
 void AAvatar::LevelUp_Implementation(float GetLevel)
 {
 	//GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->ShowLevelUpScreen();
@@ -259,7 +264,6 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	{
 		S_CancelAllAbilities();
 	}
-	
 
 	FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.PathTo"));
 	CastAbility(Tag, true);
@@ -515,7 +519,6 @@ void AAvatar::OnRep_PlayerState()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetManaAttribute()).
 		                        AddUObject(this, &AAvatar::OnManaChanged);
 	}
-
 
 	if (!HasAuthority())
 	{

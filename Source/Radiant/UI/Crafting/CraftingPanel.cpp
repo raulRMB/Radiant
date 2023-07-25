@@ -71,6 +71,10 @@ void UCraftingPanel::LoadCraftingItem(const FName ItemName)
 
 		for(int32 i = 0 ; i < CraftingNodeDataAsset->Aggregates.Num(); i++)
 		{
+			if(!CraftingNodeDataAsset->Aggregates[i])
+			{
+				continue;
+			}
 			if(UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass))
 			{
 				CraftingNode->Init(CraftingNodeDataAsset->Aggregates[i]->Icon, 1, InventoryComponent);

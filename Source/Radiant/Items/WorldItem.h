@@ -26,10 +26,10 @@ class RADIANT_API AWorldItem : public AActor
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemDataTable;
 protected:
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnywhere, Replicated)
 	FName ItemName;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnywhere, Replicated)
 	uint32 Amount;
 	
 public:

@@ -100,6 +100,7 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSet->InitLevel(1.f);
 	AttributeSet->InitRadianite(500.f);
 	AttributeSet->InitAttackSpeed(1.2f);
+	AttributeSet->InitAttackRange(1000.f);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetRadianiteAttribute()).AddUObject(
 		this, &ARTPlayerState::OnRadianiteChanged);
 }

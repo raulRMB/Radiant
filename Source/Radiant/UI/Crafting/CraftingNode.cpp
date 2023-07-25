@@ -140,7 +140,7 @@ void UCraftingNode::OnMouseRightClick()
 	{
 		for(auto Ingredient : IngredientList)
 		{
-			InventoryComponent->S_ItemUsed(Ingredient.Key);
+			InventoryComponent->S_ItemUsed(Ingredient.Key, Ingredient.Value);
 		}
 		GetOwningPlayerState<ARTPlayerState>()->S_BuyAbility(CraftingItemDataName, 1);
 		UEventBroker::Get(this)->RightMouseButtonClicked.Remove(HoveredHandle);

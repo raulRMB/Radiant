@@ -27,6 +27,11 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	UPROPERTY(EditAnywhere)
 	uint8 bHideLevel : 1;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AWorldItem> DropItemClass;
+
+	UPROPERTY(EditAnywhere)
+	FName DropItemName;
 protected:
 	UPROPERTY()
 	class UAIInfoBar* InfoBar;

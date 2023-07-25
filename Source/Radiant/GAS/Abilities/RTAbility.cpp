@@ -181,11 +181,11 @@ void URTAbility::UseItem(const FGameplayAbilitySpecHandle& Handle)
 bool URTAbility::CommitAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, FGameplayTagContainer* OptionalRelevantTags)
 {
-	if(!bItemWasUsed && HasAuthority(&ActivationInfo))
-	{
-		UseItem(Handle);
-		bItemWasUsed = true;
-	}
+	// if(!bItemWasUsed && HasAuthority(&ActivationInfo))
+	// {
+	// 	//UseItem(Handle);
+	// 	bItemWasUsed = true;
+	// }
 	return Super::CommitAbility(Handle, ActorInfo, ActivationInfo, OptionalRelevantTags);
 }
 

@@ -4,6 +4,7 @@
 #include "Components/WidgetComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/BuildingAttributeSet.h"
+#include "Items/WorldItem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/Avatar.h"
@@ -114,9 +115,14 @@ void ABuilding::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (HasAuthority())
 	{
-		if (DestroyParticles)
+		if (GetWorld())
 		{
-			if (GetWorld())
+			if(AWorldItem* WorldItem = GetWorld()->SpawnActorDeferred<AWorldItem>(DropItemClass, GetActorTransform()))
+			{
+				WorldItem->InitItem(DropItemName, 5);
+				WorldItem->FinishSpawning(GetActorTransform());
+			}
+			if (DestroyParticles)
 			{
 				GetWorld()->SpawnActor(DestroyParticles, &GetActorTransform());
 			}

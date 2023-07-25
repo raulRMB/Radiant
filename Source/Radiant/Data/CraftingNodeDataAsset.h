@@ -18,10 +18,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	TMap<class UCraftingNodeDataAsset*, uint8> Materials;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TArray<class UCraftingNodeDataAsset*> Aggregates;
 	
 	void AddAggregatesToMaterials();
+	void EmptyAggregates();
 };
 
 inline void UCraftingNodeDataAsset::AddAggregatesToMaterials()
@@ -33,4 +34,9 @@ inline void UCraftingNodeDataAsset::AddAggregatesToMaterials()
 			It.Key->Aggregates.AddUnique(this);
 		}
 	}
+}
+
+inline void UCraftingNodeDataAsset::EmptyAggregates()
+{
+	Aggregates.Empty();
 }
