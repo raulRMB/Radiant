@@ -51,7 +51,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void S_DropItem(const FName& ItemName);
 	UFUNCTION(Server, Reliable)
-	void S_ItemUsed(const FName& ItemName);
+	void S_ItemUsed(const FName& ItemName, const uint32 Amount = 1);
 
 public:
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }

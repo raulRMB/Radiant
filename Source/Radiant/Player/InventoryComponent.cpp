@@ -16,20 +16,6 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UInventoryComponent::S_ItemUsed_Implementation(const FName& ItemName)
-{
-	if (GetOwner()->HasAuthority())
-	{
-		if (Items.Contains(ItemName))
-		{
-			if (Items[ItemName].Amount > 0)
-			{
-				RemoveItem(ItemName, 1);
-			}
-		}
-	}
-}
-
 void UInventoryComponent::C_ItemChanged_Implementation(const FName& ItemName, const uint32 Amount)
 {
 	Items[ItemName].Amount = Amount;
@@ -43,6 +29,20 @@ void UInventoryComponent::S_DropItem_Implementation(const FName& ItemName)
 	if (GetOwner()->HasAuthority())
 	{
 		DropItem(ItemName);
+	}
+}
+
+void UInventoryComponent::S_ItemUsed_Implementation(const FName& ItemName, const uint32 Amount)
+{
+	if (GetOwner()->HasAuthority())
+	{
+		if (Items.Contains(ItemName))
+		{
+			if (Items[ItemName].Amount > 0)
+			{
+				RemoveItem(ItemName, Amount);
+			}
+		}
 	}
 }
 

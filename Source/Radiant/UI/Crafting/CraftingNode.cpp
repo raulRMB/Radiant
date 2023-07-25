@@ -136,7 +136,14 @@ void UCraftingNode::OnButtonUnhovered()
 
 void UCraftingNode::OnMouseRightClick()
 {
-	GetOwningPlayerState<ARTPlayerState>()->S_BuyAbility(CraftingItemDataName, 1);
-	UEventBroker::Get(this)->RightMouseButtonClicked.Remove(HoveredHandle);
+	if(CheckHasMaterials())
+	{
+		for(auto Ingredient : IngredientList)
+		{
+			InventoryComponent->S_ItemUsed(Ingredient.Key);
+		}
+		GetOwningPlayerState<ARTPlayerState>()->S_BuyAbility(CraftingItemDataName, 1);
+		UEventBroker::Get(this)->RightMouseButtonClicked.Remove(HoveredHandle);
+	}
 }
 

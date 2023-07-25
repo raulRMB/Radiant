@@ -29,6 +29,10 @@ void UCraftingPanel::Init(UInventoryComponent* Inventory)
 			{
 				if(ItemData->CraftingNodeData)
 				{
+					if(ItemData->CraftingNodeData->Materials.Num() <= 0)
+					{
+						continue;
+					}
 					UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass);
 					ItemData->CraftingNodeData->Name = It.Key;
 					CraftingNode->Init(ItemData->CraftingNodeData->Icon, 1, InventoryComponent);

@@ -11,7 +11,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FItemChangedSignature, const class FName&, 
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDragStatus, bool);
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FItemUsedSignature, const class FName&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FItemUsedSignature, const class FName&, const uint32 Amount);
 
 DECLARE_MULTICAST_DELEGATE(FGameIsReady);
 
