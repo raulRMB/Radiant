@@ -15,6 +15,9 @@ struct FItemData : public FTableRowBase
 	class UAbilityDataAsset* AbilityData;
 
 	UPROPERTY(EditAnywhere)
+	class UCraftingNodeDataAsset* CraftingNodeData;
+
+	UPROPERTY(EditAnywhere)
 	FText Tooltip;
 
 	UPROPERTY(EditAnywhere)
@@ -26,6 +29,7 @@ struct FItemData : public FTableRowBase
 	FItemData()
 	{
 		AbilityData = nullptr;
+		CraftingNodeData = nullptr;
 		Tooltip = FText::FromString("");
 		Icon = nullptr;
 		bIsWeapon = false;

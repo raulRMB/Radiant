@@ -14,6 +14,7 @@
 #include "Components/UniformGridSlot.h"
 #include "Data/CraftingItemData.h"
 #include "Data/CraftingNodeDataAsset.h"
+#include "Data/ItemData.h"
 #include "Engine/DataTable.h"
 #include "UI/ItemSlot.h"
 #include "Util/AbilityDragDropOperation.h"
@@ -21,19 +22,18 @@
 
 void UCraftingPanel::Init()
 {
-	if(CraftingItemDataTable)
+	if(ItemTable)
 	{
-		for(TPair<FName, uint8*> It : CraftingItemDataTable->GetRowMap())
+		for(TPair<FName, uint8*> It : ItemTable->GetRowMap())
 		{
-			if(FCraftingItemData* CraftingItemData = reinterpret_cast<FCraftingItemData*>(It.Value))
+			if(FItemData* ItemData = reinterpret_cast<FItemData*>(It.Value))
 			{
-				if(CraftingItemData->CraftingNodeDataAsset)
+				if(ItemData->CraftingNodeData)
 				{
 					UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass);
-					CraftingItemData->CraftingNodeName = It.Key;
-					CraftingItemData->CraftingNodeDataAsset->Name = It.Key;
+					ItemData->CraftingNodeData->Name = It.Key;
 					CraftingNode->SetCraftingItemDataName(It.Key);
-					CraftingNode->Init(CraftingItemData->CraftingNodeDataAsset->Icon, 1);
+					CraftingNode->Init(ItemData->CraftingNodeData->Icon, 1);
 					if(UCanvasPanelSlot* PanelSlot = RecipeList->AddChildToCanvas(CraftingNode))
 					{
 						PanelSlot->SetAnchors(FAnchors(.0f));
@@ -54,12 +54,12 @@ void UCraftingPanel::LoadCraftingItem(const FName ItemName)
 	CurrentNodeCount = 0;
 	RecipeTree->ClearChildren();
 	AggregateList->ClearChildren();
-	if(!CraftingItemDataTable)
+	if(!ItemTable)
 		return;
 	
-	if(FCraftingItemData* CraftingItemData = CraftingItemDataTable->FindRow<FCraftingItemData>(ItemName, TEXT("Crafting Panel Load Crafting Item")))
+	if(FItemData* CraftingItemData = ItemTable->FindRow<FItemData>(ItemName, TEXT("Crafting Panel Load Crafting Item")))
 	{
-		UCraftingNodeDataAsset* CraftingNodeDataAsset = CraftingItemData->CraftingNodeDataAsset;
+		UCraftingNodeDataAsset* CraftingNodeDataAsset = CraftingItemData->CraftingNodeData;
 		if(!CraftingNodeDataAsset)
 		{
 			return;

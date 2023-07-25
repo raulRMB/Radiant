@@ -13,7 +13,7 @@ class RADIANT_API URadiantGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	class UDataTable* CraftingItemDataTable;
+	class UDataTable* ItemTable;
 
 public:
 	virtual void Init() override;

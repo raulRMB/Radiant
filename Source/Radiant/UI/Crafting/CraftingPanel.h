@@ -27,7 +27,7 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	TSubclassOf<class UCraftingNode> CraftingNodeClass;
 
 	UPROPERTY(EditAnywhere)
-	class UDataTable* CraftingItemDataTable;
+	class UDataTable* ItemTable;
 
 	int32 CurrentNodeCount = 0;
 

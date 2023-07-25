@@ -8,31 +8,22 @@
 #include "EngineUtils.h"
 #include "Data/CraftingItemData.h"
 #include "Data/CraftingNodeDataAsset.h"
+#include "Data/ItemData.h"
 
 void URadiantGameInstance::Init()
 {
 	Super::Init();
-
-	TArray<UObject*> DataAssets;
-	FindOrLoadAssetsByPath(TEXT("/Game/Data/CraftingData/NodeData"), DataAssets, EngineUtils::ATL_Regular);
-	for(UObject* Object : DataAssets)
-	{
-		if (UCraftingNodeDataAsset* DataAsset = Cast<UCraftingNodeDataAsset>(Object))
-		{
-			FCraftingItemData CraftingItemData = FCraftingItemData();
-			CraftingItemData.CraftingNodeName = DataAsset->Name;
-			CraftingItemData.CraftingNodeDataAsset = DataAsset;
-			CraftingItemDataTable->AddRow(DataAsset->Name, CraftingItemData);
-		}
-	}
 	
-	if(CraftingItemDataTable)
+	if(ItemTable)
 	{
-		for(TPair<FName, uint8*> Row : CraftingItemDataTable->GetRowMap())
+		for(TPair<FName, uint8*> Row : ItemTable->GetRowMap())
 		{
-			if(FCraftingItemData* CraftingItemData = reinterpret_cast<FCraftingItemData*>(Row.Value))
+			if(FItemData* CraftingItemData = reinterpret_cast<FItemData*>(Row.Value))
 			{
-				CraftingItemData->CraftingNodeDataAsset->AddAggregatesToMaterials();
+				if(CraftingItemData->CraftingNodeData)
+				{
+					CraftingItemData->CraftingNodeData->AddAggregatesToMaterials();
+				}
 			}
 		}
 	}
