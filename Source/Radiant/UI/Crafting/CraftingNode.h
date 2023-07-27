@@ -56,7 +56,7 @@ class UCraftingNode : public UUserWidget
 	class UTextBlock* AmountTextBlock;
 
 	UPROPERTY(meta=(BindWidget))
-	class UButton* Button;
+	class UDynamicButton* Button;
 
 	UPROPERTY()
 	FName CraftingItemDataName;
@@ -65,8 +65,6 @@ class UCraftingNode : public UUserWidget
 
 	UPROPERTY()
 	class UCraftingNode* ParentNode;
-	
-	FDelegateHandle HoveredHandle;
 
 	UPROPERTY()
 	TMap<FName, uint32> IngredientList;
@@ -87,7 +85,7 @@ public:
 	
 	bool IsLeaf() const { return bIsLeaf; }
 	void SetIsLeaf(bool IsLeaf) { bIsLeaf = IsLeaf; }
-
+	
 	UCraftingNode* GetParentNode() const { return ParentNode; }
 	void SetParentNode(UCraftingNode* InParentNode) { ParentNode = InParentNode; }
 
@@ -95,14 +93,8 @@ public:
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION()
-	void OnButtonClicked();
-
+	void OnMouseLeftClicked();
+	
 	UFUNCTION()
-	void OnButtonHovered();
-
-	UFUNCTION()
-	void OnButtonUnhovered();
-
-	UFUNCTION()
-	void OnMouseRightClick();
+	void OnMouseRightClicked();
 };

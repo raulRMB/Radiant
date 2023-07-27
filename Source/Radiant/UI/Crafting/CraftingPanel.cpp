@@ -134,7 +134,7 @@ void UCraftingPanel::AddGraphNode(UCraftingNodeDataAsset* CNDA, FGraphNode* Node
 {
 	Depth++;
 	int Idx = 0;
-	for(auto Child : CNDA->Materials)
+	for(TPair<UCraftingNodeDataAsset*, uint8>& Child : CNDA->Materials)
 	{
 		FGraphNode* ChildNode = new FGraphNode(Node, Child.Key, Child.Value, Depth, 1, Idx);
 		Node->AddChild(ChildNode);

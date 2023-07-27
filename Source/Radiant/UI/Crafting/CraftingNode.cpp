@@ -6,6 +6,7 @@
 #include "Event/EventBroker.h"
 #include "Player/InventoryComponent.h"
 #include "Player/RTPlayerState.h"
+#include "UI/DynamicButton.h"
 #include "UI/RTHUD.h"
 #include "Util/Util.h"
 
@@ -111,30 +112,19 @@ void UCraftingNode::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	Button->OnClicked.AddUniqueDynamic(this, &UCraftingNode::OnButtonClicked);
-	Button->OnHovered.AddDynamic(this, &UCraftingNode::OnButtonHovered);
-	Button->OnUnhovered.AddDynamic(this, &UCraftingNode::OnButtonUnhovered);
+	Button->OnLeftClick.AddUObject(this, &UCraftingNode::OnMouseLeftClicked);
+	Button->OnRightClick.AddUObject(this, &UCraftingNode::OnMouseRightClicked);
 }
 
-void UCraftingNode::OnButtonClicked()
-{
+void UCraftingNode::OnMouseLeftClicked()
+{	
 	if(CraftingItemDataName.IsValid())
 	{
 		GetOwningPlayer()->GetHUD<ARTHUD>()->ReloadCraftingPanel(CraftingItemDataName);
 	}
 }
 
-void UCraftingNode::OnButtonHovered()
-{
-	HoveredHandle = UEventBroker::Get(this)->RightMouseButtonClicked.AddUObject(this, &UCraftingNode::OnMouseRightClick);
-}
-
-void UCraftingNode::OnButtonUnhovered()
-{
-	UEventBroker::Get(this)->RightMouseButtonClicked.Remove(HoveredHandle);
-}
-
-void UCraftingNode::OnMouseRightClick()
+void UCraftingNode::OnMouseRightClicked()
 {
 	if(CheckHasMaterials())
 	{
@@ -143,7 +133,6 @@ void UCraftingNode::OnMouseRightClick()
 			InventoryComponent->S_ItemUsed(Ingredient.Key, Ingredient.Value);
 		}
 		GetOwningPlayerState<ARTPlayerState>()->S_BuyAbility(CraftingItemDataName, 1);
-		UEventBroker::Get(this)->RightMouseButtonClicked.Remove(HoveredHandle);
 	}
 }
 
