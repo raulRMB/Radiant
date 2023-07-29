@@ -16,8 +16,7 @@ bool UDynamicButton::CheckButtonMask(const EMouseButtonMask Mask) const
 
 FReply UDynamicButton::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	RTPRINT("asd");
-	bool bShouldPress = bIsPressed;
+	bool bShouldPress = bIsPressed;	
 	if(CheckButtonMask(EMouseButtonMask::LeftClick) && InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
 		if(CheckButtonMask(EMouseButtonMask::Shift) && InMouseEvent.GetModifierKeys().IsShiftDown())
@@ -106,6 +105,11 @@ FReply UDynamicButton::NativeOnMouseButtonUp(const FGeometry& InGeometry, const 
 
 FReply UDynamicButton::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	if(!bIsDoubleClickable)
+	{
+		NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	}
+	
 	return FReply::Handled();
 }
 

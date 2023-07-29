@@ -43,17 +43,22 @@ class UDynamicButton : public UUserWidget
 	UPROPERTY(EditAnywhere)
 	FLinearColor PressedColor = FLinearColor::White * 0.2f;
 
+	UPROPERTY(EditAnywhere)
+	uint8 bIsDoubleClickable : 1;
 private:
 	uint8 bIsPressed : 1;
 	uint8 bIsHovered : 1;
+	
 public:
 	
 	void ListenTooButton(EMouseButtonMask InMouseButtonMask, bool bListenTo);
 	void ListenToAllButtons(bool bListenTo = true) { ButtonMask = bListenTo ? INT32_MAX : 0; }
 	void SetButtonMask(int32 InListenTo) { ButtonMask = InListenTo; }
 	int32 GetButtonMask() const { return ButtonMask; }
+	void SetIsDoubleClickable(bool bInIsDoubleClickable) { bIsDoubleClickable = bInIsDoubleClickable; }
 	
 public:
+	
 	FClickSignature OnRightClick;
 	FClickSignature OnLeftClick;
 	FClickSignature OnMiddleClick;
@@ -71,7 +76,7 @@ public:
 	FClickSignature OnAltMiddleClick;
 
 	FDynamicClickSignature OnDynamicClick;
-	
+
 protected:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
