@@ -49,6 +49,12 @@ class RADIANT_API AGridManager : public AActor
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess=true))
 	FIntVector2 GridSize;
+
+	float PerlinScale = 0.1f;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> TestActor;
+
 public:
 	AGridManager();
 	

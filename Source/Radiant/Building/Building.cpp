@@ -10,6 +10,7 @@
 #include "Player/Avatar.h"
 #include "Player/RTPlayerState.h"
 #include "UI/AIInfoBar.h"
+#include "Util/Util.h"
 
 ABuilding::ABuilding()
 {
@@ -51,6 +52,8 @@ void ABuilding::BeginPlay()
 			{
 				InfoBar->ShowLevel(!bHideLevel);
 				InfoBar->SetHealthPercent(1.f);
+				InfoBar->SetVisibility(ESlateVisibility::Hidden);
+				RTPRINT("ASD");
 			}
 		}
 		SetHealthBarColor();
@@ -97,6 +100,7 @@ void ABuilding::OnHealthChanged(const FOnAttributeChangeData& Data)
 	else if (AttributeSet)
 	{
 		InfoBar->SetHealthPercent(Data.NewValue / AttributeSet->GetMaxHealth());
+		InfoBar->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 }
 

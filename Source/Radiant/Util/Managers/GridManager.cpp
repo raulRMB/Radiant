@@ -22,36 +22,42 @@ void AGridManager::InitGrid()
 		{
 			for(int x = 0; x < GridSize.X; x++)
 			{
-				int32 Rand = FMath::RandRange(0, 400);
+				float Perlin = FMath::PerlinNoise2D(FVector2D(x + 0.1, y + 0.1) * PerlinScale);
+				
 				EEnvironmentType Type = EEnvironmentType::EEnvironmentType_Empty;
-				if(Rand < 2)
+				if(Perlin > .2f)
 				{
 					Type = EEnvironmentType::EEnvironmentType_Tree;
-				}
-				else if(Rand < 4)
-				{
-					Type = EEnvironmentType::EEnvironmentType_TreeStump;
-				}
-				else if(Rand < 6)
-				{
-					Type = EEnvironmentType::EEnvironmentType_Grass;
-				}
-				else if(Rand < 8)
-				{
-					Type = EEnvironmentType::EEnvironmentType_Rock;
-				}
-				else if(Rand < 10)
-				{
-					Type = EEnvironmentType::EEnvironmentType_Pebbles;
 				}
 				else
 				{
 					continue;
 				}
+				// else if(Rand < 4)
+				// {
+				// 	Type = EEnvironmentType::EEnvironmentType_TreeStump;
+				// }
+				// else if(Rand < 6)
+				// {
+				// 	Type = EEnvironmentType::EEnvironmentType_Grass;
+				// }
+				// else if(Rand < 8)
+				// {
+				// 	Type = EEnvironmentType::EEnvironmentType_Rock;
+				// }
+				// else if(Rand < 10)
+				// {
+				// 	Type = EEnvironmentType::EEnvironmentType_Pebbles;
+				// }
+				// else
+				// {
+				// 	continue;
+				// }
 				FTransform Transform = FTransform(FVector(x, y, 0.f) * CellSize);
 				if(BuildingTypes.Contains(Type))
 				{
 					GetWorld()->SpawnActor<ABuilding>(BuildingTypes[Type], Transform);
+					//GetWorld()->SpawnActor<AActor>(TestActor, Transform);
 				}
 			}
 		}
