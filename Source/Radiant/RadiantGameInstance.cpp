@@ -23,7 +23,6 @@ void URadiantGameInstance::Init()
 				if(CraftingItemData->CraftingNodeData)
 				{
 					CraftingItemData->CraftingNodeData->AddAggregatesToMaterials();
-					CraftingItemData->CraftingNodeData->Name = Row.Key;
 				}
 			}
 		}
