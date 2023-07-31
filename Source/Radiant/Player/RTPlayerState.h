@@ -14,6 +14,7 @@
 #include "Util/Interfaces/TeamMember.h"
 #include "RTPlayerState.generated.h"
 
+enum class EGearType : uint8;
 DECLARE_MULTICAST_DELEGATE_OneParam(FUpdateRadianiteSignature, float);
 
 class AAvatar;
@@ -86,9 +87,11 @@ public:
 	UPROPERTY(Replicated, EditAnywhere)
 	TArray<class UAbilityDataAsset*> InnateAbilities;
 	UFUNCTION(Server, Reliable)
-	void S_EquipWeapon(const FName& WeaponName);
+	void S_EquipGear(const FName& WeaponName);
 	UFUNCTION(Server, Reliable)
 	void S_UnequipWeapon();
+	UFUNCTION(Server, Reliable)
+	void S_UnequipGear(const FName& GearName);
 	FGameplayAbilitySpecHandle GiveAbility(const FItemData* ItemData) const;
 	TArray<class UAbilityDataAsset*> GetInnateAbilities() const;
 

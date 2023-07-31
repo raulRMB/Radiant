@@ -3,8 +3,8 @@
 
 #include "UI/ItemSlot.h"
 
+#include "GearSlot.h"
 #include "RTHUD.h"
-#include "WeaponSlot.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -54,16 +54,16 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 {
 	if(ItemSlot)
 	{
-		if(UWeaponSlot* WeaponSlot = Cast<UWeaponSlot>(ItemSlot))
+		if(UGearSlot* GearSlot = Cast<UGearSlot>(ItemSlot))
 		{
-			if(!WeaponSlot->CheckCanSwapWith(this))
+			if(!GearSlot->CheckCanSwapWith(this))
 			{
 				return false;
 			}
 		}
-		if(UWeaponSlot* MyWeaponSlot = Cast<UWeaponSlot>(this))
+		if(UGearSlot* GearSlot = Cast<UGearSlot>(this))
 		{
-			if(!MyWeaponSlot->CheckCanSwapWith(ItemSlot))
+			if(!GearSlot->CheckCanSwapWith(ItemSlot))
 			{
 				return false;
 			}

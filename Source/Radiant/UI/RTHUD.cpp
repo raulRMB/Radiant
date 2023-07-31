@@ -41,9 +41,8 @@ void ARTHUD::BeginPlay()
 		CraftingPanel->Init(RTPC->GetInventory());
 	}
 	
-	
 	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
-	SlotManager->InitSlots(InfoPanel, CraftingPanel->GetInventoryGrid(), ItemSlotClass, CraftingPanel->GetGearGrid());
+	SlotManager->InitSlots(InfoPanel, CraftingPanel, ItemSlotClass);
 }
 
 void ARTHUD::ShowEndScreen(bool won)

@@ -24,14 +24,29 @@ class RADIANT_API USlotManager : public UObject
 	class UHorizontalBox* HotbarHorizontalBox;
 
 	UPROPERTY()
-	class UUniformGridPanel* GearGridPanel;
+	class UItemSlot* WeaponSlot;
 
 	UPROPERTY()
-	class UItemSlot* WeaponSlot;
+	class UGearSlot* HelmetSlot;
+
+	UPROPERTY()
+	class UGearSlot* ChestSlot;
+
+	UPROPERTY()
+	class UGearSlot* LegsSlot;
+
+	UPROPERTY()
+	class UGearSlot* BootsSlot;
+
+	UPROPERTY()
+	class UGearSlot* GlovesSlot;
+
+	UPROPERTY()
+	class UGearSlot* JewelrySlot;
 public:
 	UFUNCTION()
 	void OnSlotChanged(const FName& Name, uint32 Amount) const;
-	void InitSlots(class URTInfoPanel* InfoPanel, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass, UUniformGridPanel* InGearGridPanel);
+	void InitSlots(class URTInfoPanel* InfoPanel, class UCraftingPanel* CraftingPanel, TSubclassOf<class UItemSlot> ItemSlotClass);
 	FGameplayTag GetAbilityTrigger(EItemSlotID Slot);
 
 private:

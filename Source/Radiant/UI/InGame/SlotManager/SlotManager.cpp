@@ -8,11 +8,11 @@
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/SizeBox.h"
 #include "Components/UniformGridPanel.h"
-#include "Components/UniformGridSlot.h"
 #include "Data/ItemData.h"
 #include "Event/EventBroker.h"
+#include "UI/GearSlot.h"
 #include "UI/ItemSlot.h"
-#include "UI/WeaponSlot.h"
+#include "UI/Crafting/CraftingPanel.h"
 #include "Util/Util.h"
 
 void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
@@ -31,14 +31,21 @@ void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
 	}
 }
 
-void USlotManager::InitSlots(URTInfoPanel* InfoPanel, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass, UUniformGridPanel* InGearGridPanel)
+void USlotManager::InitSlots(URTInfoPanel* InfoPanel, UCraftingPanel* CraftingPanel, TSubclassOf<UItemSlot> ItemSlotClass)
 {
 	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &USlotManager::OnSlotChanged);
 	
 	HotbarHorizontalBox = InfoPanel->GetHotbarHorizontalBox();
-	InventoryGridPanel = GridPanel;
+	InventoryGridPanel = CraftingPanel->GetInventoryGrid();
+	
 	WeaponSlot = InfoPanel->GetWeaponSlot();
-	GearGridPanel = InGearGridPanel;
+	
+	HelmetSlot = CraftingPanel->GetHelmetSlot();
+	ChestSlot = CraftingPanel->GetChestSlot();
+	LegsSlot = CraftingPanel->GetLegsSlot();
+	BootsSlot = CraftingPanel->GetBootsSlot();
+	GlovesSlot = CraftingPanel->GetGlovesSlot();
+	JewelrySlot = CraftingPanel->GetJewelrySlot();
 	
 	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::NecklaceSlot); i++)
 	{
@@ -99,7 +106,7 @@ FItemSlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) con
 	{
 		ItemSlotData.ItemName = Name;
 		ItemSlotData.ItemAmount = Amount;
-		ItemSlotData.bIsWeapon = ItemData->bIsWeapon;
+		ItemSlotData.bIsGear = ItemData->bIsGear;
 		if(ItemData->AbilityData)
 		{
 			ItemSlotData.AbilityTrigger = ItemData->AbilityData->Ability.GetDefaultObject()->GetTriggerTag();
@@ -141,7 +148,7 @@ UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<
 			SizeBox->SetHeightOverride(100.f);
 			SizeBox->AddChild(ItemSlot);
 
-			InventoryGridPanel->AddChildToUniformGrid(SizeBox, InventoryGridPanel->GetChildrenCount() / 11, InventoryGridPanel->GetChildrenCount() % 11);
+			InventoryGridPanel->AddChildToUniformGrid(SizeBox, InventoryGridPanel->GetChildrenCount() / 9, InventoryGridPanel->GetChildrenCount() % 9);
 		}
 		else if(UISlotID == EItemSlotID::WeaponSlot)
 		{
@@ -150,14 +157,47 @@ UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<
 			Slots[UISlotID] = WeaponSlot;
 			return WeaponSlot;
 		}
-		else if(UISlotID >= EItemSlotID::HelmetSlot && UISlotID <= EItemSlotID::NecklaceSlot)
+		else if(UISlotID == EItemSlotID::HelmetSlot)
 		{
-			USizeBox* SizeBox = ItemSlot->WidgetTree->ConstructWidget<USizeBox>(USizeBox::StaticClass());
-			SizeBox->SetWidthOverride(100.f);
-			SizeBox->SetHeightOverride(100.f);
-			SizeBox->AddChild(ItemSlot);
-			
-			GearGridPanel->AddChildToUniformGrid(SizeBox, GearGridPanel->GetChildrenCount() / 3, GearGridPanel->GetChildrenCount() % 3);
+			HelmetSlot->SetEmpty(true);
+			HelmetSlot->SetSlotID(EItemSlotID::HelmetSlot);
+			Slots[EItemSlotID::HelmetSlot] = HelmetSlot;				
+			return HelmetSlot;
+		}
+		else if(UISlotID == EItemSlotID::ChestSlot)
+		{
+			ChestSlot->SetEmpty(true);
+			ChestSlot->SetSlotID(EItemSlotID::ChestSlot);
+			Slots[EItemSlotID::ChestSlot] = ChestSlot;				
+			return ChestSlot;
+		}
+		else if(UISlotID == EItemSlotID::LegsSlot)
+		{
+			LegsSlot->SetEmpty(true);
+			LegsSlot->SetSlotID(EItemSlotID::LegsSlot);
+			Slots[EItemSlotID::LegsSlot] = LegsSlot;				
+			return LegsSlot;
+		}
+		else if(UISlotID == EItemSlotID::NecklaceSlot)
+		{
+			JewelrySlot->SetEmpty(true);
+			JewelrySlot->SetSlotID(EItemSlotID::NecklaceSlot);
+			Slots[EItemSlotID::NecklaceSlot] = JewelrySlot;
+			return JewelrySlot;
+		}
+		else if(UISlotID == EItemSlotID::GlovesSlot)
+		{
+			GlovesSlot->SetEmpty(true);
+			GlovesSlot->SetSlotID(EItemSlotID::GlovesSlot);
+			Slots[EItemSlotID::GlovesSlot] = GlovesSlot;
+			return GlovesSlot;
+		}
+		else if(UISlotID == EItemSlotID::BootsSlot)
+		{
+			BootsSlot->SetEmpty(true);
+			BootsSlot->SetSlotID(EItemSlotID::BootsSlot);
+			Slots[EItemSlotID::BootsSlot] = BootsSlot;
+			return BootsSlot;
 		}
 	}
 	return ItemSlot;

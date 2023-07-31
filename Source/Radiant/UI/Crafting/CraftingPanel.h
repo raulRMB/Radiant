@@ -24,7 +24,22 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	class UUniformGridPanel* InventoryGrid;
 
 	UPROPERTY(meta=(BindWidget))
-	class UUniformGridPanel* GearGrid;
+	class UGearSlot* HelmetSlot;
+	
+	UPROPERTY(meta=(BindWidget))
+	class UGearSlot* ChestSlot;
+	
+	UPROPERTY(meta=(BindWidget))
+	class UGearSlot* LegsSlot;
+
+	UPROPERTY(meta=(BindWidget))
+	class UGearSlot* JewelrySlot;
+	
+	UPROPERTY(meta=(BindWidget))
+	class UGearSlot* GlovesSlot;
+
+	UPROPERTY(meta=(BindWidget))
+	class UGearSlot* BootsSlot;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCraftingNode> CraftingNodeClass;
@@ -61,7 +76,12 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	class UInventoryComponent* InventoryComponent;
 public:
 	UUniformGridPanel* GetInventoryGrid() const { return InventoryGrid; }
-	UUniformGridPanel* GetGearGrid() const { return GearGrid; }
+	UGearSlot* GetHelmetSlot() const { return HelmetSlot; }
+	UGearSlot* GetChestSlot() const { return ChestSlot; }
+	UGearSlot* GetLegsSlot() const { return LegsSlot; }
+	UGearSlot* GetJewelrySlot() const { return JewelrySlot; }
+	UGearSlot* GetGlovesSlot() const { return GlovesSlot; }
+	UGearSlot* GetBootsSlot() const { return BootsSlot; }
 	void Init(class UInventoryComponent* Inventory);
 	void LoadCraftingItem(const FName ItemName);
 	UCraftingNode* CreateCraftingNode(class UCraftingNode* InParentCraftingNode, class FGraphNode* Node);

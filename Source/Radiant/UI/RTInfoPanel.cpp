@@ -2,9 +2,10 @@
 
 
 #include "UI/RTInfoPanel.h"
+
+#include "GearSlot.h"
 #include "Components/HorizontalBox.h"
 #include "ItemSlot.h"
-#include "WeaponSlot.h"
 #include "Player/Avatar.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
@@ -119,7 +120,7 @@ void URTInfoPanel::SetMS(float MS) const
 	MSCounter->SetText(RTPRINTF("MS: %.0f", MS));
 }
 
-UWeaponSlot* URTInfoPanel::GetWeaponSlot() const
+UGearSlot* URTInfoPanel::GetWeaponSlot() const
 {
 	return WeaponSlot;
 }

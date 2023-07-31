@@ -22,7 +22,7 @@ struct FItemSlotData
 	FText Tooltip;
 	UPROPERTY()
 	class UTexture2D* Icon;
-	uint8 bIsWeapon : 1;
+	uint8 bIsGear : 1;
 
 	FItemSlotData() :
 		ItemName(NAME_None),
@@ -31,7 +31,8 @@ struct FItemSlotData
 		CooldownTag(FGameplayTag()),
 		Tooltip(FText::FromString("")),
 		Icon(nullptr),
-		bIsWeapon(false) { }
+		bIsGear(false)
+	{ }
 };
 
 UCLASS()

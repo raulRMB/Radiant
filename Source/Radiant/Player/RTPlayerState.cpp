@@ -5,6 +5,7 @@
 #include "InventoryComponent.h"
 #include "RTPlayerController.h"
 #include "Data/AbilityDataAsset.h"
+#include "Data/GearData.h"
 #include "Data/ItemData.h"
 #include "Data/WeaponDataAsset.h"
 #include "Event/EventBroker.h"
@@ -247,22 +248,34 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32
 	// AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price * Amount);
 }
 
-void ARTPlayerState::S_EquipWeapon_Implementation(const FName& WeaponName)
+void ARTPlayerState::S_EquipGear_Implementation(const FName& WeaponName)
 {
-	const FItemData* WeaponData = UUtil::GetItemDataFromName(WeaponName);
-	const UWeaponDataAsset* WeaponDataAsset = Cast<UWeaponDataAsset>(WeaponData->AbilityData);
+	const FItemData* GearItemData = UUtil::GetItemDataFromName(WeaponName);
+	const UWeaponDataAsset* WeaponDataAsset = Cast<UWeaponDataAsset>(GearItemData->AbilityData);
+	const UGearData* GearData = Cast<UGearData>(GearItemData->GearData);
 	
-	if(!WeaponData || !WeaponDataAsset)
+	if(!GearItemData)
 	{
 		return;
 	}
-	if(WeaponAbilityHandle.IsValid())
-	{
-		AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
+	if(WeaponDataAsset)
+	{	
+		if(WeaponAbilityHandle.IsValid())
+		{
+			AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
+		}
+		
+		AttributeSet->SetAttackRange(WeaponDataAsset->AttackRange);
+		WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(WeaponDataAsset->Ability.GetDefaultObject());
 	}
-	
-	AttributeSet->SetAttackRange(WeaponDataAsset->AttackRange);
-	WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(WeaponDataAsset->Ability.GetDefaultObject());
+	else if(GearData)
+	{
+		for(const TSubclassOf<UGameplayEffect>& EffectClass : GearData->GameplayEffects)
+		{
+			UGameplayEffect* Effect = EffectClass.GetDefaultObject();
+			AbilitySystemComponent->ApplyGameplayEffectToSelf(Effect, 1.f, AbilitySystemComponent->MakeEffectContext());
+		}
+	}
 }
 
 void ARTPlayerState::S_UnequipWeapon_Implementation()
@@ -274,9 +287,23 @@ void ARTPlayerState::S_UnequipWeapon_Implementation()
 	}
 }
 
+void ARTPlayerState::S_UnequipGear_Implementation(const FName& GearName)
+{
+	if(FItemData* ItemData = UUtil::GetItemDataFromName(GearName))
+	{
+		if(const UGearData* GearData = Cast<UGearData>(ItemData->GearData))
+		{
+			for(const TSubclassOf<UGameplayEffect>& EffectClass : GearData->GameplayEffects)
+			{
+				GetAbilitySystemComponent()->RemoveActiveGameplayEffectBySourceEffect(EffectClass, GetAbilitySystemComponent());
+			}
+		}
+	}
+}
+
 FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(const FItemData* ItemData) const
 {
-	if(ItemData->bIsWeapon || !ItemData->AbilityData)
+	if(ItemData->bIsGear || !ItemData->AbilityData)
 		return FGameplayAbilitySpecHandle();
 	FGameplayAbilitySpec AbilitySpec = ItemData->AbilityData->Ability.GetDefaultObject();
 	return AbilitySystemComponent->GiveAbility(AbilitySpec);

@@ -51,7 +51,7 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	class UTextBlock* MSCounter;
 
 	UPROPERTY(meta=(BindWidget))
-	class UWeaponSlot* WeaponSlot;
+	class UGearSlot* WeaponSlot;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
@@ -74,7 +74,7 @@ public:
 	void HideLoadScreen() const;
 	void SetFPS(float FPS) const;
 	void SetMS(float MS) const;
-	class UWeaponSlot* GetWeaponSlot() const;
+	class UGearSlot* GetWeaponSlot() const;
 private:
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	                               UDragDropOperation* InOperation) override;

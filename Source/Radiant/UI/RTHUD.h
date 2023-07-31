@@ -69,7 +69,7 @@ class RADIANT_API ARTHUD : public AHUD
 	class UCraftingPanel* CraftingPanel;
 
 	UPROPERTY(meta=(BindWidget))
-	class UWeaponSlot* WeaponSlotWidget;
+	class UGearSlot* WeaponSlotWidget;
 	
 	uint8 bSettingsOpen : 1;
 
@@ -86,7 +86,7 @@ public:
 
 	FGiveAbilityFromButtonSignature GiveAbilityFromButton;
 
-	UWeaponSlot* GetWeaponSlot() const { return WeaponSlotWidget; }
+	UGearSlot* GetWeaponSlot() const { return WeaponSlotWidget; }
 
 public:
 	ARTHUD();
