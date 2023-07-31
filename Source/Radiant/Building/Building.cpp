@@ -35,7 +35,8 @@ void ABuilding::BeginPlay()
 	{
 		AttributeSet = NewObject<UBuildingAttributeSet>(this);
 	}
-
+	NetUpdateFrequency = 10.f;
+	NetCullDistanceSquared = 75000000.0f;
 	GiveInitialAbilities();
 	AttributeSet->InitMaxHealth(MaxHealth);
 	AttributeSet->InitHealth(MaxHealth);
