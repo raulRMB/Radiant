@@ -22,6 +22,9 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UUniformGridPanel* InventoryGrid;
+
+	UPROPERTY(meta=(BindWidget))
+	class UUniformGridPanel* GearGrid;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCraftingNode> CraftingNodeClass;
@@ -58,6 +61,7 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	class UInventoryComponent* InventoryComponent;
 public:
 	UUniformGridPanel* GetInventoryGrid() const { return InventoryGrid; }
+	UUniformGridPanel* GetGearGrid() const { return GearGrid; }
 	void Init(class UInventoryComponent* Inventory);
 	void LoadCraftingItem(const FName ItemName);
 	UCraftingNode* CreateCraftingNode(class UCraftingNode* InParentCraftingNode, class FGraphNode* Node);

@@ -43,7 +43,7 @@ void ARTHUD::BeginPlay()
 	
 	
 	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
-	SlotManager->InitSlots(InfoPanel, CraftingPanel->GetInventoryGrid(), ItemSlotClass);
+	SlotManager->InitSlots(InfoPanel, CraftingPanel->GetInventoryGrid(), ItemSlotClass, CraftingPanel->GetGearGrid());
 }
 
 void ARTHUD::ShowEndScreen(bool won)

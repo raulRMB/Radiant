@@ -31,15 +31,16 @@ void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
 	}
 }
 
-void USlotManager::InitSlots(URTInfoPanel* InfoPanel, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass)
+void USlotManager::InitSlots(URTInfoPanel* InfoPanel, UUniformGridPanel* GridPanel, TSubclassOf<UItemSlot> ItemSlotClass, UUniformGridPanel* InGearGridPanel)
 {
 	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &USlotManager::OnSlotChanged);
 	
 	HotbarHorizontalBox = InfoPanel->GetHotbarHorizontalBox();
 	InventoryGridPanel = GridPanel;
 	WeaponSlot = InfoPanel->GetWeaponSlot();
+	GearGridPanel = InGearGridPanel;
 	
-	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::WeaponSlot); i++)
+	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::NecklaceSlot); i++)
 	{
 		CreateNewSlot(static_cast<EItemSlotID>(i), ItemSlotClass);
 	}
@@ -139,8 +140,8 @@ UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<
 			SizeBox->SetWidthOverride(100.f);
 			SizeBox->SetHeightOverride(100.f);
 			SizeBox->AddChild(ItemSlot);
-			
-			Cast<UUniformGridSlot>(InventoryGridPanel->AddChildToUniformGrid(SizeBox, InventoryGridPanel->GetChildrenCount() / 11, InventoryGridPanel->GetChildrenCount() % 11));
+
+			InventoryGridPanel->AddChildToUniformGrid(SizeBox, InventoryGridPanel->GetChildrenCount() / 11, InventoryGridPanel->GetChildrenCount() % 11);
 		}
 		else if(UISlotID == EItemSlotID::WeaponSlot)
 		{
@@ -148,6 +149,15 @@ UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<
 			WeaponSlot->SetSlotID(UISlotID);
 			Slots[UISlotID] = WeaponSlot;
 			return WeaponSlot;
+		}
+		else if(UISlotID >= EItemSlotID::HelmetSlot && UISlotID <= EItemSlotID::NecklaceSlot)
+		{
+			USizeBox* SizeBox = ItemSlot->WidgetTree->ConstructWidget<USizeBox>(USizeBox::StaticClass());
+			SizeBox->SetWidthOverride(100.f);
+			SizeBox->SetHeightOverride(100.f);
+			SizeBox->AddChild(ItemSlot);
+			
+			GearGridPanel->AddChildToUniformGrid(SizeBox, GearGridPanel->GetChildrenCount() / 3, GearGridPanel->GetChildrenCount() % 3);
 		}
 	}
 	return ItemSlot;
