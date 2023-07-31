@@ -9,7 +9,6 @@ class RADIANT_API UCraftingNodeDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere)
 	FName Name;
 
 	UPROPERTY(EditAnywhere)
