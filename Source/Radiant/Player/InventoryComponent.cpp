@@ -81,9 +81,13 @@ int32 UInventoryComponent::AddItem(const FName& ItemName, FItemData* ItemData, i
 
 int32 UInventoryComponent::AddItem(const FName& ItemName, int32 Amount)
 {
-	Items[ItemName].Amount += Amount;
-	C_ItemChanged(ItemName, Items[ItemName].Amount);
-	return Items[ItemName].Amount;
+	if(Items.Contains(ItemName))
+	{
+		Items[ItemName].Amount += Amount;
+		C_ItemChanged(ItemName, Items[ItemName].Amount);
+		return Items[ItemName].Amount;
+	}
+	return 0;
 }
 
 ARTPlayerState* UInventoryComponent::GetPlayerState()
