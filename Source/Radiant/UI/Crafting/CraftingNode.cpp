@@ -126,7 +126,7 @@ void UCraftingNode::OnMouseLeftClicked()
 
 void UCraftingNode::OnMouseRightClicked()
 {
-	if(CheckHasMaterials())
+	if(CheckHasMaterials() && IngredientList.Num() > 0)
 	{
 		for(auto Ingredient : IngredientList)
 		{
