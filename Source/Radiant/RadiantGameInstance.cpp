@@ -24,6 +24,7 @@ void URadiantGameInstance::Init()
 				{
 					CraftingItemData->CraftingNodeData->AddAggregatesToMaterials();
 					CraftingItemData->CraftingNodeData->Name = Row.Key;
+					CraftingItemData->Icon = CraftingItemData->CraftingNodeData->Icon;
 				}
 			}
 		}
