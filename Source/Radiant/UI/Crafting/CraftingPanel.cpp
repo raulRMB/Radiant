@@ -41,11 +41,13 @@ void UCraftingPanel::Init(UInventoryComponent* Inventory)
 					if(UCanvasPanelSlot* PanelSlot = RecipeList->AddChildToCanvas(CraftingNode))
 					{
 						PanelSlot->SetAnchors(FAnchors(.0f));
-						PanelSlot->SetSize(FVector2D(40.f * RecipeList->GetCachedGeometry().Scale));
+						PanelSlot->SetSize(FVector2D(PanelSlotSize * RecipeList->GetCachedGeometry().Scale));
 						PanelSlot->SetAlignment(FVector2D(0.f));
-						FVector2D Position = FVector2D((RecipeList->GetChildrenCount() - 1) % 8, (RecipeList->GetChildrenCount() - 1) / 8);
-						PanelSlot->SetPosition(Position * 45.f);
-						PanelSlot->SetPosition(PanelSlot->GetPosition() + FVector2D(20.f));
+						auto X = (RecipeList->GetChildrenCount() - 1) % PanelSlotRowSize;
+						auto Y = (RecipeList->GetChildrenCount() - 1) / PanelSlotRowSize;
+						FVector2D Position = FVector2D(X, Y);
+						PanelSlot->SetPosition(Position * PanelSlotSize + FVector2d(PanelSlotPadding * X, PanelSlotPadding * Y));
+						PanelSlot->SetPosition(PanelSlot->GetPosition() + FVector2D(10.f));
 					}
 				}
 			}

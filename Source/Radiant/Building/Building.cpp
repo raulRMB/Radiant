@@ -54,7 +54,6 @@ void ABuilding::BeginPlay()
 				InfoBar->ShowLevel(!bHideLevel);
 				InfoBar->SetHealthPercent(1.f);
 				InfoBar->SetVisibility(ESlateVisibility::Hidden);
-				RTPRINT("ASD");
 			}
 		}
 		SetHealthBarColor();

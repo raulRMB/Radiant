@@ -11,6 +11,10 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 {
 	GENERATED_BODY()
 
+	float PanelSlotSize = 60.f;
+	int32 PanelSlotRowSize = 9;
+	float PanelSlotPadding = 10.f;
+	
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* RecipeTree;
 
