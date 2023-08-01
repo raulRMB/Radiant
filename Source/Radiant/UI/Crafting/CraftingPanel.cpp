@@ -37,6 +37,13 @@ void UCraftingPanel::Init(UInventoryComponent* Inventory)
 					ItemData->CraftingNodeData->Name = It.Key;
 					CraftingNode->Init(ItemData->CraftingNodeData->Icon, 1, InventoryComponent);
 					CraftingNode->SetCraftingItemDataName(It.Key);
+					if(ItemData->AbilityData)
+					{
+						CraftingNode->SetToolTipText(ItemData->AbilityData->Tooltip);
+					} else
+					{
+						CraftingNode->SetToolTipText(ItemData->Tooltip);
+					}
 					NodeMap.Add(It.Key, CraftingNode);
 					if(UCanvasPanelSlot* PanelSlot = RecipeList->AddChildToCanvas(CraftingNode))
 					{
