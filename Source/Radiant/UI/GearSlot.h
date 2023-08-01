@@ -16,8 +16,12 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* EmptyGearIcon;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* GearTypeText;
 	
 	virtual bool CheckCanSwapWith(UItemSlot* ItemSlot);
 	virtual void SetEmpty(const bool Empty) override;
 	virtual void SetData(const FItemSlotData& Data) override;
+	virtual void NativeConstruct() override;
 };

@@ -1,5 +1,6 @@
 ﻿#include "GearSlot.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "Data/GearData.h"
 #include "Player/RTPlayerState.h"
 #include "Util/Util.h"
@@ -32,7 +33,12 @@ bool UGearSlot::CheckCanSwapWith(UItemSlot* ItemSlot)
 		{
 			if(ItemData->GearData)
 			{
-				return ItemData->GearData->GearType == GearType;
+				const bool CanSwap = ItemData->GearData->GearType == GearType;
+				if(CanSwap)
+				{
+					GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+				}
+				return CanSwap;
 			}
 		}
 	}
@@ -47,4 +53,12 @@ void UGearSlot::SetData(const FItemSlotData& Data)
 	{
 		GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
 	}
+}
+
+void UGearSlot::NativeConstruct()
+{
+	Super::NativeConstruct();
+	FString GearTypeString = UEnum::GetValueAsString(GearType);
+	GearTypeString.RemoveFromStart("EGearType::");
+	GearTypeText->SetText(FText::FromString(GearTypeString));
 }

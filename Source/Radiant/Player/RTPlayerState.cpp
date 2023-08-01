@@ -264,11 +264,10 @@ void ARTPlayerState::S_EquipGear_Implementation(const FName& WeaponName)
 		{
 			AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
 		}
-		
-		AttributeSet->SetAttackRange(WeaponDataAsset->AttackRange);
 		WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(WeaponDataAsset->Ability.GetDefaultObject());
 	}
-	else if(GearData)
+	
+	if(GearData)
 	{
 		for(const TSubclassOf<UGameplayEffect>& EffectClass : GearData->GameplayEffects)
 		{
