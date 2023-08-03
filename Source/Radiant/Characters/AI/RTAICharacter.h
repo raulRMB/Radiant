@@ -20,7 +20,7 @@ class RADIANT_API ARTAICharacter : public ARTCharacter
 	class UNPCAttributeSet* AttributeSet;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class APickUp> PickUpClass;
+	TSubclassOf<class AWorldItem> DropClass;
 
 	UPROPERTY()
 	class UAIInfoBar* OverHeadInfoBar;

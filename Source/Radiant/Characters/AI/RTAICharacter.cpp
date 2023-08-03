@@ -7,6 +7,7 @@
 #include "Components/WidgetComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/NPCAttributeSet.h"
+#include "Items/WorldItem.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/AIInfoBar.h"
 
@@ -47,7 +48,7 @@ void ARTAICharacter::SetIsDead(const bool NewIsDead)
 	OnUnitDied.Broadcast();
 	if(NewIsDead)
 	{
-		GetWorld()->SpawnActor<APickUp>(PickUpClass, GetActorTransform());
+		GetWorld()->SpawnActor<AWorldItem>(DropClass, GetActorTransform());
 		M_NotifyOnDeath();
 		Destroy();
 	}

@@ -71,7 +71,7 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 
 int32 UInventoryComponent::AddItem(const FName& ItemName, FItemData* ItemData, int32 Amount)
 {
-	if (!FindHandle(ItemName))
+	if (ItemData->AbilityData && !FindHandle(ItemName))
 	{
 		FGameplayAbilitySpecHandle Handle = GetPlayerState()->GiveAbility(ItemData);
 		AddHandleToName(Handle, ItemName);

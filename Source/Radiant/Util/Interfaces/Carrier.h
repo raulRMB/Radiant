@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/ItemData.h"
 #include "UObject/Interface.h"
 #include "Carrier.generated.h"
 
