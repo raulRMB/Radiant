@@ -127,7 +127,7 @@ bool AAvatar::TryPickupItem()
 
 void AAvatar::GiveItem(const FName& ItemName, int32 Amount)
 {
-	GetInventory()->S_AddItem(ItemName, Amount);
+	GetRTPS()->S_GiveItem(ItemName, Amount);
 }
 
 void AAvatar::LevelUp_Implementation(float GetLevel)
@@ -252,6 +252,10 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	ITeamMember* TeamMember = Cast<ITeamMember>(HitResult.GetActor());
 	if (Targetable && TeamMember->GetTeamId() != GetTeamId())
 	{
+		if(Target == HitResult.GetActor())
+		{
+			return;
+		}
 		Target = HitResult.GetActor();
 		GetPlayerState<ARTPlayerState>()->S_SetTarget(HitResult.GetActor());
 	}

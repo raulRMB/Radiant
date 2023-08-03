@@ -20,9 +20,6 @@ protected:
 	float MontagePlayRate = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
-	FGameplayTagContainer SelfTags;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	FGameplayTagContainer SpawnTags;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
@@ -34,7 +31,6 @@ protected:
 public:
 	UGAAnimated();
 protected:
-	void SetSelfTags(const bool bApply) const;
 	virtual void OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData);
 	virtual void OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
 	virtual void OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData);

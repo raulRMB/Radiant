@@ -10,25 +10,25 @@
 
 void UMeleeBasicAttack::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
+	bIsCancelable = true;
 	Super::OnAnimCancelled(EventTag, EventData);
 }
 
 void UMeleeBasicAttack::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
+	bIsCancelable = true;
 	Super::OnAnimCompleted(EventTag, EventData);
 }
 
 void UMeleeBasicAttack::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
+	bIsCancelable = true;
 	Super::OnAnimInterrupted(EventTag, EventData);
 }
 
 void UMeleeBasicAttack::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
+	bIsCancelable = true;
 	Super::OnAnimBlendOut(EventTag, EventData);
 }
 
@@ -59,15 +59,15 @@ void UMeleeBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEven
 
 void UMeleeBasicAttack::OnUncancellableEventRecieved(FGameplayEventData EventData)
 {
-	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("State.Uncancellable"));
+	bIsCancelable = false;
 }
 
 void UMeleeBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
+	URTAbility::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
-	SetSelfTags(true);
+	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
 	
 	AActor* Target = Avatar->GetPlayerState<ARTPlayerState>()->GetTarget();
 	if(!Target)

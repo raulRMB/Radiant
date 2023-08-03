@@ -15,7 +15,11 @@ class RADIANT_API URTAbility : public UGameplayAbility
 	FVector MouseWorldLocation;
 
 	uint8 bItemWasUsed : 1;
-	
+
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class UGameplayEffect>> SelfEffects;
+	UPROPERTY()
+	TArray<FActiveGameplayEffectHandle> SelfEffectHandles;	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
@@ -40,4 +44,5 @@ protected:
 	void UseItem(const FGameplayAbilitySpecHandle& Handle);
 	virtual bool CommitAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, FGameplayTagContainer* OptionalRelevantTags = nullptr) override;
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 };

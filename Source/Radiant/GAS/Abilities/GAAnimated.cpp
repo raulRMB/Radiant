@@ -5,52 +5,12 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Player/Avatar.h"
-#include "Combat/Artillery/LinearSkillshot.h"
 #include "Player/RTPlayerState.h"
 #include "GAS/Tasks/PlayMontageAndWaitForEvent.h"
+#include "Util/Util.h"
 
 UGAAnimated::UGAAnimated()
 {
-}
-
-void UGAAnimated::SetSelfTags(const bool bApply) const
-{
-	FGameplayTag Casting = FGameplayTag::RequestGameplayTag("States.Casting");
-	if(bApply)
-	{
-		FGameplayTagContainer Tags;
-		GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
-		for(auto SelfTag : SelfTags)
-		{
-			if(!Tags.HasTag(SelfTag))
-			{
-				GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(SelfTag);
-				GetAbilitySystemComponentFromActorInfo()->AddReplicatedLooseGameplayTag(SelfTag);
-			}
-		}
-	}
-	else
-	{
-		FGameplayTagContainer Tags;
-		GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags(Tags);
-		for(auto SelfTag : SelfTags)
-		{
-			if(SelfTag == Casting)
-			{
-				continue;
-			}
-			if(Tags.HasTag(SelfTag))
-			{
-				GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(SelfTag);
-				GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(SelfTag);
-			}
-		}
-		if(Tags.HasTag(Casting))
-		{
-			GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(Casting);
-			GetAbilitySystemComponentFromActorInfo()->RemoveReplicatedLooseGameplayTag(Casting);
-		}
-	}
 }
 
 void UGAAnimated::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -77,10 +37,9 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                   const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                   const FGameplayEventData* TriggerEventData)
 {
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	
 	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
-	ARTPlayerState* Owner = Cast<ARTPlayerState>(GetOwningActorFromActorInfo());
-
-	SetSelfTags(true);
 	
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
 
@@ -88,8 +47,6 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Loc.Z = 0;
 	FVector Direction = (HitResult.Location - Loc).GetSafeNormal();
 	Avatar->SetRotationLock(true, Direction);
-
-	SetMouseWorldLocation(HitResult.Location);
 	
 	BindAnimations();
 }
@@ -99,7 +56,6 @@ void UGAAnimated::ReturnToDefault() const
 	if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
 	{
 		Avatar->C_SetRotationLock(false);
-		SetSelfTags(false);
 	}
 }
 

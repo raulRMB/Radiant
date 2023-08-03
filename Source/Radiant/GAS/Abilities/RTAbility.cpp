@@ -192,9 +192,23 @@ bool URTAbility::CommitAbility(const FGameplayAbilitySpecHandle Handle, const FG
 void URTAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                  const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	
+	for(TSubclassOf<UGameplayEffect>& SelfEffect : SelfEffects)
+	{
+		SelfEffectHandles.Add(GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(SelfEffect.GetDefaultObject(), 1.0f, GetAbilitySystemComponentFromActorInfo()->MakeEffectContext()));
+	}
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
 	SetMouseWorldLocation(HitResult.Location);
+}
+
+void URTAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	for (FActiveGameplayEffectHandle SelfEffectHandle : SelfEffectHandles)
+	{
+		GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(SelfEffectHandle, 1);
+	}
 }
 
 AAvatar* URTAbility::GetAvatar()

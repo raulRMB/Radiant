@@ -10,7 +10,7 @@
 
 UGALinearSkillshot::UGALinearSkillshot() : UGAAnimated()
 {
-	
+	bIsCancelable = false;
 }
 
 void UGALinearSkillshot::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -45,6 +45,7 @@ void UGALinearSkillshot::ActivateAbility(const FGameplayAbilitySpecHandle Handle
                                          const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                          const FGameplayEventData* TriggerEventData)
 {
+	bIsCancelable = false;
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 

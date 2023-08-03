@@ -59,9 +59,9 @@ void URangedBasicAttack::OnUncancellableEventRecieved(FGameplayEventData EventDa
 void URangedBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
+	URTAbility::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
-	SetSelfTags(true);
+	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
 	
 	AActor* Target = Avatar->GetPlayerState<ARTPlayerState>()->GetTarget();
 	if(!Target)

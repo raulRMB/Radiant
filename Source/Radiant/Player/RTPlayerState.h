@@ -95,6 +95,9 @@ public:
 	FGameplayAbilitySpecHandle GiveAbility(const FItemData* ItemData) const;
 	TArray<class UAbilityDataAsset*> GetInnateAbilities() const;
 
+	UFUNCTION(Server, Reliable)
+	void S_GiveItem(const FName& ItemName, int32 Amount);
+
 #pragma region Killable
 	
 	UFUNCTION(Server, Reliable)

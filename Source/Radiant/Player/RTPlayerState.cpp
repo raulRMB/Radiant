@@ -308,6 +308,16 @@ FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(const FItemData* ItemData
 	return AbilitySystemComponent->GiveAbility(AbilitySpec);
 }
 
+void ARTPlayerState::S_GiveItem_Implementation(const FName& ItemName, int32 Amount)
+{
+	FItemData* ItemData = ItemDataTable->FindRow<FItemData>(ItemName, FString("BuyAbility"));
+	if (!ItemData || Amount <= 0)
+	{
+		return;
+	}
+	GetInventory()->AddItem(ItemName, ItemData, Amount);
+}
+
 TArray<class UAbilityDataAsset*> ARTPlayerState::GetInnateAbilities() const
 {
 	return InnateAbilities;
