@@ -4,7 +4,7 @@
 #include "Modes/TeamDeathMatchMode.h"
 #include "Base/RTGameState.h"
 
-bool ATeamDeathMatchMode::ReadyToStartMatch_Implementation()
+bool ATeamDeathMatchMode::ReadyToEndMatch_Implementation()
 {
 	ARTGameState* State = Cast<ARTGameState>(GetWorld()->GetGameState());
 	if (State->RedScore >= KillsToWin * TeamSize)

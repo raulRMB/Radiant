@@ -16,5 +16,5 @@ class RADIANT_API ATeamDeathMatchMode : public ARTGameMode
 	uint32 KillsToWin = 3;
 
 public:
-	virtual bool ReadyToStartMatch_Implementation() override;
+	virtual bool ReadyToEndMatch_Implementation() override;
 };
