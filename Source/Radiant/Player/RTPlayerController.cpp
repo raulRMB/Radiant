@@ -99,7 +99,7 @@ void ARTPlayerController::LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* S
 
 void ARTPlayerController::ItemMagnetToggle(const FInputActionValue& InputActionValue)
 {
-	GetPawn<AAvatar>()->S_ToggleItemMagnet_Implementation();
+	GetPawn<AAvatar>()->S_ToggleItemMagnet();
 }
 
 void ARTPlayerController::SaveUserSettingsDelay()

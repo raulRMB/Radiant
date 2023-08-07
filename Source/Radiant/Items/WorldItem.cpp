@@ -15,6 +15,7 @@
 AWorldItem::AWorldItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
@@ -49,16 +50,32 @@ void AWorldItem::PickUp(ICarrier* Carrier)
 	}
 }
 
-
-void AWorldItem::MoveToActorIfMagnetized(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void AWorldItem::OnCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(Target)
+	{
+		return;
+	}
+	if(AAvatar* CarrierActor = Cast<AAvatar>(OtherActor))
+	{
+		if(CarrierActor)
+		{
+			if(CarrierActor->IsMagnetized)
+			{
+				Target = CarrierActor;
+			}
+			PotentialTargets.Add(CarrierActor);
+		}
+	}
+}
+
+void AWorldItem::OnEndCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if(AAvatar* CarrierActor = Cast<AAvatar>(OtherActor))
 	{
-		if(CarrierActor && CarrierActor->IsMagnetized)
-		{
-			Target = CarrierActor;
-		}
+		PotentialTargets.Remove(CarrierActor);
 	}
 }
 
@@ -67,7 +84,8 @@ void AWorldItem::BeginPlay()
 	Super::BeginPlay();
 	if(HasAuthority())
 	{
-		PickUpRadius->OnComponentBeginOverlap.AddDynamic(this, &AWorldItem::MoveToActorIfMagnetized);
+		PickUpRadius->OnComponentBeginOverlap.AddDynamic(this, &AWorldItem::OnCollision);
+		PickUpRadius->OnComponentEndOverlap.AddDynamic(this, &AWorldItem::OnEndCollision);
 	}
 	if(UWorldItemInfoWidget* ItemInfoWidget = Cast<UWorldItemInfoWidget>(NameWidget->GetUserWidgetObject()))
 	{
@@ -85,20 +103,35 @@ void AWorldItem::BeginPlay()
 
 void AWorldItem::Tick(float DeltaTime)
 {
-	if(Target && HasAuthority())
+	if(HasAuthority() && Target)
 	{
-		const float Distance = FVector::Dist(Target->GetActorLocation(), GetActorLocation());
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Role %d"), GetLocalRole()));
-		if(HasAuthority() && Distance < 300)
+		if(!Target->IsMagnetized)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Picked up %s"), *ItemName.ToString()));
+			Target = nullptr;
+			return;
+		}
+		const float Distance = FVector::Dist(Target->GetActorLocation(), GetActorLocation());
+		if(Distance < 100)
+		{
 			Target->PickUpItem(ItemName, Amount);
 			Destroy();
 		}
 		FVector Direction = Target->GetActorLocation() - GetActorLocation();
 		Direction.Normalize();
-		FVector NewLocation = GetActorLocation() + Direction * 1000 * DeltaTime;
-		SetActorLocation(NewLocation);
+		Location = GetActorLocation() + Direction * Speed * DeltaTime;
+		SetActorLocation(Location);
+		Speed *= 1.02f;
+	}
+	else
+	{
+		for(AAvatar* PotentialTarget : PotentialTargets)
+		{
+			if(PotentialTarget->IsMagnetized)
+			{
+				Target = PotentialTarget;
+				break;
+			}
+		}
 	}
 	Super::Tick(DeltaTime);
 }
@@ -112,11 +145,17 @@ void AWorldItem::SetBackgroundSize()
 	}
 }
 
+void AWorldItem::OnRep_Position()
+{
+	SetActorLocation(Location);
+}
+
 void AWorldItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AWorldItem, ItemName);
 	DOREPLIFETIME(AWorldItem, Amount);
+	DOREPLIFETIME(AWorldItem, Location);
 }
 
 
