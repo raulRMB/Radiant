@@ -6,6 +6,7 @@
 #include "GearSlot.h"
 #include "Components/HorizontalBox.h"
 #include "ItemSlot.h"
+#include "PlayerStatsPanel.h"
 #include "Player/Avatar.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
@@ -88,6 +89,7 @@ void URTInfoPanel::Bind(ARTPlayerState* PS)
 	{
 		UpdateRadianite(PS->GetAttributeSetBase()->GetRadianite());
 		PS->OnUpdateRadianite.AddUObject(this, &URTInfoPanel::UpdateRadianite);
+		PlayerStats->Bind(PS);
 	}
 }
 

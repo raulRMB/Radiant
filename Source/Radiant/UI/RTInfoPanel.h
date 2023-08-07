@@ -15,7 +15,7 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	class UHorizontalBox* HotbarHorizontalBox;
 
 	UPROPERTY(meta=(BindWidget))
-	class UUserWidget* PlayerStats;
+	class UPlayerStatsPanel* PlayerStats;
 	
 	UPROPERTY(meta=(BindWidget))
 	class UImage* LoadingScreen;
