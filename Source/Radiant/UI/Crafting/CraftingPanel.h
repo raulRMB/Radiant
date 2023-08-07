@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Data/ItemData.h"
 #include "CraftingPanel.generated.h"
 
 UCLASS()
@@ -18,6 +19,18 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* RecipeTree;
 
+	UPROPERTY(meta=(BindWidget))
+	class UCheckBox* AbilityFilter;
+	
+	UPROPERTY(meta=(BindWidget))
+	UCheckBox* GearFilter;
+
+	UPROPERTY(meta=(BindWidget))
+	UCheckBox* MaterialFilter;
+
+	UPROPERTY(meta=(BindWidget))
+	UCheckBox* WeaponFilter;
+	
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* RecipeList;
 
@@ -65,7 +78,10 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	FLinearColor NodeEdgeLineColor = FLinearColor::White;
 	UPROPERTY(EditAnywhere)
 	float NodeEdgeLineOffset = .25f; // Percentage of the HorizontalSeparation
-
+	UFUNCTION()
+	void OnFilterChanged(bool bIsChecked);
+	void NativeConstruct() override;
+	bool ShouldInclude(FItemData* ItemData);
 	UPROPERTY(EditAnywhere)
 	int32 MaximumNodeWidth = 5;
 	float RootNodeWidthScale = 1.f;

@@ -7,6 +7,7 @@
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/CheckBox.h"
 #include "Components/SizeBox.h"
 #include "Components/UniformGridPanel.h"
 #include "Data/CraftingNodeDataAsset.h"
@@ -17,10 +18,49 @@
 #include "Util/AbilityDragDropOperation.h"
 #include "Util/Util.h"
 
+void UCraftingPanel::OnFilterChanged(bool bIsChecked)
+{
+	Init(InventoryComponent);
+}
+
+void UCraftingPanel::NativeConstruct()
+{
+	Super::NativeConstruct();
+	AbilityFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	GearFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	MaterialFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	WeaponFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+}
+
+bool UCraftingPanel::ShouldInclude(FItemData* ItemData)
+{
+	if(ItemData->CraftingNodeData->Materials.Num() <= 0)
+	{
+		return false;
+	}
+	if(AbilityFilter->IsChecked() && ItemData->AbilityData && !ItemData->GearData)
+	{
+		return true;
+	}
+	if(GearFilter->IsChecked() && ItemData->GearData && !ItemData->AbilityData)
+	{
+		return true;
+	}
+	if(MaterialFilter->IsChecked() && !ItemData->AbilityData && !ItemData->GearData)
+	{
+		return true;
+	}
+	if(WeaponFilter->IsChecked() && ItemData->AbilityData && ItemData->GearData)
+	{
+		return true;
+	}
+	return false;
+}
+
 void UCraftingPanel::Init(UInventoryComponent* Inventory)
 {
+	RecipeList->ClearChildren();
 	InventoryComponent = Inventory;
-	
 	if(ItemTable)
 	{
 		for(TPair<FName, uint8*> It : ItemTable->GetRowMap())
@@ -29,7 +69,7 @@ void UCraftingPanel::Init(UInventoryComponent* Inventory)
 			{
 				if(ItemData->CraftingNodeData)
 				{
-					if(ItemData->CraftingNodeData->Materials.Num() <= 0)
+					if(!ShouldInclude(ItemData))
 					{
 						continue;
 					}

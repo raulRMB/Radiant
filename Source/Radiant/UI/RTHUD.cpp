@@ -31,10 +31,12 @@ void ARTHUD::BeginPlay()
 	// StoreUI->AddToViewport();
 	// StoreUI->SetVisibility(ESlateVisibility::Hidden);
 	CraftingPanel = CreateWidget<UCraftingPanel>(GetOwningPlayerController(), CraftingPanelClass);
-	CraftingPanel->AddToViewport();	
+	CraftingPanel->AddToViewport();
+	CraftingPanel->SetVisibility(ESlateVisibility::Hidden);
 	Minimap = Cast<UMinimap>(CreateWidget<UMinimap>(GetWorld(), MinimapClass));
 	Minimap->AddToViewport();
-	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	//Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	Minimap->SetVisibility(ESlateVisibility::Hidden);
 
 	if(ARTPlayerController* RTPC = Cast<ARTPlayerController>(GetOwningPlayerController()))
 	{
