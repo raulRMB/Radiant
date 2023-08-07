@@ -102,6 +102,11 @@ void ARTPlayerController::ItemMagnetToggle(const FInputActionValue& InputActionV
 	GetPawn<AAvatar>()->S_ToggleItemMagnet();
 }
 
+void ARTPlayerController::TogglePlayerStats(const FInputActionValue& InputActionValue)
+{
+	GetHUD<ARTHUD>()->TogglePlayerStats();
+}
+
 void ARTPlayerController::SaveUserSettingsDelay()
 {
 	FTimerHandle Handle;
@@ -188,6 +193,8 @@ void ARTPlayerController::SetupInputComponent()
 		                                   &ARTPlayerController::Demolish);
 		EnhancedInputComponent->BindAction(PickUpItemAction, ETriggerEvent::Started, this,
 										   &ARTPlayerController::ItemMagnetToggle);
+		EnhancedInputComponent->BindAction(ToggleStatsAction, ETriggerEvent::Started, this,
+										   &ARTPlayerController::TogglePlayerStats);
 		// EnhancedInputComponent->BindAction(PickUpItemAction, ETriggerEvent::Started, this,
 		// 								   &ARTPlayerController::ItemMagnetDisable);
 	}

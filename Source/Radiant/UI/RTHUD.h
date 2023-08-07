@@ -87,6 +87,7 @@ public:
 	FGiveAbilityFromButtonSignature GiveAbilityFromButton;
 
 	UGearSlot* GetWeaponSlot() const { return WeaponSlotWidget; }
+	void TogglePlayerStats();
 
 public:
 	ARTHUD();

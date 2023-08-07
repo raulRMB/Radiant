@@ -52,6 +52,11 @@ void ARTHUD::ShowEndScreen(bool won)
 	InfoPanel->ShowEndScreen(won);
 }
 
+void ARTHUD::TogglePlayerStats()
+{
+	InfoPanel->TogglePlayerStats();
+}
+
 ARTHUD::ARTHUD()
 {
 	PrimaryActorTick.bCanEverTick = true;

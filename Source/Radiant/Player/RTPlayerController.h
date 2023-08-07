@@ -69,6 +69,9 @@ class RADIANT_API ARTPlayerController : public APlayerController, public ICarrie
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputAction* PickUpItemAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
+	class UInputAction* ToggleStatsAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = true))
 	class UInputMappingContext* MappingContext;
@@ -118,6 +121,7 @@ protected:
 	void LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem);
 	UFUNCTION()
 	void ItemMagnetToggle(const FInputActionValue& InputActionValue);
+	void TogglePlayerStats(const FInputActionValue& InputActionValue);
 	virtual void SetupInputComponent() override;
 	virtual void OnRep_Pawn() override;
 

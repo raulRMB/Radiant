@@ -15,6 +15,9 @@ class RADIANT_API URTInfoPanel : public UUserWidget
 	class UHorizontalBox* HotbarHorizontalBox;
 
 	UPROPERTY(meta=(BindWidget))
+	class UUserWidget* PlayerStats;
+	
+	UPROPERTY(meta=(BindWidget))
 	class UImage* LoadingScreen;
 
 	UPROPERTY(meta=(BindWidget))
@@ -59,7 +62,7 @@ public:
 	void UpdateProperties(float DeltaTime) const;
 	void UpdateCooldowns() const;
 	FText FormatText(float CurrentHealth, float MaxHealth) const;
-
+	void TogglePlayerStats() const;
 	class UHorizontalBox* GetHotbarHorizontalBox();
 
 	UFUNCTION(BlueprintCallable)

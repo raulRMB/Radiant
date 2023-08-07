@@ -59,6 +59,13 @@ FText URTInfoPanel::FormatText(float CurrentHealth, float MaxHealth) const
 	return FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), CurrentHealth, MaxHealth));
 }
 
+void URTInfoPanel::TogglePlayerStats() const
+{
+	PlayerStats->SetVisibility(PlayerStats->GetVisibility() == ESlateVisibility::Visible
+		? ESlateVisibility::Hidden
+		: ESlateVisibility::Visible);
+}
+
 UHorizontalBox* URTInfoPanel::GetHotbarHorizontalBox()
 {
 	return HotbarHorizontalBox;
