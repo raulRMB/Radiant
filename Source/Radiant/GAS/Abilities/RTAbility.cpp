@@ -14,6 +14,8 @@ void URTAbility::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
+URTAbility::URTAbility() {}
+
 FVector URTAbility::GetRangeBasedMouseLocation()
 {
 	FVector AvatarLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
@@ -28,8 +30,6 @@ FVector URTAbility::GetRangedBaseMouseLocationWithHeroHalfHeight()
 	{
 		return GetRangeBasedMouseLocation() + Hero->GetHalfHeightVector();
 	}
-	RTLOG("Avatar is not a hero")
-	RTPRINT("Avatar is not a hero")
 	return FVector::ZeroVector;
 }
 

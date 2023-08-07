@@ -133,6 +133,10 @@ void AWorldItem::Tick(float DeltaTime)
 			}
 		}
 	}
+	if(!HasAuthority() && bLocationDirty)
+	{
+		SetActorLocation(FMath::Lerp(GetActorLocation(), Location, 0.1f));
+	}
 	Super::Tick(DeltaTime);
 }
 
@@ -145,9 +149,9 @@ void AWorldItem::SetBackgroundSize()
 	}
 }
 
-void AWorldItem::OnRep_Position()
+void AWorldItem::OnRep_Location()
 {
-	SetActorLocation(Location);
+	bLocationDirty = true;
 }
 
 void AWorldItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

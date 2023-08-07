@@ -13,6 +13,10 @@ class RADIANT_API UGAAnimated : public URTAbility
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere)
+	uint8 bFireOnInterrupt : 1;
+	uint8 bHasFired : 1;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	class UAnimMontage* Montage;
 

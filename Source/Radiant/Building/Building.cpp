@@ -22,9 +22,7 @@ ABuilding::ABuilding()
 	AttributeSet = CreateDefaultSubobject<UBuildingAttributeSet>("AttributeSet");
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
 	SetRootComponent(CapsuleComponent);
-
-	InfoBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("InfoBarWidgetComponent");
-	InfoBarWidgetComponent->SetupAttachment(RootComponent);
+	bAlwaysRelevant = true;
 }
 
 void ABuilding::BeginPlay()
@@ -43,21 +41,6 @@ void ABuilding::BeginPlay()
 	AttributeSet->InitAttackDamage(10.f);
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-
-	if (!HasAuthority())
-	{
-		if (ensureMsgf(InfoBarWidgetComponent, TEXT("No info widget component")))
-		{
-			InfoBar = Cast<UAIInfoBar>(InfoBarWidgetComponent->GetUserWidgetObject());
-			if (InfoBar)
-			{
-				InfoBar->ShowLevel(!bHideLevel);
-				InfoBar->SetHealthPercent(1.f);
-				InfoBar->SetVisibility(ESlateVisibility::Hidden);
-			}
-		}
-		SetHealthBarColor();
-	}
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(
 		this, &ABuilding::OnHealthChanged);
@@ -90,18 +73,35 @@ void ABuilding::S_Demolish_Implementation()
 
 void ABuilding::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if (HasAuthority())
+	if(HasAuthority())
 	{
 		if (Data.NewValue <= 0)
 		{
 			Destroy();
 		}
 	}
-	else if (AttributeSet)
+	else
 	{
-		InfoBar->SetHealthPercent(Data.NewValue / AttributeSet->GetMaxHealth());
-		InfoBar->SetVisibility(ESlateVisibility::HitTestInvisible);
+		if(!InfoBarWidgetComponent)
+		{			
+			InfoBarWidgetComponent = Cast<UWidgetComponent>(AddComponentByClass(InfoBarActorComponent, false, FTransform(FVector(0.f, 0.f, 100.f)), false));
+			if(InfoBarWidgetComponent)
+			{
+				InfoBarWidgetComponent->RegisterComponent();
+				InfoBarWidgetComponent->SetWidgetClass(InfoBarWidgetClass);
+				InfoBarWidgetComponent->InitWidget();
+				InfoBar = Cast<UAIInfoBar>(InfoBarWidgetComponent->GetUserWidgetObject());
+			}
+		}
+		if (InfoBar)
+		{
+			InfoBar->ShowLevel(!bHideLevel);
+			InfoBar->SetHealthPercent(Data.NewValue / AttributeSet->GetMaxHealth());
+			InfoBar->SetVisibility(ESlateVisibility::HitTestInvisible);
+		}
+		SetHealthBarColor();
 	}
+	
 }
 
 void ABuilding::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

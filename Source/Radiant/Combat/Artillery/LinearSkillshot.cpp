@@ -75,7 +75,7 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 		return;
 	}
 
-	if (auto Character = Cast<ARTCharacter>(OtherActor))
+	if (auto Character = Cast<IAbilitySystemInterface>(OtherActor))
 	{
 		for (auto Effect : GameplayEffects)
 		{
@@ -91,8 +91,11 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 			}
 		}
 		FGameplayCueParameters CueParameters;
-		CueParameters.Location = Character->GetActorLocation();
-		CueParameters.TargetAttachComponent = Character->GetMesh();
+		CueParameters.Location = OtherActor->GetActorLocation();
+		if(ARTCharacter* OtherCharacter = Cast<ARTCharacter>(GetInstigator()))
+		{
+			CueParameters.TargetAttachComponent = OtherCharacter->GetMesh();
+		}
 		CueParameters.Instigator = this;
 		Character->GetAbilitySystemComponent()->ExecuteGameplayCue(HitCueTag, CueParameters);
 	}

@@ -11,7 +11,7 @@ UCLASS()
 class RADIANT_API UDPS_Skillshot : public UGALinearSkillshot
 {
 	GENERATED_BODY()
-
+	
 	UPROPERTY(EditAnywhere, Category="Ability", meta=(AllowPrivateAccess="true"))
 	FGameplayTag CastStartCue;
 	

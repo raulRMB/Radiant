@@ -32,6 +32,13 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 
 	UPROPERTY(EditAnywhere)
 	FName DropItemName;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> InfoBarWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UActorComponent> InfoBarActorComponent;
+
 protected:
 	UPROPERTY()
 	class UAIInfoBar* InfoBar;

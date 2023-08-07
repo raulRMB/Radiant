@@ -269,10 +269,6 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 		Target = nullptr;
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, SystemTemplate, HitResult.Location);
 	}
-	if (!AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Uncancellable"))))
-	{
-		S_CancelAllAbilities();
-	}
 
 	FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.PathTo"));
 	CastAbility(Tag, true);

@@ -26,6 +26,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Ability")
 	float MaxRange = 1000.f;
 public:
+	URTAbility();
+	
 	const FVector& GetMouseWorldLocation() const { return MouseWorldLocation; }
 	FVector GetRangeBasedMouseLocation();
 	void SetMouseWorldLocation(const FVector& Location) { MouseWorldLocation = Location; }

@@ -23,27 +23,25 @@ void AGridManager::InitGrid()
 			for(int x = 0; x < GridSize.X; x++)
 			{
 				float Perlin = FMath::PerlinNoise2D(FVector2D(x + 0.1, y + 0.1) * PerlinScale);
-
 				
-				EEnvironmentType Type = EEnvironmentType::EEnvironmentType_Empty;
-				int32 Rand = FMath::RandRange(0, 400);
-				if(Perlin > .2f)
+				EEnvironmentType Type;
+				if(Perlin > .4f && Perlin < .5f)
 				{
 					Type = EEnvironmentType::EEnvironmentType_Tree;
 				}				
-				else if(Rand < 4)
+				else if(Perlin > .3f)
 				{
 					Type = EEnvironmentType::EEnvironmentType_TreeStump;
 				}
-				else if(Rand < 6)
+				else if(Perlin > .2f)
 				{
 					Type = EEnvironmentType::EEnvironmentType_Grass;
 				}
-				else if(Rand < 8)
+				else if(Perlin < -.4f)
 				{
 					Type = EEnvironmentType::EEnvironmentType_Rock;
 				}
-				else if(Rand < 10)
+				else if(Perlin < -.3f)
 				{
 					Type = EEnvironmentType::EEnvironmentType_Pebbles;
 				}

@@ -81,8 +81,6 @@ FVector ARTPlayerController::GetCarrierLocation() const
 void ARTPlayerController::DropItem(const FName& ItemName)
 {
 	ICarrier::DropItem(ItemName);
-
-	// TODO: REMOVE ABILITY
 }
 
 void ARTPlayerController::LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem)

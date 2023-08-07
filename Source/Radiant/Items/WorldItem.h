@@ -32,8 +32,9 @@ protected:
 	UPROPERTY(EditAnywhere, Replicated)
 	uint32 Amount;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Position)
-	FVector3d Location;
+	UPROPERTY(ReplicatedUsing=OnRep_Location)
+	FVector Location;
+	uint8 bLocationDirty : 1;
 	
 public:
 	void InitItem(FName NewItemName, uint32 NewAmount);
@@ -52,9 +53,9 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	FTimerHandle SetBackroundTimerHandle;
 	void SetBackgroundSize();
-	UFUNCTION()
-	void OnRep_Position();
 	float Speed = 1000.0f;
+UFUNCTION()
+	void OnRep_Location();
 	UPROPERTY()
 	class AAvatar* Target;
 	class TArray<AAvatar*> PotentialTargets;

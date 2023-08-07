@@ -15,21 +15,29 @@ UGAAnimated::UGAAnimated()
 
 void UGAAnimated::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	RTPRINT("OnAnimCompleted")
+	
 	ReturnToDefaultAndEndAbility();
 }
 
 void UGAAnimated::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	RTPRINT("OnAnimCancelled")
+	
 	ReturnToDefaultAndEndAbility(true);
 }
 
 void UGAAnimated::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	RTPRINT("OnAnimInterrupted")
+	
 	ReturnToDefaultAndEndAbility(true);
 }
 
 void UGAAnimated::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	RTPRINT("OnAnimBlendOut")
+	
 	ReturnToDefaultAndEndAbility();	
 }
 
@@ -105,6 +113,12 @@ void UGAAnimated::OnCancelled(FGameplayTag EventTag, FGameplayEventData EventDat
 
 void UGAAnimated::OnInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	if(bFireOnInterrupt && !bHasFired)
+	{
+		bHasFired = true;
+		OnAnimEventReceived(EventTag, EventData);	
+	}
+	
 	OnAnimInterrupted(EventTag, EventData);
 }
 
@@ -115,5 +129,9 @@ void UGAAnimated::OnBlendOut(FGameplayTag EventTag, FGameplayEventData EventData
 
 void UGAAnimated::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	OnAnimEventReceived(EventTag, EventData);
+	if(!bHasFired)
+	{
+		bHasFired = true;
+		OnAnimEventReceived(EventTag, EventData);
+	}
 }
