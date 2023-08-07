@@ -8,19 +8,20 @@
 #include "Components/WidgetComponent.h"
 #include "ItemInfo/WorldItemInfoWidget.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/Avatar.h"
 #include "Util/Util.h"
 #include "Util/Interfaces/Carrier.h"
 
 AWorldItem::AWorldItem()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 	
 	PickUpRadius = CreateDefaultSubobject<USphereComponent>(TEXT("PickUpRadius"));
 	PickUpRadius->SetupAttachment(Mesh);
-
+	
 	FX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("FX"));
 	FX->SetupAttachment(Mesh);
 
@@ -48,10 +49,26 @@ void AWorldItem::PickUp(ICarrier* Carrier)
 	}
 }
 
+
+void AWorldItem::MoveToActorIfMagnetized(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(AAvatar* CarrierActor = Cast<AAvatar>(OtherActor))
+	{
+		if(CarrierActor && CarrierActor->IsMagnetized)
+		{
+			Target = CarrierActor;
+		}
+	}
+}
+
 void AWorldItem::BeginPlay()
 {
 	Super::BeginPlay();
-
+	if(HasAuthority())
+	{
+		PickUpRadius->OnComponentBeginOverlap.AddDynamic(this, &AWorldItem::MoveToActorIfMagnetized);
+	}
 	if(UWorldItemInfoWidget* ItemInfoWidget = Cast<UWorldItemInfoWidget>(NameWidget->GetUserWidgetObject()))
 	{
 		FString ItemNameString = ItemName.ToString();
@@ -64,6 +81,26 @@ void AWorldItem::BeginPlay()
 	{
 		GetWorld()->GetTimerManager().SetTimer(SetBackroundTimerHandle, this, &AWorldItem::SetBackgroundSize, 0.01f, false);
 	}
+}
+
+void AWorldItem::Tick(float DeltaTime)
+{
+	if(Target && HasAuthority())
+	{
+		const float Distance = FVector::Dist(Target->GetActorLocation(), GetActorLocation());
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Role %d"), GetLocalRole()));
+		if(HasAuthority() && Distance < 300)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Picked up %s"), *ItemName.ToString()));
+			Target->PickUpItem(ItemName, Amount);
+			Destroy();
+		}
+		FVector Direction = Target->GetActorLocation() - GetActorLocation();
+		Direction.Normalize();
+		FVector NewLocation = GetActorLocation() + Direction * 1000 * DeltaTime;
+		SetActorLocation(NewLocation);
+	}
+	Super::Tick(DeltaTime);
 }
 
 

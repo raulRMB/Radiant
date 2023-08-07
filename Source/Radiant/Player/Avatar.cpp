@@ -65,6 +65,11 @@ AAvatar::AAvatar()
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
 }
 
+void AAvatar::S_ToggleItemMagnet_Implementation()
+{
+	IsMagnetized = !IsMagnetized;
+}
+
 void AAvatar::OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags)
 {
 	FGameplayTagContainer OwnedTags;

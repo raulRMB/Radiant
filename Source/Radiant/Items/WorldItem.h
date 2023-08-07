@@ -35,15 +35,18 @@ protected:
 public:
 	void InitItem(FName NewItemName, uint32 NewAmount);
 	void PickUp(class ICarrier* Carrier);
-public:	
+public:
+	UFUNCTION()
+	void MoveToActorIfMagnetized(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                             const FHitResult& SweepResult);
 	AWorldItem();
 
 	FName GetItemName() const { return ItemName; }
 protected:
 	virtual void BeginPlay() override;
-	
+	virtual void Tick(float DeltaTime) override;
 	FTimerHandle SetBackroundTimerHandle;
 	void SetBackgroundSize();
-
+	class AAvatar* Target;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

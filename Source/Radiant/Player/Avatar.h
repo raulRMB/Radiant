@@ -19,7 +19,10 @@ class RADIANT_API AAvatar : public ARTCharacter, public ICarrier
 
 public:
 	AAvatar();
-	
+
+	UFUNCTION(Server, Reliable)
+	void S_ToggleItemMagnet();
+	bool IsMagnetized;
 	void GameReady();
 	void OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags);
 	void CastingTagChanged(FGameplayTag GameplayTag, int I);
