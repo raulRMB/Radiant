@@ -33,9 +33,9 @@ void UPlayerStatsPanel::Bind(ARTPlayerState* PS)
 	PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSetBase()->GetMovementSpeedAttribute()).AddUObject(
 		this, &UPlayerStatsPanel::UpdateMovementSpeed);
 	MoveSpeed->SetText(FText::FromString(FString::Printf(TEXT("MS: %.0f"), PS->GetAttributeSetBase()->GetMovementSpeed())));
-	PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSetBase()->GetDamageAttribute()).AddUObject(
+	PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSetBase()->GetAttackDamageAttribute()).AddUObject(
 		this, &UPlayerStatsPanel::UpdateDamage);
-	Damage->SetText(FText::FromString(FString::Printf(TEXT("DMG: %.0f"), PS->GetAttributeSetBase()->GetDamage())));
+	Damage->SetText(FText::FromString(FString::Printf(TEXT("DMG: %.0f"), PS->GetAttributeSetBase()->GetAttackDamage())));
 	PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSetBase()->GetAttackSpeedAttribute()).AddUObject(
 		this, &UPlayerStatsPanel::UpdateAttackSpeed);
 	AttackSpeed->SetText(FText::FromString(FString::Printf(TEXT("AS: %.0f"), PS->GetAttributeSetBase()->GetAttackSpeed())));

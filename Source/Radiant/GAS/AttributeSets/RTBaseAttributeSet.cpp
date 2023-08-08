@@ -36,7 +36,7 @@ void URTBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCall
 			SetMaxHealth(GetMaxHealth() * 1.20f);
 			SetHealth(GetMaxHealth() * currHealth);
 			
-			SetDamage(GetDamage() * 1.20f);
+			SetAttackDamage(GetAttackDamage() * 1.20f);
 		}
 	}
 }
@@ -57,15 +57,22 @@ void URTBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxMovementSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, Damage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, Armor, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MagicResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, AttackDamage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, AbilityPower, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, ArmorPenetration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MagicPenetration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, CriticalChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, CriticalDamage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, AttackSpeed, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, AttackRange, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, XP, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxXP, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, Level, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxLevel, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, AttackSpeed, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, AttackRange, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxMovementSpeed, COND_None, REPNOTIFY_Always);
 }
 
 void URTBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
@@ -76,6 +83,16 @@ void URTBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
 void URTBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, MaxHealth, OldMaxHealth);
+}
+
+void URTBaseAttributeSet::OnRep_Armor(const FGameplayAttributeData& OldArmor)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, Armor, OldArmor);
+}
+
+void URTBaseAttributeSet::OnRep_MagicResistance(const FGameplayAttributeData& OldMagicResistance)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, MagicResistance, OldMagicResistance);
 }
 
 void URTBaseAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed)
@@ -89,9 +106,34 @@ void URTBaseAttributeSet::OnRep_MaxMovementSpeed(const FGameplayAttributeData& O
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, MaxMovementSpeed, OldMaxMovementSpeed);
 }
 
-void URTBaseAttributeSet::OnRep_AttackDamage(const FGameplayAttributeData& OldDamage)
+void URTBaseAttributeSet::OnRep_AttackDamage(const FGameplayAttributeData& OldAttackDamage)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, Damage, OldDamage);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, AttackDamage, OldAttackDamage);
+}
+
+void URTBaseAttributeSet::OnRep_AbilityPower(const FGameplayAttributeData& OldAbilityPower)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, AbilityPower, OldAbilityPower);
+}
+
+void URTBaseAttributeSet::OnRep_CriticalChance(const FGameplayAttributeData& OldCriticalChance)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, CriticalChance, OldCriticalChance);
+}
+
+void URTBaseAttributeSet::OnRep_CriticalDamage(const FGameplayAttributeData& OldCriticalDamage)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, CriticalDamage, OldCriticalDamage);
+}
+
+void URTBaseAttributeSet::OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, ArmorPenetration, OldArmorPenetration);
+}
+
+void URTBaseAttributeSet::OnRep_MagicPenetration(const FGameplayAttributeData& OldMagicPenetration)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, MagicPenetration, OldMagicPenetration);
 }
 
 void URTBaseAttributeSet::OnRep_XP(const FGameplayAttributeData& OldXP)

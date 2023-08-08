@@ -22,26 +22,54 @@ class RADIANT_API URTBaseAttributeSet : public UAttributeSet
 
 public:
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, Health)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_MaxHealth)
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", ReplicatedUsing = OnRep_MaxHealth)
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxHealth)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", ReplicatedUsing = OnRep_Armor)
+	FGameplayAttributeData Armor;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, Armor)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", ReplicatedUsing = OnRep_MagicResistance)
+	FGameplayAttributeData MagicResistance;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MagicResistance)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", ReplicatedUsing = OnRep_AttackDamage)
+	FGameplayAttributeData AttackDamage;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AttackDamage)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", ReplicatedUsing = OnRep_AbilityPower)
+	FGameplayAttributeData AbilityPower;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AbilityPower)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", ReplicatedUsing = OnRep_CriticalChance)
+	FGameplayAttributeData CriticalChance;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, CriticalChance)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", ReplicatedUsing = OnRep_CriticalDamage)
+	FGameplayAttributeData CriticalDamage;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, CriticalDamage)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", ReplicatedUsing = OnRep_ArmorPenetration)
+	FGameplayAttributeData ArmorPenetration;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, ArmorPenetration)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", ReplicatedUsing = OnRep_MagicPenetration)
+	FGameplayAttributeData MagicPenetration;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MagicPenetration)
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MovementSpeed)
-	FGameplayAttributeData MovementSpeed;
-	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MovementSpeed)
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", ReplicatedUsing = OnRep_AttackSpeed)
+	FGameplayAttributeData AttackSpeed;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AttackSpeed)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MaxMovementSpeed)
-	FGameplayAttributeData MaxMovementSpeed;
-	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxMovementSpeed)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Damage", ReplicatedUsing = OnRep_AttackDamage)
-	FGameplayAttributeData Damage;
-	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, Damage)
-
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", ReplicatedUsing = OnRep_AttackRange)
+	FGameplayAttributeData AttackRange;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AttackRange)
+	
 	UPROPERTY(BlueprintReadOnly, Category = "XP", ReplicatedUsing = OnRep_XP)
 	FGameplayAttributeData XP;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, XP)
@@ -50,6 +78,14 @@ public:
 	FGameplayAttributeData MaxXP;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxXP)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MovementSpeed)
+	FGameplayAttributeData MovementSpeed;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MovementSpeed)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MaxMovementSpeed)
+	FGameplayAttributeData MaxMovementSpeed;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxMovementSpeed)
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_Level)
 	FGameplayAttributeData Level;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, Level)
@@ -57,14 +93,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_MaxLevel)
 	FGameplayAttributeData MaxLevel;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxLevel)
-
-	UPROPERTY(BlueprintReadOnly, Category = "AttackSpeed", ReplicatedUsing = OnRep_AttackSpeed)
-	FGameplayAttributeData AttackSpeed;
-	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AttackSpeed)
-
-	UPROPERTY(BlueprintReadOnly, Category = "AttackRange", ReplicatedUsing = OnRep_AttackRange)
-	FGameplayAttributeData AttackRange;
-	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, AttackRange)
 
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
@@ -80,14 +108,29 @@ protected:
 	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
 
 	UFUNCTION()
-	virtual void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed);
+	virtual void OnRep_Armor(const FGameplayAttributeData& OldArmor);
 
 	UFUNCTION()
-	virtual void OnRep_MaxMovementSpeed(const FGameplayAttributeData& OldMaxMovementSpeed);
+	virtual void OnRep_MagicResistance(const FGameplayAttributeData& OldMagicResistance);
 	
 	UFUNCTION()
 	virtual void OnRep_AttackDamage(const FGameplayAttributeData& OldDamage);
 
+	UFUNCTION()
+	virtual void OnRep_AbilityPower(const FGameplayAttributeData& OldAbilityPower);
+
+	UFUNCTION()
+	virtual void OnRep_CriticalChance(const FGameplayAttributeData& OldCriticalChance);
+
+	UFUNCTION()
+	virtual void OnRep_CriticalDamage(const FGameplayAttributeData& OldCriticalDamage);
+	
+	UFUNCTION()
+	virtual void OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration);
+
+	UFUNCTION()
+	virtual void OnRep_MagicPenetration(const FGameplayAttributeData& OldMagicPenetration);
+	
 	UFUNCTION()
 	virtual void OnRep_XP(const FGameplayAttributeData& OldXP);
 
@@ -105,6 +148,12 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_AttackRange(const FGameplayAttributeData& OldAttackRange);
+	
+	UFUNCTION()
+	virtual void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed);
+
+	UFUNCTION()
+	virtual void OnRep_MaxMovementSpeed(const FGameplayAttributeData& OldMaxMovementSpeed);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

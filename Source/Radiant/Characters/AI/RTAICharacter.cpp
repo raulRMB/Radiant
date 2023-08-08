@@ -25,7 +25,7 @@ ARTAICharacter::ARTAICharacter()
 	AttributeSet->InitMaxHealth(40.f);
 	AttributeSet->InitHealth(AttributeSet->GetMaxHealth());
 	AttributeSet->InitMovementSpeed(200.f);
-	AttributeSet->InitDamage(15.f);
+	AttributeSet->InitAttackDamage(15.f);
 	AttributeSet->InitLevel(1.f);
 
 	OverHeadInfoBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("InfoBar");

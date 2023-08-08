@@ -64,6 +64,8 @@ ARTPlayerController* ARTPlayerState::GetRTController() const
 void ARTPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AttributeSet->SetArmor(100.f);
 }
 
 void ARTPlayerState::OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData)
@@ -88,12 +90,13 @@ ARTPlayerState::ARTPlayerState()
 
 	NetUpdateFrequency = 100.f;
 
-	AttributeSet->InitMaxHealth(100.f);
+	AttributeSet->InitMaxHealth(1000.f);
 	AttributeSet->InitHealth(AttributeSet->GetMaxHealth());
 	AttributeSet->InitMaxMana(150.f);
 	AttributeSet->InitMana(AttributeSet->GetMaxMana());
 	AttributeSet->InitMovementSpeed(600.f);
-	AttributeSet->InitDamage(15.f);
+	AttributeSet->InitAttackDamage(1000.f);
+	AttributeSet->InitArmor(100.f);
 	AttributeSet->InitMaxRespawnTime(10.f);
 	AttributeSet->InitCurrentRespawnTime(AttributeSet->GetMaxRespawnTime());
 	AttributeSet->InitXP(0.f);
