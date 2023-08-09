@@ -78,11 +78,11 @@ public:
 	FGameplayAttributeData MaxXP;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxXP)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MovementSpeed)
+	UPROPERTY(BlueprintReadOnly, Category = "Utility", ReplicatedUsing = OnRep_MovementSpeed)
 	FGameplayAttributeData MovementSpeed;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MovementSpeed)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Movement", ReplicatedUsing = OnRep_MaxMovementSpeed)
+	UPROPERTY(BlueprintReadOnly, Category = "Utility", ReplicatedUsing = OnRep_MaxMovementSpeed)
 	FGameplayAttributeData MaxMovementSpeed;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxMovementSpeed)
 	
@@ -93,6 +93,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_MaxLevel)
 	FGameplayAttributeData MaxLevel;
 	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, MaxLevel)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Utility", ReplicatedUsing = OnRep_CooldownReduction)
+	FGameplayAttributeData CooldownReduction;
+	ATTRIBUTE_ACCESSORS(URTBaseAttributeSet, CooldownReduction)
 
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
@@ -154,6 +158,9 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MaxMovementSpeed(const FGameplayAttributeData& OldMaxMovementSpeed);
+
+	UFUNCTION()
+	virtual void OnRep_CooldownReduction(const FGameplayAttributeData& OldCooldownReduction);
 	
 	UFUNCTION()
 	void UpdateMovementSpeed();

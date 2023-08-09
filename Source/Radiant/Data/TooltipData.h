@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "ItemTooltipData.generated.h"
+#include "TooltipData.generated.h"
 
 USTRUCT()
 struct FTooltipData : public FTableRowBase

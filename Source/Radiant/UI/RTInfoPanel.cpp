@@ -33,7 +33,7 @@ void URTInfoPanel::UpdateProperties(float DeltaTime) const
 {
 	if (auto State = GetOwningPlayerState<ARTPlayerState>())
 	{
-		if (URTAvatarAttributeSet* Attributes = State->GetAttributeSetBase())
+		if (URTAvatarAttributeSet* Attributes = State->GetAttributeSet())
 		{
 			UpdateCooldowns();
 			HealthBar->SetPercent(Attributes->GetHealth() / Attributes->GetMaxHealth());
@@ -87,7 +87,7 @@ void URTInfoPanel::Bind(ARTPlayerState* PS)
 {
 	if (PS)
 	{
-		UpdateRadianite(PS->GetAttributeSetBase()->GetRadianite());
+		UpdateRadianite(PS->GetAttributeSet()->GetRadianite());
 		PS->OnUpdateRadianite.AddUObject(this, &URTInfoPanel::UpdateRadianite);
 		PlayerStats->Bind(PS);
 	}

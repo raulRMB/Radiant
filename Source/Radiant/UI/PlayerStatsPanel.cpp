@@ -4,42 +4,77 @@
 #include "UI/PlayerStatsPanel.h"
 
 #include "AbilitySystemComponent.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "..\Data\TooltipData.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
+#include "Structs/TooltipStatInfo.h"
 #include "Player/RTPlayerState.h"
+#include "Util/Util.h"
 
 void UPlayerStatsPanel::UpdateMovementSpeed(const FOnAttributeChangeData& OnAttributeChangeData)
 {
-	MoveSpeed->SetText(FText::FromString(FString::Printf(TEXT("MS: %.0f"), OnAttributeChangeData.NewValue)));
+	MovementSpeedText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
 }
 
-void UPlayerStatsPanel::UpdateDamage(const FOnAttributeChangeData& OnAttributeChangeData)
+void UPlayerStatsPanel::UpdateAttackDamage(const FOnAttributeChangeData& OnAttributeChangeData)
 {
-	Damage->SetText(FText::FromString(FString::Printf(TEXT("DMG: %.0f"), OnAttributeChangeData.NewValue)));
+	AttackDamageText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
+}
+
+void UPlayerStatsPanel::UpdateArmorPenetration(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	ArmorPenetrationText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
+}
+
+void UPlayerStatsPanel::UpdateAbilityPower(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	AbilityPowerText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
+}
+
+void UPlayerStatsPanel::UpdateMagicPenetration(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	MagicPenetrationText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
+}
+
+void UPlayerStatsPanel::UpdateArmor(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	ArmorText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
+}
+
+void UPlayerStatsPanel::UpdateMagicResistance(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	MagicResistanceText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
+}
+
+void UPlayerStatsPanel::UpdateCooldownReduction(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	CooldownReductionText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
 }
 
 void UPlayerStatsPanel::UpdateAttackSpeed(const FOnAttributeChangeData& OnAttributeChangeData)
 {
-	AttackSpeed->SetText(FText::FromString(FString::Printf(TEXT("AS: %.0f"), OnAttributeChangeData.NewValue)));
+	AttackSpeedText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
 }
 
 void UPlayerStatsPanel::UpdateAttackRange(const FOnAttributeChangeData& OnAttributeChangeData)
 {
-	AttackRange->SetText(FText::FromString(FString::Printf(TEXT("Range: %.0f"), OnAttributeChangeData.NewValue)));
+	AttackRangeText->SetText(RTPRINTF("%.0f", OnAttributeChangeData.NewValue));
 }
 
 void UPlayerStatsPanel::Bind(ARTPlayerState* PS)
 {
-	PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSetBase()->GetMovementSpeedAttribute()).AddUObject(
-		this, &UPlayerStatsPanel::UpdateMovementSpeed);
-	MoveSpeed->SetText(FText::FromString(FString::Printf(TEXT("MS: %.0f"), PS->GetAttributeSetBase()->GetMovementSpeed())));
-	PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSetBase()->GetAttackDamageAttribute()).AddUObject(
-		this, &UPlayerStatsPanel::UpdateDamage);
-	Damage->SetText(FText::FromString(FString::Printf(TEXT("DMG: %.0f"), PS->GetAttributeSetBase()->GetAttackDamage())));
-	PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSetBase()->GetAttackSpeedAttribute()).AddUObject(
-		this, &UPlayerStatsPanel::UpdateAttackSpeed);
-	AttackSpeed->SetText(FText::FromString(FString::Printf(TEXT("AS: %.0f"), PS->GetAttributeSetBase()->GetAttackSpeed())));
-	PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSetBase()->GetAttackRangeAttribute()).AddUObject(
-		this, &UPlayerStatsPanel::UpdateAttackRange);
-	AttackRange->SetText(FText::FromString(FString::Printf(TEXT("AR: %.0f"), PS->GetAttributeSetBase()->GetAttackRange())));
+	BindStatsPanelStat(AttackDamage);
+	BindStatsPanelStat(ArmorPenetration);
+	BindStatsPanelStat(AttackSpeed);
+	
+	BindStatsPanelStat(AbilityPower);
+	BindStatsPanelStat(MagicPenetration);
+	BindStatsPanelStat(CooldownReduction);
+	
+	BindStatsPanelStat(Armor);
+	BindStatsPanelStat(MagicResistance);
+
+	BindStatsPanelStat(MovementSpeed);
+	BindStatsPanelStat(AttackRange);
 }

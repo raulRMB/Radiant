@@ -132,7 +132,7 @@ UAbilitySystemComponent* ARTPlayerState::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-URTAvatarAttributeSet* ARTPlayerState::GetAttributeSetBase() const
+URTAvatarAttributeSet* ARTPlayerState::GetAttributeSet() const
 {
 	return AttributeSet;
 }

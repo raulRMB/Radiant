@@ -73,7 +73,7 @@ public:
 	void SetTeamId(ETeamId NewTeamId) { TeamId = NewTeamId; }
 
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	class URTAvatarAttributeSet* GetAttributeSetBase() const;
+	class URTAvatarAttributeSet* GetAttributeSet() const;
 
 	UFUNCTION(Server, Reliable)
 	void SetUsername(const FString& String);

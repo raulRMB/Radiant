@@ -183,7 +183,7 @@ void AAvatar::BeginPlay()
 		ARTPlayerState* PS = GetRTPS();
 		if(PS)
 		{
-			auto AS = PS->GetAttributeSetBase();
+			auto AS = PS->GetAttributeSet();
 			if (AS)
 			{
 				OverHeadInfoBar->SetXPPercent(AS->GetXP() / AS->GetMaxXP());
@@ -457,7 +457,7 @@ void AAvatar::PossessedBy(AController* NewController)
 		AbilitySystemComponent = Cast<URTAbilitySystemComponent>(PS->GetAbilitySystemComponent());
 		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
 
-		AttributeSet = PS->GetAttributeSetBase();
+		AttributeSet = PS->GetAttributeSet();
 	}
 	GiveInitialAbilities();
 
@@ -473,8 +473,8 @@ void AAvatar::OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData)
 	{
 		if (auto PS = GetPlayerState<ARTPlayerState>())
 		{
-			float CurrentXP = PS->GetAttributeSetBase()->GetXP();
-			float MaxXP = PS->GetAttributeSetBase()->GetMaxXP();
+			float CurrentXP = PS->GetAttributeSet()->GetXP();
+			float MaxXP = PS->GetAttributeSet()->GetMaxXP();
 			OverHeadInfoBar->SetXPPercent(CurrentXP / MaxXP);
 		}
 	}
@@ -514,7 +514,7 @@ void AAvatar::OnRep_PlayerState()
 		AbilitySystemComponent = Cast<URTAbilitySystemComponent>(PS->GetAbilitySystemComponent());
 		AbilitySystemComponent->InitAbilityActorInfo(PS, this);
 
-		AttributeSet = PS->GetAttributeSetBase();
+		AttributeSet = PS->GetAttributeSet();
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).
 		                        AddUObject(this, &AAvatar::OnHealthChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetXPAttribute()).AddUObject(

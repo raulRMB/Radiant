@@ -5,7 +5,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
-#include "Data/ItemTooltipData.h"
+#include "..\..\Data\TooltipData.h"
 #include "Util/Util.h"
 
 void UItemTooltip::AddStatInfo(FTooltipStatInfo StatInfo)

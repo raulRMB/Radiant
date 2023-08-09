@@ -73,6 +73,7 @@ void URTBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxLevel, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, MaxMovementSpeed, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URTBaseAttributeSet, CooldownReduction, COND_None, REPNOTIFY_Always);
 }
 
 void URTBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
@@ -104,6 +105,11 @@ void URTBaseAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldM
 void URTBaseAttributeSet::OnRep_MaxMovementSpeed(const FGameplayAttributeData& OldMaxMovementSpeed)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, MaxMovementSpeed, OldMaxMovementSpeed);
+}
+
+void URTBaseAttributeSet::OnRep_CooldownReduction(const FGameplayAttributeData& OldCooldownReduction)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URTBaseAttributeSet, CooldownReduction, OldCooldownReduction);
 }
 
 void URTBaseAttributeSet::OnRep_AttackDamage(const FGameplayAttributeData& OldAttackDamage)

@@ -49,5 +49,17 @@ public:
 
 	static struct FItemData* GetItemDataFromName(const FName& Name, const FString& ContextString = FString(""));
 
+	static struct FTooltipData* GetTooltipDataFromName(const FName& Name, const FString& ContextString = FString(""));
+
 	static class UDataTable* GetItemDataTable();
 };
+
+#define BindStatsPanelStat(StatName) \
+PS->GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(PS->GetAttributeSet()->Get##StatName##Attribute()).AddUObject( \
+	this, &UPlayerStatsPanel::Update##StatName); \
+StatName##Text->SetText(RTPRINTF("%.0f", PS->GetAttributeSet()->Get##StatName())); \
+if(FTooltipData* TooltipData = UUtil::GetTooltipDataFromName(FName(#StatName))) \
+{ \
+	StatName##Icon->SetBrushFromTexture(TooltipData->Icon); \
+	StatName##Icon->SetColorAndOpacity(TooltipData->Color); \
+}

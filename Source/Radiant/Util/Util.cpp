@@ -2,11 +2,11 @@
 
 
 #include "Util/Util.h"
-
 #include "EngineUtils.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Data/BuildingTypes.h"
 #include "Data/ItemData.h"
+#include "Data/TooltipData.h"
 #include "Player/Avatar.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
@@ -155,6 +155,23 @@ FItemData* UUtil::GetItemDataFromName(const FName& Name, const FString& ContextS
 		if (UDataTable* ItemTable = Cast<UDataTable>(Objects[0]))
 		{
 			if (FItemData* ItemData = ItemTable->FindRow<FItemData>(Name, ContextString))
+			{
+				return ItemData;
+			}
+		}
+	}
+	return nullptr;
+}
+
+FTooltipData* UUtil::GetTooltipDataFromName(const FName& Name, const FString& ContextString)
+{
+	TArray<UObject*> Objects;
+	FindOrLoadAssetsByPath(TEXT("/Game/Data/TooltipData/"), Objects, EngineUtils::ATL_Regular);
+	if (Objects.Num() > 0)
+	{
+		if (UDataTable* ItemTable = Cast<UDataTable>(Objects[0]))
+		{
+			if (FTooltipData* ItemData = ItemTable->FindRow<FTooltipData>(Name, ContextString))
 			{
 				return ItemData;
 			}

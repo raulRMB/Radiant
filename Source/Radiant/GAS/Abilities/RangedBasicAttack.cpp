@@ -84,6 +84,6 @@ void URangedBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	WaitEvent->EventReceived.AddDynamic(this, &URangedBasicAttack::OnUncancellableEventRecieved);
 	WaitEvent->ReadyForActivation();
 
-	float AttackSpeed = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSetBase()->GetAttackSpeed();
+	float AttackSpeed = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSet()->GetAttackSpeed();
 	BindAnimations(AttackSpeed);
 }

@@ -87,6 +87,6 @@ void UMeleeBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	WaitEvent->EventReceived.AddDynamic(this, &UMeleeBasicAttack::OnUncancellableEventRecieved);
 	WaitEvent->ReadyForActivation();
 
-	float AttackSpeed = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSetBase()->GetAttackSpeed();
+	float AttackSpeed = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSet()->GetAttackSpeed();
 	BindAnimations(AttackSpeed);
 }
