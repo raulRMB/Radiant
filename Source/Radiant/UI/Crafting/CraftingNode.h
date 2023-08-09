@@ -58,6 +58,9 @@ class UCraftingNode : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UDynamicButton* Button;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UItemTooltip> ItemTooltipClass;
+
 	UPROPERTY()
 	FName CraftingItemDataName;
 
@@ -97,4 +100,6 @@ public:
 	
 	UFUNCTION()
 	void OnMouseRightClicked();
+	
+	void InitTooltip();
 };

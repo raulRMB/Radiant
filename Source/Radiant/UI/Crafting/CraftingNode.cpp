@@ -3,11 +3,13 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Data/GearData.h"
 #include "Event/EventBroker.h"
 #include "Player/InventoryComponent.h"
 #include "Player/RTPlayerState.h"
 #include "UI/DynamicButton.h"
 #include "UI/RTHUD.h"
+#include "UI/InGame/ItemTooltip.h"
 #include "Util/Util.h"
 
 FGraphNode::~FGraphNode()
@@ -133,6 +135,41 @@ void UCraftingNode::OnMouseRightClicked()
 			InventoryComponent->S_ItemUsed(Ingredient.Key, Ingredient.Value);
 		}
 		GetOwningPlayerState<ARTPlayerState>()->S_BuyAbility(CraftingItemDataName, 1);
+	}
+}
+
+void UCraftingNode::InitTooltip()
+{
+	UItemTooltip* Tooltip = CreateWidget<UItemTooltip>(this, ItemTooltipClass);
+	if(FItemData* ItemData = UUtil::GetItemDataFromName(CraftingItemDataName))
+	{
+		if(ItemData->GearData)
+		{
+			for(TSubclassOf<UGameplayEffect>& EffectClass : ItemData->GearData->GameplayEffects)
+			{
+				if(UGameplayEffect* Effect = EffectClass.GetDefaultObject())
+				{
+					FTooltipStatInfo StatInfo;
+					for(FGameplayModifierInfo& Modifier : Effect->Modifiers)
+					{
+						FName Name = FName(Modifier.Attribute.AttributeName);
+						StatInfo.CellType = Name;
+						float Magnitude;						
+						Modifier.ModifierMagnitude.GetStaticMagnitudeIfPossible(1, Magnitude);
+						StatInfo.ModOp = Modifier.ModifierOp;
+						Magnitude = FMath::Abs(Magnitude);
+						StatInfo.Value = Magnitude;
+						Tooltip->AddStatInfo(StatInfo);
+					}
+				}
+			}
+			Tooltip->Init();
+			SetToolTip(Tooltip);
+		}
+	}
+	else
+	{
+		SetToolTip(nullptr);
 	}
 }
 

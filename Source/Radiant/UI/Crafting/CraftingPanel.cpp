@@ -77,6 +77,7 @@ void UCraftingPanel::Init(UInventoryComponent* Inventory)
 					ItemData->CraftingNodeData->Name = It.Key;
 					CraftingNode->Init(ItemData->CraftingNodeData->Icon, 1, InventoryComponent);
 					CraftingNode->SetCraftingItemDataName(It.Key);
+					CraftingNode->InitTooltip();
 					if(ItemData->AbilityData)
 					{
 						CraftingNode->SetToolTipText(ItemData->AbilityData->Tooltip);
@@ -128,6 +129,7 @@ void UCraftingPanel::LoadCraftingItem(const FName ItemName)
 			{
 				CraftingNode->Init(CraftingNodeDataAsset->Aggregates[i]->Icon, 1, InventoryComponent);
 				CraftingNode->SetCraftingItemDataName(CraftingNodeDataAsset->Aggregates[i]->Name);
+				CraftingNode->InitTooltip();
 				if(USizeBox* SizeBox = WidgetTree->ConstructWidget<USizeBox>())
 				{
 					SizeBox->AddChild(CraftingNode);
@@ -165,6 +167,7 @@ UCraftingNode* UCraftingPanel::CreateCraftingNode(UCraftingNode* InParentNode, F
 		CraftingNode->Init(Node->GetDataAsset()->Icon, Node->GetAmount(), InventoryComponent);
 		CraftingNode->SetIsLeaf(Node->GetChildCount() < 1);
 		CraftingNode->SetCraftingItemDataName(Node->GetDataAsset()->Name);
+		CraftingNode->InitTooltip();
 		CraftingNode->SetParentNode(InParentNode);
 		if(UCanvasPanelSlot* PanelSlot = RecipeTree->AddChildToCanvas(CraftingNode))
 		{
