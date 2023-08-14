@@ -3,6 +3,7 @@
 
 #include "GAS/Abilities/Building/GABuildAccept.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Player/Avatar.h"
 #include "Player/InventoryComponent.h"
 #include "Util/Util.h"
@@ -11,8 +12,6 @@ void UGABuildAccept::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                      const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                      const FGameplayEventData* TriggerEventData)
 {
-	//Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
 	if(!HasAuthority(&ActivationInfo))
 	{
 		if(AAvatar* Avatar = GetAvatar())
@@ -24,7 +23,8 @@ void UGABuildAccept::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			Mouse.X = FMath::RoundToInt(Mouse.X / 200);
 			Mouse.Y = FMath::RoundToInt(Mouse.Y / 200);
 			GridPiece.Position = FIntVector2(Mouse.X, Mouse.Y);
-			Avatar->S_PlaceGridPiece(GridPiece);
+
+			Avatar->S_TryPlaceGridPiece(GridPiece, ItemName);
 		}
 	}
 

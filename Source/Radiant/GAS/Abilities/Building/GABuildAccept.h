@@ -14,6 +14,9 @@ class RADIANT_API UGABuildAccept : public URTAbility
 	
 	UPROPERTY(EditAnywhere)
 	EEnvironmentType EnvironmentType;
+
+	UPROPERTY(EditAnywhere)
+	FName ItemName;
 	
 public:
 	

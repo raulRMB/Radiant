@@ -1,7 +1,7 @@
 // Copyright Radiant Studios
 
 
-#include "GAS/AttributeSets/BuildingAttributeSet.h"
+#include "BuildingAttributeSet.h"
 
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"

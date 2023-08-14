@@ -40,20 +40,17 @@ class RADIANT_API AGridManager : public AActor
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TArray<class ABuilding*> Pieces;
+	TArray<class AActor*> Pieces;
 	UPROPERTY(Replicated)
-	TArray<bool> Cells;
+	TArray<EEnvironmentType> Cells;
 
 	UPROPERTY(EditAnywhere)
-	TMap<EEnvironmentType, TSubclassOf<class ABuilding>> BuildingTypes;
+	TMap<EEnvironmentType, TSubclassOf<class AActor>> BuildingTypes;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess=true))
 	FIntVector2 GridSize;
 
 	float PerlinScale = 0.1f;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> TestActor;
 
 public:
 	AGridManager();
@@ -64,7 +61,7 @@ public:
 	uint32 CellHalfSize = CellSize / 2;
 
 	void PlacePieceAtMouse(FGridPiece Piece);
-	bool CheckCanPlace(const FIntVector2 Piece);
+	bool CheckCanPlace(const FGridPiece Piece);
 
 	virtual void BeginPlay() override;
 

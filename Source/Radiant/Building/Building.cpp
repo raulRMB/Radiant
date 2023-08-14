@@ -3,7 +3,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
-#include "GAS/AttributeSets/BuildingAttributeSet.h"
+#include "GAS/AttributeSets/Buildings/BuildingAttributeSet.h"
 #include "Items/WorldItem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -14,7 +14,6 @@
 
 ABuilding::ABuilding()
 {
-	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 	AbilitySystemComponent = CreateDefaultSubobject<URTAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -84,7 +83,7 @@ void ABuilding::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if(!InfoBarWidgetComponent)
 		{			
-			InfoBarWidgetComponent = Cast<UWidgetComponent>(AddComponentByClass(InfoBarActorComponent, false, FTransform(FVector(0.f, 0.f, 100.f)), false));
+			InfoBarWidgetComponent = Cast<UWidgetComponent>(AddComponentByClass(InfoBarActorComponent, false, FTransform(WidgetLocation), false));
 			if(InfoBarWidgetComponent)
 			{
 				InfoBarWidgetComponent->RegisterComponent();

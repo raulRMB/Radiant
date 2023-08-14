@@ -4,9 +4,7 @@
 #include "GAS/Abilities/Building/GABuildAbility.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Data/ItemData.h"
 #include "GAS/Tasks/AbilityTask_BuildMode.h"
-#include "Kismet/GameplayStatics.h"
 #include "Player/Avatar.h"
 #include "Player/InventoryComponent.h"
 #include "Player/RTPlayerController.h"
@@ -29,8 +27,6 @@ void UGABuildAbility::OnOrderAccepted()
 			PC->OrderAccepted.Remove(OrderAcceptedHandle);
 		}
 	}
-		
-	GetAvatar()->GetInventory()->S_ItemUsed(ItemName);
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 

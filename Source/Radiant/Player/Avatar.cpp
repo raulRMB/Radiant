@@ -319,6 +319,15 @@ void AAvatar::SpawnActorAtSelf(const FString& PieceName, const uint32 Amount)
 	}
 }
 
+void AAvatar::S_TryPlaceGridPiece_Implementation(FGridPiece Piece, FName ItemName)
+{
+	if(GridManager->CheckCanPlace(Piece))
+	{
+		GetInventory()->S_ItemUsed(ItemName);
+		GridManager->PlacePieceAtMouse(Piece);
+	}
+}
+
 void AAvatar::S_PickUpItem_Implementation(AWorldItem* WorldItem)
 {
 	if(WorldItem)
@@ -406,11 +415,6 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag, bool bIgnoreSelf)
 
 	BufferAbility = EventData;
 	AbilitySystemComponent->HandleGameplayEvent(EventTag, &EventData);
-}
-
-void AAvatar::S_PlaceGridPiece_Implementation(FGridPiece Piece)
-{
-	GridManager->PlacePieceAtMouse(Piece);
 }
 
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)

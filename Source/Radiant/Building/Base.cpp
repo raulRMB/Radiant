@@ -3,7 +3,7 @@
 
 #include "Base.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
-#include "GAS/AttributeSets/BuildingAttributeSet.h"
+#include "GAS/AttributeSets/Buildings/BuildingAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameMode.h"
 #include "UI/AIInfoBar.h"

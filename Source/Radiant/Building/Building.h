@@ -22,6 +22,9 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UWidgetComponent* InfoBarWidgetComponent;
 
+	UPROPERTY(EditAnywhere, meta=(MakeEditWidget))
+	FVector WidgetLocation;
+
 	FGridPiece GridPiece;
 
 	UPROPERTY(EditAnywhere)
@@ -79,5 +82,6 @@ public:
 private:
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
+protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

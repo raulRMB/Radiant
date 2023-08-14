@@ -14,5 +14,7 @@ enum class EEnvironmentType : uint8
 	EEnvironmentType_TreeStump,
 	EEnvironmentType_Pebbles,
 	EEnvironmentType_Grass,
+	EEnvironmentType_Vein,
+	EEnvironmentType_Extractor,
 	EEvironmentType_MobSpawner,
 };

@@ -124,7 +124,7 @@ protected:
 
 public:
 	UFUNCTION(Server, Reliable)
-	void S_PlaceGridPiece(FGridPiece Piece);
+	void S_TryPlaceGridPiece(FGridPiece Piece, FName ItemName);
 	UFUNCTION(Server, Reliable)
 	void S_PickUpItem(class AWorldItem* WorldItem);
 

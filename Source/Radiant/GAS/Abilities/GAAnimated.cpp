@@ -14,30 +14,22 @@ UGAAnimated::UGAAnimated()
 }
 
 void UGAAnimated::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	RTPRINT("OnAnimCompleted")
-	
+{	
 	ReturnToDefaultAndEndAbility();
 }
 
 void UGAAnimated::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	RTPRINT("OnAnimCancelled")
-	
+{	
 	ReturnToDefaultAndEndAbility(true);
 }
 
 void UGAAnimated::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	RTPRINT("OnAnimInterrupted")
-	
 	ReturnToDefaultAndEndAbility(true);
 }
 
 void UGAAnimated::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	RTPRINT("OnAnimBlendOut")
-	
+{	
 	ReturnToDefaultAndEndAbility();	
 }
 

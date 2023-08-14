@@ -22,9 +22,6 @@ class RADIANT_API UGABuildAbility : public URTAbility
 	FGameplayAbilitySpecHandle ChildSpecHandle;
 
 	UPROPERTY(EditAnywhere)
-	FName ItemName;
-
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<URTAbility> BuildAcceptAbility;
 	
 public:

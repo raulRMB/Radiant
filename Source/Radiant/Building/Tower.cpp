@@ -5,7 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
-#include "GAS/AttributeSets/BuildingAttributeSet.h"
+#include "GAS/AttributeSets/Buildings/BuildingAttributeSet.h"
 #include "Player/Avatar.h"
 #include "Util/Util.h"
 

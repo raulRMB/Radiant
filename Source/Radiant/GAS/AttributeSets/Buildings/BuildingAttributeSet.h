@@ -19,22 +19,22 @@ class RADIANT_API UBuildingAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
+	UPROPERTY(ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(UBuildingAttributeSet, Health)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_MaxHealth)
+	UPROPERTY(ReplicatedUsing = OnRep_MaxHealth)
 	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(UBuildingAttributeSet, MaxHealth)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Damage", ReplicatedUsing = OnRep_AttackDamage)
+	UPROPERTY(ReplicatedUsing = OnRep_AttackDamage)
 	FGameplayAttributeData AttackDamage;
+	
+public:
+	ATTRIBUTE_ACCESSORS(UBuildingAttributeSet, Health)
+	ATTRIBUTE_ACCESSORS(UBuildingAttributeSet, MaxHealth)
 	ATTRIBUTE_ACCESSORS(UBuildingAttributeSet, AttackDamage)
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+	
 private:
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);

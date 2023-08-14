@@ -14,7 +14,7 @@ AGridManager::AGridManager()
 
 void AGridManager::InitGrid()
 {
-	Cells.Init(false, GridSize.X * GridSize.Y);
+	Cells.Init(EEnvironmentType::EEnvironmentType_Empty, GridSize.X * GridSize.Y);
 
 	if(HasAuthority())
 	{
@@ -28,7 +28,7 @@ void AGridManager::InitGrid()
 				if(Perlin > .4f && Perlin < .5f)
 				{
 					Type = EEnvironmentType::EEnvironmentType_Tree;
-				}				
+				}
 				else if(Perlin > .3f)
 				{
 					Type = EEnvironmentType::EEnvironmentType_TreeStump;
@@ -47,13 +47,14 @@ void AGridManager::InitGrid()
 				}
 				else
 				{
+					Cells[x + y * GridSize.Y] = EEnvironmentType::EEnvironmentType_Empty;
 					continue;
 				}
 				FTransform Transform = FTransform(FVector(x, y, 0.f) * CellSize);
 				if(BuildingTypes.Contains(Type))
 				{
-					GetWorld()->SpawnActor<ABuilding>(BuildingTypes[Type], Transform);
-					//GetWorld()->SpawnActor<AActor>(TestActor, Transform);
+					Cells[x + y * GridSize.Y] = Type;
+					GetWorld()->SpawnActor<AActor>(BuildingTypes[Type], Transform);
 				}
 			}
 		}
@@ -68,8 +69,20 @@ void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
 		{
 			return;
 		}
-		auto Pos = Piece.Position.X + Piece.Position.Y * GridSize.Y;
-		if(Cells.Num() < Pos || Cells[Pos])
+		int32 Pos = Piece.Position.X + Piece.Position.Y * GridSize.Y;
+		if(Cells.Num() < Pos)
+		{
+			return;
+		}
+		if(Piece.Type == EEnvironmentType::EEnvironmentType_Extractor)
+		{
+			EEnvironmentType Type = Cells[Pos];
+			if(Type != EEnvironmentType::EEnvironmentType_Vein)
+			{
+				return;
+			}
+		}
+		else if(Cells[Pos] != EEnvironmentType::EEnvironmentType_Empty)
 		{
 			return;
 		}
@@ -77,23 +90,30 @@ void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
 		ABuilding* Building = GetWorld()->SpawnActorDeferred<ABuilding>(BuildingTypes[Piece.Type], Transform);
 		Building->S_SetTeamId(Piece.TeamId);
 		Building->FinishSpawning(Transform);
-		Cells[Piece.Position.X + Piece.Position.Y * GridSize.Y] = true;
+		Cells[Piece.Position.X + Piece.Position.Y * GridSize.Y] = Piece.Type;
 	}
 }
 
-bool AGridManager::CheckCanPlace(const FIntVector2 Position)
+bool AGridManager::CheckCanPlace(const FGridPiece Piece)
 {
+	FIntVector2 Position = Piece.Position;
 	if(Position.X < 0 || Position.Y < 0 || Position.X >= GridSize.X || Position.Y >= GridSize.Y)
 	{
 		return false;
 	}
 	int32 Pos = Position.X + Position.Y * GridSize.Y;
-	if(Cells.Num() < Pos || Cells[Pos])
+	
+	if(Cells.Num() < Pos)
 	{
 		return false;
 	}
+	if(Piece.Type == EEnvironmentType::EEnvironmentType_Extractor)
+	{
+		EEnvironmentType Type = Cells[Pos];
+		return Type == EEnvironmentType::EEnvironmentType_Vein;
+	}
 	
-	return Cells[Position.X + Position.Y * GridSize.Y];
+	return Cells[Position.X + Position.Y * GridSize.Y] == EEnvironmentType::EEnvironmentType_Empty;
 }
 
 void AGridManager::BeginPlay()
