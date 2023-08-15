@@ -53,6 +53,7 @@ private:
 	UItemSlot* GetSlot(const FName& Name) const;
 	UItemSlot* GetSlot(EItemSlotID UISlotID) const;
 	UItemSlot* FindEmptySlot() const;
+	UItemSlot* FindEmptyAbilitySlot() const;
 	FItemSlotData CreateSlotData(const FName& Name, uint32 Amount) const;
 	UItemSlot* CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<UItemSlot> ItemSlotClass);
 };

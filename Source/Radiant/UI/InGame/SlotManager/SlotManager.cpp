@@ -8,6 +8,7 @@
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/SizeBox.h"
 #include "Components/UniformGridPanel.h"
+#include "Data/GearData.h"
 #include "Data/ItemData.h"
 #include "Event/EventBroker.h"
 #include "UI/GearSlot.h"
@@ -71,6 +72,42 @@ UItemSlot* USlotManager::GetSlot(const FName& Name) const
 			return Pair.Value;
 		}
 	}
+	auto ItemData = UUtil::GetItemDataFromName(Name);
+	if(ItemData->GearData)
+	{
+		if(ItemData->GearData->GearType == EGearType::Weapon && Slots[EItemSlotID::WeaponSlot]->IsEmpty())
+		{
+			return Slots[EItemSlotID::WeaponSlot];
+		}
+		if(ItemData->GearData->GearType == EGearType::Boots && Slots[EItemSlotID::BootsSlot]->IsEmpty())
+		{
+			return Slots[EItemSlotID::BootsSlot];
+		}
+		if(ItemData->GearData->GearType == EGearType::Chest && Slots[EItemSlotID::ChestSlot]->IsEmpty())
+		{
+			return Slots[EItemSlotID::ChestSlot];
+		}
+		if(ItemData->GearData->GearType == EGearType::Gloves && Slots[EItemSlotID::GlovesSlot]->IsEmpty())
+		{
+			return Slots[EItemSlotID::GlovesSlot];
+		}
+		if(ItemData->GearData->GearType == EGearType::Helmet && Slots[EItemSlotID::HelmetSlot]->IsEmpty())
+		{
+			return Slots[EItemSlotID::HelmetSlot];
+		}
+		if(ItemData->GearData->GearType == EGearType::Legs && Slots[EItemSlotID::LegsSlot]->IsEmpty())
+		{
+			return Slots[EItemSlotID::LegsSlot];
+		}
+		if(ItemData->GearData->GearType == EGearType::Necklace && Slots[EItemSlotID::NecklaceSlot]->IsEmpty())
+		{
+			return Slots[EItemSlotID::NecklaceSlot];
+		}
+	}
+	if(ItemData->AbilityData && !ItemData->GearData)
+	{
+		return FindEmptyAbilitySlot();
+	}
 	return FindEmptySlot();
 }
 
@@ -85,7 +122,7 @@ UItemSlot* USlotManager::GetSlot(EItemSlotID UISlotID) const
 
 UItemSlot* USlotManager::FindEmptySlot() const
 {
-	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::InventoryLast); i++)
+	for (uint32 i = static_cast<uint32>(EItemSlotID::InventoryFirst); i <= static_cast<uint32>(EItemSlotID::InventoryLast); i++)
 	{
 		if(Slots.Contains(static_cast<EItemSlotID>(i)))
 		{
@@ -96,6 +133,21 @@ UItemSlot* USlotManager::FindEmptySlot() const
 		}
 	}
 	return nullptr;
+}
+
+UItemSlot* USlotManager::FindEmptyAbilitySlot() const
+{
+	for (uint32 i = static_cast<uint32>(EItemSlotID::HotBarFirst); i <= static_cast<uint32>(EItemSlotID::HotBarLast); i++)
+	{
+		if(Slots.Contains(static_cast<EItemSlotID>(i)))
+		{
+			if(Slots[static_cast<EItemSlotID>(i)]->IsEmpty())
+			{
+				return Slots[static_cast<EItemSlotID>(i)];
+			}
+		}
+	}
+	return FindEmptySlot();
 }
 
 FItemSlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) const
