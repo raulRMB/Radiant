@@ -391,6 +391,15 @@ bool AAvatar::CheckShouldAttack()
 	return true;
 }
 
+void AAvatar::CastHotBarAbility(const FGameplayTag& AbilityTag, bool bIgnoreSelf)
+{
+	if(HasTag("CC.Silenced"))
+	{
+		return;
+	}
+	CastAbility(AbilityTag, bIgnoreSelf);
+}
+
 void AAvatar::CastAbility(const FGameplayTag& AbilityTag, bool bIgnoreSelf)
 {
 	if(GetIsDead())
@@ -418,32 +427,32 @@ void AAvatar::CastAbility(const FGameplayTag& AbilityTag, bool bIgnoreSelf)
 
 void AAvatar::OnAbilityOne(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFirst));
+	CastHotBarAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFirst));
 }
 
 void AAvatar::OnAbilityTwo(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarTwo));
+	CastHotBarAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarTwo));
 }
 
 void AAvatar::OnAbilityThree(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarThree));
+	CastHotBarAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarThree));
 }
 
 void AAvatar::OnAbilityFour(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFour));
+	CastHotBarAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFour));
 }
 
 void AAvatar::OnAbilityFive(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFive));
+	CastHotBarAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarFive));
 }
 
 void AAvatar::OnAbilitySix(const FInputActionValue& Value)
 {
-	CastAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarLast));
+	CastHotBarAbility(GetRTHUD()->GetAbilityTrigger(EItemSlotID::HotBarLast));
 }
 
 ARTPlayerState* AAvatar::GetRTPS() const

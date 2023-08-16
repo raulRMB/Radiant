@@ -132,6 +132,7 @@ public:
 	virtual FVector GetCarrierLocation() const override { return GetActorLocation(); }
 
 	bool CheckShouldAttack();
+	void CastHotBarAbility(const FGameplayTag& AbilityTag, bool bIgnoreSelf = false);
 	void ApplyInitialEffects();
 	void CastAbility(const FGameplayTag& AbilityTag, bool bIgnoreSelf = false);
 	void OnUpdateTarget(const FInputActionValue& Value);
