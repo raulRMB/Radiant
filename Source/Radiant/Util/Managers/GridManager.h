@@ -41,20 +41,27 @@ class RADIANT_API AGridManager : public AActor
 
 	UPROPERTY()
 	TArray<class AActor*> Pieces;
-	UPROPERTY(Replicated)
+	UPROPERTY(VisibleAnywhere, Replicated)
 	TArray<EEnvironmentType> Cells;
+	UPROPERTY(VisibleAnywhere)
+	uint16 GridDimensions;
+	
+	UPROPERTY(EditAnywhere)
+	uint8 bSpawnMap : 1;
 
 	UPROPERTY(EditAnywhere)
 	TMap<EEnvironmentType, TSubclassOf<class AActor>> BuildingTypes;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess=true))
-	FIntVector2 GridSize;
-
 	float PerlinScale = 0.1f;
 
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* MapTexture;
+	
 public:
 	AGridManager();
-	
+
+	UFUNCTION(CallInEditor)
+	void GenerateMap();
 	void InitGrid();
 	
 	uint32 CellSize = 200;
