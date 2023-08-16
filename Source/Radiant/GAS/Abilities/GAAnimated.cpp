@@ -4,6 +4,7 @@
 #include "GAS/Abilities/GAAnimated.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Player/Avatar.h"
 #include "Player/RTPlayerState.h"
 #include "GAS/Tasks/PlayMontageAndWaitForEvent.h"
@@ -40,7 +41,7 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
 	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
-	
+	Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
 
 	FVector Loc = Avatar->GetActorLocation();
@@ -84,6 +85,10 @@ void UGAAnimated::BindAnimations()
 void UGAAnimated::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                              const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if(AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
+	{
+		Avatar->GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

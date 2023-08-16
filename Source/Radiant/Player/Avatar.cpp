@@ -44,7 +44,6 @@ AAvatar::AAvatar()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	bReplicates = true;
 	bCameraLocked = true;
 
@@ -168,7 +167,7 @@ void AAvatar::OnDragStatusChanged(bool status)
 void AAvatar::BeginPlay()
 {
 	Super::BeginPlay();
-
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 	Destination = GetActorLocation();
 	UnlockedCamera->SetWorldRotation(MainCamera->GetComponentRotation());
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))

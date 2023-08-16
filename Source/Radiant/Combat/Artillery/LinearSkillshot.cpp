@@ -81,11 +81,10 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 		{
 			if (!AffectedActors.Contains(OtherActor))
 			{
-				UGameplayEffect* NewEffect = NewObject<UGameplayEffect>(GetTransientPackage(), Effect);
 				if (ARTCharacter* Projectile_Instigator = Cast<ARTCharacter>(GetInstigator()))
 				{
 					Projectile_Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(
-						NewEffect, Character->GetAbilitySystemComponent(), 1.f);
+						Effect.GetDefaultObject(), Character->GetAbilitySystemComponent(), 1.f, Character->GetAbilitySystemComponent()->MakeEffectContext());
 				}
 				AffectedActors.AddUnique(OtherActor);
 			}

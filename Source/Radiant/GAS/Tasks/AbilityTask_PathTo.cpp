@@ -4,6 +4,7 @@
 #include "GAS/Tasks/AbilityTask_PathTo.h"
 
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/Avatar.h"
 #include "Util/Util.h"
@@ -47,7 +48,10 @@ void UAbilityTask_PathTo::OnUnitDied()
 void UAbilityTask_PathTo::Activate()
 {
 	Super::Activate();
-	
+	if(const AAvatar* Avatar = Cast<AAvatar>(GetAvatarActor()))
+	{
+		Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
+	}
 	if(IKillable* Killable = Cast<IKillable>(GetAvatarActor()))
 	{
 		if(Killable->GetIsDead())
@@ -121,6 +125,14 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 			{
 				return;
 			}
+
+			if(Avatar->HasTag("CC.Rooted"))
+			{
+				Avatar->GetCharacterMovement()->bOrientRotationToMovement = false;
+			} else if(Avatar->GetCharacterMovement()->bOrientRotationToMovement == false)
+			{
+				Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
+			}
 			
 			float Dist = FVector::Dist(Avatar->GetActorLocation(), Location);
 			if(Dist < 190.f)
@@ -164,6 +176,7 @@ void UAbilityTask_PathTo::OnDestroy(bool AbilityEnded)
 		{
 			if(AAvatar* Avatar = Cast<AAvatar>(Ability->GetAvatarActorFromActorInfo()))
 			{
+				Avatar->GetCharacterMovement()->bOrientRotationToMovement = false;
 				Avatar->CheckShouldAttack();
 				if(AController* Controller = Avatar->GetController())
 				{
