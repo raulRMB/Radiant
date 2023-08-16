@@ -7,6 +7,21 @@
 #include "GAAnimated.generated.h"
 
 
+UENUM(BlueprintType)
+enum class EAnimatedAbilityTarget : uint8
+{
+	Self,
+	Target,
+	SelfAndTarget
+};
+
+UENUM(BlueprintType)
+enum class EAnimatedAbilityCastType : uint8
+{
+	Instant,
+	OnNotify
+};
+
 UCLASS()
 class RADIANT_API UGAAnimated : public URTAbility
 {
@@ -16,6 +31,18 @@ protected:
 	UPROPERTY(EditAnywhere)
 	uint8 bFireOnInterrupt : 1;
 	uint8 bHasFired : 1;
+
+	UPROPERTY(EditAnywhere)
+	EAnimatedAbilityTarget AnimatedAbilityTarget;
+
+	UPROPERTY(EditAnywhere)
+	EAnimatedAbilityCastType AnimatedAbilityCastType;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> InstantEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "/Script/Radiant.EArtilleryBehavior"))
+	int32 TargetingBehavior;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	class UAnimMontage* Montage;
@@ -42,6 +69,7 @@ protected:
 	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) {}
 	void ReturnToDefaultAndEndAbility(bool bWasCancelled = false);
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	bool ShouldHit(AActor* OtherActor);
 	void ReturnToDefault() const;
 	void BindAnimations(float PlayRate);
 	void BindAnimations();

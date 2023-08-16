@@ -4,6 +4,7 @@
 #include "GAS/Abilities/GAAnimated.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Combat/Artillery/Artillery.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Player/Avatar.h"
 #include "Player/RTPlayerState.h"
@@ -41,15 +42,56 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
 	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
-	Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
-	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
 
+	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
+	auto Char = Cast<ARTCharacter>(HitResult.GetActor());
+	if(AnimatedAbilityCastType == EAnimatedAbilityCastType::Instant && !ShouldHit(Char))
+	{
+		return;
+	}
+	if(AnimatedAbilityTarget == EAnimatedAbilityTarget::Target && AnimatedAbilityCastType == EAnimatedAbilityCastType::Instant)
+	{
+		if(FVector::DistSquared(HitResult.Location, Avatar->GetActorLocation()) < MaxRange * MaxRange)
+		{
+			return;
+		}
+		GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToTarget(InstantEffect.GetDefaultObject(), Char->GetAbilitySystemComponent(), 1.f, Avatar->GetAbilitySystemComponent()->MakeEffectContext());
+	} 
+	
+	Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
 	FVector Loc = Avatar->GetActorLocation();
 	Loc.Z = 0;
 	FVector Direction = (HitResult.Location - Loc).GetSafeNormal();
 	Avatar->SetRotationLock(true, Direction);
-	
 	BindAnimations();
+}
+
+bool UGAAnimated::ShouldHit(AActor* OtherActor)
+{
+	auto Owner = GetAvatarActorFromActorInfo();
+	ITeamMember* Self = Cast<ITeamMember>(Owner);
+	ITeamMember* Target = Cast<ITeamMember>(OtherActor);
+	
+	if (!Self || !Target)
+	{
+		return false;
+	}
+	
+	if (TargetingBehavior & static_cast<int32>(EArtilleryBehavior::HitSelf) && OtherActor == Owner)
+	{
+		return true;
+	}
+	if (TargetingBehavior & static_cast<int32>(EArtilleryBehavior::HitAllies) && Self->GetTeamId() == Target->GetTeamId() &&
+		OtherActor != Owner)
+	{
+		return true;
+	}
+	if (TargetingBehavior & static_cast<int32>(EArtilleryBehavior::HitEnemies) && Self->GetTeamId() != Target->GetTeamId())
+	{
+		return true;
+	}
+	
+	return false;
 }
 
 void UGAAnimated::ReturnToDefault() const
