@@ -30,6 +30,31 @@ void UCraftingPanel::NativeConstruct()
 	GearFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
 	MaterialFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
 	WeaponFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	GeneralFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	SupportFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	DamageFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	TankFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+}
+
+bool UCraftingPanel::ShouldIncludeClass(FItemData* ItemData)
+{
+	if(GeneralFilter->IsChecked() && ItemData->ClassType == EClassType::General)
+	{
+		return true;
+	}
+	if(SupportFilter->IsChecked() && ItemData->ClassType == EClassType::Support)
+	{
+		return true;
+	}
+	if(DamageFilter->IsChecked() && ItemData->ClassType == EClassType::Damage)
+	{
+		return true;
+	}
+	if(TankFilter->IsChecked() && ItemData->ClassType == EClassType::Tank)
+	{
+		return true;
+	}
+	return false;
 }
 
 bool UCraftingPanel::ShouldInclude(FItemData* ItemData)
@@ -38,19 +63,19 @@ bool UCraftingPanel::ShouldInclude(FItemData* ItemData)
 	{
 		return false;
 	}
-	if(AbilityFilter->IsChecked() && ItemData->AbilityData && !ItemData->GearData)
+	if(AbilityFilter->IsChecked() && ItemData->ItemType == EItemType::Ability)
 	{
 		return true;
 	}
-	if(GearFilter->IsChecked() && ItemData->GearData && !ItemData->AbilityData)
+	if(GearFilter->IsChecked() && ItemData->ItemType == EItemType::Gear)
 	{
 		return true;
 	}
-	if(MaterialFilter->IsChecked() && !ItemData->AbilityData && !ItemData->GearData)
+	if(MaterialFilter->IsChecked() && ItemData->ItemType == EItemType::Material)
 	{
 		return true;
 	}
-	if(WeaponFilter->IsChecked() && ItemData->AbilityData && ItemData->GearData)
+	if(WeaponFilter->IsChecked() && ItemData->ItemType == EItemType::Weapon)
 	{
 		return true;
 	}
@@ -69,24 +94,27 @@ void UCraftingPanel::Init(UInventoryComponent* Inventory)
 			{
 				if(ItemData->CraftingNodeData)
 				{
-					if(!ShouldInclude(ItemData))
+					if(!ShouldInclude(ItemData) || !ShouldIncludeClass(ItemData))
 					{
 						continue;
 					}
-					UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass);
-					ItemData->CraftingNodeData->Name = It.Key;
-					CraftingNode->Init(ItemData->CraftingNodeData->Icon, 1, InventoryComponent);
-					CraftingNode->SetCraftingItemDataName(It.Key);
-					CraftingNode->InitTooltip();
-					if(ItemData->AbilityData)
+					if(!NodeMap.Contains(It.Key))
 					{
-						CraftingNode->SetToolTipText(ItemData->AbilityData->Tooltip);
-					} else
-					{
-						CraftingNode->SetToolTipText(ItemData->Tooltip);
+						UCraftingNode* CraftingNode = CreateWidget<UCraftingNode>(this, CraftingNodeClass);
+						ItemData->CraftingNodeData->Name = It.Key;
+						CraftingNode->Init(ItemData->CraftingNodeData->Icon, 1, InventoryComponent);
+						CraftingNode->SetCraftingItemDataName(It.Key);
+						CraftingNode->InitTooltip();
+						if(ItemData->AbilityData)
+						{
+							CraftingNode->SetToolTipText(ItemData->AbilityData->Tooltip);
+						} else
+						{
+							CraftingNode->SetToolTipText(ItemData->Tooltip);
+						}
+						NodeMap.Add(It.Key, CraftingNode);
 					}
-					NodeMap.Add(It.Key, CraftingNode);
-					if(UCanvasPanelSlot* PanelSlot = RecipeList->AddChildToCanvas(CraftingNode))
+					if(UCanvasPanelSlot* PanelSlot = RecipeList->AddChildToCanvas(NodeMap.FindChecked(It.Key)))
 					{
 						PanelSlot->SetAnchors(FAnchors(.0f));
 						PanelSlot->SetSize(FVector2D(PanelSlotSize * RecipeList->GetCachedGeometry().Scale));

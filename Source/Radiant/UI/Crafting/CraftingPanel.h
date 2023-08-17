@@ -30,6 +30,18 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	UCheckBox* WeaponFilter;
+
+	UPROPERTY(meta=(BindWidget))
+	UCheckBox* GeneralFilter;
+	
+	UPROPERTY(meta=(BindWidget))
+	UCheckBox* SupportFilter;
+
+	UPROPERTY(meta=(BindWidget))
+	UCheckBox* DamageFilter;
+
+	UPROPERTY(meta=(BindWidget))
+	UCheckBox* TankFilter;
 	
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* RecipeList;
@@ -81,6 +93,7 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	UFUNCTION()
 	void OnFilterChanged(bool bIsChecked);
 	void NativeConstruct() override;
+	bool ShouldIncludeClass(FItemData* ItemData);
 	bool ShouldInclude(FItemData* ItemData);
 	UPROPERTY(EditAnywhere)
 	int32 MaximumNodeWidth = 5;
