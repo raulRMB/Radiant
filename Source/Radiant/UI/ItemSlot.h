@@ -23,7 +23,7 @@ struct FItemSlotData
 	UPROPERTY()
 	class UTexture2D* Icon;
 	uint8 bIsGear : 1;
-
+	
 	FItemSlotData() :
 		ItemName(NAME_None),
 		ItemAmount(0),
@@ -66,6 +66,7 @@ protected:
 	uint8 bShouldDropItem : 1;
 
 	virtual void NativeConstruct() override;
+	bool IsHotBarSlot();
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 

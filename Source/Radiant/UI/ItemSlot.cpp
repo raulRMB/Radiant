@@ -26,6 +26,11 @@ void UItemSlot::NativeConstruct()
 	bIsOnCooldown = false;
 }
 
+bool UItemSlot::IsHotBarSlot()
+{
+	return SlotID <= EItemSlotID::HotBarLast && SlotID >= EItemSlotID::HotBarFirst;
+}
+
 void UItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
 	UDragDropOperation*& OutOperation)
 {
@@ -54,6 +59,22 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 {
 	if(ItemSlot)
 	{
+		if(IsHotBarSlot() && ItemSlot->GetAbilityTrigger() == FGameplayTag::EmptyTag)
+		{
+			return false;
+		}
+		if(ItemSlot->IsHotBarSlot() && GetAbilityTrigger() == FGameplayTag::EmptyTag)
+		{
+			return false;
+		}
+		if(!ItemSlot->IsHotBarSlot() && IsHotBarSlot() && bIsOnCooldown)
+		{
+			return false;
+		}
+		if(ItemSlot->IsHotBarSlot() && !IsHotBarSlot() && ItemSlot->bIsOnCooldown)
+		{
+			return false;
+		}
 		if(UGearSlot* GearSlot = Cast<UGearSlot>(ItemSlot))
 		{
 			if(!GearSlot->CheckCanSwapWith(this))
