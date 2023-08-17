@@ -506,8 +506,7 @@ void AAvatar::ApplyInitialEffects()
 	{
 		for (auto Effect : InitialEffects)
 		{
-			UGameplayEffect* EffectInstance = NewObject<UGameplayEffect>(this, Effect);
-			AbilitySystemComponent->ApplyGameplayEffectToSelf(EffectInstance, 1,
+			AbilitySystemComponent->ApplyGameplayEffectToSelf(Effect.GetDefaultObject(), 1,
 															  AbilitySystemComponent->MakeEffectContext());
 		}
 		AbilitySystemComponent->AbilityFailedCallbacks.AddUObject(this, &AAvatar::OnAbilityFailed);
