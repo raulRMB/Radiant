@@ -34,6 +34,13 @@ bool UItemSlot::IsHotBarSlot()
 void UItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
 	UDragDropOperation*& OutOperation)
 {
+	if(SlotID == EItemSlotID::WeaponSlot && ItemSlotData.ItemType == EItemType::Weapon)
+	{
+		if(GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Cooldown")))
+		{
+			return;
+		}
+	}
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 	UAbilityDragDropOperation* DragWidget = Cast<UAbilityDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UAbilityDragDropOperation::StaticClass()));
 	SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -69,6 +76,20 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 {
 	if(ItemSlot)
 	{
+		if(SlotID == EItemSlotID::WeaponSlot && GetItemType() == EItemType::Weapon)
+		{
+			if(GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Cooldown")))
+			{
+				return false;
+			}
+		}
+		if(ItemSlot->SlotID == EItemSlotID::WeaponSlot && ItemSlot->GetItemType() == EItemType::Weapon)
+		{
+			if(GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Cooldown")))
+			{
+				return false;
+			}
+		}
 		auto Class = GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->CurrentClass;
 		if(IsHotBarSlot() && !ItemSlot->bIsEmpty && (ItemSlot->GetItemSlotData().ClassType != Class && ItemSlot->GetItemSlotData().ClassType != EClassType::General))
 		{
