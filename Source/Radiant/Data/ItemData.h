@@ -6,11 +6,35 @@
 #include "Engine/DataTable.h"
 #include "ItemData.generated.h"
 
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	Ability,
+	Gear,
+	Material,
+	Weapon
+};
+
+UENUM(BlueprintType)
+enum class EClassType : uint8
+{
+	General,
+	Support,
+	Damage,
+	Tank
+};
+
 USTRUCT()
 struct FItemData : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere)
+	EItemType ItemType;
+
+	UPROPERTY(EditAnywhere)
+	EClassType ClassType;
+	
 	UPROPERTY(EditAnywhere)
 	class UAbilityDataAsset* AbilityData;
 
