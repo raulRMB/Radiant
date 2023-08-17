@@ -49,14 +49,14 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		return;
 	}
-	if(AnimatedAbilityTarget == EAnimatedAbilityTarget::Target && AnimatedAbilityCastType == EAnimatedAbilityCastType::Instant)
+	if(AnimatedAbilityCastType == EAnimatedAbilityCastType::Instant)
 	{
-		if(FVector::DistSquared(HitResult.Location, Avatar->GetActorLocation()) > MaxRange * MaxRange) 
+		if(FVector::DistSquared(HitResult.Location, Avatar->GetActorLocation()) > MaxRange * MaxRange)
 		{
 			return;
 		}
-		auto EffectHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToTarget(InstantEffect.GetDefaultObject(), Char->GetAbilitySystemComponent(), 1.f, Char->GetAbilitySystemComponent()->MakeEffectContext());
-		bool applied = EffectHandle.WasSuccessfullyApplied();
+		CommitAbility(Handle, ActorInfo, ActivationInfo);
+		GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToTarget(InstantEffect.GetDefaultObject(), Char->GetAbilitySystemComponent(), 1.f, Char->GetAbilitySystemComponent()->MakeEffectContext());
 	} 
 	
 	Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
