@@ -32,10 +32,26 @@ void USlotManager::OnSlotChanged(const FName& Name, uint32 Amount) const
 	}
 }
 
+void USlotManager::OnClassChanged(EClassType Class)
+{
+	for(int i = static_cast<int>(EItemSlotID::HotBarFirst); i <= static_cast<int>(EItemSlotID::HotBarLast); i++)
+	{
+		auto Slot = Slots[static_cast<EItemSlotID>(i)];
+		if(Slot->IsEmpty() || Slot->GetItemClass() == EClassType::General)
+		{
+			continue;
+		}
+		if(Slot->GetItemClass() != Class)
+		{
+			Slot->SwapWith(FindEmptySlot());
+		}
+	}
+}
+
 void USlotManager::InitSlots(URTInfoPanel* InfoPanel, UCraftingPanel* CraftingPanel, TSubclassOf<UItemSlot> ItemSlotClass)
 {
 	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &USlotManager::OnSlotChanged);
-	
+	UEventBroker::Get(this)->CurrentClassChanged.AddUObject(this, &USlotManager::OnClassChanged);
 	HotbarHorizontalBox = InfoPanel->GetHotbarHorizontalBox();
 	InventoryGridPanel = CraftingPanel->GetInventoryGrid();
 	
@@ -104,7 +120,7 @@ UItemSlot* USlotManager::GetSlot(const FName& Name) const
 			return Slots[EItemSlotID::NecklaceSlot];
 		}
 	}
-	if(ItemData->AbilityData && !ItemData->GearData)
+	if(ItemData->ItemType == EItemType::Ability && Slots[EItemSlotID::WeaponSlot]->GetItemClass() == ItemData->ClassType)
 	{
 		return FindEmptyAbilitySlot();
 	}
@@ -159,6 +175,8 @@ FItemSlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) con
 		ItemSlotData.ItemName = Name;
 		ItemSlotData.ItemAmount = Amount;
 		ItemSlotData.bIsGear = ItemData->bIsGear;
+		ItemSlotData.ItemType = ItemData->ItemType;
+		ItemSlotData.ClassType = ItemData->ClassType;
 		if(ItemData->AbilityData)
 		{
 			ItemSlotData.AbilityTrigger = ItemData->AbilityData->Ability.GetDefaultObject()->GetTriggerTag();

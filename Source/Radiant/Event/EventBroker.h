@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums/ClassType.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "EventBroker.generated.h"
 
@@ -10,6 +11,8 @@
 DECLARE_MULTICAST_DELEGATE_TwoParams(FItemChangedSignature, const class FName&, const uint32 Amount);
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDragStatus, bool);
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FCurrentClassChanged, EClassType);
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FItemUsedSignature, const class FName&, const uint32 Amount);
 
@@ -26,6 +29,7 @@ public:
 	FDragStatus DragStatusChanged;
 	FItemUsedSignature ItemUsed;
 	FGameIsReady GameIsReady;
+	FCurrentClassChanged CurrentClassChanged;
 	FRightMouseButtonClickedSignature RightMouseButtonClicked;
 	static UEventBroker* Get(const UObject* WorldContextObject);
 };

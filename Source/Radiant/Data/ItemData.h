@@ -4,25 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Enums/ClassType.h"
+#include "Enums/ItemType.h"
 #include "ItemData.generated.h"
-
-UENUM(BlueprintType)
-enum class EItemType : uint8
-{
-	Ability,
-	Gear,
-	Material,
-	Weapon
-};
-
-UENUM(BlueprintType)
-enum class EClassType : uint8
-{
-	General,
-	Support,
-	Damage,
-	Tank
-};
 
 USTRUCT()
 struct FItemData : public FTableRowBase

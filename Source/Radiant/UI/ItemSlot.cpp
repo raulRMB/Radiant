@@ -55,15 +55,34 @@ FReply UItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPo
 	return ReplyResult.NativeReply;
 }
 
+EItemType UItemSlot::GetItemType()
+{
+	return ItemSlotData.ItemType;
+}
+
+EClassType UItemSlot::GetItemClass()
+{
+	return ItemSlotData.ClassType;
+}
+
 bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 {
 	if(ItemSlot)
 	{
-		if(IsHotBarSlot() && ItemSlot->GetAbilityTrigger() == FGameplayTag::EmptyTag)
+		auto Class = GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->CurrentClass;
+		if(IsHotBarSlot() && !ItemSlot->bIsEmpty && (ItemSlot->GetItemSlotData().ClassType != Class && ItemSlot->GetItemSlotData().ClassType != EClassType::General))
 		{
 			return false;
 		}
-		if(ItemSlot->IsHotBarSlot() && GetAbilityTrigger() == FGameplayTag::EmptyTag)
+		if(ItemSlot->IsHotBarSlot() && !bIsEmpty && ItemSlotData.ClassType != Class && ItemSlotData.ClassType != EClassType::General)
+		{
+			return false;
+		}
+		if(IsHotBarSlot() && !ItemSlot->bIsEmpty && ItemSlot->GetItemSlotData().ItemType != EItemType::Ability)
+		{
+			return false;
+		}
+		if(ItemSlot->IsHotBarSlot() && !bIsEmpty && ItemSlotData.ItemType != EItemType::Ability)
 		{
 			return false;
 		}
@@ -170,7 +189,6 @@ float UItemSlot::GetCooldownPercent(const float TimeRemaining, const float Coold
 void UItemSlot::SetData(const FItemSlotData& Data)
 {
 	ItemSlotData = Data;
-	
 	if(Data.ItemAmount > 0)
 	{
 		AmountText->SetVisibility(ESlateVisibility::Visible);

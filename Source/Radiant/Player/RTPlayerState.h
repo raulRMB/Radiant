@@ -7,6 +7,7 @@
 #include "GameplayEffectTypes.h"
 #include "RTPlayerController.h"
 #include "Data/ItemData.h"
+#include "Enums/ClassType.h"
 #include "GameFramework/PlayerState.h"
 #include "UI/ItemSlot.h"
 #include "Util/Interfaces/Carrier.h"
@@ -45,12 +46,16 @@ protected:
 
 	UPROPERTY(Replicated, VisibleAnywhere)
 	uint8 bIsDead : 1;
+
+	
+	
 public:
 	virtual FVector GetCarrierLocation() const override;
 	virtual class UInventoryComponent* GetInventory() const override;
 	void RemoveAbility(FGameplayAbilitySpecHandle Handle);
 	class ARTPlayerController* GetRTController() const;
-
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentClass, VisibleAnywhere)
+	EClassType CurrentClass = EClassType::General;
 	virtual void BeginPlay() override;
 
 	FUpdateRadianiteSignature OnUpdateRadianite;
@@ -68,6 +73,9 @@ public:
 	UFUNCTION()
 	virtual void OnRep_UsernameChanged();
 
+	UFUNCTION()
+	virtual void OnRep_CurrentClass();
+	
 	AActor* GetTarget() const { return Target; }
 	virtual ETeamId GetTeamId() const override { return TeamId; }
 	void SetTeamId(ETeamId NewTeamId) { TeamId = NewTeamId; }

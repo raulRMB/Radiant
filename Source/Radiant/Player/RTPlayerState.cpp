@@ -28,6 +28,7 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, Username);
 	DOREPLIFETIME(ARTPlayerState, InnateAbilities);
 	DOREPLIFETIME(ARTPlayerState, bIsDead);
+	DOREPLIFETIME(ARTPlayerState, CurrentClass);
 }
 
 FVector ARTPlayerState::GetCarrierLocation() const
@@ -120,6 +121,11 @@ void ARTPlayerState::SetPlayerStats()
 void ARTPlayerState::OnRep_UsernameChanged()
 {
 	GetPawn<AAvatar>()->SetOverheadBarText(Username);
+}
+
+void ARTPlayerState::OnRep_CurrentClass()
+{
+	UEventBroker::Get(this)->CurrentClassChanged.Broadcast(CurrentClass);
 }
 
 void ARTPlayerState::S_SetTarget_Implementation(AActor* NewTargetId)
@@ -268,6 +274,7 @@ void ARTPlayerState::S_EquipGear_Implementation(const FName& WeaponName)
 			AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
 		}
 		WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(WeaponDataAsset->Ability.GetDefaultObject());
+		CurrentClass = GearItemData->ClassType;
 	}
 	
 	if(GearData)
@@ -295,6 +302,10 @@ void ARTPlayerState::S_UnequipGear_Implementation(const FName& GearName)
 	{
 		if(const UGearData* GearData = Cast<UGearData>(ItemData->GearData))
 		{
+			if(ItemData->ItemType == EItemType::Weapon)
+			{
+				CurrentClass = EClassType::General;
+			}
 			for(const TSubclassOf<UGameplayEffect>& EffectClass : GearData->GameplayEffects)
 			{
 				GetAbilitySystemComponent()->RemoveActiveGameplayEffectBySourceEffect(EffectClass, GetAbilitySystemComponent());

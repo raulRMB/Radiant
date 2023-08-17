@@ -6,8 +6,11 @@
 #include "GameplayTagContainer.h"
 #include "Blueprint/UserWidget.h"
 #include "Data/AbilityDataAsset.h"
+#include "Data/ItemData.h"
+#include "Enums/ClassType.h"
 #include "Util/AbilityDragDropOperation.h"
 #include "Enums/ItemSlotID.h"
+#include "Enums/ItemType.h"
 #include "ItemSlot.generated.h"
 
 USTRUCT()
@@ -23,7 +26,9 @@ struct FItemSlotData
 	UPROPERTY()
 	class UTexture2D* Icon;
 	uint8 bIsGear : 1;
-	
+	EItemType ItemType;
+	EClassType ClassType;
+
 	FItemSlotData() :
 		ItemName(NAME_None),
 		ItemAmount(0),
@@ -31,7 +36,9 @@ struct FItemSlotData
 		CooldownTag(FGameplayTag()),
 		Tooltip(FText::FromString("")),
 		Icon(nullptr),
-		bIsGear(false)
+		bIsGear(false),
+		ItemType(EItemType::Material),
+		ClassType(EClassType::General)
 	{ }
 };
 
@@ -69,8 +76,6 @@ protected:
 	bool IsHotBarSlot();
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-
-	bool SwapWith(UItemSlot* ItemSlot);
 	
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	                          UDragDropOperation* InOperation) override;
@@ -81,17 +86,17 @@ protected:
 	bool GetCooldownRemaining(float& TimeRemaining, float& CooldownDuration);
 	void SetAbilityCoolDown(const float Percent);
 public:
+	bool SwapWith(UItemSlot* ItemSlot);
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* Mat;
 	virtual void SetData(const FItemSlotData& Data);
 	void UpdateCooldown();
 	void Reset();
-
 	FItemSlotData& GetItemSlotData() { return ItemSlotData; }
-
 	void SetShouldDropItem(const bool ShouldDropItem) { bShouldDropItem = ShouldDropItem; }
 	FName& GetItemName() { return ItemSlotData.ItemName; }
-
+	EItemType GetItemType();
+	EClassType GetItemClass();
 	virtual void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
 	bool IsEmpty() const { return bIsEmpty; }
 
