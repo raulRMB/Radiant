@@ -34,12 +34,9 @@ bool UItemSlot::IsHotBarSlot()
 void UItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
 	UDragDropOperation*& OutOperation)
 {
-	if(SlotID == EItemSlotID::WeaponSlot && ItemSlotData.ItemType == EItemType::Weapon)
+	if(IsWeaponSlotWithCooldowns())
 	{
-		if(GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Cooldown")))
-		{
-			return;
-		}
+		return;
 	}
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 	UAbilityDragDropOperation* DragWidget = Cast<UAbilityDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UAbilityDragDropOperation::StaticClass()));
@@ -72,46 +69,51 @@ EClassType UItemSlot::GetItemClass()
 	return ItemSlotData.ClassType;
 }
 
+bool UItemSlot::IsWeaponSlotWithCooldowns()
+{
+	if(SlotID == EItemSlotID::WeaponSlot && ItemSlotData.ItemType == EItemType::Weapon)
+	{
+		if(GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Cooldown")))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UItemSlot::HoldsValidClassForWeapon()
+{
+	auto Class = GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->CurrentClass;
+	return bIsEmpty || GetItemClass() == Class || GetItemClass() == EClassType::General;
+}
+
+bool UItemSlot::IsHotbarSlotOnCooldown()
+{
+	return IsHotBarSlot() && bIsOnCooldown;
+}
+
+bool UItemSlot::HoldsAbility()
+{
+	return bIsEmpty || ItemSlotData.ItemType == EItemType::Ability;
+}
+
 bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 {
 	if(ItemSlot)
 	{
-		if(SlotID == EItemSlotID::WeaponSlot && GetItemType() == EItemType::Weapon)
-		{
-			if(GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Cooldown")))
-			{
-				return false;
-			}
-		}
-		if(ItemSlot->SlotID == EItemSlotID::WeaponSlot && ItemSlot->GetItemType() == EItemType::Weapon)
-		{
-			if(GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Cooldown")))
-			{
-				return false;
-			}
-		}
-		auto Class = GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->CurrentClass;
-		if(IsHotBarSlot() && !ItemSlot->bIsEmpty && (ItemSlot->GetItemSlotData().ClassType != Class && ItemSlot->GetItemSlotData().ClassType != EClassType::General))
+		if(IsWeaponSlotWithCooldowns() || ItemSlot->IsWeaponSlotWithCooldowns())
 		{
 			return false;
 		}
-		if(ItemSlot->IsHotBarSlot() && !bIsEmpty && ItemSlotData.ClassType != Class && ItemSlotData.ClassType != EClassType::General)
+		if((IsHotBarSlot() && !ItemSlot->HoldsValidClassForWeapon()) || (ItemSlot->IsHotBarSlot() && !HoldsValidClassForWeapon()))
 		{
 			return false;
 		}
-		if(IsHotBarSlot() && !ItemSlot->bIsEmpty && ItemSlot->GetItemSlotData().ItemType != EItemType::Ability)
+		if((IsHotBarSlot() && !ItemSlot->HoldsAbility()) || (ItemSlot->IsHotBarSlot() && !HoldsAbility()))
 		{
 			return false;
 		}
-		if(ItemSlot->IsHotBarSlot() && !bIsEmpty && ItemSlotData.ItemType != EItemType::Ability)
-		{
-			return false;
-		}
-		if(!ItemSlot->IsHotBarSlot() && IsHotBarSlot() && bIsOnCooldown)
-		{
-			return false;
-		}
-		if(ItemSlot->IsHotBarSlot() && !IsHotBarSlot() && ItemSlot->bIsOnCooldown)
+		if((!ItemSlot->IsHotBarSlot() && IsHotbarSlotOnCooldown()) || (!IsHotBarSlot() && ItemSlot->IsHotbarSlotOnCooldown()))
 		{
 			return false;
 		}
@@ -132,14 +134,11 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 		FItemSlotData TempItemSlotData = ItemSlot->ItemSlotData;
 		ItemSlot->SetData(ItemSlotData);
 		SetData(TempItemSlotData);
-
 		bool bTempIsEmpty = ItemSlot->bIsEmpty;
 		ItemSlot->SetEmpty(bIsEmpty);
 		SetEmpty(bTempIsEmpty);
-				
 		return true;
 	}
-	
 	return false;
 }
 
@@ -177,7 +176,7 @@ void UItemSlot::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDr
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 	SetVisibility(ESlateVisibility::Visible);
-	if(bShouldDropItem)
+	if(bShouldDropItem && !IsWeaponSlotWithCooldowns())
 	{
 		if(AAvatar* Avatar = GetOwningPlayerPawn<AAvatar>())
 		{

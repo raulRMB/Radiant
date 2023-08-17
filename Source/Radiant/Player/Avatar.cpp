@@ -160,7 +160,7 @@ void AAvatar::OnDragStatusChanged(bool status)
 	else
 	{
 		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAvatar::SetIsDraggingFalse, 0.2f, false);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAvatar::SetIsDraggingFalse, 0.01f, false);
 	}
 }
 

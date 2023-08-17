@@ -97,6 +97,10 @@ public:
 	FName& GetItemName() { return ItemSlotData.ItemName; }
 	EItemType GetItemType();
 	EClassType GetItemClass();
+	bool IsWeaponSlotWithCooldowns();
+	bool HoldsValidClassForWeapon();
+	bool IsHotbarSlotOnCooldown();
+	bool HoldsAbility();
 	virtual void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
 	bool IsEmpty() const { return bIsEmpty; }
 
