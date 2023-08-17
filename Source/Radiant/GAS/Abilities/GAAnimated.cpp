@@ -56,7 +56,7 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			return;
 		}
 		CommitAbility(Handle, ActorInfo, ActivationInfo);
-		GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToTarget(InstantEffect.GetDefaultObject(), Char->GetAbilitySystemComponent(), 1.f, Char->GetAbilitySystemComponent()->MakeEffectContext());
+		GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToTarget(InstantEffect.GetDefaultObject(), Char->GetAbilitySystemComponent(), 1.f, GetAbilitySystemComponentFromActorInfo()->MakeEffectContext());
 	} 
 	
 	Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
