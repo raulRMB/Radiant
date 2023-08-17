@@ -44,7 +44,7 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	AAvatar* Avatar = Cast<AAvatar>(GetAvatarActorFromActorInfo());
 
 	FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TriggerEventData->TargetData,0);
-	auto Char = Cast<ARTCharacter>(HitResult.GetActor());
+	ARTCharacter* Char = Cast<ARTCharacter>(HitResult.GetActor());
 	if(AnimatedAbilityCastType == EAnimatedAbilityCastType::Instant && !ShouldHit(Char))
 	{
 		return;

@@ -66,20 +66,33 @@ void ABuilding::S_Demolish_Implementation()
 {
 	if (HasAuthority())
 	{
-		Destroy();
+		DestroyBuilding();
 	}
 }
 
-void ABuilding::OnHealthChanged(const FOnAttributeChangeData& Data)
+void ABuilding::InitGridValues(AGridManager* NewGridManager, const FGridPiece& NewGridPiece)
 {
-	if(HasAuthority())
+	GridManager = NewGridManager;
+	GridPiece = NewGridPiece;
+}
+
+void ABuilding::DestroyBuilding()
+{
+	if(GridManager)
 	{
-		if (Data.NewValue <= 0)
-		{
-			Destroy();
-		}
+		GridManager->ClearPiece(GridPiece);
 	}
-	else
+	Destroy();
+}
+
+void ABuilding::M_ShowInfoBar_Implementation(bool bCond, float HealthPercent)
+{
+	if(!bCond)
+	{
+		return;
+	}
+	
+	if(!HasAuthority())
 	{
 		if(!InfoBarWidgetComponent)
 		{			
@@ -95,18 +108,33 @@ void ABuilding::OnHealthChanged(const FOnAttributeChangeData& Data)
 		if (InfoBar)
 		{
 			InfoBar->ShowLevel(!bHideLevel);
-			InfoBar->SetHealthPercent(Data.NewValue / AttributeSet->GetMaxHealth());
+			InfoBar->SetHealthPercent(HealthPercent);
 			InfoBar->SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
 		SetHealthBarColor();
 	}
-	
+}
+
+void ABuilding::OnHealthChanged(const FOnAttributeChangeData& Data)
+{
+	if(HasAuthority())
+	{
+		if (Data.NewValue <= 0)
+		{
+			DestroyBuilding();
+		}
+	}
+	else
+	{
+		M_ShowInfoBar(true, Data.NewValue / AttributeSet->GetMaxHealth());
+	}
 }
 
 void ABuilding::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABuilding, TeamId);
+	DOREPLIFETIME(ABuilding, bHideLevel);
 }
 
 void ABuilding::Tick(float DeltaSeconds)

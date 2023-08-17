@@ -18,11 +18,13 @@ void AGridManager::GenerateMap()
 	GridDimensions = MapTexture->GetSizeX();
 	
 	TextureCompressionSettings OldCompressionSettings = MapTexture->CompressionSettings;
+	ETextureSourceEncoding OldSourceEncoding = MapTexture->SourceColorSettings.EncodingOverride;
 	TextureMipGenSettings OldMipGenSettings = MapTexture->MipGenSettings;
 	bool OldSRGB = MapTexture->SRGB;
 
 	MapTexture->CompressionSettings = TextureCompressionSettings::TC_VectorDisplacementmap;
 	MapTexture->MipGenSettings = TextureMipGenSettings::TMGS_NoMipmaps;
+	MapTexture->SourceColorSettings.EncodingOverride = ETextureSourceEncoding::TSE_Linear;
 	MapTexture->SRGB = false;
 	MapTexture->UpdateResource();
 	
@@ -61,6 +63,7 @@ void AGridManager::GenerateMap()
 
 	MapTexture->CompressionSettings = OldCompressionSettings;
 	MapTexture->MipGenSettings = OldMipGenSettings;
+	MapTexture->SourceColorSettings.EncodingOverride = OldSourceEncoding;
 	MapTexture->SRGB = OldSRGB;
 	MapTexture->UpdateResource();
 }
@@ -82,14 +85,28 @@ void AGridManager::InitGrid()
 				{
 					continue;
 				}
-				FVector2D Position = FVector2D(x, y);
-				GetWorld()->SpawnActor<AActor>(BuildingTypes[Cells[y * GridDimensions + x]], FVector(Position.X, Position.Y, 0.f) * CellSize, FRotator::ZeroRotator);
+				FIntVector2 Position = FIntVector2(x, y);
+				FTransform SpawnTransform = FTransform(FVector(Position.X, Position.Y, 0.f) * CellSize);
+				AActor* Actor = GetWorld()->SpawnActorDeferred<AActor>(BuildingTypes[Cells[y * GridDimensions + x]], SpawnTransform);
+				
+				if(ABuilding* Building = Cast<ABuilding>(Actor))
+				{
+					FGridPiece Piece;
+					Piece.Position = Position;
+					Piece.Level = 1;
+					Piece.Type = Cells[y * GridDimensions + x];
+					Piece.TeamId = ETeamId::Neutral;
+					Building->InitGridValues(this, Piece);
+					Building->S_SetTeamId(ETeamId::Neutral);
+				}
+				
+				Actor->FinishSpawning(SpawnTransform);
 			}
 		}
 	}
 }
 
-void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
+void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 {
 	if(HasAuthority())
 	{
@@ -115,11 +132,27 @@ void AGridManager::PlacePieceAtMouse(FGridPiece Piece)
 			return;
 		}
 		FTransform Transform = FTransform(FVector(Piece.Position.X, Piece.Position.Y, 0.f) * CellSize);
-		ABuilding* Building = GetWorld()->SpawnActorDeferred<ABuilding>(BuildingTypes[Piece.Type], Transform);
-		Building->S_SetTeamId(Piece.TeamId);
-		Building->FinishSpawning(Transform);
+		AActor* Actor = GetWorld()->SpawnActorDeferred<AActor>(BuildingTypes[Piece.Type], Transform);
+		if(ABuilding* Building = Cast<ABuilding>(Actor))
+		{
+			Building->S_SetTeamId(Piece.TeamId);
+			Building->M_ShowInfoBar(true, 1.f);
+			Building->InitGridValues(this, Piece);
+		}
+		Actor->FinishSpawning(Transform);
 		Cells[Piece.Position.X + Piece.Position.Y * GridDimensions] = Piece.Type;
 	}
+}
+
+void AGridManager::ClearPiece(const FGridPiece Piece)
+{
+	FIntVector2 Position = Piece.Position;
+	if(Position.X < 0 || Position.Y < 0 || Position.X >= GridDimensions || Position.Y >= GridDimensions)
+	{
+		return;
+	}
+
+	Cells[Position.X + Position.Y * GridDimensions] = EEnvironmentType::EEnvironmentType_Empty;
 }
 
 bool AGridManager::CheckCanPlace(const FGridPiece Piece)

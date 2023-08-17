@@ -26,8 +26,10 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	FVector WidgetLocation;
 
 	FGridPiece GridPiece;
+	UPROPERTY()
+	class AGridManager* GridManager;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 	uint8 bHideLevel : 1;
 
 	UPROPERTY(EditAnywhere)
@@ -78,8 +80,15 @@ public:
 	void S_SetTeamId(ETeamId NewTeamId);
 	UFUNCTION(Server, Reliable)
 	void S_Demolish();
+	UFUNCTION(NetMulticast, Reliable)
+	void M_ShowInfoBar(const bool bCond, const float HealthPercent);
+
+	void InitGridValues(class AGridManager* NewGridManager, const FGridPiece& NewGridPiece);
+	
+	void DestroyBuilding();
 
 private:
+	
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
 protected:

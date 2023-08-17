@@ -861,20 +861,20 @@ void AAvatar::Demolish()
 	FHitResult HitResult = GetMousePositionInWorld();
 	if (ABuilding* Building = Cast<ABuilding>(HitResult.GetActor()))
 	{
-		if (Building->GetTeamId() == GetPlayerState<ARTPlayerState>()->GetTeamId())
-		{
-			S_Demolish(Building);
-		}
+		S_Demolish(GetRTPS()->GetTeamId(), Building);
 	}
 }
 
-void AAvatar::S_Demolish_Implementation(ABuilding* Building)
+void AAvatar::S_Demolish_Implementation(ETeamId PlayerTeamId, ABuilding* Building)
 {
 	if (HasAuthority())
 	{
 		if (IsValid(Building))
 		{
-			Building->Destroy();
+			if (PlayerTeamId == Building->GetTeamId())
+			{
+				Building->DestroyBuilding();
+			}
 		}
 	}
 }

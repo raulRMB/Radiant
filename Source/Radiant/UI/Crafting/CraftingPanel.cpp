@@ -119,8 +119,8 @@ void UCraftingPanel::Init(UInventoryComponent* Inventory)
 						PanelSlot->SetAnchors(FAnchors(.0f));
 						PanelSlot->SetSize(FVector2D(PanelSlotSize * RecipeList->GetCachedGeometry().Scale));
 						PanelSlot->SetAlignment(FVector2D(0.f));
-						auto X = (RecipeList->GetChildrenCount() - 1) % PanelSlotRowSize;
-						auto Y = (RecipeList->GetChildrenCount() - 1) / PanelSlotRowSize;
+						int32 X = (RecipeList->GetChildrenCount() - 1) % PanelSlotRowSize;
+						int32 Y = (RecipeList->GetChildrenCount() - 1) / PanelSlotRowSize;
 						FVector2D Position = FVector2D(X, Y);
 						PanelSlot->SetPosition(Position * PanelSlotSize + FVector2d(PanelSlotPadding * X, PanelSlotPadding * Y));
 						PanelSlot->SetPosition(PanelSlot->GetPosition() + FVector2D(10.f));

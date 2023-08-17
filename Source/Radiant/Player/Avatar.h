@@ -149,7 +149,7 @@ public:
 	void MoveCamera(FVector Dir);
 	void Demolish();
 	UFUNCTION(Server, Reliable)
-	void S_Demolish(ABuilding* Building);
+	void S_Demolish(ETeamId PlayerTeamId, ABuilding* Building);
 
 	class ARTPlayerState* GetRTPS() const;
 	
