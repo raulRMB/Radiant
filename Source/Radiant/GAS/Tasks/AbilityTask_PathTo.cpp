@@ -129,7 +129,9 @@ void UAbilityTask_PathTo::TickTask(float DeltaTime)
 			if(Avatar->HasTag("CC.Rooted"))
 			{
 				Avatar->GetCharacterMovement()->bOrientRotationToMovement = false;
-			} else if(Avatar->GetCharacterMovement()->bOrientRotationToMovement == false)
+				return;
+			}
+			if(Avatar->GetCharacterMovement()->bOrientRotationToMovement == false)
 			{
 				Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
 			}
