@@ -46,6 +46,8 @@ void UCraftingNode::OnItemChanged(const FName& Name, uint32 Amount)
 
 void UCraftingNode::Init(UTexture2D* Texture, uint8 Amount, UInventoryComponent* NewInventoryComponent)
 {
+	Button->OnLeftClick.AddUObject(this, &UCraftingNode::OnMouseLeftClicked);
+	Button->OnRightClick.AddUObject(this, &UCraftingNode::OnMouseRightClicked);
 	InventoryComponent = NewInventoryComponent;
 	UEventBroker::Get(this)->ItemChanged.AddUObject(this, &UCraftingNode::OnItemChanged);
 	if(Icon)
@@ -113,9 +115,6 @@ bool UCraftingNode::CheckHasMaterials()
 void UCraftingNode::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	Button->OnLeftClick.AddUObject(this, &UCraftingNode::OnMouseLeftClicked);
-	Button->OnRightClick.AddUObject(this, &UCraftingNode::OnMouseRightClicked);
 }
 
 void UCraftingNode::OnMouseLeftClicked()
