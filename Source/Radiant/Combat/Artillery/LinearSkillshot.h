@@ -37,6 +37,9 @@ class RADIANT_API ALinearSkillshot : public AArtillery
 	UPROPERTY()
 	TArray<AActor*> AffectedActors;
 
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class AArtillery>> ArtilleryChildren;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
 	uint8 bUseRange : 1;

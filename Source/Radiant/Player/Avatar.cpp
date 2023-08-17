@@ -230,6 +230,11 @@ FHitResult AAvatar::GetMousePositionInWorld(bool bIgnoreSelf) const
 	FVector2D MousePosition = GetMousePosition();
 	FVector WorldPosition;
 	FVector WorldDirection;
+
+	if(!GetWorld())
+	{
+		return FHitResult();
+	}
 	UGameplayStatics::DeprojectScreenToWorld(GetWorld()->GetFirstPlayerController(), MousePosition, WorldPosition,
 	                                         WorldDirection);
 

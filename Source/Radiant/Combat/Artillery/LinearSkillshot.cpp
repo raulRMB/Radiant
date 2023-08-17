@@ -3,6 +3,7 @@
 
 #include "Combat/Artillery/LinearSkillshot.h"
 
+#include "AreaOfEffect.h"
 #include "GameplayEffect.h"
 #include "Player/Avatar.h"
 #include "Components/SphereComponent.h"
@@ -100,6 +101,26 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 	}
 
 	OverlapStart(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+
+	for(TSubclassOf<AArtillery> Artillery : ArtilleryChildren)
+	{
+		AArtillery* ArtilleryChild = GetWorld()->SpawnActorDeferred<AArtillery>(
+			Artillery,
+			FTransform(GetActorLocation()),
+			GetOwner(),
+			GetInstigator(),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		
+		if(AAreaOfEffect* AreaOfEffect = Cast<AAreaOfEffect>(ArtilleryChild))
+		{
+			if(ARTCharacter* Character = Cast<ARTCharacter>(GetInstigator()))
+			{
+				AreaOfEffect->SetSourceCharacter(Character);
+			}
+		}
+
+		ArtilleryChild->FinishSpawning(FTransform(GetActorLocation()));
+	}
 
 	if (bConsumeOnHit)
 	{
