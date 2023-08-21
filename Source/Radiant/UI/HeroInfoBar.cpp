@@ -31,8 +31,21 @@ void UHeroInfoBar::SetOverheadText(const FString& String)
 	}
 }
 
+void UHeroInfoBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if(DamageTakenBar->GetPercent() >= HealthBar->GetPercent())
+	{
+		DamageTakenBar->SetPercent(DamageTakenBar->GetPercent() - (DamageIndicatorLerpRate * InDeltaTime));
+	}
+}
+
 void UHeroInfoBar::SetHealthPercent(float Percent)
 {
+	if(Percent < HealthBar->GetPercent())
+	{
+		DamageTakenBar->SetPercent(HealthBar->GetPercent());
+	}
 	HealthBar->SetPercent(Percent);
 }
 

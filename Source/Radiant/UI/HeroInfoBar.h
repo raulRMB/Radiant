@@ -14,6 +14,12 @@ class RADIANT_API UHeroInfoBar : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HealthBar;
+
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* DamageTakenBar;
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* ManaBar;
 	UPROPERTY(meta = (BindWidget))
@@ -22,11 +28,14 @@ class RADIANT_API UHeroInfoBar : public UUserWidget
 	class UTextBlock* Level;
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Username;
-
+	
 public:
 	UPROPERTY()
 	UMaterialInstanceDynamic* MaterialInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageIndicatorLerpRate = 1.6f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMaterialInterface* Interface;
 	void SetHealthPercent(float Percent);
