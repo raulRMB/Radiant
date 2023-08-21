@@ -28,7 +28,7 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, Username);
 	DOREPLIFETIME(ARTPlayerState, InnateAbilities);
 	DOREPLIFETIME(ARTPlayerState, bIsDead);
-	DOREPLIFETIME(ARTPlayerState, CurrentClass);
+	DOREPLIFETIME_CONDITION_NOTIFY(ARTPlayerState, CurrentClass, COND_AutonomousOnly, REPNOTIFY_Always);
 }
 
 FVector ARTPlayerState::GetCarrierLocation() const
@@ -91,21 +91,21 @@ ARTPlayerState::ARTPlayerState()
 
 	NetUpdateFrequency = 100.f;
 
-	AttributeSet->InitMaxHealth(1000.f);
+	AttributeSet->InitMaxHealth(500.f);
 	AttributeSet->InitHealth(AttributeSet->GetMaxHealth());
 	AttributeSet->InitMaxMana(150.f);
 	AttributeSet->InitMana(AttributeSet->GetMaxMana());
-	AttributeSet->InitMovementSpeed(600.f);
-	AttributeSet->InitAttackDamage(1000.f);
-	AttributeSet->InitArmor(100.f);
+	AttributeSet->InitMovementSpeed(500.f);
+	AttributeSet->InitAttackDamage(40.f);
+	AttributeSet->InitArmor(0.f);
 	AttributeSet->InitMaxRespawnTime(10.f);
 	AttributeSet->InitCurrentRespawnTime(AttributeSet->GetMaxRespawnTime());
 	AttributeSet->InitXP(0.f);
 	AttributeSet->InitMaxXP(100.f);
 	AttributeSet->InitLevel(1.f);
 	AttributeSet->InitRadianite(500.f);
-	AttributeSet->InitAttackSpeed(1.2f);
-	AttributeSet->InitAttackRange(1000.f);
+	AttributeSet->InitAttackSpeed(1.f);
+	AttributeSet->InitAttackRange(0.f);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetRadianiteAttribute()).AddUObject(
 		this, &ARTPlayerState::OnRadianiteChanged);
 }
@@ -125,7 +125,10 @@ void ARTPlayerState::OnRep_UsernameChanged()
 
 void ARTPlayerState::OnRep_CurrentClass()
 {
-	UEventBroker::Get(this)->CurrentClassChanged.Broadcast(CurrentClass);
+	if(GetLocalRole() == ROLE_AutonomousProxy)
+	{
+		UEventBroker::Get(this)->CurrentClassChanged.Broadcast(CurrentClass);
+	}
 }
 
 void ARTPlayerState::S_SetTarget_Implementation(AActor* NewTargetId)
