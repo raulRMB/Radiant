@@ -28,7 +28,7 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, Username);
 	DOREPLIFETIME(ARTPlayerState, InnateAbilities);
 	DOREPLIFETIME(ARTPlayerState, bIsDead);
-	DOREPLIFETIME_CONDITION_NOTIFY(ARTPlayerState, CurrentClass, COND_AutonomousOnly, REPNOTIFY_Always);
+	DOREPLIFETIME(ARTPlayerState, CurrentClass);
 }
 
 FVector ARTPlayerState::GetCarrierLocation() const
