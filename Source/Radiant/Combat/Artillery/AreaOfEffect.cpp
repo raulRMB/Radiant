@@ -184,8 +184,11 @@ void AAreaOfEffect::BeginPlay()
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAreaOfEffect::OnTimerEnd, LifeSpan, false);
 	}
 
-	HitBox->OnComponentBeginOverlap.AddDynamic(this, &AAreaOfEffect::OnHitBoxBeginOverlap);
-	HitBox->OnComponentEndOverlap.AddDynamic(this, &AAreaOfEffect::OnHitBoxEndOverlap);
+	if(IsValid(this))
+	{
+		HitBox->OnComponentBeginOverlap.AddDynamic(this, &AAreaOfEffect::OnHitBoxBeginOverlap);
+		HitBox->OnComponentEndOverlap.AddDynamic(this, &AAreaOfEffect::OnHitBoxEndOverlap);
+	}
 }
 
 // Called every frame
