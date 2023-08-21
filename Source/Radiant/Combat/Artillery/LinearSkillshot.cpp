@@ -76,16 +76,16 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 		return;
 	}
 
-	if (auto Character = Cast<IAbilitySystemInterface>(OtherActor))
+	if (IAbilitySystemInterface* ASCInterface = Cast<IAbilitySystemInterface>(OtherActor))
 	{
-		for (auto Effect : GameplayEffects)
+		for (TSubclassOf<UGameplayEffect>& Effect : GameplayEffects)
 		{
 			if (!AffectedActors.Contains(OtherActor))
 			{
 				if (ARTCharacter* Projectile_Instigator = Cast<ARTCharacter>(GetInstigator()))
 				{
 					Projectile_Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(
-						Effect.GetDefaultObject(), Character->GetAbilitySystemComponent(), 1.f, Character->GetAbilitySystemComponent()->MakeEffectContext());
+						Effect.GetDefaultObject(), ASCInterface->GetAbilitySystemComponent(), 1.f, ASCInterface->GetAbilitySystemComponent()->MakeEffectContext());
 				}
 				AffectedActors.AddUnique(OtherActor);
 			}
@@ -97,7 +97,7 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 			CueParameters.TargetAttachComponent = OtherCharacter->GetMesh();
 		}
 		CueParameters.Instigator = this;
-		Character->GetAbilitySystemComponent()->ExecuteGameplayCue(HitCueTag, CueParameters);
+		ASCInterface->GetAbilitySystemComponent()->ExecuteGameplayCue(HitCueTag, CueParameters);
 	}
 
 	OverlapStart(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);

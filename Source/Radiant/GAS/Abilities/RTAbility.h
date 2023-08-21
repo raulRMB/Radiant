@@ -42,6 +42,10 @@ public:
 	FGameplayTag GetCooldownTag() const;
 	
 	class AAvatar* GetAvatar();
+
+	void RemoveEffects();
+
+	TArray<FActiveGameplayEffectHandle>& GetSelfEffectHandles() { return SelfEffectHandles; }
 protected:
 	void UseItem(const FGameplayAbilitySpecHandle& Handle);
 	virtual bool CommitAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, FGameplayTagContainer* OptionalRelevantTags = nullptr) override;

@@ -8,7 +8,7 @@
 // Add default functionality here for any IArtillery functions that are not pure virtual.
 bool AArtillery::ShouldHit(AActor* OtherActor)
 {
-	ITeamMember* Self = Cast<ITeamMember>(Owner);
+	ITeamMember* Self = Cast<ITeamMember>(GetInstigator());
 	ITeamMember* Target = Cast<ITeamMember>(OtherActor);
 
 	if (!Self || !Target)
@@ -16,12 +16,12 @@ bool AArtillery::ShouldHit(AActor* OtherActor)
 		return false;
 	}
 
-	if (Behavior & static_cast<int32>(EArtilleryBehavior::HitSelf) && OtherActor == Owner)
+	if (Behavior & static_cast<int32>(EArtilleryBehavior::HitSelf) && OtherActor == GetInstigator())
 	{
 		return true;
 	}
 	if (Behavior & static_cast<int32>(EArtilleryBehavior::HitAllies) && Self->GetTeamId() == Target->GetTeamId() &&
-		OtherActor != Owner)
+		OtherActor != GetInstigator())
 	{
 		return true;
 	}

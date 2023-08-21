@@ -2,11 +2,9 @@
 
 
 #include "Combat/Artillery/AreaOfEffect.h"
-
 #include "Player/Avatar.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
-#include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -30,29 +28,87 @@ void AAreaOfEffect::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 }
 
-void AAreaOfEffect::ApplyGameplayEffects()
+void AAreaOfEffect::ApplyGameplayEffectsToTargets()
 {
 	if (HasAuthority())
 	{
 		for (ITeamMember* TeamMember : EffectTargets)
 		{
-			if (auto ASC = Cast<IAbilitySystemInterface>(TeamMember))
+			if (IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(TeamMember))
 			{
-				if (UAbilitySystemComponent* AbilitySystemComponent = ASC->GetAbilitySystemComponent())
+				if (UAbilitySystemComponent* AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent())
 				{
-					for (auto GameplayEffect : GameplayEffects)
-					{
-						FGameplayEffectContextHandle EffectContext = SourceCharacter->GetAbilitySystemComponent()->
-							MakeEffectContext();
-						FGameplayEffectSpecHandle NewHandle = SourceCharacter->GetAbilitySystemComponent()->
-						                                                       MakeOutgoingSpec(
-							                                                       GameplayEffect, 1, EffectContext);
-						if (NewHandle.IsValid())
-						{
-							SourceCharacter->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(
-								*NewHandle.Data.Get(), AbilitySystemComponent);
-						}
-					}
+					ApplyGameplayEffectsToASC(AbilitySystemComponent);
+				}
+			}
+		}
+	}
+}
+
+void AAreaOfEffect::ApplyGameplayEffectsToASC(UAbilitySystemComponent* ASC)
+{
+	if(!HasAuthority())
+	{
+		return;
+	}
+	
+	for (TSubclassOf<UGameplayEffect>& GameplayEffect : GameplayEffects)
+	{
+		UAbilitySystemComponent* SourceASC = SourceCharacter->GetAbilitySystemComponent();
+		SourceASC->ApplyGameplayEffectToTarget(
+			GameplayEffect.GetDefaultObject(), ASC, 1, ASC->MakeEffectContext());
+	}
+}
+
+void AAreaOfEffect::RemoveGameplayEffectsFromASC(UAbilitySystemComponent* ASC)
+{
+	if(!HasAuthority())
+	{
+		return;
+	}
+	
+	FGameplayTagContainer TagsToRemove;
+	for (TSubclassOf<UGameplayEffect>& GameplayEffect : GameplayEffects)
+	{
+		for(FGameplayTag Tag : GameplayEffect.GetDefaultObject()->InheritableGameplayEffectTags.CombinedTags)
+		{
+			TagsToRemove.AddTag(Tag);
+		}	
+	}
+	FGameplayEffectQuery Query = FGameplayEffectQuery::MakeQuery_MatchAnyEffectTags(TagsToRemove);
+	ASC->RemoveActiveEffects(Query, 1);
+}
+
+void AAreaOfEffect::OnHitBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(ApplicationType == EAOEApplicationType::Constant || ApplicationType == EAOEApplicationType::OnOverlap)
+	{
+		if(ShouldHit(OtherActor))
+		{
+			if(IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(OtherActor))
+			{
+				if(UAbilitySystemComponent* AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent())
+				{
+					ApplyGameplayEffectsToASC(AbilitySystemComponent);
+				}
+			}
+		}
+	}
+}
+
+void AAreaOfEffect::OnHitBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if(ApplicationType == EAOEApplicationType::Constant)
+	{
+		if(ShouldHit(OtherActor))
+		{
+			if(IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(OtherActor))
+			{
+				if(UAbilitySystemComponent* AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent())
+				{
+					RemoveGameplayEffectsFromASC(AbilitySystemComponent);
 				}
 			}
 		}
@@ -86,8 +142,25 @@ void AAreaOfEffect::ApplyInstantEffects()
 		SourceCharacter->GetAbilitySystemComponent()->ExecuteGameplayCue(CueTag, CueParameters);
 	}
 
-	ApplyGameplayEffects();
+	ApplyGameplayEffectsToTargets();
 	Destroy();
+}
+
+void AAreaOfEffect::OnTimerEnd()
+{
+	if (ApplicationType == EAOEApplicationType::Constant)
+	{
+		Destroy();
+	}
+	else if(ApplicationType == EAOEApplicationType::OnTimerEnd_Instant)
+	{
+		ApplyInstantEffects();
+	}
+	else if(ApplicationType == EAOEApplicationType::OnTimerEnd_Constant)
+	{
+		ApplicationType = EAOEApplicationType::Constant;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAreaOfEffect::OnTimerEnd, ConstantLifeSpan, false);
+	}
 }
 
 
@@ -102,14 +175,17 @@ void AAreaOfEffect::BeginPlay()
 		TimerDisplay->SetRelativeScale3D(FVector::ZeroVector);
 	}
 
-	if (LifeSpan == 0.f)
+	if (ApplicationType == EAOEApplicationType::Instant)
 	{
 		ApplyInstantEffects();
 	}
 	else
 	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAreaOfEffect::ApplyInstantEffects, LifeSpan, false);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAreaOfEffect::OnTimerEnd, LifeSpan, false);
 	}
+
+	HitBox->OnComponentBeginOverlap.AddDynamic(this, &AAreaOfEffect::OnHitBoxBeginOverlap);
+	HitBox->OnComponentEndOverlap.AddDynamic(this, &AAreaOfEffect::OnHitBoxEndOverlap);
 }
 
 // Called every frame

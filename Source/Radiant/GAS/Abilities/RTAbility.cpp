@@ -204,14 +204,18 @@ void URTAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	for (FActiveGameplayEffectHandle SelfEffectHandle : SelfEffectHandles)
-	{
-		GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(SelfEffectHandle, 1);
-	}
+	RemoveEffects();
 }
 
 AAvatar* URTAbility::GetAvatar()
 {
 	return Cast<AAvatar>(GetAvatarActorFromActorInfo());
+}
+
+void URTAbility::RemoveEffects()
+{
+	for(FActiveGameplayEffectHandle& SelfEffectHandle : SelfEffectHandles)
+	{
+		GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(SelfEffectHandle, 1);
+	}
 }
