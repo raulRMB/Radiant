@@ -8,8 +8,6 @@ void UDPS_Blink::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
                                  const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
-	CommitAbility(Handle, ActorInfo, ActivationInfo);
 	
 	FGameplayCueParameters CueParameters;
 	CueParameters.Location = GetAvatarActorFromActorInfo()->GetActorLocation();

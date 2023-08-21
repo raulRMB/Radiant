@@ -12,6 +12,8 @@ void UGADash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
+	CommitAbility(Handle, ActorInfo, ActivationInfo);
+	
 	switch (DashType)
 	{
 	case EDashType::Linear:
