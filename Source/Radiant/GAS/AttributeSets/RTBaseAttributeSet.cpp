@@ -22,7 +22,7 @@ void URTBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCall
 				Killable->SetIsDead(true);
 			}
 		}
-		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
+		SetHealth(FMath::Clamp(Health.GetBaseValue(), 0.0f, GetMaxHealth()));
 	}
 	else if(Data.EvaluatedData.Attribute == GetXPAttribute())
 	{
@@ -38,6 +38,15 @@ void URTBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCall
 			
 			SetAttackDamage(GetAttackDamage() * 1.20f);
 		}
+	}
+}
+
+void URTBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHealth());
 	}
 }
 
