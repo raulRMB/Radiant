@@ -125,9 +125,12 @@ void ARTPlayerState::OnRep_UsernameChanged()
 
 void ARTPlayerState::OnRep_CurrentClass()
 {
-	if(GetLocalRole() == ROLE_AutonomousProxy)
+	if(GetPawn())
 	{
-		UEventBroker::Get(this)->CurrentClassChanged.Broadcast(CurrentClass);
+		if(GetPawn()->GetLocalRole() == ROLE_AutonomousProxy)
+		{
+			UEventBroker::Get(this)->CurrentClassChanged.Broadcast(CurrentClass);
+		}
 	}
 }
 
