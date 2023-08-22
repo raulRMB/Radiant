@@ -25,6 +25,10 @@ class RADIANT_API UUtil : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+
+	UFUNCTION(BlueprintCallable)
+	static UItemTooltip* InitTooltip(UUserWidget* Widget, TSubclassOf<UItemTooltip> TooltipClass, FName ItemName);
+	
 	UFUNCTION(BlueprintCallable)
 	static FVector GetMousePosition(class UObject* WorldContext, TArray<AActor*> IgnoredActors);
 

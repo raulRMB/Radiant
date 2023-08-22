@@ -139,36 +139,6 @@ void UCraftingNode::OnMouseRightClicked()
 
 void UCraftingNode::InitTooltip()
 {
-	UItemTooltip* Tooltip = CreateWidget<UItemTooltip>(this, ItemTooltipClass);
-	if(FItemData* ItemData = UUtil::GetItemDataFromName(CraftingItemDataName))
-	{
-		if(ItemData->GearData)
-		{
-			for(TSubclassOf<UGameplayEffect>& EffectClass : ItemData->GearData->GameplayEffects)
-			{
-				if(UGameplayEffect* Effect = EffectClass.GetDefaultObject())
-				{
-					FTooltipStatInfo StatInfo;
-					for(FGameplayModifierInfo& Modifier : Effect->Modifiers)
-					{
-						FName Name = FName(Modifier.Attribute.AttributeName);
-						StatInfo.CellType = Name;
-						float Magnitude;						
-						Modifier.ModifierMagnitude.GetStaticMagnitudeIfPossible(1, Magnitude);
-						StatInfo.ModOp = Modifier.ModifierOp;
-						Magnitude = FMath::Abs(Magnitude);
-						StatInfo.Value = Magnitude;
-						Tooltip->AddStatInfo(StatInfo);
-					}
-				}
-			}
-			Tooltip->Init();
-			SetToolTip(Tooltip);
-		}
-	}
-	else
-	{
-		SetToolTip(nullptr);
-	}
+	SetToolTip(UUtil::InitTooltip(this, ItemTooltipClass, CraftingItemDataName));
 }
 

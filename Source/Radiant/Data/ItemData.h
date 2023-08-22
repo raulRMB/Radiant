@@ -14,6 +14,9 @@ struct FItemData : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
+	FName DisplayName;
+	
+	UPROPERTY(EditAnywhere)
 	EItemType ItemType;
 
 	UPROPERTY(EditAnywhere)
@@ -34,9 +37,6 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* Icon;
 
-	UPROPERTY(EditAnywhere)
-	uint8 bIsGear : 1;
-
 	FItemData()
 	{
 		AbilityData = nullptr;
@@ -44,6 +44,5 @@ struct FItemData : public FTableRowBase
 		CraftingNodeData = nullptr;
 		Tooltip = FText::FromString("");
 		Icon = nullptr;
-		bIsGear = false;
 	}
 };

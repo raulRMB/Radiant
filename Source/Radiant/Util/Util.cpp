@@ -5,6 +5,7 @@
 #include "EngineUtils.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Data/BuildingTypes.h"
+#include "Data/GearData.h"
 #include "Data/ItemData.h"
 #include "Data/TooltipData.h"
 #include "Player/Avatar.h"
@@ -13,8 +14,41 @@
 #include "Kismet/GameplayStatics.h"
 #include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
+#include "UI/InGame/ItemTooltip.h"
 
 struct FGameplayAbilityTargetDataHandle;
+
+UItemTooltip* UUtil::InitTooltip(UUserWidget* Widget, TSubclassOf<UItemTooltip> TooltipClass, FName ItemName)
+{
+	UItemTooltip* Tooltip = CreateWidget<UItemTooltip>(Widget, TooltipClass);
+	if(FItemData* ItemData = GetItemDataFromName(ItemName))
+	{
+		if(ItemData->GearData)
+		{
+			for(TSubclassOf<UGameplayEffect>& EffectClass : ItemData->GearData->GameplayEffects)
+			{
+				if(UGameplayEffect* Effect = EffectClass.GetDefaultObject())
+				{
+					FTooltipStatInfo StatInfo;
+					for(FGameplayModifierInfo& Modifier : Effect->Modifiers)
+					{
+						FName Name = FName(Modifier.Attribute.AttributeName);
+						StatInfo.CellType = Name;
+						float Magnitude;						
+						Modifier.ModifierMagnitude.GetStaticMagnitudeIfPossible(1, Magnitude);
+						StatInfo.ModOp = Modifier.ModifierOp;
+						Magnitude = FMath::Abs(Magnitude);
+						StatInfo.Value = Magnitude;
+						Tooltip->AddStatInfo(StatInfo);
+					}
+				}
+			}
+		}
+		Tooltip->Init(ItemData, FText::FromString(ItemName.ToString()));
+		return Tooltip;
+	}
+	return nullptr;
+}
 
 FVector UUtil::GetMousePosition(class UObject* WorldContext, TArray<AActor*> IgnoredActors)
 {

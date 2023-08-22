@@ -11,6 +11,7 @@
 #include "Data/AbilityDataAsset.h"
 #include "Event/EventBroker.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "InGame/ItemTooltip.h"
 #include "Player/Avatar.h"
 #include "Player/RTPlayerController.h"
 #include "Player/RTPlayerState.h"
@@ -220,10 +221,12 @@ void UItemSlot::SetData(const FItemSlotData& Data)
 	{
 		AmountText->SetVisibility(ESlateVisibility::Hidden);
 	}
-	AmountText->SetToolTipText(Data.Tooltip);
+	
+	//AmountText->SetToolTipText(Data.Tooltip);
 	Icon->SetBrushFromTexture(Data.Icon);
-	Icon->SetToolTipText(Data.Tooltip);
-	CooldownMask->SetToolTipText(Data.Tooltip);
+	//Icon->SetToolTipText(Data.Tooltip);
+	//CooldownMask->SetToolTipText(Data.Tooltip);
+	SetToolTip(UUtil::InitTooltip(this, Tooltip, Data.ItemName));
 	CooldownTag = Data.CooldownTag;
 	Trigger = Data.AbilityTrigger;
 }

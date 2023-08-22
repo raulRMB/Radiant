@@ -25,7 +25,6 @@ struct FItemSlotData
 	FText Tooltip;
 	UPROPERTY()
 	class UTexture2D* Icon;
-	uint8 bIsGear : 1;
 	EItemType ItemType;
 	EClassType ClassType;
 
@@ -36,7 +35,6 @@ struct FItemSlotData
 		CooldownTag(FGameplayTag()),
 		Tooltip(FText::FromString("")),
 		Icon(nullptr),
-		bIsGear(false),
 		ItemType(EItemType::Material),
 		ClassType(EClassType::General)
 	{ }
@@ -103,7 +101,8 @@ public:
 	bool HoldsAbility();
 	virtual void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
 	bool IsEmpty() const { return bIsEmpty; }
-
+	UPROPERTY(EditAnywhere)
+	class TSubclassOf<class UItemTooltip> Tooltip;
 	void SetSlotID(const EItemSlotID& ID) { SlotID = ID; }
 	FGameplayTag GetAbilityTrigger();
 };

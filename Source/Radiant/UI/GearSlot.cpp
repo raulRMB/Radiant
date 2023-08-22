@@ -27,7 +27,7 @@ bool UGearSlot::CheckCanSwapWith(UItemSlot* ItemSlot)
 	}
 	
 	const FItemSlotData& SlotData = ItemSlot->GetItemSlotData();
-	if(SlotData.bIsGear)
+	if(SlotData.ItemType == EItemType::Gear || SlotData.ItemType == EItemType::Weapon)
 	{
 		if(FItemData* ItemData = UUtil::GetItemDataFromName(SlotData.ItemName, FString("UGearSlot::CheckCanSwapWith")))
 		{
@@ -49,7 +49,7 @@ void UGearSlot::SetData(const FItemSlotData& Data)
 {
 	Super::SetData(Data);
 
-	if(Data.bIsGear)
+	if(Data.ItemType == EItemType::Gear || Data.ItemType == EItemType::Weapon)
 	{
 		GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
 	}

@@ -6,6 +6,8 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "..\..\Data\TooltipData.h"
+#include "Data/AbilityDataAsset.h"
+#include "Data/GearData.h"
 #include "Util/Util.h"
 
 void UItemTooltip::AddStatInfo(FTooltipStatInfo StatInfo)
@@ -28,12 +30,14 @@ UTextBlock* UItemTooltip::CreateTextBlock(UObject* Outer, FTooltipStatInfo& Stat
 		break;
 	}
 	TextBlock->SetText(Text);
-	
+	TextBlock->Font.Size = 11;
 	return TextBlock;
 }
 
-void UItemTooltip::Init()
+void UItemTooltip::Init(FItemData* ItemData, FText Name)
 {
+	ItemName->SetText(Name);
+	Description->SetText(ItemData->Tooltip);
 	for(FTooltipStatInfo& StatInfo : StatInfos)
 	{
 		FTooltipData* TooltipData = ItemTooltipData->FindRow<FTooltipData>(StatInfo.CellType, "");
@@ -41,9 +45,10 @@ void UItemTooltip::Init()
 		{
 			continue;
 		}
+		
 		UImage* Image = NewObject<UImage>(this);
 		Image->SetBrushFromTexture(TooltipData->Icon);
-		Image->Brush.SetImageSize(FVector2D(32.f, 32.f));
+		Image->Brush.SetImageSize(FVector2D(20.f, 20.f));
 		Image->SetColorAndOpacity(TooltipData->Color);
 		UHorizontalBox* HorizontalBox = NewObject<UHorizontalBox>(this);
 		if(UHorizontalBoxSlot* HorizontalBoxSlot = HorizontalBox->AddChildToHorizontalBox(Image))

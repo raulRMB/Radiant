@@ -322,7 +322,7 @@ void ARTPlayerState::S_UnequipGear_Implementation(const FName& GearName)
 
 FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(const FItemData* ItemData) const
 {
-	if(ItemData->bIsGear || !ItemData->AbilityData)
+	if(ItemData->ItemType == EItemType::Gear || !ItemData->AbilityData)
 		return FGameplayAbilitySpecHandle();
 	FGameplayAbilitySpec AbilitySpec = ItemData->AbilityData->Ability.GetDefaultObject();
 	return AbilitySystemComponent->GiveAbility(AbilitySpec);

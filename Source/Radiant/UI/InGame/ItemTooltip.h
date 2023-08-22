@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Data/ItemData.h"
 #include "Structs/TooltipStatInfo.h"
 #include "ItemTooltip.generated.h"
 
@@ -16,6 +17,12 @@ class UItemTooltip : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UVerticalBox* VerticalBox;
 
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* ItemName;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* Description;
+	
 	UPROPERTY()
 	TArray<FTooltipStatInfo> StatInfos;
 
@@ -24,5 +31,5 @@ public:
 
 	static class UTextBlock* CreateTextBlock(UObject* Outer, FTooltipStatInfo& StatInfo); 
 	
-	void Init();
+	void Init(FItemData* ItemData, FText ItemName);
 };

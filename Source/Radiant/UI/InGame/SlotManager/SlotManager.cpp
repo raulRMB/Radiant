@@ -174,15 +174,13 @@ FItemSlotData USlotManager::CreateSlotData(const FName& Name, uint32 Amount) con
 	{
 		ItemSlotData.ItemName = Name;
 		ItemSlotData.ItemAmount = Amount;
-		ItemSlotData.bIsGear = ItemData->bIsGear;
 		ItemSlotData.ItemType = ItemData->ItemType;
 		ItemSlotData.ClassType = ItemData->ClassType;
 		if(ItemData->AbilityData)
 		{
 			ItemSlotData.AbilityTrigger = ItemData->AbilityData->Ability.GetDefaultObject()->GetTriggerTag();
 			ItemSlotData.CooldownTag = ItemData->AbilityData->Ability.GetDefaultObject()->GetCooldownTag();
-			ItemSlotData.Tooltip = ItemData->AbilityData->Tooltip;
-			ItemSlotData.Icon = ItemData->AbilityData->Icon;
+			ItemSlotData.Icon = ItemData->Icon;
 		}
 		else
 		{
