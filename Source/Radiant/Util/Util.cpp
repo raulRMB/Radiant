@@ -18,6 +18,11 @@ struct FGameplayAbilityTargetDataHandle;
 
 FVector UUtil::GetMousePosition(class UObject* WorldContext, TArray<AActor*> IgnoredActors)
 {
+	if(!IsValid(WorldContext) || !IsValid(WorldContext->GetWorld()))
+	{
+		return FVector::ZeroVector;
+	}
+	
 	FVector2D MousePosition;
 	if (GEngine && GEngine->GameViewport)
 	{
@@ -33,7 +38,7 @@ FVector UUtil::GetMousePosition(class UObject* WorldContext, TArray<AActor*> Ign
 	// Get the hit result
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParams;
-	for (auto Actor : IgnoredActors)
+	for (AActor* Actor : IgnoredActors)
 	{
 		CollisionQueryParams.AddIgnoredActor(Actor);
 	}
