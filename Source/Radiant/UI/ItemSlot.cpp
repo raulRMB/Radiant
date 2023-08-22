@@ -39,6 +39,7 @@ void UItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointer
 	SetVisibility(ESlateVisibility::HitTestInvisible);
 	if(IsWeaponSlotWithCooldowns())
 	{
+		SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
 	UAbilityDragDropOperation* DragWidget = Cast<UAbilityDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UAbilityDragDropOperation::StaticClass()));
