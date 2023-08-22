@@ -34,7 +34,8 @@ float UAttackDamageCalculation::CalculateBaseMagnitude_Implementation(const FGam
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 	
-	if(TargetTags->HasTag(FGameplayTag::RequestGameplayTag(FName("States.Invulnerable"))))
+	if(TargetTags->HasTag(FGameplayTag::RequestGameplayTag(FName("States.Invulnerable")))
+		|| TargetTags->HasTag(FGameplayTag::RequestGameplayTag(FName("States.Dead"))))
 	{
 		return 0.f;
 	}
