@@ -323,6 +323,23 @@ void AAvatar::SpawnActorAtSelf(const FString& PieceName, const uint32 Amount)
 	}
 }
 
+void AAvatar::GiveArchetypeItems(const EClassType Archetype)
+{
+	UDataTable* DataTable = UUtil::GetItemDataTable();
+	if (DataTable)
+	{
+		DataTable->GetRowMap();
+		for (auto& Item : DataTable->GetRowMap())
+		{
+			FItemData* ItemData = reinterpret_cast<FItemData*>(Item.Value);
+			if (ItemData->ClassType == Archetype)
+			{
+				GiveItem(Item.Key, 100);
+			}
+		}
+	}
+}
+
 void AAvatar::S_TryPlaceGridPiece_Implementation(FGridPiece Piece, FName ItemName)
 {
 	if(GridManager->CheckCanPlace(Piece))
