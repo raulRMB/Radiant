@@ -54,6 +54,10 @@ void AAreaOfEffect::ApplyGameplayEffectsToASC(UAbilitySystemComponent* ASC)
 	
 	for (TSubclassOf<UGameplayEffect>& GameplayEffect : GameplayEffects)
 	{
+		if(!IsValid(GameplayEffect.GetDefaultObject()))
+		{
+			continue;
+		}
 		UAbilitySystemComponent* SourceASC = SourceCharacter->GetAbilitySystemComponent();
 		SourceASC->ApplyGameplayEffectToTarget(
 			GameplayEffect.GetDefaultObject(), ASC, 1, ASC->MakeEffectContext());
