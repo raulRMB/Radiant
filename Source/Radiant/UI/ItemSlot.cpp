@@ -23,6 +23,7 @@ void UItemSlot::NativeConstruct()
 	MaterialInstance = UMaterialInstanceDynamic::Create(Mat, this);
 	CooldownMask->SetBrushResourceObject(MaterialInstance);
 	CooldownMask->SetVisibility(ESlateVisibility::Hidden);
+	AmountText->SetVisibility(ESlateVisibility::HitTestInvisible);
 	bIsOnCooldown = false;
 }
 
@@ -34,16 +35,15 @@ bool UItemSlot::IsHotBarSlot()
 void UItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
 	UDragDropOperation*& OutOperation)
 {
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+	SetVisibility(ESlateVisibility::HitTestInvisible);
 	if(IsWeaponSlotWithCooldowns())
 	{
 		return;
 	}
-	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 	UAbilityDragDropOperation* DragWidget = Cast<UAbilityDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UAbilityDragDropOperation::StaticClass()));
-	SetVisibility(ESlateVisibility::HitTestInvisible);
 	Icon->SetDesiredSizeOverride(FVector2D(80, 80));
 	DragWidget->DefaultDragVisual = Icon;
-	DragWidget->DefaultDragVisual->SetVisibility(ESlateVisibility::HitTestInvisible);
 	DragWidget->WidgetReference = this;
 	DragWidget->Pivot = EDragPivot::CenterCenter;
 	OutOperation = DragWidget;
@@ -167,6 +167,7 @@ bool UItemSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& 
 	if(DragDropOperation && DragDropOperation->WidgetReference != nullptr)
 	{
 		SwapWith(DragDropOperation->WidgetReference);
+		DragDropOperation->WidgetReference->SetVisibility(ESlateVisibility::Visible);
 	}
 	UEventBroker::Get(this)->DragStatusChanged.Broadcast(false);
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
@@ -218,6 +219,7 @@ void UItemSlot::SetData(const FItemSlotData& Data)
 	{
 		AmountText->SetVisibility(ESlateVisibility::Hidden);
 	}
+	AmountText->SetToolTipText(Data.Tooltip);
 	Icon->SetBrushFromTexture(Data.Icon);
 	Icon->SetToolTipText(Data.Tooltip);
 	CooldownMask->SetToolTipText(Data.Tooltip);
