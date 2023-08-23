@@ -58,6 +58,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (AllowPrivateAccess = "true"))
 	float SpawnRange = 300.f;
+
+	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess = true))
+	FGameplayTagContainer CueTags;
 	
 public:
 	UGAAnimated();
