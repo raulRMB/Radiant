@@ -22,11 +22,20 @@ class UItemTooltip : public UUserWidget
 
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* Description;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* ItemType;
+
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* ClassType;
 	
 	UPROPERTY()
 	TArray<FTooltipStatInfo> StatInfos;
 
 public:
+	void ShowTooltip();
+	void NativeConstruct() override;
+	
 	void AddStatInfo(FTooltipStatInfo StatInfo);
 
 	static class UTextBlock* CreateTextBlock(UObject* Outer, FTooltipStatInfo& StatInfo); 

@@ -18,7 +18,6 @@
 #define RTLOGP4(x, a, b, c, e) UE_LOG(LogTemp, Warning, TEXT(x), a, b, c, e);
 #define RTPRINTF(s, x) FText::FromString(FString::Printf(TEXT(s), x))
 
-
 UCLASS()
 class RADIANT_API UUtil : public UBlueprintFunctionLibrary
 {
@@ -28,6 +27,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static UItemTooltip* InitTooltip(UUserWidget* Widget, TSubclassOf<UItemTooltip> TooltipClass, FName ItemName);
+
+	UFUNCTION(BlueprintCallable)
+	static FText ItemTypeToText(const EItemType Value);
+
+	UFUNCTION(BlueprintCallable)
+	static FLinearColor ItemTypeToColor(EItemType Value);
+
+	UFUNCTION(BlueprintCallable)
+	static FLinearColor ClassTypeToColor(EClassType Value);
+	
+	UFUNCTION(BlueprintCallable)
+	static FText ClassTypeToText(const EClassType Value);
 	
 	UFUNCTION(BlueprintCallable)
 	static FVector GetMousePosition(class UObject* WorldContext, TArray<AActor*> IgnoredActors);

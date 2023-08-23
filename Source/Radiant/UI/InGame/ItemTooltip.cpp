@@ -10,6 +10,17 @@
 #include "Data/GearData.h"
 #include "Util/Util.h"
 
+void UItemTooltip::ShowTooltip()
+{
+	SetVisibility(ESlateVisibility::HitTestInvisible);
+}
+
+void UItemTooltip::NativeConstruct()
+{
+	Super::NativeConstruct();
+	ShowTooltip();
+}
+
 void UItemTooltip::AddStatInfo(FTooltipStatInfo StatInfo)
 {
 	StatInfos.Add(StatInfo);
@@ -36,8 +47,12 @@ UTextBlock* UItemTooltip::CreateTextBlock(UObject* Outer, FTooltipStatInfo& Stat
 
 void UItemTooltip::Init(FItemData* ItemData, FText Name)
 {
-	ItemName->SetText(Name);
+	ItemName->SetText(FText::FromName(ItemData->DisplayName));
 	Description->SetText(ItemData->Tooltip);
+	ItemType->SetText(UUtil::ItemTypeToText(ItemData->ItemType));
+	ItemType->SetColorAndOpacity(UUtil::ItemTypeToColor(ItemData->ItemType));
+	ClassType->SetText(UUtil::ClassTypeToText(ItemData->ClassType));
+	ClassType->SetColorAndOpacity(UUtil::ClassTypeToColor(ItemData->ClassType));
 	for(FTooltipStatInfo& StatInfo : StatInfos)
 	{
 		FTooltipData* TooltipData = ItemTooltipData->FindRow<FTooltipData>(StatInfo.CellType, "");

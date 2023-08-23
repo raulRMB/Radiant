@@ -18,6 +18,70 @@
 
 struct FGameplayAbilityTargetDataHandle;
 
+FText UUtil::ItemTypeToText(const EItemType Value)
+{
+	switch (Value)
+	{
+		case EItemType::Ability:
+			return FText::FromString("Ability");
+		case EItemType::Gear:
+			return FText::FromString("Gear");
+		case EItemType::Material:
+			return FText::FromString("Material");
+		case EItemType::Weapon:
+			return FText::FromString("Weapon");
+	}
+	return FText::FromString("");
+}
+
+FLinearColor UUtil::ItemTypeToColor(const EItemType Value)
+{
+	switch(Value)
+	{
+		case EItemType::Ability:
+			return FLinearColor(0.0f, 1.0f, 1.0f, 1.0f);
+		case EItemType::Gear:
+			return FLinearColor(1.0f, 1.0f, 0.0f, 1.0f);
+		case EItemType::Material:
+			return FLinearColor(0.0f, 1.0f, 0.0f, 1.0f);
+		case EItemType::Weapon:
+			return FLinearColor(0.72f, 0.15f, 0.52f, 1.0f);
+	}
+	return FLinearColor::White;
+}
+
+FLinearColor UUtil::ClassTypeToColor(const EClassType Value)
+{
+	switch(Value)
+	{
+	case EClassType::Support:
+		return FLinearColor(0.58f, 0.24f, 0.6f, 1.0f);
+	case EClassType::Tank:
+		return FLinearColor(0.91f, 0.57f, 0.2f, 1.0f);
+	case EClassType::Damage:
+		return FLinearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	case EClassType::General:
+		return FLinearColor::White;
+	}
+	return FLinearColor::White;
+}
+
+FText UUtil::ClassTypeToText(const EClassType Value)
+{
+	switch (Value)
+	{
+		case EClassType::Damage:
+			return FText::FromString("Damage");
+		case EClassType::General:
+			return FText::FromString("General");
+		case EClassType::Support:
+			return FText::FromString("Support");
+		case EClassType::Tank:
+			return FText::FromString("Tank");
+	}
+	return FText::FromString("");
+}
+
 UItemTooltip* UUtil::InitTooltip(UUserWidget* Widget, TSubclassOf<UItemTooltip> TooltipClass, FName ItemName)
 {
 	UItemTooltip* Tooltip = CreateWidget<UItemTooltip>(Widget, TooltipClass);
