@@ -64,22 +64,6 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	FVector Direction = (HitResult.Location - Loc).GetSafeNormal();
 	Avatar->SetRotationLock(true, Direction);
 	BindAnimations();
-
-	FGameplayCueParameters CueParameters;
-	CueParameters.Location = GetAvatarActorFromActorInfo()->GetActorLocation();
-	if(AAvatar* Hero = Cast<AAvatar>(GetAvatarActorFromActorInfo()))
-	{
-		CueParameters.TargetAttachComponent = Hero->GetMesh();
-		CueParameters.Instigator = Hero;
-	}
-	
-	if(HasAuthority(&CurrentActivationInfo))
-	{
-		for(FGameplayTag Tag : CueTags)
-		{
-			GetAbilitySystemComponentFromActorInfo_Checked()->ExecuteGameplayCue(Tag, CueParameters);
-		}
-	}
 }
 
 
