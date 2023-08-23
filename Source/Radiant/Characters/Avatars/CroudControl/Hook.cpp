@@ -43,6 +43,15 @@ void AHook::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherAc
 	Super::OverlapEnd(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 }
 
+void AHook::LifeSpanExpired()
+{
+	if(HookAbility)
+	{
+		HookAbility->OnFinished();
+	}
+	Super::LifeSpanExpired();
+}
+
 void AHook::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

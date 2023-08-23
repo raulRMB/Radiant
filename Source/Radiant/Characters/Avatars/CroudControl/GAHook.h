@@ -18,6 +18,8 @@ class RADIANT_API UGAHook : public UGALinearSkillshot
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	void OnTargetHit(class AActor* NewTarget);
+	UFUNCTION()
+	void OnFinished();
 private:
 
 	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
@@ -25,9 +27,6 @@ private:
 	virtual void OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	virtual void OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	virtual void OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) override;
-	
-	UFUNCTION()
-	void OnFinished();
 
 	UPROPERTY(EditAnywhere)
 	double DisplaceSpeed = 2000.0f;
