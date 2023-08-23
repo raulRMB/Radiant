@@ -28,6 +28,9 @@ void AMapHitBox::BeginPlay()
 void AMapHitBox::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if(!bBlockCharacters)
+		return;
+	
 	if(ARTCharacter* Character = Cast<ARTCharacter>(OtherActor))
 	{
 		FVector ToCenter = Character->GetActorLocation() - GetActorLocation();
@@ -41,19 +44,5 @@ void AMapHitBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	/* for(ARTCharacter* Character : Characters)
-	{
-		if(IsValid(Character))
-		{
-			FVector CharacterLocation = Character->GetActorLocation();
-			FVector Dir = GetActorLocation() - CharacterLocation;
-			Dir.Normalize();
-			Character->SetActorLocation(CharacterLocation + Dir * MoveSpeed *  DeltaTime);
-		}
-		else
-		{
-			Characters.Remove(Character);
-		}
-	} */
 }
 

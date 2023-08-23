@@ -19,6 +19,9 @@ class RADIANT_API AMapHitBox : public AActor
 	UPROPERTY()
 	TArray<ARTCharacter*> Characters;
 
+	UPROPERTY(EditAnywhere)
+	bool bBlockCharacters = true;
+	
 public:
 	// Sets default values for this actor's properties
 	AMapHitBox();
