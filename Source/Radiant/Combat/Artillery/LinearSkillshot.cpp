@@ -87,9 +87,9 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 					Projectile_Instigator->GetAbilitySystemComponent()->ApplyGameplayEffectToTarget(
 						Effect.GetDefaultObject(), ASCInterface->GetAbilitySystemComponent(), 1.f, ASCInterface->GetAbilitySystemComponent()->MakeEffectContext());
 				}
-				AffectedActors.AddUnique(OtherActor);
 			}
 		}
+		AffectedActors.AddUnique(OtherActor);
 		FGameplayCueParameters CueParameters;
 		CueParameters.Location = OtherActor->GetActorLocation();
 		if(ARTCharacter* OtherCharacter = Cast<ARTCharacter>(GetInstigator()))
