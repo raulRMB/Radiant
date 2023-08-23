@@ -55,6 +55,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void S_AddItem(const FName& ItemName, const uint32 Amount = 1);
+	UFUNCTION(Server, Reliable)
+	void S_RemoveAllItems();
 
 public:
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }

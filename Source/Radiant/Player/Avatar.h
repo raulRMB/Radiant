@@ -123,6 +123,8 @@ protected:
 	void SpawnActorAtSelf(const FString& PieceName, const uint32 Amount);
 	UFUNCTION(Exec)
 	void GiveArchetypeItems(const EClassType ClassType);
+	UFUNCTION(Exec)
+	void ClearInventory();
 
 public:
 	UFUNCTION(Server, Reliable)

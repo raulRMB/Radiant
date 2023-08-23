@@ -53,6 +53,15 @@ void UInventoryComponent::S_AddItem_Implementation(const FName& ItemName, const 
 	AddItem(ItemName, Amount);
 }
 
+void UInventoryComponent::S_RemoveAllItems_Implementation()
+{
+	for(TPair<FName, FInventoryItem>& Item : Items)
+	{
+		Item.Value.Amount = 0;
+		C_ItemChanged(Item.Key, Item.Value.Amount);
+	}
+}
+
 void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 {
 	TArray<FName> RowNames = ItemDataTable->GetRowNames();
@@ -110,6 +119,12 @@ int32 UInventoryComponent::RemoveItem(const FName& ItemName, int32 Amount)
 			HandleToItemName.Remove(*Handle);
 		}
 	}
+	if(Amount == -1)
+	{
+		Items[ItemName].Amount = 0;
+		C_ItemChanged(ItemName, Items[ItemName].Amount);
+	}
+	
 	return Items[ItemName].Amount;
 }
 

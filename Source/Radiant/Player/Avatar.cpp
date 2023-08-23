@@ -231,7 +231,7 @@ FHitResult AAvatar::GetMousePositionInWorld(bool bIgnoreSelf) const
 	FVector WorldPosition;
 	FVector WorldDirection;
 
-	if(!GetWorld())
+	if(!IsValid(this) || !GetWorld())
 	{
 		return FHitResult();
 	}
@@ -325,8 +325,7 @@ void AAvatar::SpawnActorAtSelf(const FString& PieceName, const uint32 Amount)
 
 void AAvatar::GiveArchetypeItems(const EClassType Archetype)
 {
-	UDataTable* DataTable = UUtil::GetItemDataTable();
-	if (DataTable)
+	if (UDataTable* DataTable = UUtil::GetItemDataTable())
 	{
 		DataTable->GetRowMap();
 		for (auto& Item : DataTable->GetRowMap())
@@ -337,6 +336,14 @@ void AAvatar::GiveArchetypeItems(const EClassType Archetype)
 				GiveItem(Item.Key, 100);
 			}
 		}
+	}
+}
+
+void AAvatar::ClearInventory()
+{
+	if(UInventoryComponent* InventoryComponent = GetInventory())
+	{
+		InventoryComponent->S_RemoveAllItems();
 	}
 }
 
