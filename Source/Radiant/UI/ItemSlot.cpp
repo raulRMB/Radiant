@@ -78,7 +78,7 @@ EClassType UItemSlot::GetItemClass()
 
 bool UItemSlot::IsWeaponSlotWithCooldowns()
 {
-	if(SlotID == EItemSlotID::WeaponSlot && ItemSlotData.ItemType == EItemType::Weapon)
+	if(SlotID == EItemSlotID::WeaponSlot && ItemSlotData.ItemType == EItemType::Weapon && ItemSlotData.ClassType != EClassType::General)
 	{
 		if(GetWorld()->GetFirstPlayerController()->GetPlayerState<ARTPlayerState>()->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Cooldown")))
 		{
