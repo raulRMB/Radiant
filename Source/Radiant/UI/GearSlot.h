@@ -25,6 +25,7 @@ public:
 	virtual void OnBeforeEmpty() override;
 	virtual void OnBeforeSwap() override;
 	virtual void OnBeforeItemDropped() override;
+	bool ValidateGear();
 	virtual void OnAfterSwap() override;
 	virtual void NativeConstruct() override;
 };

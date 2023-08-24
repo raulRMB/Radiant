@@ -298,30 +298,32 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32
 
 void ARTPlayerState::S_EquipGear_Implementation(const FName& WeaponName)
 {
-	const FItemData* GearItemData = UUtil::GetItemDataFromName(WeaponName);
-	const UWeaponDataAsset* WeaponDataAsset = Cast<UWeaponDataAsset>(GearItemData->AbilityData);
-	const UGearData* GearData = Cast<UGearData>(GearItemData->GearData);
-	
-	if(!GearItemData)
+	if(const FItemData* GearItemData = UUtil::GetItemDataFromName(WeaponName))
 	{
-		return;
-	}
-	if(WeaponDataAsset)
-	{	
-		if(WeaponAbilityHandle.IsValid())
+		const UWeaponDataAsset* WeaponDataAsset = Cast<UWeaponDataAsset>(GearItemData->AbilityData);
+		const UGearData* GearData = Cast<UGearData>(GearItemData->GearData);
+	
+		if(!GearItemData)
 		{
-			AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
+			return;
 		}
-		WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(WeaponDataAsset->Ability.GetDefaultObject());
-		CurrentClass = GearItemData->ClassType;
-	}
+		if(WeaponDataAsset)
+		{	
+			if(WeaponAbilityHandle.IsValid())
+			{
+				AbilitySystemComponent->SetRemoveAbilityOnEnd(WeaponAbilityHandle);
+			}
+			WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(WeaponDataAsset->Ability.GetDefaultObject());
+			CurrentClass = GearItemData->ClassType;
+		}
 	
-	if(GearData)
-	{
-		for(const TSubclassOf<UGameplayEffect>& EffectClass : GearData->GameplayEffects)
+		if(GearData)
 		{
-			UGameplayEffect* Effect = EffectClass.GetDefaultObject();
-			AbilitySystemComponent->ApplyGameplayEffectToSelf(Effect, 1.f, AbilitySystemComponent->MakeEffectContext());
+			for(const TSubclassOf<UGameplayEffect>& EffectClass : GearData->GameplayEffects)
+			{
+				UGameplayEffect* Effect = EffectClass.GetDefaultObject();
+				AbilitySystemComponent->ApplyGameplayEffectToSelf(Effect, 1.f, AbilitySystemComponent->MakeEffectContext());
+			}
 		}
 	}
 }

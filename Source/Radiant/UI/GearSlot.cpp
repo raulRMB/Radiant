@@ -8,31 +8,55 @@
 void UGearSlot::OnAfterFill()
 {
 	Super::OnAfterFill();
-	GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
+	if(ValidateGear())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
+	}
 }
 
 void UGearSlot::OnBeforeEmpty()
 {
 	Super::OnBeforeEmpty();
-	GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+	if(ValidateGear())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+	}
 }
 
 void UGearSlot::OnBeforeSwap()
 {
 	Super::OnBeforeSwap();
-	GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+	if(ValidateGear())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+	}
 }
 
 void UGearSlot::OnBeforeItemDropped()
 {
 	Super::OnBeforeItemDropped();
-	GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+	if(ValidateGear())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+	}
+}
+
+bool UGearSlot::ValidateGear()
+{
+	if(ItemSlotData.ItemName.IsNone())
+	{
+		return false;
+	}
+	return true;
 }
 
 void UGearSlot::OnAfterSwap()
 {
 	Super::OnAfterSwap();
-	GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
+	if(ValidateGear())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
+	}
 }
 
 bool UGearSlot::CheckCanSwapWith(UItemSlot* ItemSlot)
