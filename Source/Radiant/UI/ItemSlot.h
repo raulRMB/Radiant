@@ -50,7 +50,7 @@ protected:
 	EItemSlotID SlotID;
 	
 	uint8 bIsOnCooldown : 1;
-	uint8 bIsEmpty : 1;
+	bool bIsEmpty = true;
 
 	FItemSlotData ItemSlotData;
 	
@@ -81,16 +81,32 @@ protected:
 	
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	                          UDragDropOperation* InOperation) override;
+
 	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 	void SetOn(bool On);
 	float GetCooldownPercent(const float TimeRemaining, const float CooldownDuration);
 	bool GetCooldownRemaining(float& TimeRemaining, float& CooldownDuration);
 	void SetAbilityCoolDown(const float Percent);
+	virtual void OnBeforeSwap();
+	virtual void OnBeforeFill();
+	virtual void OnAfterFill();
+	virtual void OnBeforeEmpty();
+	virtual void OnAfterEmpty();
+	virtual void OnAfterSwap();
+	virtual void OnBeforeItemDropped();
+	virtual void OnAfterItemDropped();
+	void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
+
 public:
+	
+	void Fill(FItemSlotData Data);
+	void Empty();
+	bool SwapWith(UItemSlot* ItemSlot);
+	
 	void SetKeybindText();
 	void ListenForKeybindChanges();
-	bool SwapWith(UItemSlot* ItemSlot);
+	
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* Mat;
 	virtual void SetData(const FItemSlotData& Data);
@@ -105,7 +121,6 @@ public:
 	bool HoldsValidClassForWeapon();
 	bool IsHotbarSlotOnCooldown();
 	bool HoldsAbility();
-	virtual void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
 	bool IsEmpty() const { return bIsEmpty; }
 	UPROPERTY(EditAnywhere)
 	class TSubclassOf<class UItemTooltip> Tooltip;

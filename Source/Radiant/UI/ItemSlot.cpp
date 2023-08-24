@@ -33,6 +33,54 @@ void UItemSlot::ListenForKeybindChanges()
 	UEventBroker::Get(this)->KeybindChanged.AddUObject(this, &UItemSlot::SetKeybindText);
 }
 
+void UItemSlot::OnAfterSwap()
+{
+}
+
+void UItemSlot::OnBeforeSwap()
+{
+}
+
+void UItemSlot::OnBeforeFill()
+{
+}
+
+void UItemSlot::OnAfterFill()
+{
+}
+
+void UItemSlot::OnBeforeEmpty()
+{
+}
+
+void UItemSlot::OnAfterEmpty()
+{
+}
+
+void UItemSlot::OnBeforeItemDropped()
+{
+}
+
+void UItemSlot::OnAfterItemDropped()
+{
+}
+
+void UItemSlot::Fill(FItemSlotData Data)
+{
+	OnBeforeFill();
+	SetData(Data);
+	SetEmpty(false);
+	OnAfterFill();
+}
+
+void UItemSlot::Empty()
+{
+	OnBeforeEmpty();
+	Reset();
+	SetEmpty(true);
+	OnAfterEmpty();
+}
+
 bool UItemSlot::IsHotBarSlot()
 {
 	return SlotID <= EItemSlotID::HotBarLast && SlotID >= EItemSlotID::HotBarFirst;
@@ -139,11 +187,14 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 			}
 		}
 		FItemSlotData TempItemSlotData = ItemSlot->ItemSlotData;
+		OnBeforeSwap();
+		ItemSlot->OnBeforeSwap();
 		ItemSlot->SetData(ItemSlotData);
 		SetData(TempItemSlotData);
 		bool bTempIsEmpty = ItemSlot->bIsEmpty;
 		ItemSlot->SetEmpty(bIsEmpty);
 		SetEmpty(bTempIsEmpty);
+		OnAfterSwap();
 		return true;
 	}
 	return false;
@@ -188,7 +239,9 @@ void UItemSlot::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDr
 	{
 		if(AAvatar* Avatar = GetOwningPlayerPawn<AAvatar>())
 		{
+			OnBeforeItemDropped();
 			Avatar->DropItem(ItemSlotData.ItemName);
+			OnAfterItemDropped();
 		}
 	}
 	UEventBroker::Get(this)->DragStatusChanged.Broadcast(false);
@@ -243,11 +296,7 @@ void UItemSlot::SetData(const FItemSlotData& Data)
 	{
 		AmountText->SetVisibility(ESlateVisibility::Hidden);
 	}
-	
-	//AmountText->SetToolTipText(Data.Tooltip);
 	Icon->SetBrushFromTexture(Data.Icon);
-	//Icon->SetToolTipText(Data.Tooltip);
-	//CooldownMask->SetToolTipText(Data.Tooltip);
 	SetToolTip(UUtil::InitTooltip(this, Tooltip, Data.ItemName));
 	CooldownTag = Data.CooldownTag;
 	Trigger = Data.AbilityTrigger;

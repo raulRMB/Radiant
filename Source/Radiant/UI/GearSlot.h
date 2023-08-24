@@ -21,7 +21,10 @@ public:
 	class UTextBlock* GearTypeText;
 	
 	virtual bool CheckCanSwapWith(UItemSlot* ItemSlot);
-	virtual void SetEmpty(const bool Empty) override;
-	virtual void SetData(const FItemSlotData& Data) override;
+	virtual void OnAfterFill() override;
+	virtual void OnBeforeEmpty() override;
+	virtual void OnBeforeSwap() override;
+	virtual void OnBeforeItemDropped() override;
+	virtual void OnAfterSwap() override;
 	virtual void NativeConstruct() override;
 };

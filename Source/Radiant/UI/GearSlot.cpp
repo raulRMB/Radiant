@@ -5,14 +5,34 @@
 #include "Player/RTPlayerState.h"
 #include "Util/Util.h"
 
-void UGearSlot::SetEmpty(const bool Empty)
+void UGearSlot::OnAfterFill()
 {
-	Super::SetEmpty(Empty);
+	Super::OnAfterFill();
+	GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
+}
 
-	if(Empty)
-	{
-		Icon->SetBrushFromTexture(EmptyGearIcon);
-	}
+void UGearSlot::OnBeforeEmpty()
+{
+	Super::OnBeforeEmpty();
+	GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+}
+
+void UGearSlot::OnBeforeSwap()
+{
+	Super::OnBeforeSwap();
+	GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+}
+
+void UGearSlot::OnBeforeItemDropped()
+{
+	Super::OnBeforeItemDropped();
+	GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
+}
+
+void UGearSlot::OnAfterSwap()
+{
+	Super::OnAfterSwap();
+	GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
 }
 
 bool UGearSlot::CheckCanSwapWith(UItemSlot* ItemSlot)
@@ -22,7 +42,6 @@ bool UGearSlot::CheckCanSwapWith(UItemSlot* ItemSlot)
 
 	if(ItemSlot->IsEmpty())
 	{
-		GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
 		return true;
 	}
 	
@@ -33,26 +52,11 @@ bool UGearSlot::CheckCanSwapWith(UItemSlot* ItemSlot)
 		{
 			if(ItemData->GearData)
 			{
-				const bool CanSwap = ItemData->GearData->GearType == GearType;
-				if(CanSwap)
-				{
-					GetOwningPlayerState<ARTPlayerState>()->S_UnequipGear(ItemSlotData.ItemName);
-				}
-				return CanSwap;
+				return ItemData->GearData->GearType == GearType;
 			}
 		}
 	}
 	return false;
-}
-
-void UGearSlot::SetData(const FItemSlotData& Data)
-{
-	Super::SetData(Data);
-
-	if(Data.ItemType == EItemType::Gear || Data.ItemType == EItemType::Weapon)
-	{
-		GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
-	}
 }
 
 void UGearSlot::NativeConstruct()
