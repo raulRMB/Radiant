@@ -4,6 +4,7 @@
 #include "GAS/Abilities/GADash.h"
 
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Player/Avatar.h"
 #include "GAS/Tasks/MoveToLocationParabolic.h"
 
@@ -30,6 +31,14 @@ void UGADash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 	}
 }
 
+void UGADash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	
+}
+
 void UGADash::LinearDash()
 {
 	UAbilityTask_ApplyRootMotionMoveToForce* MoveTask = UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
@@ -51,7 +60,7 @@ void UGADash::LinearDash()
 }
 
 void UGADash::ParabolicDash()
-{
+{	
 	UMoveToLocationParabolic* MoveTask = UMoveToLocationParabolic::MoveToLocationParabolic(
 		this,
 		FName("MoveTask"),
@@ -75,7 +84,7 @@ void UGADash::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData Even
 
 
 void UGADash::OnTargetLocationReached()
-{
+{	
 	ReturnToDefaultAndEndAbility(false);
 }
 

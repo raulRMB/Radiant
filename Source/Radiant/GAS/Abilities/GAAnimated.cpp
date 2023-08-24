@@ -55,7 +55,6 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		{
 			return;
 		}
-		CommitAbility(Handle, ActorInfo, ActivationInfo);
 		GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToTarget(InstantEffect.GetDefaultObject(), Char->GetAbilitySystemComponent(), 1.f, GetAbilitySystemComponentFromActorInfo()->MakeEffectContext());
 	} 
 	Avatar->GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -64,6 +63,7 @@ void UGAAnimated::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	FVector Direction = (HitResult.Location - Loc).GetSafeNormal();
 	Avatar->SetRotationLock(true, Direction);
 	BindAnimations();
+	CommitAbility(Handle, ActorInfo, ActivationInfo);
 }
 
 

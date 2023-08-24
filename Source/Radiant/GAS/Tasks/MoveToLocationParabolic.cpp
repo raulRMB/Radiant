@@ -78,6 +78,7 @@ void UMoveToLocationParabolic::TickTask(float DeltaTime)
 			if(ParabolicCurve)
 				NewLocation += ParabolicCurve->GetVectorValue(MoveFraction) * Height;
 			MyActor->SetActorLocation(NewLocation);
+			MyActor->SetActorRotation((TargetLocation - StartLocation).Rotation());
 		}
 	}
 	else

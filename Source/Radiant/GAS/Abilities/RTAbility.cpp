@@ -216,6 +216,13 @@ void URTAbility::RemoveEffects()
 {
 	for(FActiveGameplayEffectHandle& SelfEffectHandle : SelfEffectHandles)
 	{
+		if(const UGameplayEffect* Effect = GetAbilitySystemComponentFromActorInfo()->GetGameplayEffectCDO(SelfEffectHandle))
+		{
+			if(Effect->DurationPolicy == EGameplayEffectDurationType::HasDuration)
+			{
+				continue;
+			}
+		}
 		GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(SelfEffectHandle, 1);
 	}
 }
