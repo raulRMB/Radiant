@@ -331,7 +331,7 @@ void AAvatar::GiveArchetypeItems(const EClassType Archetype)
 		for (auto& Item : DataTable->GetRowMap())
 		{
 			FItemData* ItemData = reinterpret_cast<FItemData*>(Item.Value);
-			if (ItemData->ClassType == Archetype)
+			if (ItemData->ClassType == Archetype && ItemData->Enabled)
 			{
 				GiveItem(Item.Key, 100);
 			}

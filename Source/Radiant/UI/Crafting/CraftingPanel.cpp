@@ -94,7 +94,7 @@ void UCraftingPanel::Init(UInventoryComponent* Inventory)
 			{
 				if(ItemData->CraftingNodeData)
 				{
-					if(!ShouldInclude(ItemData) || !ShouldIncludeClass(ItemData))
+					if(!ShouldInclude(ItemData) || !ShouldIncludeClass(ItemData) || !ItemData->Enabled)
 					{
 						continue;
 					}

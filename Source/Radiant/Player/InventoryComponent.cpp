@@ -69,6 +69,10 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 	{
 		if (FItemData* ItemData = ItemDataTable->FindRow<FItemData>(RowName, "InitInventory"))
 		{
+			if(!ItemData->Enabled)
+			{
+				continue;
+			}
 			FInventoryItem InventoryItem;
 			InventoryItem.Amount = 0;
 			InventoryItem.AbilityData = ItemData->AbilityData;

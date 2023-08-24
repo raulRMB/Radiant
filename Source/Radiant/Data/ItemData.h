@@ -15,6 +15,9 @@ struct FItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	FName DisplayName;
+
+	UPROPERTY(EditAnywhere)
+	bool Enabled = true;
 	
 	UPROPERTY(EditAnywhere)
 	EItemType ItemType;
