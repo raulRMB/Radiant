@@ -18,6 +18,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FItemUsedSignature, const class FName&, con
 
 DECLARE_MULTICAST_DELEGATE(FGameIsReady);
 
+DECLARE_MULTICAST_DELEGATE(FKeybindChanged);
+
 DECLARE_MULTICAST_DELEGATE(FRightMouseButtonClickedSignature);
 
 UCLASS()
@@ -30,6 +32,7 @@ public:
 	FItemUsedSignature ItemUsed;
 	FGameIsReady GameIsReady;
 	FCurrentClassChanged CurrentClassChanged;
+	FKeybindChanged KeybindChanged;
 	FRightMouseButtonClickedSignature RightMouseButtonClicked;
 	static UEventBroker* Get(const UObject* WorldContextObject);
 };

@@ -7,6 +7,7 @@
 #include "Settings.h"
 #include "Components/InputKeySelector.h"
 #include "Components/TextBlock.h"
+#include "Event/EventBroker.h"
 #include "Player/RTPlayerController.h"
 
 void UKeySelect::NativeConstruct()
@@ -21,6 +22,7 @@ void UKeySelect::RebindKey(FInputChord SelectedKey)
 	{
 		Subsystem->AddPlayerMappedKey(Mapping.PlayerMappableOptions.Name, SelectedKey.Key);
 		Cast<ARTPlayerController>(GetOwningLocalPlayer()->PlayerController)->SaveUserSettingsDelay();
+		UEventBroker::Get(this)->KeybindChanged.Broadcast();
 	}
 }
 

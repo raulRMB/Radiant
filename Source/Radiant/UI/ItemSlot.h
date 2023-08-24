@@ -62,7 +62,11 @@ protected:
 	class UImage* CooldownMask;
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* AmountText;
-
+	UPROPERTY(meta=(BindWidget))
+	class UImage* KeybindBackground;
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* Keybind;
+	
 	uint32 ItemAmount = 0;
 
 	FGameplayTag CooldownTag;
@@ -84,6 +88,8 @@ protected:
 	bool GetCooldownRemaining(float& TimeRemaining, float& CooldownDuration);
 	void SetAbilityCoolDown(const float Percent);
 public:
+	void SetKeybindText();
+	void ListenForKeybindChanges();
 	bool SwapWith(UItemSlot* ItemSlot);
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* Mat;

@@ -34,6 +34,27 @@ FText UUtil::ItemTypeToText(const EItemType Value)
 	return FText::FromString("");
 }
 
+FName UUtil::GetMappingNameFromSlot(const EItemSlotID SlotID)
+{
+	switch(SlotID)
+	{
+		case EItemSlotID::HotBarFirst:
+			return FName("Ability 1");
+		case EItemSlotID::HotBarTwo:
+			return FName("Ability 2");
+		case EItemSlotID::HotBarThree:
+			return FName("Ability 3");
+		case EItemSlotID::HotBarFour:
+			return FName("Ability 4");
+		case EItemSlotID::HotBarFive:
+			return FName("Ability 5");
+		case EItemSlotID::HotBarLast:
+			return FName("Ability 6");
+		default:
+			return FName("");
+	}
+}
+
 FLinearColor UUtil::ItemTypeToColor(const EItemType Value)
 {
 	switch(Value)

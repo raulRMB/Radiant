@@ -206,6 +206,8 @@ UItemSlot* USlotManager::CreateNewSlot(const EItemSlotID& UISlotID, TSubclassOf<
 				Slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
 				Slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
 				Slot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+				ItemSlot->ListenForKeybindChanges();
+				ItemSlot->SetKeybindText();
 				Slot->SetPadding({5.f, 0.f, 5.f, 0.f});
 			}
 		}

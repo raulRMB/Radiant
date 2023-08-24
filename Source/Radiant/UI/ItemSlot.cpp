@@ -28,6 +28,11 @@ void UItemSlot::NativeConstruct()
 	bIsOnCooldown = false;
 }
 
+void UItemSlot::ListenForKeybindChanges()
+{
+	UEventBroker::Get(this)->KeybindChanged.AddUObject(this, &UItemSlot::SetKeybindText);
+}
+
 bool UItemSlot::IsHotBarSlot()
 {
 	return SlotID <= EItemSlotID::HotBarLast && SlotID >= EItemSlotID::HotBarFirst;
@@ -202,6 +207,17 @@ void UItemSlot::SetOn(bool On)
 void UItemSlot::SetAbilityCoolDown(const float Percent)
 {
 	MaterialInstance->SetScalarParameterValue("Percent", Percent);
+}
+
+void UItemSlot::SetKeybindText()
+{
+	KeybindBackground->SetVisibility(ESlateVisibility::HitTestInvisible);
+	Keybind->SetVisibility(ESlateVisibility::HitTestInvisible);
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetOwningLocalPlayer()))
+	{
+		FKey Mapping = Subsystem->GetPlayerMappedKey(UUtil::GetMappingNameFromSlot(SlotID));
+		Keybind->SetText(FText::FromName(Mapping.GetFName()));
+	}
 }
 
 float UItemSlot::GetCooldownPercent(const float TimeRemaining, const float CooldownDuration)

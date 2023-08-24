@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums/ItemSlotID.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Util/Managers/GridManager.h"
 #include "Util.generated.h"
@@ -30,6 +31,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FText ItemTypeToText(const EItemType Value);
+
+	UFUNCTION(BlueprintCallable)
+	static FName GetMappingNameFromSlot(EItemSlotID SlotID);
 
 	UFUNCTION(BlueprintCallable)
 	static FLinearColor ItemTypeToColor(EItemType Value);
