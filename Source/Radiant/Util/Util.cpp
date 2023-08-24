@@ -55,6 +55,27 @@ FName UUtil::GetMappingNameFromSlot(const EItemSlotID SlotID)
 	}
 }
 
+FName UUtil::GetDefaultKeybindFromSlot(const EItemSlotID SlotID)
+{
+	switch(SlotID)
+	{
+		case EItemSlotID::HotBarFirst:
+			return FName("Q");
+		case EItemSlotID::HotBarTwo:
+			return FName("W");
+		case EItemSlotID::HotBarThree:
+			return FName("E");
+		case EItemSlotID::HotBarFour:
+			return FName("R");
+		case EItemSlotID::HotBarFive:
+			return FName("D");
+		case EItemSlotID::HotBarLast:
+			return FName("F");
+		default:
+			return FName("");
+	}
+}
+
 FLinearColor UUtil::ItemTypeToColor(const EItemType Value)
 {
 	switch(Value)

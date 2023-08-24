@@ -216,7 +216,13 @@ void UItemSlot::SetKeybindText()
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetOwningLocalPlayer()))
 	{
 		FKey Mapping = Subsystem->GetPlayerMappedKey(UUtil::GetMappingNameFromSlot(SlotID));
-		Keybind->SetText(FText::FromName(Mapping.GetFName()));
+		if(Mapping.GetFName() == NAME_None)
+		{
+			Keybind->SetText(FText::FromName(UUtil::GetDefaultKeybindFromSlot(SlotID)));
+		} else
+		{
+			Keybind->SetText(FText::FromName(Mapping.GetFName()));
+		}
 	}
 }
 

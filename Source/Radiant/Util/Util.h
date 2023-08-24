@@ -36,6 +36,9 @@ public:
 	static FName GetMappingNameFromSlot(EItemSlotID SlotID);
 
 	UFUNCTION(BlueprintCallable)
+	static FName GetDefaultKeybindFromSlot(EItemSlotID SlotID);
+
+	UFUNCTION(BlueprintCallable)
 	static FLinearColor ItemTypeToColor(EItemType Value);
 
 	UFUNCTION(BlueprintCallable)
