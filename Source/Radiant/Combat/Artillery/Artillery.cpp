@@ -9,6 +9,10 @@
 bool AArtillery::ShouldHit(AActor* OtherActor)
 {
 	ITeamMember* Self = Cast<ITeamMember>(GetInstigator());
+	if(Self == nullptr)
+	{
+		Self = Cast<ITeamMember>(GetOwner());
+	}
 	ITeamMember* Target = Cast<ITeamMember>(OtherActor);
 
 	if (!Self || !Target)
