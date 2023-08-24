@@ -248,19 +248,52 @@ void ARTPlayerState::GameReady_Implementation()
 	UEventBroker::Get(this)->GameIsReady.Broadcast();
 }
 
+void ARTPlayerState::AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name)
+{
+	HandleToItemName.Add(Handle, Name);
+}
+
+const FGameplayAbilitySpecHandle* ARTPlayerState::FindHandle(FName Name)
+{
+	return HandleToItemName.FindKey(Name);
+}
+
+FName ARTPlayerState::GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle)
+{
+	if (HandleToItemName.Contains(Handle))
+	{
+		return HandleToItemName[Handle];
+	}
+	return NAME_None;
+}
+
+void ARTPlayerState::S_EquipAbility_Implementation(const FName& ItemName)
+{
+	FItemData* ItemData = UUtil::GetItemDataFromName(ItemName);
+	if (ItemData->AbilityData && !FindHandle(ItemName))
+	{
+		FGameplayAbilitySpecHandle Handle = GiveAbility(ItemData);
+		AddHandleToName(Handle, ItemName);
+	}
+}
+
+void ARTPlayerState::S_UnequipAbility_Implementation(const FName& ItemName)
+{
+	if(const auto Handle = FindHandle(ItemName))
+	{
+		RemoveAbility(*Handle);
+		HandleToItemName.Remove(*Handle);
+	}
+}
+
 void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32 Amount)
 {
 	FItemData* ItemData = ItemDataTable->FindRow<FItemData>(AbilityName, FString("BuyAbility"));
-	// if(ItemData->AbilityData->Price * Amount > AttributeSet->GetRadianite())
-	// {
-	// 	Amount = AttributeSet->GetRadianite() / ItemData->AbilityData->Price;
-	// }
 	if (!ItemData || Amount <= 0 || InnateAbilities.Contains(ItemData->AbilityData))
 	{
 		return;
 	}
 	GetInventory()->AddItem(AbilityName, ItemData, Amount);
-	// AttributeSet->SetRadianite(AttributeSet->GetRadianite() - ItemData->AbilityData->Price * Amount);
 }
 
 void ARTPlayerState::S_EquipGear_Implementation(const FName& WeaponName)

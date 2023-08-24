@@ -46,10 +46,10 @@ protected:
 
 	UPROPERTY(Replicated, VisibleAnywhere)
 	uint8 bIsDead : 1;
-
-	
 	
 public:
+	UPROPERTY()
+	TMap<FGameplayAbilitySpecHandle, FName> HandleToItemName;
 	virtual FVector GetCarrierLocation() const override;
 	virtual class UInventoryComponent* GetInventory() const override;
 	void RemoveAbility(FGameplayAbilitySpecHandle Handle);
@@ -106,6 +106,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void S_GiveItem(const FName& ItemName, int32 Amount);
 
+	UFUNCTION(Server, Reliable)
+	void S_EquipAbility(const FName& ItemName);
+	UFUNCTION(Server, Reliable)
+	void S_UnequipAbility(const FName& DisplayName);
+	void AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name);
+	const FGameplayAbilitySpecHandle* FindHandle(FName Name);
+	FName GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle);
 #pragma region Killable
 	
 	UFUNCTION(Server, Reliable)
@@ -124,7 +131,7 @@ public:
 	class AAvatar* GetAvatar() const;
 	class ARTGameMode* GetRTGM() const;
 	class ARTGameState* GetRTGS() const;
-	
+
 #pragma endregion ConvenienceGetters
 
 };

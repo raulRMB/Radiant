@@ -33,24 +33,49 @@ void UItemSlot::ListenForKeybindChanges()
 	UEventBroker::Get(this)->KeybindChanged.AddUObject(this, &UItemSlot::SetKeybindText);
 }
 
+bool UItemSlot::ShouldChangeAbility()
+{
+	return (IsHotBarSlot() || SlotID == EItemSlotID::WeaponSlot) && !bIsEmpty;
+}
+
 void UItemSlot::OnAfterSwap()
 {
+	if(ShouldChangeAbility())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_EquipAbility(ItemSlotData.ItemName);
+	}
 }
 
 void UItemSlot::OnBeforeSwap()
 {
+	if(ShouldChangeAbility())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_UnequipAbility(ItemSlotData.ItemName);
+	}
 }
 
 void UItemSlot::OnBeforeFill()
 {
+	if(ShouldChangeAbility())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_UnequipAbility(ItemSlotData.ItemName);
+	}
 }
 
 void UItemSlot::OnAfterFill()
 {
+	if(ShouldChangeAbility())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_EquipAbility(ItemSlotData.ItemName);
+	}
 }
 
 void UItemSlot::OnBeforeEmpty()
 {
+	if(ShouldChangeAbility())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_UnequipAbility(ItemSlotData.ItemName);
+	}
 }
 
 void UItemSlot::OnAfterEmpty()
@@ -59,14 +84,37 @@ void UItemSlot::OnAfterEmpty()
 
 void UItemSlot::OnBeforeItemDropped()
 {
+	if(ShouldChangeAbility())
+	{
+		GetOwningPlayerState<ARTPlayerState>()->S_UnequipAbility(ItemSlotData.ItemName);
+	}
 }
 
 void UItemSlot::OnAfterItemDropped()
 {
 }
 
+void UItemSlot::UpdateAmount(int32 Amount)
+{
+	ItemSlotData.ItemAmount = Amount;
+	if(ItemSlotData.ItemAmount > 0)
+	{
+		AmountText->SetVisibility(ESlateVisibility::Visible);
+		AmountText->SetText(FText::FromString(FString::FromInt(ItemSlotData.ItemAmount)));
+	}
+	else
+	{
+		AmountText->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void UItemSlot::Fill(FItemSlotData Data)
 {
+	if(ItemSlotData.ItemAmount > 0)
+	{
+		UpdateAmount(Data.ItemAmount);
+		return;
+	}
 	OnBeforeFill();
 	SetData(Data);
 	SetEmpty(false);
@@ -195,6 +243,7 @@ bool UItemSlot::SwapWith(UItemSlot* ItemSlot)
 		ItemSlot->SetEmpty(bIsEmpty);
 		SetEmpty(bTempIsEmpty);
 		OnAfterSwap();
+		ItemSlot->OnAfterSwap();
 		return true;
 	}
 	return false;

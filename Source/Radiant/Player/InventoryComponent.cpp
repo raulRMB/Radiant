@@ -84,11 +84,6 @@ void UInventoryComponent::InitInventory(const UDataTable* ItemDataTable)
 
 int32 UInventoryComponent::AddItem(const FName& ItemName, FItemData* ItemData, int32 Amount)
 {
-	if (ItemData->AbilityData && !FindHandle(ItemName))
-	{
-		FGameplayAbilitySpecHandle Handle = GetPlayerState()->GiveAbility(ItemData);
-		AddHandleToName(Handle, ItemName);
-	}
 	return AddItem(ItemName, Amount);
 }
 
@@ -114,14 +109,6 @@ int32 UInventoryComponent::RemoveItem(const FName& ItemName, int32 Amount)
 	{
 		Items[ItemName].Amount -= Amount;
 		C_ItemChanged(ItemName, Items[ItemName].Amount);
-	}
-	if(Items[ItemName].Amount == 0)
-	{
-		if(const auto Handle = FindHandle(ItemName))
-		{
-			GetPlayerState()->RemoveAbility(*Handle);
-			HandleToItemName.Remove(*Handle);
-		}
 	}
 	if(Amount == -1)
 	{
@@ -153,29 +140,11 @@ void UInventoryComponent::DropItem(const FName& ItemName)
 
 void UInventoryComponent::UseItem(const FGameplayAbilitySpecHandle& Handle)
 {
+	auto HandleToItemName = GetPlayerState()->HandleToItemName;
 	if (HandleToItemName.Contains(Handle))
 	{
 		S_ItemUsed(HandleToItemName[Handle]);
 	}
-}
-
-void UInventoryComponent::AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name)
-{
-	HandleToItemName.Add(Handle, Name);
-}
-
-const FGameplayAbilitySpecHandle* UInventoryComponent::FindHandle(FName Name)
-{
-	return HandleToItemName.FindKey(Name);
-}
-
-FName UInventoryComponent::GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle)
-{
-	if (HandleToItemName.Contains(Handle))
-	{
-		return HandleToItemName[Handle];
-	}
-	return NAME_None;
 }
 
 uint32 UInventoryComponent::GetItemAmount(const FName Key) const

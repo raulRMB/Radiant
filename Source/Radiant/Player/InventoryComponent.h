@@ -37,9 +37,6 @@ class RADIANT_API UInventoryComponent : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AWorldItem> WorldItemClass;
 
-	UPROPERTY()
-	TMap<FGameplayAbilitySpecHandle, FName> HandleToItemName;
-
 public:
 	UInventoryComponent();
 
@@ -56,8 +53,7 @@ public:
 	void S_AddItem(const FName& ItemName, const uint32 Amount = 1);
 	UFUNCTION(Server, Reliable)
 	void S_RemoveAllItems();
-
-public:
+	
 	int32 AddItem(const FName& ItemName, int32 Amount);
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
@@ -66,9 +62,5 @@ public:
 	int32 RemoveItem(const FName& ItemName, int32 Amount);
 	void DropItem(const FName& ItemName);
 	void UseItem(const FGameplayAbilitySpecHandle& Handle);
-	void AddHandleToName(FGameplayAbilitySpecHandle Handle, FName Name);
-	const FGameplayAbilitySpecHandle* FindHandle(FName Name);
-
-	FName GetItemNameFormHandle(const FGameplayAbilitySpecHandle& Handle);
 	uint32 GetItemAmount(const FName Key) const;
 };

@@ -96,6 +96,7 @@ protected:
 	virtual void OnAfterSwap();
 	virtual void OnBeforeItemDropped();
 	virtual void OnAfterItemDropped();
+	void UpdateAmount(int32 Amount);
 	void SetEmpty(const bool Empty) { bIsEmpty = Empty; }
 
 public:
@@ -106,7 +107,8 @@ public:
 	
 	void SetKeybindText();
 	void ListenForKeybindChanges();
-	
+	bool ShouldChangeAbility();
+
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* Mat;
 	virtual void SetData(const FItemSlotData& Data);
