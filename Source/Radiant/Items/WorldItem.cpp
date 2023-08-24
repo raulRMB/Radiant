@@ -89,7 +89,8 @@ void AWorldItem::BeginPlay()
 	}
 	if(UWorldItemInfoWidget* ItemInfoWidget = Cast<UWorldItemInfoWidget>(NameWidget->GetUserWidgetObject()))
 	{
-		FString ItemNameString = ItemName.ToString();
+		auto ItemData = UUtil::GetItemDataFromName(ItemName);
+		FString ItemNameString = ItemData ? ItemData->DisplayName.ToString() : ItemName.ToString();
 		ItemNameString.Append(" : ");
 		ItemNameString.Append(FString::FromInt(Amount));
 		ItemInfoWidget->SetText(FName(*ItemNameString));
