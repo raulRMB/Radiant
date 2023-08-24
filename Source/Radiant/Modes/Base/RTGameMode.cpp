@@ -9,6 +9,7 @@
 #include "GameFramework/GameSession.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/InventoryComponent.h"
 #include "Player/RTPlayerState.h"
 #include "Util/Managers/ActorManager.h"
 #include "Util/Spawners/AISpawner.h"
@@ -130,6 +131,7 @@ void ARTGameMode::PlayersAreLoaded() const
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
 			PlayerController->GetPlayerState<ARTPlayerState>()->GameReady();
+			PlayerController->GetPlayerState<ARTPlayerState>()->GetInventory()->AddItem(FName("BasicWeapon"), 1);
 			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
 			Hero->ApplyInitialEffects();
 		}

@@ -46,7 +46,6 @@ public:
 private:
 	UFUNCTION(Client, Reliable)
 	void C_ItemChanged(const FName& ItemName, const uint32 Amount);
-	int32 AddItem(const FName& ItemName, int32 Amount);
 public:
 	UFUNCTION(Server, Reliable)
 	void S_DropItem(const FName& ItemName);
@@ -59,6 +58,7 @@ public:
 	void S_RemoveAllItems();
 
 public:
+	int32 AddItem(const FName& ItemName, int32 Amount);
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
 	int32 AddItem(const FName& ItemName, FItemData* ItemData, int32 Amount);
