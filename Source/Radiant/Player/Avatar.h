@@ -11,7 +11,6 @@
 #include "Util/Managers/GridManager.h"
 #include "Avatar.generated.h"
 
-
 UCLASS()
 class RADIANT_API AAvatar : public ARTCharacter, public ICarrier
 {
@@ -20,8 +19,16 @@ class RADIANT_API AAvatar : public ARTCharacter, public ICarrier
 public:
 	AAvatar();
 
+	UPROPERTY(EditAnywhere)
+	TMap<EClassType, USkeletalMesh*> AvatarMeshes;
+
+	UPROPERTY(EditAnywhere)
+	TMap<EClassType, TSubclassOf<UAnimInstance>> AvatarAnimBlueprints;
+	
 	UFUNCTION(Server, Reliable)
 	void S_ToggleItemMagnet();
+	UFUNCTION(NetMulticast, Reliable)
+	void M_SwitchMesh(EClassType Class);
 	bool IsMagnetized;
 	void GameReady();
 	void OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags);

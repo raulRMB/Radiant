@@ -64,6 +64,12 @@ AAvatar::AAvatar()
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
 }
 
+void AAvatar::M_SwitchMesh_Implementation(EClassType Class)
+{
+	GetMesh()->SetSkeletalMesh(AvatarMeshes[Class]);
+	GetMesh()->SetAnimInstanceClass(AvatarAnimBlueprints[Class].Get());
+}
+
 void AAvatar::S_ToggleItemMagnet_Implementation()
 {
 	IsMagnetized = !IsMagnetized;
