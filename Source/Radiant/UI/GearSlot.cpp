@@ -5,12 +5,24 @@
 #include "Player/RTPlayerState.h"
 #include "Util/Util.h"
 
+void UGearSlot::EquipGear()
+{
+	if(auto PS = GetOwningPlayerState<ARTPlayerState>())
+	{
+		PS->S_EquipGear(ItemSlotData.ItemName);
+	} else
+	{
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGearSlot::EquipGear, 0.1f, false);
+	}
+}
+
 void UGearSlot::OnAfterFill()
 {
 	Super::OnAfterFill();
 	if(ValidateGear())
 	{
-		GetOwningPlayerState<ARTPlayerState>()->S_EquipGear(ItemSlotData.ItemName);
+		EquipGear();
 	}
 }
 

@@ -219,7 +219,6 @@ void AAvatar::BeginPlay()
 void AAvatar::GameReady()
 {
 	SetOwnHealthBarColor();
-	SetMeshForClass(GetPlayerState<ARTPlayerState>()->CurrentClass);
 }
 
 FVector2D AAvatar::GetMousePosition()

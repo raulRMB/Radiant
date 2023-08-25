@@ -92,6 +92,7 @@ protected:
 	virtual void OnBeforeFill();
 	virtual void OnAfterFill();
 	virtual void OnBeforeEmpty();
+	void EquipAbility();
 	virtual void OnAfterEmpty();
 	virtual void OnAfterSwap();
 	virtual void OnBeforeItemDropped();

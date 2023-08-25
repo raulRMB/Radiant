@@ -66,7 +66,7 @@ void UItemSlot::OnAfterFill()
 {
 	if(ShouldChangeAbility())
 	{
-		GetOwningPlayerState<ARTPlayerState>()->S_EquipAbility(ItemSlotData.ItemName);
+		EquipAbility();
 	}
 }
 
@@ -75,6 +75,18 @@ void UItemSlot::OnBeforeEmpty()
 	if(ShouldChangeAbility())
 	{
 		GetOwningPlayerState<ARTPlayerState>()->S_UnequipAbility(ItemSlotData.ItemName);
+	}
+}
+
+void UItemSlot::EquipAbility()
+{
+	if(auto PS = GetOwningPlayerState<ARTPlayerState>())
+	{
+		PS->S_EquipAbility(ItemSlotData.ItemName);
+	} else
+	{
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UItemSlot::EquipAbility, 0.1f, false);
 	}
 }
 
