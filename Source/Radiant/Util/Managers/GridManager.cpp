@@ -14,6 +14,8 @@ AGridManager::AGridManager()
 
 void AGridManager::GenerateMap()
 {
+#ifndef UE_BUILD_SHIPPING
+	
 	Cells.Init(EEnvironmentType::EEnvironmentType_Empty, MapTexture->GetSizeX() * MapTexture->GetSizeY());
 	GridDimensions = MapTexture->GetSizeX();
 	
@@ -66,6 +68,9 @@ void AGridManager::GenerateMap()
 	MapTexture->SourceColorSettings.EncodingOverride = OldSourceEncoding;
 	MapTexture->SRGB = OldSRGB;
 	MapTexture->UpdateResource();
+	
+#endif // WITH_EDITOR
+	
 }
 
 void AGridManager::InitGrid()

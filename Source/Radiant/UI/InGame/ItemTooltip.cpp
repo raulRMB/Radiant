@@ -41,7 +41,9 @@ UTextBlock* UItemTooltip::CreateTextBlock(UObject* Outer, FTooltipStatInfo& Stat
 		break;
 	}
 	TextBlock->SetText(Text);
-	TextBlock->Font.Size = 11;
+	FSlateFontInfo FontInfo = TextBlock->GetFont();
+	FontInfo.Size = 11;
+	TextBlock->SetFont(FontInfo);
 	return TextBlock;
 }
 

@@ -5,11 +5,11 @@
 UENUM()
 enum class EGearType : uint8
 {
-	Weapon		= EItemSlotID::WeaponSlot,
-	Helmet		= EItemSlotID::HelmetSlot,
-	Chest		= EItemSlotID::ChestSlot,
-	Legs		= EItemSlotID::LegsSlot,
-	Boots		= EItemSlotID::BootsSlot,
-	Gloves		= EItemSlotID::GlovesSlot,
-	Necklace	= EItemSlotID::NecklaceSlot
+	Weapon		= static_cast<uint8>(EItemSlotID::WeaponSlot),
+	Helmet		= static_cast<uint8>(EItemSlotID::HelmetSlot),
+	Chest		= static_cast<uint8>(EItemSlotID::ChestSlot),
+	Legs		= static_cast<uint8>(EItemSlotID::LegsSlot),
+	Boots		= static_cast<uint8>(EItemSlotID::BootsSlot),
+	Gloves		= static_cast<uint8>(EItemSlotID::GlovesSlot),
+	Necklace	= static_cast<uint8>(EItemSlotID::NecklaceSlot)
 };
