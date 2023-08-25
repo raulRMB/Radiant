@@ -68,6 +68,7 @@ void AAvatar::SetMeshForClass(EClassType Class)
 {
 	GetMesh()->SetSkeletalMesh(AvatarMeshes[Class]);
 	GetMesh()->SetAnimInstanceClass(AvatarAnimBlueprints[Class].Get());
+	DeathMontage = DeathAnimMontages[Class];
 }
 
 void AAvatar::M_SwitchMesh_Implementation(EClassType Class)

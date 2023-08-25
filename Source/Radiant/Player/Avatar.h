@@ -20,11 +20,14 @@ public:
 	AAvatar();
 	void SetMeshForClass(EClassType Class);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category=CharacterSwapping)
 	TMap<EClassType, USkeletalMesh*> AvatarMeshes;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category=CharacterSwapping)
 	TMap<EClassType, TSubclassOf<UAnimInstance>> AvatarAnimBlueprints;
+
+	UPROPERTY(EditAnywhere, Category=CharacterSwapping)
+	TMap<EClassType, class UAnimMontage*> DeathAnimMontages;
 	
 	UFUNCTION(Server, Reliable)
 	void S_ToggleItemMagnet();
