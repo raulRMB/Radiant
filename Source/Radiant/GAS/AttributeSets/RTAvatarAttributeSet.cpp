@@ -16,6 +16,10 @@ void URTAvatarAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCa
 		if(GetHealth() <= 0)
 		{
 			AAvatar* Hero = Cast<AAvatar>(GetActorInfo()->AvatarActor);
+			if(Hero->HasTag("States.Dead"))
+			{
+				return;
+			}
 			Hero->M_SetInfoBarVisibility(false);
 
 			if(Hero->HasAuthority())
