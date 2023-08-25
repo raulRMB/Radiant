@@ -14,7 +14,7 @@
 void ARTGameState::OnHeroDeath_Implementation(AAvatar* Hero)
 {
 	ETeamId TeamID = Hero->GetPlayerState<ARTPlayerState>()->GetTeamId();
-	TeamID == ETeamId::Red ? RedScore++ : BlueScore++;
+	TeamID == ETeamId::Blue ? RedScore++ : BlueScore++;
 	UE_LOG(LogTemp, Warning, TEXT("Red: %d, Blue: %d"), RedScore, BlueScore);
 	NotifyHeroDeath(RedScore, BlueScore);
 }

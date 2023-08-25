@@ -18,6 +18,7 @@ class RADIANT_API AAvatar : public ARTCharacter, public ICarrier
 
 public:
 	AAvatar();
+	void SetMeshForClass(EClassType Class);
 
 	UPROPERTY(EditAnywhere)
 	TMap<EClassType, USkeletalMesh*> AvatarMeshes;
@@ -33,9 +34,7 @@ public:
 	void GameReady();
 	void OnAbilityFailed(const UGameplayAbility* GameplayAbility, const FGameplayTagContainer& GameplayTags);
 	void CastingTagChanged(FGameplayTag GameplayTag, int I);
-
-	UFUNCTION(Client, Reliable)
-	void GameEnding(bool Won);
+	
 	UFUNCTION(Client, Reliable)
 	void S_StopMovement();
 	void StopMovement();
@@ -56,12 +55,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	class AActor* Target;
-
-	UPROPERTY(EditAnywhere)
-	class USoundBase* WinSound;
-
-	UPROPERTY(EditAnywhere)
-	class USoundBase* LoseSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	uint8 bIsAttacking : 1;

@@ -14,6 +14,7 @@
 #include "Player/Avatar.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/RTHUD.h"
 #include "UI/Client/ClientSubsystem.h"
@@ -29,6 +30,12 @@ void ARTPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTPlayerState, InnateAbilities);
 	DOREPLIFETIME(ARTPlayerState, bIsDead);
 	DOREPLIFETIME(ARTPlayerState, CurrentClass);
+}
+
+void ARTPlayerState::GameEnding_Implementation(ETeamId Won)
+{
+	GetPlayerController()->GetHUD<ARTHUD>()->ShowEndScreen(Won == TeamId);
+	UGameplayStatics::PlaySound2D(GetWorld(), Won == TeamId ? WinSound : LoseSound);
 }
 
 FVector ARTPlayerState::GetCarrierLocation() const

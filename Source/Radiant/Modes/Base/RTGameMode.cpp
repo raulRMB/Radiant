@@ -145,8 +145,8 @@ void ARTGameMode::NotifyMatchEnd(ETeamId WinningTeamId)
 		APlayerController* PlayerController = Iterator->Get();
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
-			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
-			Hero->GameEnding(Hero->GetPlayerState<ARTPlayerState>()->GetTeamId() == WinningTeamId);
+			auto PS = PlayerController->GetPlayerState<ARTPlayerState>();
+			PS->GameEnding(WinningTeamId);
 		}
 	}
 }

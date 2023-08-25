@@ -48,6 +48,14 @@ protected:
 	uint8 bIsDead : 1;
 	
 public:
+	UFUNCTION(Client, Reliable)
+	void GameEnding(ETeamId Won);
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* WinSound;
+	UPROPERTY(EditAnywhere)
+	class USoundBase* LoseSound;
+	
 	UPROPERTY()
 	TMap<FGameplayAbilitySpecHandle, FName> HandleToItemName;
 	virtual FVector GetCarrierLocation() const override;

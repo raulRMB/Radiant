@@ -64,10 +64,15 @@ AAvatar::AAvatar()
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
 }
 
-void AAvatar::M_SwitchMesh_Implementation(EClassType Class)
+void AAvatar::SetMeshForClass(EClassType Class)
 {
 	GetMesh()->SetSkeletalMesh(AvatarMeshes[Class]);
 	GetMesh()->SetAnimInstanceClass(AvatarAnimBlueprints[Class].Get());
+}
+
+void AAvatar::M_SwitchMesh_Implementation(EClassType Class)
+{
+	SetMeshForClass(Class);
 }
 
 void AAvatar::S_ToggleItemMagnet_Implementation()
@@ -145,13 +150,6 @@ void AAvatar::LevelUp_Implementation(float GetLevel)
 	//GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->ShowLevelUpScreen();
 }
 
-void AAvatar::GameEnding_Implementation(bool Won)
-{
-	GetController<ARTPlayerController>()->GetHUD<ARTHUD>()->ShowEndScreen(Won);
-	UGameplayStatics::PlaySound2D(GetWorld(), Won ? WinSound : LoseSound);
-}
-
-
 void AAvatar::SetIsDraggingFalse()
 {
 	bIsDragging = false;
@@ -199,6 +197,7 @@ void AAvatar::BeginPlay()
 	ARTPlayerState* PS = GetPlayerState<ARTPlayerState>();
 	if (PS)
 	{
+		SetMeshForClass(PS->CurrentClass);
 		SetOverheadBarText(PS->GetUsername());
 	}
 	SetOwnHealthBarColor();
@@ -219,6 +218,7 @@ void AAvatar::BeginPlay()
 void AAvatar::GameReady()
 {
 	SetOwnHealthBarColor();
+	SetMeshForClass(GetPlayerState<ARTPlayerState>()->CurrentClass);
 }
 
 FVector2D AAvatar::GetMousePosition()
