@@ -322,7 +322,10 @@ void ARTPlayerState::S_EquipGear_Implementation(const FName& WeaponName)
 			}
 			WeaponAbilityHandle = AbilitySystemComponent->GiveAbility(WeaponDataAsset->Ability.GetDefaultObject());
 			CurrentClass = GearItemData->ClassType;
-			GetAvatar()->M_SwitchMesh(CurrentClass);
+			if(auto Avatar = GetAvatar())
+			{
+				Avatar->M_SwitchMesh(CurrentClass);
+			}
 		}
 	
 		if(GearData)
