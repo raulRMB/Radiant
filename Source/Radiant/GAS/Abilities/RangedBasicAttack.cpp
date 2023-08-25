@@ -41,7 +41,7 @@ void URangedBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEve
 	if(HasAuthority(&CurrentActivationInfo))
 	{
 		AAvatar* Hero = Cast<AAvatar>(GetAvatarActorFromActorInfo());
-		FTransform Transform = FTransform(Hero->GetMesh()->GetSocketLocation(FName("LeftHandSocket")));
+		FTransform Transform = FTransform(Hero->GetMesh()->GetSocketLocation(SocketName));
 		AHeatSeeking* Projectile = GetWorld()->SpawnActorDeferred<AHeatSeeking>(ProjectileClass, Transform, GetOwningActorFromActorInfo(), Hero);
 		AActor* Target = Hero->GetPlayerState<ARTPlayerState>()->GetTarget();
 		Projectile->SetTarget(Target);
