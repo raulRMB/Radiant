@@ -21,6 +21,13 @@ class AExtractor : public ABuilding
 
 	UPROPERTY()
 	class UExtractorAttributeSet* ExtractorAttributeSet;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AWorldItem> WorldItemClass;
+	
+	UPROPERTY()
+	class AWorldItem* WorldItem;
+
 	
 public:
 	AExtractor();
@@ -29,7 +36,7 @@ public:
 	
 	virtual void Tick(float DeltaSeconds) override;
 	
-	void Extract() const;
+	void Extract();
 
 	void SetVein(class AVein* NewVein) { Vein = NewVein; }
 	

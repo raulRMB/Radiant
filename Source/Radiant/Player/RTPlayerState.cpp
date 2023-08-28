@@ -374,6 +374,11 @@ FGameplayAbilitySpecHandle ARTPlayerState::GiveAbility(const FItemData* ItemData
 	return AbilitySystemComponent->GiveAbility(AbilitySpec);
 }
 
+void ARTPlayerState::S_GiveItemUnchecked_Implementation(const FName& ItemName, int32 Amount)
+{
+	GetInventory()->AddItemUnchecked(ItemName, Amount);
+}
+
 void ARTPlayerState::S_GiveItem_Implementation(const FName& ItemName, int32 Amount)
 {
 	FItemData* ItemData = ItemDataTable->FindRow<FItemData>(ItemName, FString("BuyAbility"));

@@ -1,7 +1,9 @@
 ﻿#include "Extractor.h"
 #include "GAS/AttributeSets/Buildings/ExtractorAttributeSet.h"
+#include "Items/WorldItem.h"
 #include "Net/UnrealNetwork.h"
 #include "Objectives/Vein.h"
+#include "Util/Util.h"
 
 AExtractor::AExtractor()
 {
@@ -25,18 +27,32 @@ void AExtractor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	ExtractionTimer += DeltaSeconds;
-	
-	if(Vein && ExtractionTimer >= ExtractionRate)
+	if(HasAuthority())
 	{
-		ExtractionTimer = 0.f;
-		Extract();
+		ExtractionTimer += DeltaSeconds;
+		
+		if(ExtractionTimer >= ExtractionRate)
+		{
+			ExtractionTimer = 0.f;
+			Extract();
+		}
 	}
 }
 
-void AExtractor::Extract() const
-{
-	Vein->OnExtracted(ExtractionRate);
+void AExtractor::Extract()
+{	
+	if(IsValid(WorldItem))
+	{
+		WorldItem->UpdateAmount(WorldItem->GetAmount() + ExtractionRate);
+	}
+	else
+	{
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		WorldItem = GetWorld()->SpawnActorDeferred<AWorldItem>(WorldItemClass, FTransform(GetActorLocation() + FVector(100.f, 0.f, 0.f)), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		WorldItem->InitItem(FName("Radianite"), ExtractionRate);
+		WorldItem->FinishSpawning(FTransform(GetActorLocation() + FVector(100.f, 0.f, 0.f)));
+	}
 }
 
 void AExtractor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

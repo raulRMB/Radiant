@@ -113,7 +113,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void S_GiveItem(const FName& ItemName, int32 Amount);
-
+	UFUNCTION(Server, Reliable)
+	void S_GiveItemUnchecked(const FName& ItemName, int32 Amount);
+	
 	UFUNCTION(Server, Reliable)
 	void S_EquipAbility(const FName& ItemName);
 	UFUNCTION(Server, Reliable)

@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(EditAnywhere, Replicated)
 	FName ItemName;
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, ReplicatedUsing=OnRep_Amount)
 	uint32 Amount;
 
 	UPROPERTY(ReplicatedUsing=OnRep_Location)
@@ -38,6 +38,8 @@ protected:
 	
 public:
 	void InitItem(FName NewItemName, uint32 NewAmount);
+	void UpdateAmount(uint32 NewAmount);
+	uint32 GetAmount() const { return Amount; }
 	void PickUp(class ICarrier* Carrier);
 public:
 	UFUNCTION()
@@ -54,10 +56,13 @@ protected:
 	FTimerHandle SetBackroundTimerHandle;
 	void SetBackgroundSize();
 	float Speed = 1000.0f;
-UFUNCTION()
+	void UpdateInfo();
+	UFUNCTION()
 	void OnRep_Location();
 	UPROPERTY()
 	class AAvatar* Target;
 	class TArray<AAvatar*> PotentialTargets;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UFUNCTION()
+	void OnRep_Amount();
 };

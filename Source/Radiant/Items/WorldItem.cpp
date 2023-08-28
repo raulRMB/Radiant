@@ -36,6 +36,12 @@ void AWorldItem::InitItem(FName NewItemName, uint32 NewAmount)
 	Amount = NewAmount;
 }
 
+void AWorldItem::UpdateAmount(uint32 NewAmount)
+{
+	Amount = NewAmount;
+	UpdateInfo();
+}
+
 void AWorldItem::PickUp(ICarrier* Carrier)
 {
 	TArray<AActor*> OverlappingActors;
@@ -87,15 +93,7 @@ void AWorldItem::BeginPlay()
 		PickUpRadius->OnComponentBeginOverlap.AddDynamic(this, &AWorldItem::OnCollision);
 		PickUpRadius->OnComponentEndOverlap.AddDynamic(this, &AWorldItem::OnEndCollision);
 	}
-	if(UWorldItemInfoWidget* ItemInfoWidget = Cast<UWorldItemInfoWidget>(NameWidget->GetUserWidgetObject()))
-	{
-		auto ItemData = UUtil::GetItemDataFromName(ItemName);
-		FString ItemNameString = ItemData ? ItemData->DisplayName.ToString() : ItemName.ToString();
-		ItemNameString.Append(" : ");
-		ItemNameString.Append(FString::FromInt(Amount));
-		ItemInfoWidget->SetText(FName(*ItemNameString));
-	}
-
+	UpdateInfo();
 	if(!HasAuthority() && GetWorld())
 	{
 		GetWorld()->GetTimerManager().SetTimer(SetBackroundTimerHandle, this, &AWorldItem::SetBackgroundSize, 0.01f, false);
@@ -150,6 +148,18 @@ void AWorldItem::SetBackgroundSize()
 	}
 }
 
+void AWorldItem::UpdateInfo()
+{
+	if(UWorldItemInfoWidget* ItemInfoWidget = Cast<UWorldItemInfoWidget>(NameWidget->GetUserWidgetObject()))
+	{
+		FItemData* ItemData = UUtil::GetItemDataFromName(ItemName);
+		FString ItemNameString = ItemData ? ItemData->DisplayName.ToString() : ItemName.ToString();
+		ItemNameString.Append(" : ");
+		ItemNameString.Append(FString::FromInt(Amount));
+		ItemInfoWidget->SetText(FName(*ItemNameString));
+	}
+}
+
 void AWorldItem::OnRep_Location()
 {
 	bLocationDirty = true;
@@ -161,6 +171,11 @@ void AWorldItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(AWorldItem, ItemName);
 	DOREPLIFETIME(AWorldItem, Amount);
 	DOREPLIFETIME(AWorldItem, Location);
+}
+
+void AWorldItem::OnRep_Amount()
+{
+	UpdateInfo();
 }
 
 

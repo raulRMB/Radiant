@@ -143,7 +143,7 @@ bool AAvatar::TryPickupItem()
 
 void AAvatar::GiveItem(const FName& ItemName, int32 Amount)
 {
-	GetRTPS()->S_GiveItem(ItemName, Amount);
+	GetRTPS()->S_GiveItemUnchecked(ItemName, Amount);
 }
 
 void AAvatar::LevelUp_Implementation(float GetLevel)

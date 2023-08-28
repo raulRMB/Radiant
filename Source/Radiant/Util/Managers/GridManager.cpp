@@ -14,7 +14,7 @@ AGridManager::AGridManager()
 
 void AGridManager::GenerateMap()
 {
-#ifndef UE_BUILD_SHIPPING
+#if !UE_BUILD_SHIPPING
 	
 	Cells.Init(EEnvironmentType::EEnvironmentType_Empty, MapTexture->GetSizeX() * MapTexture->GetSizeY());
 	GridDimensions = MapTexture->GetSizeX();
@@ -50,7 +50,7 @@ void AGridManager::GenerateMap()
 			{
 				Cells[(MapTexture->GetSizeY() - Y - 1) * MapTexture->GetSizeX() + X] = EEnvironmentType::EEnvironmentType_Tree;
 			}
-			else if(PixelColor.ToPackedRGBA() == 0x0300aaff)
+			else if(PixelColor.ToPackedRGBA() == 0x0000ffff)
 			{
 				Cells[(MapTexture->GetSizeY() - Y - 1) * MapTexture->GetSizeX() + X] = EEnvironmentType::EEnvironmentType_Vein;
 			}
