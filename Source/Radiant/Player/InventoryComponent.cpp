@@ -4,6 +4,7 @@
 #include "Player/InventoryComponent.h"
 
 #include "RTPlayerState.h"
+#include "Data/CraftingNodeDataAsset.h"
 #include "Data/ItemData.h"
 #include "Engine/DataTable.h"
 #include "Event/EventBroker.h"
@@ -89,13 +90,61 @@ int32 UInventoryComponent::AddItem(const FName& ItemName, FItemData* ItemData, i
 
 int32 UInventoryComponent::AddItem(const FName& ItemName, int32 Amount)
 {
+	if(FItemData* ItemData = UUtil::GetItemDataFromName(ItemName))
+	{
+		const auto IngredientList = InitIngredientList(ItemData->CraftingNodeData);
+		if(CheckHasMaterialsToCraft(IngredientList))
+		{
+			for(auto Ingredient : IngredientList)
+			{
+				S_ItemUsed(Ingredient.Key, Ingredient.Value);
+			}
+			return AddItemUnchecked(ItemName, Amount);
+		}
+	}
+	return 0;
+}
+
+int32 UInventoryComponent::AddItemUnchecked(const FName& ItemName, int32 Amount)
+{
 	if(Items.Contains(ItemName))
 	{
 		Items[ItemName].Amount += Amount;
 		C_ItemChanged(ItemName, Items[ItemName].Amount);
+		UE_LOG(LogTemp, Warning, TEXT("Added %d %s total: %d"), Amount, *ItemName.ToString(), Items[ItemName].Amount);
 		return Items[ItemName].Amount;
 	}
 	return 0;
+}
+
+bool UInventoryComponent::CheckHasMaterialsToCraft(const TMap<FName, uint32> IngredientList)
+{
+	bool bHasMaterials = true;
+	for(TPair<FName, uint32> Ingredient : IngredientList)
+	{
+		auto val = GetItemAmount(Ingredient.Key);
+		if(Ingredient.Value > val)
+		{
+			bHasMaterials = false;
+			break;
+		}
+	}
+	return bHasMaterials;
+}
+
+TMap<FName, uint32> UInventoryComponent::InitIngredientList(UCraftingNodeDataAsset* DataAsset)
+{
+	TMap<FName, uint32> IngredientList = TMap<FName, uint32>();
+	for(TPair<UCraftingNodeDataAsset*, uint32> Material : DataAsset->Materials)
+	{
+		if(IngredientList.Contains(Material.Key->Name))
+		{
+			IngredientList[Material.Key->Name] += Material.Value;
+			continue;
+		}
+		IngredientList.Add(Material.Key->Name, Material.Value);
+	}
+	return IngredientList;
 }
 
 ARTPlayerState* UInventoryComponent::GetPlayerState()

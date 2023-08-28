@@ -129,10 +129,6 @@ void UCraftingNode::OnMouseRightClicked()
 {
 	if(CheckHasMaterials() && IngredientList.Num() > 0)
 	{
-		for(auto Ingredient : IngredientList)
-		{
-			InventoryComponent->S_ItemUsed(Ingredient.Key, Ingredient.Value);
-		}
 		GetOwningPlayerState<ARTPlayerState>()->S_BuyAbility(CraftingItemDataName, 1);
 	}
 }

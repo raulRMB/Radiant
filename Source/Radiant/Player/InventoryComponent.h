@@ -43,6 +43,7 @@ public:
 private:
 	UFUNCTION(Client, Reliable)
 	void C_ItemChanged(const FName& ItemName, const uint32 Amount);
+	TMap<FName, uint32> InitIngredientList(UCraftingNodeDataAsset* DataAsset);
 public:
 	UFUNCTION(Server, Reliable)
 	void S_DropItem(const FName& ItemName);
@@ -55,6 +56,8 @@ public:
 	void S_RemoveAllItems();
 	
 	int32 AddItem(const FName& ItemName, int32 Amount);
+	int32 AddItemUnchecked(const FName& ItemName, int32 Amount);
+	bool CheckHasMaterialsToCraft(const TMap<FName, uint32> IngredientList);
 	TMap<FName, FInventoryItem> GetItems() const { return Items; }
 	void InitInventory(const class UDataTable* ItemDataTable);
 	int32 AddItem(const FName& ItemName, FItemData* ItemData, int32 Amount);

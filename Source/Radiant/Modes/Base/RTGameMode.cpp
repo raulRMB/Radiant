@@ -131,7 +131,7 @@ void ARTGameMode::PlayersAreLoaded() const
 		if (PlayerController && (PlayerController->GetPawn() != nullptr))
 		{
 			PlayerController->GetPlayerState<ARTPlayerState>()->GameReady();
-			PlayerController->GetPlayerState<ARTPlayerState>()->GetInventory()->AddItem(FName("BasicWeapon"), 1);
+			PlayerController->GetPlayerState<ARTPlayerState>()->GetInventory()->AddItemUnchecked(FName("BasicWeapon"), 1);
 			AAvatar* Hero = Cast<AAvatar>(PlayerController->GetPawn());
 			Hero->ApplyInitialEffects();
 		}
