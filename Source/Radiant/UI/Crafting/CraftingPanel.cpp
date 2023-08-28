@@ -3,6 +3,7 @@
 
 #include "CraftingPanel.h"
 #include "CraftingNode.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
@@ -253,23 +254,21 @@ int32 UCraftingPanel::NativePaint(const FPaintArgs& Args, const FGeometry& Allot
 		{
 			if(UCraftingNode* CraftingNode = Cast<UCraftingNode>(Child))
 			{
-				FVector2D Start, End;
-				// if(!CraftingNode->IsLeaf())
-				// {
-				// 	// Draw Left Line
-				// 	Start = CraftingNode->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(0.f, .5f));
-				// 	End = Start - FVector2D(25.f, 0.f);
-				// 	UWidgetBlueprintLibrary::DrawLine(Context, Start, End,FLinearColor::White, true, 1.f);
-				// }
 				if(CraftingNode->GetParentNode())
 				{
-					// Draw Right Line
-					float CanvasScale = 1.0 / RootNodeWidthScale;
-					Start = CraftingNode->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(1.f, .5f));
-					End = Start + FVector2D(NodeEdgeLineOffset * NodeHorizontalSeparation, 0.f) * CanvasScale;
+					FVector2D PixelPosition;
+					FVector2D ViewportPosition;
+					USlateBlueprintLibrary::AbsoluteToViewport(CraftingNode, CraftingNode->GetCachedGeometry().GetAbsolutePositionAtCoordinates(FVector2D(1.f, .5f)),PixelPosition, ViewportPosition);
+					FVector2D Start = ViewportPosition;
+
+					FVector2D End = Start + FVector2D(NodeEdgeLineOffset * NodeHorizontalSeparation, 0.f) / RootNodeWidthScale;
 					UWidgetBlueprintLibrary::DrawLine(Context, Start, End,NodeEdgeLineColor, true, NodeEdgeLineThickness);
+
 					Start = End;
-					End = CraftingNode->GetParentNode()->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(0.f, .5f));
+
+					USlateBlueprintLibrary::AbsoluteToViewport(CraftingNode->GetParentNode(), CraftingNode->GetParentNode()->GetCachedGeometry().GetAbsolutePositionAtCoordinates(FVector2D(.0f, .5f)),PixelPosition, ViewportPosition);
+					End = ViewportPosition;
+
 					UWidgetBlueprintLibrary::DrawLine(Context, Start, End, NodeEdgeLineColor, true, NodeEdgeLineThickness);
 				}
 			}
