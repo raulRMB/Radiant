@@ -81,6 +81,12 @@ class RADIANT_API ARTHUD : public AHUD
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UItemSlot> ItemSlotClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> TeamInfoDisplayClass;
+	UPROPERTY()
+	class UTeamInfoDisplay* TeamInfoDisplay;
+	
 public:
 	TObjectPtr<class UCaptureAreaBar> CaptureAreaBar;
 

@@ -6,6 +6,7 @@
 #include "CaptureAreaBar.h"
 #include "Minimap.h"
 #include "RTInfoPanel.h"
+#include "TeamInfoDisplay.h"
 #include "Crafting/CraftingPanel.h"
 #include "Data/ItemData.h"
 #include "Player/RTPlayerState.h"
@@ -45,6 +46,11 @@ void ARTHUD::BeginPlay()
 	
 	SlotManager = NewObject<USlotManager>(this, USlotManager::StaticClass());
 	SlotManager->InitSlots(InfoPanel, CraftingPanel, ItemSlotClass);
+
+	TeamInfoDisplay = CreateWidget<UTeamInfoDisplay>(GetOwningPlayerController(), TeamInfoDisplayClass);
+	TeamInfoDisplay->Init();
+	TeamInfoDisplay->SetVisibility(ESlateVisibility::HitTestInvisible);
+	TeamInfoDisplay->AddToViewport();
 }
 
 void ARTHUD::ShowEndScreen(bool won)

@@ -179,8 +179,8 @@ void UInventoryComponent::DropItem(const FName& ItemName)
 			Offset *= 100.0f;
 			FTransform SpawnTransform = FTransform((Carrier->GetCarrierLocation() + Offset) * FVector(1.f,1.f,0.f));
 			AWorldItem* WorldItem = GetWorld()->SpawnActorDeferred<AWorldItem>(WorldItemClass, SpawnTransform);
-			WorldItem->FinishSpawning(SpawnTransform);
 			WorldItem->InitItem(ItemName, Items[ItemName].Amount);
+			WorldItem->FinishSpawning(SpawnTransform);
 		}
 	}
 	Items[ItemName].Amount = 0;
