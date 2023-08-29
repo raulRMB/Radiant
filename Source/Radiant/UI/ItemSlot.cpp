@@ -272,6 +272,7 @@ void UItemSlot::Reset()
 	ItemSlotData = FItemSlotData();
 	CooldownTag = FGameplayTag();
 	Trigger = FGameplayTag();
+	SetToolTip(nullptr);
 }
 
 FGameplayTag UItemSlot::GetAbilityTrigger()
