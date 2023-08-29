@@ -163,6 +163,7 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData);
+	void OnMaxHealthChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	virtual void OnRep_PlayerState() override;
 	virtual void OnRep_Controller() override;
 

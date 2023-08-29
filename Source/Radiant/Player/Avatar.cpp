@@ -192,6 +192,7 @@ void AAvatar::BeginPlay()
 			{
 				OverHeadInfoBar->SetXPPercent(AS->GetXP() / AS->GetMaxXP());
 				OverHeadInfoBar->SetLevel(AS->GetLevel());
+				OverHeadInfoBar->SetTicks(AS->GetMaxHealth() / 100);
 			}
 		}
 	}
@@ -535,6 +536,16 @@ void AAvatar::OnLevelChanged(const FOnAttributeChangeData& OnAttributeChangeData
 	}
 }
 
+void AAvatar::OnMaxHealthChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	if(OverHeadInfoBar)
+	{
+		OverHeadInfoBar->SetTicks(AttributeSet->GetMaxHealth() / 100);
+		float Percent = AttributeSet->GetHealth() / AttributeSet->GetMaxHealth();
+		OverHeadInfoBar->SetHealthPercent(Percent);
+	}
+}
+
 void AAvatar::ApplyInitialEffects()
 {
 	if(HasAuthority())
@@ -563,6 +574,8 @@ void AAvatar::OnRep_PlayerState()
 		AttributeSet = PS->GetAttributeSet();
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).
 		                        AddUObject(this, &AAvatar::OnHealthChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetMaxHealthAttribute()).
+								AddUObject(this, &AAvatar::OnMaxHealthChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetXPAttribute()).AddUObject(
 			this, &AAvatar::OnXPChanged);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetLevelAttribute()).
@@ -705,6 +718,7 @@ void AAvatar::SetOwnHealthBarColor()
 		{
 			return;
 		}
+		OverHeadInfoBar->SetTicks(GetPlayerState<ARTPlayerState>()->GetAttributeSet()->GetMaxHealth() / 100);
 		ETeamId Id = GetPlayerState<ARTPlayerState>()->GetTeamId();
 		FLinearColor Color;
 		if (LocalPS)
