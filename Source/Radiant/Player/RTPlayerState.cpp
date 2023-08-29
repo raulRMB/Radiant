@@ -305,6 +305,7 @@ void ARTPlayerState::S_BuyAbility_Implementation(const FName& AbilityName, int32
 
 void ARTPlayerState::S_EquipGear_Implementation(const FName& WeaponName)
 {
+	S_UnequipGear_Implementation(WeaponName);
 	if(const FItemData* GearItemData = UUtil::GetItemDataFromName(WeaponName))
 	{
 		const UWeaponDataAsset* WeaponDataAsset = Cast<UWeaponDataAsset>(GearItemData->AbilityData);
