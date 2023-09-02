@@ -9,7 +9,6 @@
 DECLARE_DELEGATE_TwoParams(FOnHeroDeath, uint32, uint32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FRadianiteChangedSignature, double XP, uint32 Level);
 
-
 UCLASS()
 class RADIANT_API ARTGameState : public AGameState
 {

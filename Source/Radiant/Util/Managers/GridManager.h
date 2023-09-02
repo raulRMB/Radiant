@@ -33,6 +33,8 @@ struct FGridPiece
 	{}
 };
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FGridUpdateSignature, const FIntVector2&, EEnvironmentType);
+DECLARE_MULTICAST_DELEGATE_OneParam(FGridInitSignature, const TArray<EEnvironmentType>&);
 
 UCLASS()
 class RADIANT_API AGridManager : public AActor
@@ -41,9 +43,13 @@ class RADIANT_API AGridManager : public AActor
 
 	UPROPERTY()
 	TArray<class AActor*> Pieces;
-	UPROPERTY(VisibleAnywhere, Replicated)
-	TArray<EEnvironmentType> Cells;
+	//UPROPERTY(Replicated, VisibleAnywhere)
 	UPROPERTY(VisibleAnywhere)
+	TArray<EEnvironmentType> Cells;
+	UPROPERTY(Replicated, VisibleAnywhere)
+	TArray<bool> VisibleCells;
+	
+	UPROPERTY(EditAnywhere)
 	uint16 GridDimensions;
 	
 	UPROPERTY(EditAnywhere)
@@ -56,6 +62,9 @@ class RADIANT_API AGridManager : public AActor
 
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* MapTexture;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<AActor*> VisibleActors;
 	
 public:
 	AGridManager();
@@ -63,6 +72,10 @@ public:
 	UFUNCTION(CallInEditor)
 	void GenerateMap();
 	void InitGrid();
+	UFUNCTION(Server, Reliable)
+	void S_RequestInitGrid(class ARTPlayerState* PlayerState);
+
+	void AddVisibleActor(AActor* Actor);
 	
 	uint32 CellSize = 200;
 	uint32 CellHalfSize = CellSize / 2;
@@ -74,4 +87,35 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* RenderTarget;
+	
+public:
+	FGridUpdateSignature OnGridUpdate;
+	
+private:
+	UFUNCTION(NetMulticast, Reliable)
+	void M_UpdateGrid(const FIntVector2& Position, EEnvironmentType EnvironmentType);	
+
+	void CheckVisible(const FIntVector2& Start);
+
+	bool GetVisibleCell(const FIntVector2& Position);
+
+	void ClearVision();
+	void SetVisible();
+	
+	virtual void Tick(float DeltaSeconds) override;
+
+	//void UpdateTexture(const FIntVector2& Pos);
+
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* EmptyTexture;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* VisionTexture;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* PlayerTexture;
+
+	UPROPERTY(EditAnywhere, Category = "Vision")
+	float VisionRange = 10.f;
 };

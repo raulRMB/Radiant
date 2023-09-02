@@ -16,6 +16,7 @@
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "UI/Minimap.h"
 #include "UI/RTHUD.h"
 #include "UI/Client/ClientSubsystem.h"
 #include "Util/Util.h"
@@ -234,6 +235,24 @@ ARTGameState* ARTPlayerState::GetRTGS() const
 
 #pragma endregion ConvenienceGetters
 
+void ARTPlayerState::C_InitGrid_Implementation(const TArray<EEnvironmentType>& Cells)
+{
+	if(ARTHUD* HUD = GetPlayerController()->GetHUD<ARTHUD>())
+	{
+		if(UMinimap* Minimap = HUD->GetMinimap())
+		{
+			Minimap->InitGrid(Cells);
+		}
+	}
+}
+
+void ARTPlayerState::S_RequestInitGrid_Implementation()
+{
+	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass())))
+	{
+		GM->S_RequestInitGrid(this);
+	}
+}
 
 void ARTPlayerState::GameReady_Implementation()
 {

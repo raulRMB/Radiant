@@ -94,6 +94,7 @@ public:
 
 	UGearSlot* GetWeaponSlot() const { return WeaponSlotWidget; }
 	void TogglePlayerStats();
+	UMinimap* GetMinimap();
 
 public:
 	ARTHUD();

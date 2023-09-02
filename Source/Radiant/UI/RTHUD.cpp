@@ -35,9 +35,9 @@ void ARTHUD::BeginPlay()
 	CraftingPanel->AddToViewport();
 	CraftingPanel->SetVisibility(ESlateVisibility::Hidden);
 	Minimap = Cast<UMinimap>(CreateWidget<UMinimap>(GetWorld(), MinimapClass));
+	Minimap->BindGridUpdate();
 	Minimap->AddToViewport();
-	//Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	Minimap->SetVisibility(ESlateVisibility::Hidden);
+	Minimap->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 	if(ARTPlayerController* RTPC = Cast<ARTPlayerController>(GetOwningPlayerController()))
 	{
@@ -61,6 +61,11 @@ void ARTHUD::ShowEndScreen(bool won)
 void ARTHUD::TogglePlayerStats()
 {
 	InfoPanel->TogglePlayerStats();
+}
+
+UMinimap* ARTHUD::GetMinimap()
+{
+	return Minimap;
 }
 
 ARTHUD::ARTHUD()
@@ -134,7 +139,7 @@ void ARTHUD::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	Minimap->DrawDynamic();
+	// Minimap->DrawDynamic();
 }
 
 void ARTHUD::InitCraftingPanel(UInventoryComponent* Inventory) const

@@ -11,6 +11,8 @@
 #include "Util/Managers/GridManager.h"
 #include "Avatar.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FGridUpdateSignature, const FIntVector2&, EEnvironmentType);
+
 UCLASS()
 class RADIANT_API AAvatar : public ARTCharacter, public ICarrier
 {
@@ -28,7 +30,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category=CharacterSwapping)
 	TMap<EClassType, class UAnimMontage*> DeathAnimMontages;
-	
+
 	UFUNCTION(Server, Reliable)
 	void S_ToggleItemMagnet();
 	UFUNCTION(NetMulticast, Reliable)
@@ -113,6 +115,7 @@ public:
 protected:
 	void SetIsDraggingFalse();
 	void OnDragStatusChanged(bool bArg);
+
 	virtual void BeginPlay() override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld(bool bIgnoreSelf = false) const;

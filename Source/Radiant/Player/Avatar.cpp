@@ -215,6 +215,14 @@ void AAvatar::BeginPlay()
 	UEventBroker::Get(this)->DragStatusChanged.AddUObject(this, &AAvatar::OnDragStatusChanged);
 	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
 	UEventBroker::Get(this)->GameIsReady.AddUObject(this, &AAvatar::GameReady);
+
+	if(HasAuthority())
+	{
+		if(GridManager)
+		{
+			GridManager->AddVisibleActor(this);
+		}
+	}
 }
 
 void AAvatar::GameReady()
@@ -718,7 +726,10 @@ void AAvatar::SetOwnHealthBarColor()
 		{
 			return;
 		}
-		OverHeadInfoBar->SetTicks(GetPlayerState<ARTPlayerState>()->GetAttributeSet()->GetMaxHealth() / 100);
+		if(OverHeadInfoBar)
+		{
+			OverHeadInfoBar->SetTicks(GetPlayerState<ARTPlayerState>()->GetAttributeSet()->GetMaxHealth() / 100);
+		}
 		ETeamId Id = GetPlayerState<ARTPlayerState>()->GetTeamId();
 		FLinearColor Color;
 		if (LocalPS)

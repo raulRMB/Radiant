@@ -2,16 +2,10 @@
 
 
 #include "RTGameState.h"
-
-#include "RTGameMode.h"
-#include "Kismet/GameplayStatics.h"
 #include "Player/Avatar.h"
 #include "Net/UnrealNetwork.h"
 #include "Objectives/CaptureArea.h"
 #include "Player/RTPlayerState.h"
-#include "UI/CaptureAreaBar.h"
-#include "Util/Util.h"
-#include "Util/Managers/GridManager.h"
 
 void ARTGameState::OnHeroDeath_Implementation(AAvatar* Hero)
 {

@@ -7,6 +7,8 @@
 #include "Minimap.generated.h"
 
 
+enum class EEnvironmentType : uint8;
+
 UCLASS()
 class RADIANT_API UMinimap : public UUserWidget
 {
@@ -20,6 +22,9 @@ class RADIANT_API UMinimap : public UUserWidget
 
 	UPROPERTY(EditAnywhere)
 	class UTextureRenderTarget2D* RenderTarget;
+
+	UPROPERTY(EditAnywhere)
+	class UTextureRenderTarget2D* MapRenderTarget;
 	
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* AllyTexture;
@@ -30,7 +35,17 @@ class RADIANT_API UMinimap : public UUserWidget
 	float UnitSize = 13.f;
 	float HalfUnitSize = UnitSize * .5f;
 
+	UPROPERTY(EditAnywhere)
+	TMap<EEnvironmentType, class UTexture2D*> EnvironmentTextures;
+	
 public:
 	void DrawDynamic();
-	void DrawStatic();
+	void BindGridUpdate();
+	void InitGrid(const TArray<EEnvironmentType>& Array);
+
+private:
+	UFUNCTION()
+	void OnGridUpdate(const FIntVector2& Position, EEnvironmentType EnvironmentType);
+	UFUNCTION()
+	void Request();
 };

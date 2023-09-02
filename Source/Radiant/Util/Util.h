@@ -74,6 +74,16 @@ public:
 	static struct FTooltipData* GetTooltipDataFromName(const FName& Name, const FString& ContextString = FString(""));
 
 	static class UDataTable* GetItemDataTable();
+
+#pragma region Grid
+	static void CheckVisible(const TArray<EEnvironmentType>& Grid, class UTexture2D* TargetTexture, const FIntVector2& Position);
+private:
+	static void SetValid(TArray<TArray<bool>>& MapState, TArray<TArray<bool>>& VisionState, int X, int Y, int OX, int oY);
+	static bool CheckValid(TArray<TArray<bool>>& Grid, int X, int Y, int OX, int OY);
+	static int GetDir(int O, int T); 
+#pragma endregion Grid
+public:
+	
 };
 
 #define BindStatsPanelStat(StatName) \

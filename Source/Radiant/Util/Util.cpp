@@ -8,10 +8,12 @@
 #include "Data/GearData.h"
 #include "Data/ItemData.h"
 #include "Data/TooltipData.h"
+#include "Engine/Canvas.h"
 #include "Player/Avatar.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetRenderingLibrary.h"
 #include "Modes/Base/RTGameState.h"
 #include "Player/RTPlayerState.h"
 #include "UI/InGame/ItemTooltip.h"
@@ -337,4 +339,101 @@ UDataTable* UUtil::GetItemDataTable()
 		}
 	}
 	return nullptr;
+}
+
+void UUtil::CheckVisible(const TArray<EEnvironmentType>& Grid, UTexture2D* TargetTexture, const FIntVector2& Position)
+{
+	TArray<TArray<bool>> MapState;
+	MapState.SetNum(128);
+	for(int32 i = 0; i < 128; i++)
+	{
+		MapState[i].SetNum(128);
+		for(int32 j = 0; j < 128; j++)
+		{
+			MapState[i][j] = Grid[i + j * 128] != EEnvironmentType::EEnvironmentType_Empty;
+		}
+	}
+
+	TArray<TArray<bool>> VisionState;
+	VisionState.SetNum(128);
+	for(int32 i = 0; i < 128; i++)
+	{
+		VisionState[i].SetNum(128);
+		for(int32 j = 0; j < 128; j++)
+		{
+			VisionState[i][j] = false;
+		}
+	}
+	
+	for(int32 radius = 1; radius <= 11; radius++) {
+		for(int32 i = -radius; i <= radius; i++)
+		{
+			SetValid(MapState, VisionState, Position.X + i, Position.Y + radius, Position.X, Position.Y);
+			SetValid(MapState, VisionState, Position.X + i, Position.Y - radius, Position.X, Position.Y);
+			SetValid(MapState, VisionState, Position.X + radius, Position.Y + i, Position.X, Position.Y);
+			SetValid(MapState, VisionState, Position.X - radius, Position.Y + i, Position.X, Position.Y);
+		}
+	}
+
+
+	FTexture2DMipMap* MipMap = &TargetTexture->GetPlatformData()->Mips[0];
+	FByteBulkData* RawImageData = &MipMap->BulkData;
+	FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
+	
+	for(int i = 0; i < MapState.Num(); i++)
+	{
+		for(int j = 0; j < MapState[i].Num(); j++)
+		{
+			FormattedImageData[i + j * 128] = FColor::Black;
+			
+			if(VisionState[i][j])
+			{
+				FormattedImageData[i + j * 128] = FColor::White;
+			}
+		}
+	}
+	
+	RawImageData->Unlock();
+	TargetTexture->UpdateResource();
+}
+
+void UUtil::SetValid(TArray<TArray<bool>>& MapState, TArray<TArray<bool>>& VisionState, int X, int Y, int OX, int OY)
+{
+	VisionState[X][Y] = CheckValid(MapState, X, Y, OX, OY);
+}
+
+bool UUtil::CheckValid(TArray<TArray<bool>>& Grid, int X, int Y, int OX, int OY)
+{
+	if(X < 0 || Y < 0 || X > 128 || Y > 128 || Grid[X][Y])
+		return false;
+	if(X == OX && Y == OY) 
+		return true;
+
+	int DirX = GetDir(OX, X);
+	int DirY = GetDir(OY, Y);
+	
+	bool Result1 = CheckValid(Grid, X + DirX, Y + DirY, OX, OY);
+
+	if(!(Grid[X-1][Y] || Grid[X+1][Y] || Grid[X][Y-1] || Grid[X][Y+1]))
+		return Result1;
+
+	bool Result2 = true, Result3 = true;
+
+	if(DirX != 0)
+	{
+		Result2 = CheckValid(Grid, X + DirX, Y, OX, OY);
+	}
+	if(DirY != 0)
+	{
+		Result3 = CheckValid(Grid, X, Y + DirY, OX, OY);
+	}
+	
+	return Result1 && Result2 && Result3;
+}
+
+int UUtil::GetDir(int O, int T)
+{
+	if(O == T)
+		return 0;
+	return O > T ? 1 : -1;
 }
