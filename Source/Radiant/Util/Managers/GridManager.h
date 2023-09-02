@@ -104,6 +104,8 @@ private:
 
 	void ClearVision();
 	void SetVisible();
+
+	FVector GetTransformedVector(const FIntVector2& Position);
 	
 	virtual void Tick(float DeltaSeconds) override;
 

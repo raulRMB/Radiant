@@ -49,23 +49,23 @@ void AGridManager::GenerateMap()
 
 			if(PixelColor.ToPackedRGBA() == 0Xffffffff)
 			{
-				Cells[(MapTexture->GetSizeY() - Y - 1) * MapTexture->GetSizeX() + X] = EEnvironmentType::EEnvironmentType_Wall;
+				Cells[MapTexture->GetSizeY() * Y + X] = EEnvironmentType::EEnvironmentType_Wall;
 			}
 			else if(PixelColor.ToPackedRGBA() == 0Xff6f00ff)
 			{
-				Cells[(MapTexture->GetSizeY() - Y - 1) * MapTexture->GetSizeX() + X] = EEnvironmentType::EEnvironmentType_Rock;
+				Cells[MapTexture->GetSizeY() * Y + X] = EEnvironmentType::EEnvironmentType_Rock;
 			}
 			else if(PixelColor.ToPackedRGBA() == 0X3bff00ff)
 			{
-				Cells[(MapTexture->GetSizeY() - Y - 1) * MapTexture->GetSizeX() + X] = EEnvironmentType::EEnvironmentType_Tree;
+				Cells[MapTexture->GetSizeY() * Y + X] = EEnvironmentType::EEnvironmentType_Tree;
 			}
 			else if(PixelColor.ToPackedRGBA() == 0x0000ffff)
 			{
-				Cells[(MapTexture->GetSizeY() - Y - 1) * MapTexture->GetSizeX() + X] = EEnvironmentType::EEnvironmentType_Vein;
+				Cells[MapTexture->GetSizeY() * Y + X] = EEnvironmentType::EEnvironmentType_Vein;
 			}
 			else if(PixelColor.ToPackedRGBA() == 0xfbff00ff)
 			{
-				Cells[(MapTexture->GetSizeY() - Y - 1) * MapTexture->GetSizeX() + X] = EEnvironmentType::EEnvironmentType_Grass;
+				Cells[MapTexture->GetSizeY() * Y + X] = EEnvironmentType::EEnvironmentType_Grass;
 			}
 		}
 	}
@@ -102,7 +102,7 @@ void AGridManager::InitGrid()
 					continue;
 				}
 				FIntVector2 Position = FIntVector2(x, y);
-				FTransform SpawnTransform = FTransform(FVector(Position.X, Position.Y, 0.f) * CellSize);
+				FTransform SpawnTransform = FTransform(GetTransformedVector(Position));			
 				AActor* Actor = GetWorld()->SpawnActorDeferred<AActor>(BuildingTypes[Cells[y * GridDimensions + x]], SpawnTransform);
 				
 				if(ABuilding* Building = Cast<ABuilding>(Actor))
@@ -282,13 +282,21 @@ void AGridManager::SetVisible()
 	}
 }
 
+FVector AGridManager::GetTransformedVector(const FIntVector2& Position)
+{
+	double X = 127 - Position.Y;
+	double Y = Position.X;
+	
+	return FVector(X, Y, 0.f) * CellSize;
+}
+
 void AGridManager::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
 	if(VisibleActors.Num() > 0)
 	{
-		FIntVector2 Pos = FIntVector2(FMath::Floor(VisibleActors[0]->GetActorLocation().Y / 200), 128 - (FMath::Floor(VisibleActors[0]->GetActorLocation().X / 200)));
+		FIntVector2 Pos = FIntVector2((VisibleActors[0]->GetActorLocation().Y + 100) / 200 , 127 - (VisibleActors[0]->GetActorLocation().X - 100) / 200);
 		UUtil::CheckVisible(Cells, RenderTarget, Pos);
 	}
 
