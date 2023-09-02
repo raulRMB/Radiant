@@ -404,10 +404,11 @@ void UUtil::SetValid(TArray<TArray<bool>>& MapState, TArray<TArray<bool>>& Visio
 
 bool UUtil::CheckValid(TArray<TArray<bool>>& Grid, int X, int Y, int OX, int OY)
 {
-	if(X < 0 || Y < 0 || X > 128 || Y > 128 || Grid[X][Y])
-		return false;
 	if(X == OX && Y == OY) 
 		return true;
+	if(X < 0 || Y < 0 || X > 128 || Y > 128 || Grid[X][Y])
+		return false;
+
 
 	int DirX = GetDir(OX, X);
 	int DirY = GetDir(OY, Y);
