@@ -98,18 +98,20 @@ private:
 	UFUNCTION(NetMulticast, Reliable)
 	void M_UpdateGrid(const FIntVector2& Position, EEnvironmentType EnvironmentType);	
 
-	void CheckVisible(const FIntVector2& Start);
 
 	bool GetVisibleCell(const FIntVector2& Position);
+	
+	void ClearAllVisible();
+	void DrawVisible();
+	void CheckVisible(const FVector2D& From, const FVector2D& To);
 
-	void ClearVision();
-	void SetVisible();
+	bool IsBlockingVision(const FIntVector2& Position, const FIntVector2& Direction);
+	EEnvironmentType& GetCell(const FIntVector2& Position);
+	bool GetNeighbor(const FIntVector2& Position, const FIntVector2& Direction, EEnvironmentType& OutCell);
 
 	FVector GetTransformedVector(const FIntVector2& Position);
 	
 	virtual void Tick(float DeltaSeconds) override;
-
-	//void UpdateTexture(const FIntVector2& Pos);
 
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* EmptyTexture;

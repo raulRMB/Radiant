@@ -210,8 +210,6 @@ void AGridManager::BeginPlay()
 	Super::BeginPlay();
 
 	InitGrid();
-	
-	//UUtil::CheckVisible(this, VisionTexture, RenderTarget, FIntVector2(0, 0));
 }
 
 void AGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -222,39 +220,87 @@ void AGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(AGridManager, VisibleCells);
 }
 
-
-//
-// void AGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
-// {
-// 	const double DX = To.X - From.X;
-// 	const double DY = To.Y - From.Y;
-//
-// 	const double SideLength = FMath::Max(FMath::Abs(DX), FMath::Abs(DY));
-//
-// 	const double XIncrement = DX / SideLength;
-// 	const double YIncrement = DY / SideLength;
-//
-// 	double CurrentX = From.X;
-// 	double CurrentY = From.Y;
-// 	
-// 	for(int i = 0; i <= SideLength; i++)
-// 	{
-// 		// if(Cells[static_cast<int32>(CurrentX) + static_cast<int32>(CurrentY) * GridDimensions] != EEnvironmentType::EEnvironmentType_Empty)
-// 		// {
-// 		// 	break;
-// 		// }
-// 		VisibleCells[static_cast<int32>(CurrentX) + static_cast<int32>(CurrentY) * GridDimensions] = true;
-// 		CurrentX += XIncrement;
-// 		CurrentY += YIncrement;
-// 	}
-// }
-
-void AGridManager::CheckVisible(const FIntVector2& Start)
+void AGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 {
-	for(int Range = 0; Range < 10; Range++)
+	const double DX = To.X - From.X;
+	const double DY = To.Y - From.Y;
+
+	const double SideLength = FMath::Max(FMath::Abs(DX), FMath::Abs(DY));
+
+	const double XIncrement = DX / SideLength;
+	const double YIncrement = DY / SideLength;
+
+	double CurrentX = From.X;
+	double CurrentY = From.Y;
+	
+	FVector2D Direction = FVector2D(DX, DY);
+	Direction.Normalize();
+	FIntVector2 DirectionInt = FIntVector2(Direction.X, Direction.Y);
+
+	for(int i = 0; i <= SideLength; i++)
 	{
-		//for(int i = 0; )
+		if(IsBlockingVision(FIntVector2(CurrentX, CurrentY), DirectionInt))
+		{
+			break;
+		}
+		VisibleCells[static_cast<int32>(CurrentX) + static_cast<int32>(CurrentY) * GridDimensions] = true;
+		CurrentX += XIncrement;
+		CurrentY += YIncrement;
 	}
+}
+
+bool AGridManager::IsBlockingVision(const FIntVector2& Position, const FIntVector2& Direction)
+{	
+	EEnvironmentType& Cell = GetCell(Position);
+	if(Cell != EEnvironmentType::EEnvironmentType_Empty)
+	{
+		return true;
+	}
+	// TOP RIGHT
+	if(Direction == FIntVector2(1, -1) && GetNeighbor(Position, FIntVector2(1, 0), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty
+		&& GetNeighbor(Position, FIntVector2(0, -1), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty)
+	{
+		return true;
+	}
+	// TOP LEFT
+	if(Direction == FIntVector2(-1, -1) && GetNeighbor(Position, FIntVector2(-1, 0), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty
+		&& GetNeighbor(Position, FIntVector2(0, -1), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty)
+	{
+		return true;
+	}
+	// BOTTOM RIGHT
+	if(Direction == FIntVector2(1, 1) && GetNeighbor(Position, FIntVector2(1, 0), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty
+		&& GetNeighbor(Position, FIntVector2(0, 1), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty)
+	{
+		return true;
+	}
+	// BOTTOM LEFT
+	if(Direction == FIntVector2(-1, 1) && GetNeighbor(Position, FIntVector2(-1, 0), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty
+		&& GetNeighbor(Position, FIntVector2(0, 1), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty)
+	{
+		return true;
+	}
+	return false;
+}
+
+EEnvironmentType& AGridManager::GetCell(const FIntVector2& Position)
+{
+	if(Position.X < 0 || Position.Y < 0 || Position.X >= GridDimensions || Position.Y >= GridDimensions)
+	{
+		return Cells[0];
+	}
+	return Cells[static_cast<int32>(Position.X) + static_cast<int32>(Position.Y) * GridDimensions];
+}
+
+bool AGridManager::GetNeighbor(const FIntVector2& Position, const FIntVector2& Direction, EEnvironmentType& OutCell)
+{
+	FIntVector2 NeighborPosition = FIntVector2(Position.X + Direction.X, Position.Y + Direction.Y);
+	if(NeighborPosition.X < 0 || NeighborPosition.Y < 0 || NeighborPosition.X >= GridDimensions || NeighborPosition.Y >= GridDimensions)
+	{
+		return false;
+	}
+	OutCell = Cells[NeighborPosition.X + NeighborPosition.Y * GridDimensions];
+	return true;
 }
 
 bool AGridManager::GetVisibleCell(const FIntVector2& Position)
@@ -262,7 +308,7 @@ bool AGridManager::GetVisibleCell(const FIntVector2& Position)
 	return VisibleCells[Position.X + Position.Y * GridDimensions];
 }
 
-void AGridManager::ClearVision()
+void AGridManager::ClearAllVisible()
 {	
 	for(int i = 0; i < VisibleCells.Num(); i++)
 	{
@@ -273,12 +319,18 @@ void AGridManager::ClearVision()
 	}
 }
 
-void AGridManager::SetVisible()
+void AGridManager::DrawVisible()
 {
-	for(AActor* Actor : VisibleActors)
+	if(VisibleActors.Num() > 0)
 	{
-		
-		// CheckVisible(Pos);
+		for(double Angle = 0.; Angle <= 2. * PI; Angle += 0.01)
+		{
+			double X = (VisibleActors[0]->GetActorLocation().Y + 100.) / 200.;
+			double Y = 127. - (VisibleActors[0]->GetActorLocation().X - 100.) / 200.;
+			FVector2D From = FVector2D(X, Y);
+			FVector2D To = FVector2D(FMath::Cos(Angle) * 10. + X, FMath::Sin(Angle) * 10 + Y);
+			CheckVisible(From, To);
+		}
 	}
 }
 
@@ -293,58 +345,27 @@ FVector AGridManager::GetTransformedVector(const FIntVector2& Position)
 void AGridManager::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if(!HasAuthority())
+		return;
 	
-	if(VisibleActors.Num() > 0)
+	ClearAllVisible();
+	DrawVisible();
+	
+	FTexture2DMipMap* MipMap = &RenderTarget->GetPlatformData()->Mips[0];
+	FByteBulkData* RawImageData = &MipMap->BulkData;
+	FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
+	
+	for(int i = 0; i < 128; i++)
 	{
-		FIntVector2 Pos = FIntVector2((VisibleActors[0]->GetActorLocation().Y + 100) / 200 , 127 - (VisibleActors[0]->GetActorLocation().X - 100) / 200);
-		UUtil::CheckVisible(Cells, RenderTarget, Pos);
+		for(int j = 0; j < 128; j++)
+		{
+			FormattedImageData[i + j * 128] = VisibleCells[i + j * 128] ? FColor::White : FColor::Black;
+		}
 	}
-
-	// if(VisibleActors.Num() > 0)
-	// {
-	// 	FIntVector2 Pos = FIntVector2(FMath::Floor(VisibleActors[0]->GetActorLocation().X / 200), FMath::Floor(VisibleActors[0]->GetActorLocation().Y / 200));
-	// 	UUtil::CheckVisible(this, MapTexture, VisionTexture, RenderTarget, Pos);
-	// }
 	
-	// if(HasAuthority())
-	// {
-	// 	ClearVision();
-	// 	SetVisible();
-	// }
-	// else
-	// {
-	// 	UpdateTexture(FIntVector2(0, 0));
-	// }
+	RawImageData->Unlock();
+	RenderTarget->UpdateResource();
 }
 
-// void AGridManager::UpdateTexture(const FIntVector2& Pos)
-// {
-// 	UKismetRenderingLibrary::ClearRenderTarget2D(this, RenderTarget, FLinearColor::Black);
-// 	
-// 	UCanvas* Canvas;
-// 	FDrawToRenderTargetContext Context;
-// 	FVector2D Size;
-// 	UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(
-// 		this,
-// 		RenderTarget,
-// 		Canvas,
-// 		Size,
-// 		Context
-// 		);
-//
-// 	for(int i = 0; i < VisibleCells.Num(); i++)
-// 	{	
-// 		if(VisibleCells[i])
-// 		{
-// 			Canvas->DrawTile(VisionTexture, i % GridDimensions, i / GridDimensions, 1, 1, 0, 0, 1, 1, BLEND_Opaque);
-// 		}
-// 	}
-// 	UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(this, Context);
-// }
-
-void AGridManager::M_UpdateGrid_Implementation(const FIntVector2& Position, EEnvironmentType EnvironmentType)
-{
-	// OnGridUpdate.Broadcast(Position, EnvironmentType);
-
-	
-}
+void AGridManager::M_UpdateGrid_Implementation(const FIntVector2& Position, EEnvironmentType EnvironmentType) {}
