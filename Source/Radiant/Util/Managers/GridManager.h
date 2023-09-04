@@ -96,7 +96,8 @@ public:
 	
 public:
 	FGridUpdateSignature OnGridUpdate;
-	
+	bool IsTargetVisibleForTeam(const AActor* Target, ETeamId TeamId);
+
 private:
 	UFUNCTION(NetMulticast, Reliable)
 	void M_UpdateGrid(const FIntVector2& Position, EEnvironmentType EnvironmentType);	
@@ -113,7 +114,7 @@ private:
 	bool GetNeighbor(const FIntVector2& Position, const FIntVector2& Direction, EEnvironmentType& OutCell);
 
 	FVector GetTransformedVector(const FIntVector2& Position);
-	
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditAnywhere)

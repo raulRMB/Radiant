@@ -651,11 +651,27 @@ void AAvatar::SetIsDead(const bool NewIsDead)
 
 bool AAvatar::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
-	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
 	{
-		//GM->Get
+		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
+		{
+			return IsVisibleForTeam(PS->GetTeamId());
+		}
 	}
 	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+}
+
+bool AAvatar::IsVisibleForTeam(const ETeamId TargetTeamId) const
+{
+	if(TargetTeamId == GetTeamId())
+	{
+		return true;
+	}
+	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+	{
+		return GM->IsTargetVisibleForTeam(this, TargetTeamId);
+	}
+	return false;
 }
 
 void AAvatar::M_PlayDeathMontage_Implementation()
@@ -1026,6 +1042,11 @@ void AAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(!HasAuthority())
+	{
+		SetActorHiddenInGame(!IsVisibleForTeam(UUtil::GetLocalPlayerTeamId(this)));
+	}
+	
 	FPS = 1.0 / DeltaTime;
 	HandleCamera(DeltaTime);
 

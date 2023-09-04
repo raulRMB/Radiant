@@ -91,7 +91,7 @@ void AGridManager::InitGrid()
 {
 
 	VisibleCellsRedTeam.Init(false, 128*128);
-	VisibleCellsRedTeam.Init(false, 128*128);
+	VisibleCellsBlueTeam.Init(false, 128*128);
 	
 	if(!bSpawnMap)
 	{
@@ -348,7 +348,6 @@ void AGridManager::DrawVisible(ETeamId TeamId, TArray<bool>& VisibleCells)
 {
 	for(auto Actor : VisibleActors)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Actor: %s"), *Actor->GetName()));
 		if(Actor)
 		{
 			if(ITeamMember * TeamMember = Cast<ITeamMember>(Actor))
@@ -380,10 +379,12 @@ FVector AGridManager::GetTransformedVector(const FIntVector2& Position)
 	return FVector(X, Y, 0.f) * CellSize;
 }
 
-// bool IsTargetVisibleForTeam(AActor Target, ETeamId TeamId)
-// {
-// 	
-// }
+bool AGridManager::IsTargetVisibleForTeam(const AActor* Target, ETeamId TeamId)
+{
+	FIntVector2 TargetPosition = FIntVector2((Target->GetActorLocation().Y + 100) / 200, 127 - (Target->GetActorLocation().X + 100) / 200);
+	TArray<bool>& Arr = GetVisibleCellsArray(TeamId);
+	return Arr[TargetPosition.X + TargetPosition.Y * GridDimensions];
+}
 
 void AGridManager::Tick(float DeltaSeconds)
 {
@@ -391,7 +392,12 @@ void AGridManager::Tick(float DeltaSeconds)
 
 	if(HasAuthority())
 	{
-		
+		TArray<bool>& Red = GetVisibleCellsArray(ETeamId::Red);
+		ClearAllVisible(Red);
+		DrawVisible(ETeamId::Red, Red);
+		TArray<bool>& Blue = GetVisibleCellsArray(ETeamId::Blue);
+		ClearAllVisible(Blue);
+		DrawVisible(ETeamId::Blue, Blue);
 	}
 	else
 	{
