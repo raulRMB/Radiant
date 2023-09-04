@@ -10,6 +10,7 @@
 #include "Modes/Base/RTGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/RTPlayerState.h"
+#include "Util/TempGridActor.h"
 #include "Util/Util.h"
 
 TArray<bool>& AGridManager::GetVisibleCellsArray(ETeamId TeamId)
@@ -87,12 +88,42 @@ void AGridManager::GenerateMap()
 	
 }
 
+void AGridManager::SpawnTmpActor(FGridPiece& Piece, UStaticMeshComponent* Mesh, FTransform Transform)
+{
+	if(TmpCells[Piece.Position.X + Piece.Position.Y * GridDimensions] == Piece.Type)
+	{
+		return;
+	}
+	//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, FString::Printf(TEXT("Spawning TmpActor")));
+	FTransform SpawnTransform = FTransform(GetTransformedVector(Piece.Position));
+	TmpCells[Piece.Position.X + Piece.Position.Y * GridDimensions] = Piece.Type;
+	auto tmp = GetWorld()->SpawnActorDeferred<ATempGridActor>(ATempGridActor::StaticClass(), SpawnTransform);
+	tmp->SetMesh(Mesh);
+	//tmp->GetMesh()->BodyInstance->Bo
+	//tmp->GetMesh()->BodyInstance.Scale3D = Mesh->BodyInstance.Scale3D;
+	tmp->SetActorTransform(Transform);
+	TmpPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] = tmp;
+	tmp->FinishSpawning(SpawnTransform);
+}
+
+void AGridManager::DestroyTmpActor(FGridPiece& Piece)
+{
+	if(TmpCells[Piece.Position.X + Piece.Position.Y * GridDimensions] == EEnvironmentType::EEnvironmentType_Empty)
+	{
+		return;
+	}
+	//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, FString::Printf(TEXT("Destorying TmpActor")));
+	TmpCells[Piece.Position.X + Piece.Position.Y * GridDimensions] = EEnvironmentType::EEnvironmentType_Empty;
+	TmpPieces[Piece.Position.X + Piece.Position.Y * GridDimensions]->Destroy();
+}
+
 void AGridManager::InitGrid()
 {
 
 	VisibleCellsRedTeam.Init(false, 128*128);
 	VisibleCellsBlueTeam.Init(false, 128*128);
-	
+	TmpCells.Init(EEnvironmentType::EEnvironmentType_Empty, MapTexture->GetSizeX() * MapTexture->GetSizeY());
+	TmpPieces.Init(nullptr, MapTexture->GetSizeX() * MapTexture->GetSizeY());
 	if(!bSpawnMap)
 	{
 		return;
@@ -174,7 +205,7 @@ void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 		}
 		Actor->FinishSpawning(Transform);
 		Cells[Piece.Position.X + Piece.Position.Y * GridDimensions] = Piece.Type;
-		M_UpdateGrid(Piece.Position, EEnvironmentType::EEnvironmentType_Empty);
+		//M_UpdateGrid(Piece.Position, EEnvironmentType::EEnvironmentType_Empty);
 	}
 }
 
@@ -187,7 +218,7 @@ void AGridManager::ClearPiece(const FGridPiece Piece)
 	}
 
 	Cells[Position.X + Position.Y * GridDimensions] = EEnvironmentType::EEnvironmentType_Empty;
-	M_UpdateGrid(Piece.Position, EEnvironmentType::EEnvironmentType_Empty);
+	//M_UpdateGrid(Piece.Position, EEnvironmentType::EEnvironmentType_Empty);
 }
 
 bool AGridManager::CheckCanPlace(const FGridPiece Piece)
@@ -424,4 +455,4 @@ void AGridManager::Tick(float DeltaSeconds)
 	}
 }
 
-void AGridManager::M_UpdateGrid_Implementation(const FIntVector2& Position, EEnvironmentType EnvironmentType) {}
+//void AGridManager::M_UpdateGrid_Implementation(const FIntVector2& Position, EEnvironmentType EnvironmentType) {}

@@ -36,7 +36,7 @@ void ABase::OnBaseHealthChanged(const FOnAttributeChangeData& Data)
 void ABase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Gem->AddLocalRotation(FRotator(0.f, 90.f * DeltaTime, 0.f));
+	//Gem->AddLocalRotation(FRotator(0.f, 90.f * DeltaTime, 0.f));
 }
 
 void ABase::BeginPlay()

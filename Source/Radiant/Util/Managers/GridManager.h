@@ -43,9 +43,13 @@ class RADIANT_API AGridManager : public AActor
 
 	UPROPERTY()
 	TArray<class AActor*> Pieces;
+	UPROPERTY()
+	TArray<class AActor*> TmpPieces;
 	//UPROPERTY(Replicated, VisibleAnywhere)
 	UPROPERTY(VisibleAnywhere)
 	TArray<EEnvironmentType> Cells;
+	UPROPERTY(VisibleAnywhere)
+	TArray<EEnvironmentType> TmpCells;
 	//UPROPERTY(Replicated, VisibleAnywhere)
 	TArray<bool> VisibleCellsRedTeam;
 	TArray<bool> VisibleCellsBlueTeam;
@@ -61,6 +65,9 @@ class RADIANT_API AGridManager : public AActor
 	UPROPERTY(EditAnywhere)
 	TMap<EEnvironmentType, TSubclassOf<class AActor>> BuildingTypes;
 
+	// UPROPERTY(EditAnywhere)
+	// TMap<EEnvironmentType, TSubclassOf<class AActor>> PlaceholderBuildings;
+	
 	float PerlinScale = 0.1f;
 
 	UPROPERTY(EditAnywhere)
@@ -74,6 +81,8 @@ public:
 
 	UFUNCTION(CallInEditor)
 	void GenerateMap();
+	void SpawnTmpActor(FGridPiece& Piece, UStaticMeshComponent* Mesh, FTransform Transform);
+	void DestroyTmpActor(FGridPiece& Piece);
 	void InitGrid();
 	UFUNCTION(Server, Reliable)
 	void S_RequestInitGrid(class ARTPlayerState* PlayerState);
@@ -99,9 +108,8 @@ public:
 	bool IsTargetVisibleForTeam(const AActor* Target, ETeamId TeamId);
 
 private:
-	UFUNCTION(NetMulticast, Reliable)
-	void M_UpdateGrid(const FIntVector2& Position, EEnvironmentType EnvironmentType);	
-
+	//UFUNCTION(NetMulticast, Reliable)
+	//void M_UpdateGrid(const FIntVector2& Position, EEnvironmentType EnvironmentType);
 
 	bool GetVisibleCell(const TArray<bool>& Arr, const FIntVector2& Position);
 	

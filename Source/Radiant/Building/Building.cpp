@@ -21,13 +21,36 @@ ABuilding::ABuilding()
 	AttributeSet = CreateDefaultSubobject<UBuildingAttributeSet>("AttributeSet");
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
 	SetRootComponent(CapsuleComponent);
-	bAlwaysRelevant = true;
+	//bAlwaysRelevant = true;
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bAllowTickOnDedicatedServer = false;
+}
+
+bool ABuilding::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
+{
+	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
+	{
+		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
+		{
+			return IsVisibleForTeam(PS->GetTeamId());
+		}
+	}
+	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+}
+
+bool ABuilding::IsVisibleForTeam(const ETeamId TargetTeamId) const
+{
+	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+	{
+		return GM->IsTargetVisibleForTeam(this, TargetTeamId);
+	}
+	return false;
 }
 
 void ABuilding::BeginPlay()
 {
 	Super::BeginPlay();
-
 	if (!AttributeSet)
 	{
 		AttributeSet = NewObject<UBuildingAttributeSet>(this);
@@ -135,10 +158,34 @@ void ABuilding::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABuilding, TeamId);
 	DOREPLIFETIME(ABuilding, bHideLevel);
+	DOREPLIFETIME(ABuilding, TmpActor);
+	DOREPLIFETIME(ABuilding, GridPiece);
 }
 
 void ABuilding::Tick(float DeltaSeconds)
 {
+	if(!HasAuthority())
+	{
+		if(IsVisibleForTeam(UUtil::GetLocalPlayerTeamId(this)))
+		{
+			SetActorHiddenInGame(false);
+			if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+			{
+				GM->DestroyTmpActor(GridPiece);
+			}
+		} else
+		{
+			SetActorHiddenInGame(true);
+			if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+			{
+				if(GridPiece.Type != EEnvironmentType::EEnvironmentType_Empty)
+				{
+					UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
+					GM->SpawnTmpActor(GridPiece, Mesh, GetTransform());
+				}
+			}
+		}
+	}
 	Super::Tick(DeltaSeconds);
 }
 
