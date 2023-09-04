@@ -7,8 +7,11 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "ItemInfo/WorldItemInfoWidget.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/Avatar.h"
+#include "Player/RTPlayerController.h"
+#include "Player/RTPlayerState.h"
 #include "Util/Util.h"
 #include "Util/Interfaces/Carrier.h"
 
@@ -28,6 +31,27 @@ AWorldItem::AWorldItem()
 
 	NameWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("NameWidget"));
 	NameWidget->SetupAttachment(Mesh);
+}
+
+bool AWorldItem::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
+{
+	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
+	{
+		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
+		{
+			return IsVisibleForTeam(PS->GetTeamId());
+		}
+	}
+	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+}
+
+bool AWorldItem::IsVisibleForTeam(const ETeamId TargetTeamId) const
+{
+	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+	{
+		return GM->IsTargetVisibleForTeam(this, TargetTeamId);
+	}
+	return false;
 }
 
 void AWorldItem::InitItem(FName NewItemName, uint32 NewAmount)
@@ -93,6 +117,7 @@ void AWorldItem::BeginPlay()
 		PickUpRadius->OnComponentBeginOverlap.AddDynamic(this, &AWorldItem::OnCollision);
 		PickUpRadius->OnComponentEndOverlap.AddDynamic(this, &AWorldItem::OnEndCollision);
 	}
+	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
 	UpdateInfo();
 	if(!HasAuthority() && GetWorld())
 	{
@@ -102,6 +127,10 @@ void AWorldItem::BeginPlay()
 
 void AWorldItem::Tick(float DeltaTime)
 {
+	if(!HasAuthority())
+	{
+		SetActorHiddenInGame(!IsVisibleForTeam(UUtil::GetLocalPlayerTeamId(this)));
+	}
 	if(HasAuthority() && Target)
 	{
 		if(!Target->IsMagnetized)

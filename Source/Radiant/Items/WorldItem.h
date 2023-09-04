@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums/TeamId.h"
 #include "GameFramework/Actor.h"
 #include "WorldItem.generated.h"
 
@@ -35,8 +36,12 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Location)
 	FVector Location;
 	uint8 bLocationDirty : 1;
-	
+	virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;
+	bool IsVisibleForTeam(ETeamId TargetTeamId) const;
+
 public:
+	UPROPERTY()
+	class AGridManager* GridManager;
 	void InitItem(FName NewItemName, uint32 NewAmount);
 	void UpdateAmount(uint32 NewAmount);
 	uint32 GetAmount() const { return Amount; }
