@@ -216,13 +216,13 @@ void AAvatar::BeginPlay()
 	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
 	UEventBroker::Get(this)->GameIsReady.AddUObject(this, &AAvatar::GameReady);
 
-	if(HasAuthority())
-	{
+	// if(HasAuthority())
+	// {
 		if(GridManager)
 		{
 			GridManager->AddVisibleActor(this);
 		}
-	}
+	//}
 }
 
 void AAvatar::GameReady()
@@ -647,6 +647,15 @@ void AAvatar::SetIsDead(const bool NewIsDead)
 	{
 		M_PlayDeathMontage();
 	}
+}
+
+bool AAvatar::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
+{
+	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+	{
+		//GM->Get
+	}
+	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 }
 
 void AAvatar::M_PlayDeathMontage_Implementation()

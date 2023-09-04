@@ -46,8 +46,11 @@ class RADIANT_API AGridManager : public AActor
 	//UPROPERTY(Replicated, VisibleAnywhere)
 	UPROPERTY(VisibleAnywhere)
 	TArray<EEnvironmentType> Cells;
-	UPROPERTY(Replicated, VisibleAnywhere)
-	TArray<bool> VisibleCells;
+	//UPROPERTY(Replicated, VisibleAnywhere)
+	TArray<bool> VisibleCellsRedTeam;
+	TArray<bool> VisibleCellsBlueTeam;
+
+	TArray<bool>& GetVisibleCellsArray(ETeamId TeamId);
 	
 	UPROPERTY(EditAnywhere)
 	uint16 GridDimensions;
@@ -99,11 +102,11 @@ private:
 	void M_UpdateGrid(const FIntVector2& Position, EEnvironmentType EnvironmentType);	
 
 
-	bool GetVisibleCell(const FIntVector2& Position);
+	bool GetVisibleCell(const TArray<bool>& Arr, const FIntVector2& Position);
 	
-	void ClearAllVisible();
-	void DrawVisible();
-	void CheckVisible(const FVector2D& From, const FVector2D& To);
+	void ClearAllVisible(TArray<bool>& Arr);
+	void DrawVisible(ETeamId TeamId, TArray<bool>& VisibleCells);
+	bool CheckVisible(const FVector2D& From, const FVector2D& To, double Angle, TArray<bool>& VisibleCells);
 
 	bool IsBlockingVision(const FIntVector2& Position, const FIntVector2& Direction);
 	EEnvironmentType& GetCell(const FIntVector2& Position);

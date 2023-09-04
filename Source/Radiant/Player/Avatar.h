@@ -177,6 +177,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void M_PlayDeathMontage();
+
+	virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;
 	
 	UFUNCTION(Server, Reliable)
 	void S_CancelAllAbilities();

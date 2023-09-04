@@ -33,6 +33,9 @@ public:
 	static FText ItemTypeToText(const EItemType Value);
 
 	UFUNCTION(BlueprintCallable)
+	static ETeamId GetLocalPlayerTeamId(class UObject* WorldContext);
+	
+	UFUNCTION(BlueprintCallable)
 	static FName GetMappingNameFromSlot(EItemSlotID SlotID);
 
 	UFUNCTION(BlueprintCallable)

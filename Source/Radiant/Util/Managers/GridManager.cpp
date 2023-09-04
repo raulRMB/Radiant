@@ -12,6 +12,11 @@
 #include "Player/RTPlayerState.h"
 #include "Util/Util.h"
 
+TArray<bool>& AGridManager::GetVisibleCellsArray(ETeamId TeamId)
+{
+	return TeamId == ETeamId::Red ? VisibleCellsRedTeam : VisibleCellsBlueTeam;
+}
+
 AGridManager::AGridManager(): GridDimensions(0), bSpawnMap(0), MapTexture(nullptr), RenderTarget(nullptr),
                               EmptyTexture(nullptr),
                               VisionTexture(nullptr)
@@ -84,12 +89,14 @@ void AGridManager::GenerateMap()
 
 void AGridManager::InitGrid()
 {
+
+	VisibleCellsRedTeam.Init(false, 128*128);
+	VisibleCellsRedTeam.Init(false, 128*128);
+	
 	if(!bSpawnMap)
 	{
 		return;
 	}
-	
-	VisibleCells.Init(false, Cells.Num());
 	
 	if(HasAuthority())
 	{
@@ -217,10 +224,10 @@ void AGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	//DOREPLIFETIME(AGridManager, Cells);
-	DOREPLIFETIME(AGridManager, VisibleCells);
+	// DOREPLIFETIME(AGridManager, VisibleCells);
 }
 
-void AGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
+bool AGridManager::CheckVisible(const FVector2D& From, const FVector2D& To, double Angle, TArray<bool>& VisibleCells)
 {
 	const double DX = To.X - From.X;
 	const double DY = To.Y - From.Y;
@@ -232,21 +239,39 @@ void AGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 
 	double CurrentX = From.X;
 	double CurrentY = From.Y;
-	
+
 	FVector2D Direction = FVector2D(DX, DY);
 	Direction.Normalize();
-	FIntVector2 DirectionInt = FIntVector2(Direction.X, Direction.Y);
 
+	FIntVector2 DirectionInt = FIntVector2(DX, DY);
+	if (Angle > 0.52359877559 && Angle < 1.0471975512)
+	{
+		Direction = FVector2D(1, -1);
+	}
+	else if(Angle > 2.0943951024 && Angle < 2.61799387799)
+	{
+		Direction = FVector2D(-1, -1);
+	}
+	else if(Angle > 3.66519142919 && Angle < 4.18879020479)
+	{
+		Direction = FVector2D(-1, 1);
+	}
+	else if(Angle > 5.23598775598 && Angle < 5.75958653158)
+	{
+		Direction = FVector2D(1, 1);
+	}
 	for(int i = 0; i <= SideLength; i++)
 	{
 		if(IsBlockingVision(FIntVector2(CurrentX, CurrentY), DirectionInt))
 		{
 			break;
 		}
-		VisibleCells[static_cast<int32>(CurrentX) + static_cast<int32>(CurrentY) * GridDimensions] = true;
+		uint32 index = static_cast<uint32>(CurrentX) + static_cast<uint32>(CurrentY) * GridDimensions;
+		VisibleCells[index] = true;
 		CurrentX += XIncrement;
 		CurrentY += YIncrement;
 	}
+	return false;
 }
 
 bool AGridManager::IsBlockingVision(const FIntVector2& Position, const FIntVector2& Direction)
@@ -303,36 +328,49 @@ bool AGridManager::GetNeighbor(const FIntVector2& Position, const FIntVector2& D
 	return true;
 }
 
-bool AGridManager::GetVisibleCell(const FIntVector2& Position)
+bool AGridManager::GetVisibleCell(const TArray<bool>& Arr, const FIntVector2& Position)
 {
-	return VisibleCells[Position.X + Position.Y * GridDimensions];
+	return Arr[Position.X + Position.Y * GridDimensions];
 }
 
-void AGridManager::ClearAllVisible()
+void AGridManager::ClearAllVisible(TArray<bool>& Arr)
 {	
-	for(int i = 0; i < VisibleCells.Num(); i++)
+	for(int i = 0; i < Arr.Num(); i++)
 	{
-		if(VisibleCells[i])
+		if(Arr[i])
 		{
-			VisibleCells[i] = false;
+			Arr[i] = false;
 		}
 	}
 }
 
-void AGridManager::DrawVisible()
+void AGridManager::DrawVisible(ETeamId TeamId, TArray<bool>& VisibleCells)
 {
-	if(VisibleActors.Num() > 0)
+	for(auto Actor : VisibleActors)
 	{
-		for(double Angle = 0.; Angle <= 2. * PI; Angle += 0.01)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Actor: %s"), *Actor->GetName()));
+		if(Actor)
 		{
-			double X = (VisibleActors[0]->GetActorLocation().Y + 100.) / 200.;
-			double Y = 127. - (VisibleActors[0]->GetActorLocation().X - 100.) / 200.;
-			FVector2D From = FVector2D(X, Y);
-			FVector2D To = FVector2D(FMath::Cos(Angle) * 10. + X, FMath::Sin(Angle) * 10 + Y);
-			CheckVisible(From, To);
+			if(ITeamMember * TeamMember = Cast<ITeamMember>(Actor))
+			{
+				if(TeamMember->GetTeamId() != TeamId)
+				{
+					continue;
+				}
+				for(double Angle = 0.; Angle <= 2. * PI; Angle += 0.01)
+				{
+					double X = (Actor->GetActorLocation().Y + 100.) / 200.;
+					double Y = 127. - (Actor->GetActorLocation().X - 100.) / 200.;
+					FVector2D From = FVector2D(X, Y);
+					FVector2D To = FVector2D(FMath::Cos(Angle) * 10. + X, FMath::Sin(Angle) * 10 + Y);
+					CheckVisible(From, To, Angle, VisibleCells);
+				}
+			}
 		}
 	}
 }
+
+
 
 FVector AGridManager::GetTransformedVector(const FIntVector2& Position)
 {
@@ -342,30 +380,42 @@ FVector AGridManager::GetTransformedVector(const FIntVector2& Position)
 	return FVector(X, Y, 0.f) * CellSize;
 }
 
+// bool IsTargetVisibleForTeam(AActor Target, ETeamId TeamId)
+// {
+// 	
+// }
+
 void AGridManager::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if(!HasAuthority())
-		return;
-	
-	ClearAllVisible();
-	DrawVisible();
-	
-	FTexture2DMipMap* MipMap = &RenderTarget->GetPlatformData()->Mips[0];
-	FByteBulkData* RawImageData = &MipMap->BulkData;
-	FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
-	
-	for(int i = 0; i < 128; i++)
+	if(HasAuthority())
 	{
-		for(int j = 0; j < 128; j++)
-		{
-			FormattedImageData[i + j * 128] = VisibleCells[i + j * 128] ? FColor::White : FColor::Black;
-		}
+		
 	}
-	
-	RawImageData->Unlock();
-	RenderTarget->UpdateResource();
+	else
+	{
+		ETeamId TeamId = UUtil::GetLocalPlayerTeamId(this);
+		TArray<bool>& VisibleCells = GetVisibleCellsArray(TeamId);
+		if(TeamId == ETeamId::Neutral || VisibleCells.Num() == 0)
+		{
+			return;
+		}
+		ClearAllVisible(VisibleCells);
+		DrawVisible(TeamId, VisibleCells);
+		FTexture2DMipMap* MipMap = &RenderTarget->GetPlatformData()->Mips[0];
+		FByteBulkData* RawImageData = &MipMap->BulkData;
+		FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
+		for(int i = 0; i < 128; i++)
+		{
+			for(int j = 0; j < 128; j++)
+			{
+				FormattedImageData[i + j * 128] = VisibleCells[i + j * 128] ? FColor::White : FColor::Black;
+			}
+		}
+		RawImageData->Unlock();
+		RenderTarget->UpdateResource();	
+	}
 }
 
 void AGridManager::M_UpdateGrid_Implementation(const FIntVector2& Position, EEnvironmentType EnvironmentType) {}

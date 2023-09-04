@@ -36,6 +36,21 @@ FText UUtil::ItemTypeToText(const EItemType Value)
 	return FText::FromString("");
 }
 
+ETeamId UUtil::GetLocalPlayerTeamId(UObject* WorldContext)
+{
+	if(IsValid(WorldContext))
+	{
+		if(auto PC = Cast<ARTPlayerController>(WorldContext->GetWorld()->GetFirstLocalPlayerFromController()->GetPlayerController(WorldContext->GetWorld())))
+		{
+			if(auto PS = PC->GetPlayerState<ARTPlayerState>())
+			{
+				return PS->GetTeamId();
+			}
+		}
+	}
+	return ETeamId::Neutral;
+}
+
 FName UUtil::GetMappingNameFromSlot(const EItemSlotID SlotID)
 {
 	switch(SlotID)
