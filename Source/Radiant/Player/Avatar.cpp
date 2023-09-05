@@ -669,7 +669,7 @@ bool AAvatar::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarge
 	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 }
 
-bool AAvatar::IsVisibleForTeam(const ETeamId TargetTeamId) const
+bool AAvatar::IsVisibleForTeamLocal(const ETeamId TargetTeamId) const
 {
 	if(TargetTeamId == GetTeamId())
 	{
@@ -678,6 +678,23 @@ bool AAvatar::IsVisibleForTeam(const ETeamId TargetTeamId) const
 	if(ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
 	{
 		return TeamGridManager->IsTargetVisible(this);
+	}
+	return false;
+}
+
+bool AAvatar::IsVisibleForTeam(ETeamId TargetTeamId) const
+{
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(this, ATeamGridManager::StaticClass(), Actors);
+	for (auto Actor : Actors)
+	{
+		if (ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(Actor))
+		{
+			if(TeamGridManager->GetTeamId() == TargetTeamId)
+			{
+				return TeamGridManager->IsTargetVisible(this);
+			}
+		}
 	}
 	return false;
 }
@@ -1052,7 +1069,7 @@ void AAvatar::Tick(float DeltaTime)
 
 	if(!HasAuthority())
 	{
-		SetActorHiddenInGame(!IsVisibleForTeam(UUtil::GetLocalPlayerTeamId(this)));
+		SetActorHiddenInGame(!IsVisibleForTeamLocal(UUtil::GetLocalPlayerTeamId(this)));
 	}
 	
 	FPS = 1.0 / DeltaTime;

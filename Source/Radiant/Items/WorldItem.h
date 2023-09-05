@@ -37,6 +37,8 @@ protected:
 	FVector Location;
 	uint8 bLocationDirty : 1;
 	virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;
+	
+	bool IsVisibleForTeamLocal(ETeamId TargetTeamId) const;
 	bool IsVisibleForTeam(ETeamId TargetTeamId) const;
 
 public:

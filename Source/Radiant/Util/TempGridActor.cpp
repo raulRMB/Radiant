@@ -21,10 +21,6 @@ ATempGridActor::ATempGridActor()
 void ATempGridActor::SetMesh(const UStaticMeshComponent* NewMesh) const
 {
 	Mesh->SetStaticMesh(NewMesh->GetStaticMesh());
-	// Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	// Mesh->SetCollisionProfileName("NoCollision");
-	// Mesh->SetGenerateOverlapEvents(false);
-	// Mesh->SetCanEverAffectNavigation(false);
 }
 
 void ATempGridActor::SetMaterial(UMaterialInterface* NewMaterial) const

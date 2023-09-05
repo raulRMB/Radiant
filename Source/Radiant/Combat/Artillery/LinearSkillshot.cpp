@@ -9,6 +9,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerState.h"
 
 // Sets default values
@@ -52,6 +53,11 @@ void ALinearSkillshot::BeginPlay()
 			LifeSpan = Range / Speed;
 		}
 		SetLifeSpan(LifeSpan);
+	}
+
+	if(AGridManager* GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass())))
+	{
+		GridManager->AddVisibleActor(this);
 	}
 }
 

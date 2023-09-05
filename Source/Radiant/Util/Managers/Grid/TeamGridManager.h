@@ -40,8 +40,11 @@ class RADIANT_API ATeamGridManager : public AActor, public ITeamMember
 	uint32 CellHalfSize = CellSize / 2;
 
 	UPROPERTY(EditAnywhere)
-	class UTexture2D* RenderTarget;
+	class UTexture2D* FOWRenderTarget;
 
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* MinimapRenderTarget;
+	
 	UPROPERTY(Replicated, EditAnywhere)
 	ETeamId TeamId = ETeamId::Neutral;
 
@@ -95,4 +98,5 @@ private:
 	void DrawVisible();
 	bool CheckVisible(const FVector2D& From, const FVector2D& To);
 	void UpdateGridIfOutOfSync(FIntVector2 Pos);
+	FColor GetColorForType(const EEnvironmentType& Type);
 };

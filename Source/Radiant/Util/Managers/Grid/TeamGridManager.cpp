@@ -2,7 +2,6 @@
 
 
 #include "TeamGridManager.h"
-
 #include "Net/UnrealNetwork.h"
 #include "Structs/GridPiece.h"
 #include "Util/TempGridActor.h"
@@ -36,16 +35,14 @@ void ATeamGridManager::SpawnInitialTempActors()
 			}
 			FIntVector2 Position = FIntVector2(x, y);
 			FTransform SpawnTransform = FTransform(GetTransformedVector(Position));			
-			ATempGridActor* TempGridActor = GetWorld()->SpawnActorDeferred<ATempGridActor>(ATempGridActor::StaticClass(), SpawnTransform);
 			UStaticMeshComponent* Mesh = GridManager->GetMesh(Cells[y * GridDimensions + x]);
+			ATempGridActor* TempGridActor = GetWorld()->SpawnActorDeferred<ATempGridActor>(ATempGridActor::StaticClass(), SpawnTransform);
 			if(Mesh)
 			{
+				TempGridActor->SetActorScale3D(Mesh->GetRelativeScale3D());
+				TempGridActor->SetActorRotation(Mesh->GetRelativeRotation());
+				TempGridActor->SetActorLocation(TempGridActor->GetActorLocation() + Mesh->GetRelativeLocation());
 				TempGridActor->SetMesh(Mesh);
-
-				// SpawnTransform.SetRotation(SpawnTransform.GetRotation() + Mesh->GetRelativeTransform().GetRotation());
-				// SpawnTransform.SetLocation(SpawnTransform.GetLocation() + Mesh->GetRelativeTransform().GetLocation());
-				SpawnTransform.SetScale3D(Mesh->GetComponentTransform().GetScale3D());
-				TempGridActor->SetActorTransform(SpawnTransform);
 			}
 			TempPieces[x + y * GridDimensions] = TempGridActor;
 			TempGridActor->FinishSpawning(SpawnTransform);
@@ -105,7 +102,7 @@ void ATeamGridManager::Tick(float DeltaTime)
 		}
 		ClearAllVisible();
 		DrawVisible();
-		FTexture2DMipMap* MipMap = &RenderTarget->GetPlatformData()->Mips[0];
+		FTexture2DMipMap* MipMap = &FOWRenderTarget->GetPlatformData()->Mips[0];
 		FByteBulkData* RawImageData = &MipMap->BulkData;
 		FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
 		for(int i = 0; i < 128; i++)
@@ -116,7 +113,20 @@ void ATeamGridManager::Tick(float DeltaTime)
 			}
 		}
 		RawImageData->Unlock();
-		RenderTarget->UpdateResource();	
+		FOWRenderTarget->UpdateResource();
+
+		MipMap = &MinimapRenderTarget->GetPlatformData()->Mips[0];
+		RawImageData = &MipMap->BulkData;
+		FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
+		for(int i = 0; i < 128; i++)
+		{
+			for(int j = 0; j < 128; j++)
+			{
+				FormattedImageData[i + j * 128] = GetColorForType(Cells[i + j * 128]);
+			}
+		}
+		RawImageData->Unlock();
+		MinimapRenderTarget->UpdateResource();
 	}
 }
 
@@ -284,15 +294,16 @@ bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 		{
 			UpdateGridIfOutOfSync(FIntVector2(CurrentX, CurrentY));
 		}
-		// if(IsBlockingVision(FIntVector2(CurrentX, CurrentY), DirectionInt))
-		// {
-		// 	break;
-		// }
+		if(IsBlockingVision(FIntVector2(CurrentX, CurrentY), DirectionInt))
+		{
+			break;
+		}
 		CurrentX += XIncrement;
 		CurrentY += YIncrement;
 	}
 	return false;
 }
+
 
 void ATeamGridManager::UpdateGridIfOutOfSync(FIntVector2 Pos)
 {
@@ -303,6 +314,24 @@ void ATeamGridManager::UpdateGridIfOutOfSync(FIntVector2 Pos)
 		NewData.Type = GridManager->GetCell(Pos);
 		M_UpdateTempActor(NewData);
 		Cells[Pos.X + Pos.Y * GridDimensions] = GridManager->GetCell(Pos);
+	}
+}
+
+FColor ATeamGridManager::GetColorForType(const EEnvironmentType& Type)
+{
+	switch (Type)
+	{
+	case EEnvironmentType::EEnvironmentType_Rock:
+		return FColor(102, 102, 102);
+	case EEnvironmentType::EEnvironmentType_Tree:
+		return FColor(71, 119, 42);
+	case EEnvironmentType::EEnvironmentType_Grass:
+		return FColor(95, 185, 38);
+	case EEnvironmentType::EEnvironmentType_Wall:
+		return FColor(93,84,53);
+	default:
+		return FColor(80,90,14);
+
 	}
 }
 
@@ -338,8 +367,8 @@ void ATeamGridManager::DrawVisible()
 				{
 					return;
 				}
-				double X = (Actor->GetActorLocation().Y + 100.) / 200.;
-				double Y = 127. - (Actor->GetActorLocation().X - 100.) / 200.;
+				double X = (Actor->GetActorLocation().Y + 110.) / 200.;
+				double Y = 127. - (Actor->GetActorLocation().X - 110.) / 200.;
 				for(FIntVector2& Vec : GridManager->GetRange(EVisionRange::Medium))
 				{
 					FVector2D From = FVector2D(X, Y);

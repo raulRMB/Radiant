@@ -14,6 +14,7 @@
 #include "Player/RTPlayerState.h"
 #include "Util/Util.h"
 #include "Util/Interfaces/Carrier.h"
+#include "Util/Managers/Grid/TeamGridManager.h"
 
 AWorldItem::AWorldItem()
 {
@@ -42,15 +43,32 @@ bool AWorldItem::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTa
 			return IsVisibleForTeam(PS->GetTeamId());
 		}
 	}
-	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+	return false;
 }
 
-bool AWorldItem::IsVisibleForTeam(const ETeamId TargetTeamId) const
+bool AWorldItem::IsVisibleForTeamLocal(const ETeamId TargetTeamId) const
 {
-	// if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
-	// {
-	// 	return GM->IsTargetVisibleForTeam(this, TargetTeamId);
-	// }
+	if(ATeamGridManager* GM = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
+	{
+		return GM->IsTargetVisible(this);
+	}
+	return false;
+}
+
+bool AWorldItem::IsVisibleForTeam(ETeamId TargetTeamId) const
+{
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(this, ATeamGridManager::StaticClass(), Actors);
+	for (auto Actor : Actors)
+	{
+		if (ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(Actor))
+		{
+			if(TeamGridManager->GetTeamId() == TargetTeamId)
+			{
+				return TeamGridManager->IsTargetVisible(this);
+			}
+		}
+	}
 	return false;
 }
 
@@ -129,7 +147,7 @@ void AWorldItem::Tick(float DeltaTime)
 {
 	if(!HasAuthority())
 	{
-		SetActorHiddenInGame(!IsVisibleForTeam(UUtil::GetLocalPlayerTeamId(this)));
+		SetActorHiddenInGame(!IsVisibleForTeamLocal(UUtil::GetLocalPlayerTeamId(this)));
 	}
 	if(HasAuthority() && Target)
 	{
