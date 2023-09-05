@@ -18,6 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	ATempGridActor();
 	void SetMesh(const UStaticMeshComponent* NewMesh) const;
+	void SetMaterial(UMaterialInterface* NewMaterial) const;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

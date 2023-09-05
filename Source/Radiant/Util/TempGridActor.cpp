@@ -18,6 +18,11 @@ void ATempGridActor::SetMesh(const UStaticMeshComponent* NewMesh) const
 	Mesh->SetStaticMesh(NewMesh->GetStaticMesh());
 }
 
+void ATempGridActor::SetMaterial(UMaterialInterface* NewMaterial) const
+{
+	Mesh->SetMaterial(0, NewMaterial);
+}
+
 // Called when the game starts or when spawned
 void ATempGridActor::BeginPlay()
 {

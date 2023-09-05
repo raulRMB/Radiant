@@ -50,6 +50,9 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UActorComponent> InfoBarActorComponent;
 
+	UPROPERTY(EditAnywhere)
+	class UMaterialInterface* DarkMaterial;
+
 protected:
 	UPROPERTY()
 	class UAIInfoBar* InfoBar;
@@ -84,6 +87,8 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UBuildingAttributeSet* GetAttributeSet() const;
 	virtual ETeamId GetTeamId() const override { return TeamId; }
+
+	UMaterialInterface* GetDarkMaterial() const { return DarkMaterial; }
 
 	UFUNCTION(Server, Reliable)
 	void S_SetTeamId(ETeamId NewTeamId);

@@ -255,7 +255,7 @@ void ATeamGridManager::DrawVisible()
 				}
 				double X = (Actor->GetActorLocation().Y + 100.) / 200.;
 				double Y = 127. - (Actor->GetActorLocation().X - 100.) / 200.;
-				for(FIntVector2& Vec : GridManager->GetRange(EVisionRange::Long))
+				for(FIntVector2& Vec : GridManager->GetRange(EVisionRange::Medium))
 				{
 					FVector2D From = FVector2D(X, Y);
 					FVector2D To = FVector2D(X + Vec.X, Y + Vec.Y);
