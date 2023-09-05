@@ -330,7 +330,7 @@ FColor ATeamGridManager::GetColorForType(const EEnvironmentType& Type)
 	case EEnvironmentType::EEnvironmentType_Wall:
 		return FColor(93,84,53);
 	default:
-		return FColor(80,90,14);
+		return FColor(3,3, 6);
 
 	}
 }
