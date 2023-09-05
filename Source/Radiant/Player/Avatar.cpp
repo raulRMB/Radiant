@@ -659,6 +659,10 @@ void AAvatar::SetIsDead(const bool NewIsDead)
 
 bool AAvatar::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
+	if(RealViewer == GetController())
+	{
+		return true;
+	}
 	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
 	{
 		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
