@@ -89,10 +89,10 @@ void UMinimap::OnGridUpdate(const FIntVector2& Position, EEnvironmentType Enviro
 
 void UMinimap::Request()
 {
-	if(ARTPlayerState* PS = GetWorld()->GetFirstLocalPlayerFromController()->GetPlayerController(GetWorld())->GetPlayerState<ARTPlayerState>())
-	{
-		PS->S_RequestInitGrid();
-	}
+	// if(ARTPlayerState* PS = GetWorld()->GetFirstLocalPlayerFromController()->GetPlayerController(GetWorld())->GetPlayerState<ARTPlayerState>())
+	// {
+	// 	PS->S_RequestInitGrid();
+	// }
 }
 
 void UMinimap::InitGrid(const TArray<EEnvironmentType>& Environments)

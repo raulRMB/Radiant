@@ -38,6 +38,7 @@
 #include "Util/Util.h"
 #include "Util/Interfaces/Targetable.h"
 #include "Util/Managers/ActorManager.h"
+#include "Util/Managers/Grid/TeamGridManager.h"
 
 // Sets default values
 AAvatar::AAvatar()
@@ -213,21 +214,28 @@ void AAvatar::BeginPlay()
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &AAvatar::ShowStats, 0.3f, true);
 	UEventBroker::Get(this)->DragStatusChanged.AddUObject(this, &AAvatar::OnDragStatusChanged);
-	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
 	UEventBroker::Get(this)->GameIsReady.AddUObject(this, &AAvatar::GameReady);
+	GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
+	
+	if(GridManager)
+	{
+		GridManager->AddVisibleActor(this);
+	}
+}
 
-	// if(HasAuthority())
-	// {
-		if(GridManager)
-		{
-			GridManager->AddVisibleActor(this);
-		}
-	//}
+void AAvatar::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
 }
 
 void AAvatar::GameReady()
 {
 	SetOwnHealthBarColor();
+
+	if(GridManager)
+	{
+		GridManager->AddVisibleActor(this);
+	}
 }
 
 FVector2D AAvatar::GetMousePosition()
@@ -667,9 +675,9 @@ bool AAvatar::IsVisibleForTeam(const ETeamId TargetTeamId) const
 	{
 		return true;
 	}
-	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+	if(ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
 	{
-		return GM->IsTargetVisibleForTeam(this, TargetTeamId);
+		return TeamGridManager->IsTargetVisible(this);
 	}
 	return false;
 }

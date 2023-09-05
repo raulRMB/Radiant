@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GAS/Abilities/RTAbility.h"
-#include "Util/Managers/GridManager.h"
 #include "GABuildAbility.generated.h"
 
 class ABuilding;

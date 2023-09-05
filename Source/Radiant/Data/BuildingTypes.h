@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "Util/Managers/GridManager.h"
+#include "Util/Managers/Grid/GridManager.h"
 #include "BuildingTypes.generated.h"
 
 

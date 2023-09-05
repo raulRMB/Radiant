@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Enums/ItemSlotID.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Util/Managers/GridManager.h"
+#include "Util/Managers/Grid/GridManager.h"
 #include "Util.generated.h"
 
 #define RTPRINTP(f, x) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f), x));

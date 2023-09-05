@@ -8,7 +8,7 @@
 #include "Characters/RTCharacter.h"
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "Util/Interfaces/Carrier.h"
-#include "Util/Managers/GridManager.h"
+#include "Util/Managers/Grid/GridManager.h"
 #include "Avatar.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FGridUpdateSignature, const FIntVector2&, EEnvironmentType);
@@ -117,6 +117,7 @@ protected:
 	void OnDragStatusChanged(bool bArg);
 
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld(bool bIgnoreSelf = false) const;
 

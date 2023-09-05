@@ -29,6 +29,7 @@ ABuilding::ABuilding()
 
 bool ABuilding::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
+	return true;
 	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
 	{
 		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
@@ -41,10 +42,10 @@ bool ABuilding::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTar
 
 bool ABuilding::IsVisibleForTeam(const ETeamId TargetTeamId) const
 {
-	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
-	{
-		return GM->IsTargetVisibleForTeam(this, TargetTeamId);
-	}
+	// if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+	// {
+	// 	return GM->IsTargetVisibleForTeam(this, TargetTeamId);
+	// }
 	return false;
 }
 
@@ -168,21 +169,21 @@ void ABuilding::Tick(float DeltaSeconds)
 	{
 		if(IsVisibleForTeam(UUtil::GetLocalPlayerTeamId(this)))
 		{
-			SetActorHiddenInGame(false);
-			if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
-			{
-				GM->DestroyTmpActor(GridPiece);
-			}
+			//SetActorHiddenInGame(false);
+			// if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+			// {
+			// 	GM->DestroyTempActor(GridPiece);
+			// }
 		} else
 		{
-			SetActorHiddenInGame(true);
+			//SetActorHiddenInGame(true);
 			if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
 			{
-				if(GridPiece.Type != EEnvironmentType::EEnvironmentType_Empty)
-				{
-					UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
-					GM->SpawnTmpActor(GridPiece, Mesh, GetTransform());
-				}
+				// if(GridPiece.Type != EEnvironmentType::EEnvironmentType_Empty)
+				// {
+				// 	UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
+				// 	GM->SpawnTempActor(GridPiece, Mesh, GetTransform());
+				// }`
 			}
 		}
 	}

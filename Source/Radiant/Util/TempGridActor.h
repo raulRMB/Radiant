@@ -17,14 +17,7 @@ class RADIANT_API ATempGridActor : public AActor
 public:
 	// Sets default values for this actor's properties
 	ATempGridActor();
-	const UStaticMeshComponent* GetMesh() const { return Mesh; }
-	void SetMesh(UStaticMeshComponent *NewMesh)
-	{
-		Mesh->SetStaticMesh(NewMesh->GetStaticMesh());
-		Mesh->SetWorldScale3D(NewMesh->GetComponentScale());
-		Mesh->SetRelativeRotation(NewMesh->GetRelativeRotation());
-		Mesh->SetRelativeLocation(NewMesh->GetRelativeLocation());
-	}
+	void SetMesh(const UStaticMeshComponent* NewMesh) const;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

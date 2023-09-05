@@ -14,7 +14,6 @@
 #include "Util/Interfaces/Carrier.h"
 #include "Util/Interfaces/Killable.h"
 #include "Util/Interfaces/TeamMember.h"
-#include "Util/Managers/GridManager.h"
 #include "RTPlayerState.generated.h"
 
 enum class EGearType : uint8;
@@ -147,16 +146,4 @@ public:
 	class ARTGameState* GetRTGS() const;
 
 #pragma endregion ConvenienceGetters
-
-	
-public:
-	FGridInitSignature OnGridInit;
-	FRequestInitGridSignature OnRequestInitGrid;
-	
-public:
-	UFUNCTION(Client, Reliable)
-	void C_InitGrid(const TArray<EEnvironmentType>& Cells);
-	UFUNCTION(Server, Reliable)
-	void S_RequestInitGrid();
-
 };

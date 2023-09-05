@@ -83,6 +83,11 @@ void ARTPlayerController::DropItem(const FName& ItemName)
 	ICarrier::DropItem(ItemName);
 }
 
+ETeamId ARTPlayerController::GetTeamId() const
+{
+	return GetPlayerState<ARTPlayerState>()->GetTeamId();
+}
+
 void ARTPlayerController::LoadUserSettings(UEnhancedInputLocalPlayerSubsystem* Subsystem)
 {
 	if (UGameplayStatics::DoesSaveGameExist("UserSettings", 0))

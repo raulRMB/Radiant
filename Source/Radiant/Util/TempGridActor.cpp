@@ -13,6 +13,11 @@ ATempGridActor::ATempGridActor()
 	RootComponent = Mesh;
 }
 
+void ATempGridActor::SetMesh(const UStaticMeshComponent* NewMesh) const
+{
+	Mesh->SetStaticMesh(NewMesh->GetStaticMesh());
+}
+
 // Called when the game starts or when spawned
 void ATempGridActor::BeginPlay()
 {

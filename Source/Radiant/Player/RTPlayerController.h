@@ -9,13 +9,14 @@
 #include "GameplayTagContainer.h"
 #include "Enums/ItemSlotID.h"
 #include "Util/Interfaces/Carrier.h"
+#include "Util/Interfaces/TeamMember.h"
 #include "RTPlayerController.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOrderAcceptedSignature);
 
 
 UCLASS()
-class RADIANT_API ARTPlayerController : public APlayerController, public ICarrier
+class RADIANT_API ARTPlayerController : public APlayerController, public ICarrier, public ITeamMember
 {
 	GENERATED_BODY()
 
@@ -90,6 +91,8 @@ public:
 	virtual FVector GetCarrierLocation() const override;
 
 	virtual void DropItem(const FName& ItemName) override;
+
+	virtual ETeamId GetTeamId() const override;
 
 	/****** End Inventory ******/
 

@@ -3,7 +3,8 @@
 #include "AbilitySystemInterface.h"
 #include "Util/Interfaces/Targetable.h"
 #include "Util/Interfaces/TeamMember.h"
-#include "Util/Managers/GridManager.h"
+#include "Structs/GridPiece.h"
+#include "Util/Managers/Grid/GridManager.h"
 #include "Building.generated.h"
 
 struct FOnAttributeChangeData;

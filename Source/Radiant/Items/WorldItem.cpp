@@ -47,10 +47,10 @@ bool AWorldItem::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTa
 
 bool AWorldItem::IsVisibleForTeam(const ETeamId TargetTeamId) const
 {
-	if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
-	{
-		return GM->IsTargetVisibleForTeam(this, TargetTeamId);
-	}
+	// if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+	// {
+	// 	return GM->IsTargetVisibleForTeam(this, TargetTeamId);
+	// }
 	return false;
 }
 

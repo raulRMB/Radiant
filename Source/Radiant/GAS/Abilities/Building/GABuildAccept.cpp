@@ -7,6 +7,7 @@
 #include "Player/Avatar.h"
 #include "Player/InventoryComponent.h"
 #include "Util/Util.h"
+#include "Structs/GridPiece.h"
 
 void UGABuildAccept::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                      const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
