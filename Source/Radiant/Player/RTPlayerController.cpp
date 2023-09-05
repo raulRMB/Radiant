@@ -219,63 +219,99 @@ void ARTPlayerController::OnRep_Pawn()
 
 void ARTPlayerController::OnClick(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->OnUpdateTarget(Value);
-	UEventBroker::Get(this)->RightMouseButtonClicked.Broadcast();
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->OnUpdateTarget(Value);
+		UEventBroker::Get(this)->RightMouseButtonClicked.Broadcast();
+	}
 }
 
 void ARTPlayerController::OnAbilityOne(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->OnAbilityOne(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->OnAbilityOne(Value);
+	}
 }
 
 void ARTPlayerController::OnAbilityTwo(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->OnAbilityTwo(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->OnAbilityTwo(Value);
+	}
 }
 
 void ARTPlayerController::OnAbilityThree(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->OnAbilityThree(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->OnAbilityThree(Value);
+	}
 }
 
 void ARTPlayerController::OnAbilityFour(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->OnAbilityFour(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->OnAbilityFour(Value);
+	}
 }
 
 void ARTPlayerController::OnAbilityFive(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->OnAbilityFive(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->OnAbilityFive(Value);
+	}
 }
 
 void ARTPlayerController::OnAbilitySix(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->OnAbilitySix(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->OnAbilitySix(Value);
+	}
 }
 
 void ARTPlayerController::ToggleCameraBool(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->ToggleCameraBool(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->ToggleCameraBool(Value);
+	}
 }
 
 void ARTPlayerController::HoldCamera(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->HoldCamera(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->HoldCamera(Value);
+	}
 }
 
 void ARTPlayerController::ReleaseHoldCamera(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->ReleaseHoldCamera(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->ReleaseHoldCamera(Value);
+	}
 }
 
 void ARTPlayerController::AttackMove(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->AttackMove(Value);
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->AttackMove(Value);
+	}
 }
 
 void ARTPlayerController::CameraMove(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->MoveCamera(Value.Get<FVector>());
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->MoveCamera(Value.Get<FVector>());
+	}
 }
 
 void ARTPlayerController::ToggleStore(const FInputActionValue& Value)
@@ -290,15 +326,20 @@ void ARTPlayerController::Escape(const FInputActionValue& Value)
 
 void ARTPlayerController::AcceptOrder(const FInputActionValue& Value)
 {
-	if(GetPawn<AAvatar>()->TryPickupItem())
+	if(GetPawn<AAvatar>())
 	{
-		return;
+		if(GetPawn<AAvatar>()->TryPickupItem())
+		{
+			return;
+		}
+		OrderAccepted.Broadcast();
 	}
-	
-	OrderAccepted.Broadcast();
 }
 
 void ARTPlayerController::Demolish(const FInputActionValue& Value)
 {
-	GetPawn<AAvatar>()->Demolish();
+	if(GetPawn<AAvatar>())
+	{
+		GetPawn<AAvatar>()->Demolish();
+	}
 }
