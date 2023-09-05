@@ -20,10 +20,10 @@ void UGATowerAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		SpawnParams.Owner = GetOwningActorFromActorInfo();
 		ATower* Tower = Cast<ATower>(GetAvatarActorFromActorInfo());
 		AHeatSeeking* Projectile = GetWorld()->SpawnActorDeferred<AHeatSeeking>(
-			ProjectileClass, Tower->GetGemTransform(), GetOwningActorFromActorInfo(), nullptr,
+			ProjectileClass, Tower->GetTransform(), GetOwningActorFromActorInfo(), nullptr,
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		Projectile->SetTarget(Tower->GetTarget());
-		Projectile->FinishSpawning(Tower->GetGemTransform());
+		Projectile->FinishSpawning(Tower->GetTransform());
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);

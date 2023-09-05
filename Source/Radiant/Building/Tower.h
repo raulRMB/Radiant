@@ -20,11 +20,11 @@ class RADIANT_API ATower : public ABuilding
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Stats, meta=(AllowPrivateAccess=true, MakeEditWidget))
 	FVector GemOffset = FVector(0.f, 0.f, 0.f);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
-	class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
-	class UStaticMeshComponent* Gem;
+	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
+	// class UStaticMeshComponent* BaseMesh;
+	//
+	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
+	// class UStaticMeshComponent* Gem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
 	class USphereComponent* AttackRadius;
@@ -40,7 +40,6 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-	FTransform GetGemTransform() const;
 	TObjectPtr<class AActor> GetTarget() const;
 
 private:

@@ -13,13 +13,6 @@ ATower::ATower()
 {
 	bReplicates = true;
 	PrimaryActorTick.bCanEverTick = true;
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	Mesh->SetupAttachment(RootComponent);
-
-	Gem = CreateDefaultSubobject<UStaticMeshComponent>("Gem");
-	Gem->SetupAttachment(RootComponent);
-
 	AttackRadius = CreateDefaultSubobject<USphereComponent>("AttackRadius");
 	AttackRadius->SetupAttachment(RootComponent);
 	AttackRadius->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -38,7 +31,6 @@ void ATower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	TArray<AActor*> OverlappingActors;
-	Gem->AddLocalRotation(FRotator(0.f, 90.f * DeltaTime, 0.f));
 	if (IsValid(Target))
 	{
 		FGameplayEventData EventData;
@@ -67,11 +59,6 @@ void ATower::Tick(float DeltaTime)
 			Target = nullptr;
 		}
 	}
-}
-
-FTransform ATower::GetGemTransform() const
-{
-	return FTransform(Gem->GetComponentLocation() + GemOffset);
 }
 
 TObjectPtr<AActor> ATower::GetTarget() const

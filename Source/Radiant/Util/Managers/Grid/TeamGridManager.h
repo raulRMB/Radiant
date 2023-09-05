@@ -15,20 +15,23 @@ class RADIANT_API ATeamGridManager : public AActor, public ITeamMember
 {
 	GENERATED_BODY()	
 
-	UPROPERTY(Replicated, VisibleAnywhere)
+	UPROPERTY(ReplicatedUsing=OnRep_Cells, VisibleAnywhere)
 	TArray<EEnvironmentType> Cells;
 
 	UPROPERTY()
 	TArray<bool> VisibleCells;
 
+	UFUNCTION()
+	void OnRep_Cells();
+	void SpawnInitialTempActors();
+
+	bool Initialized = false;
+	
 	UPROPERTY()
 	TArray<class AActor*> TempPieces;
 	
 	UPROPERTY(EditAnywhere)
 	uint16 GridDimensions;
-
-	UPROPERTY(EditAnywhere)
-	TMap<EEnvironmentType, TSubclassOf<class AActor>> BuildingTypes;
 
 	UPROPERTY(Replicated, VisibleAnywhere)
 	TArray<AActor*> VisibleActors;
@@ -62,10 +65,13 @@ public:
 
 	void AddVisibleActor(AActor* Actor);
 	void RemoveVisibleActor(AActor* Actor);
-	void SpawnTempActor(struct FGridPiece& Piece, UStaticMeshComponent* Mesh, FTransform Transform);
-	void DestroyTempActor(FGridPiece& Piece);
+	bool HasTempActor(struct FGridPiece& Piece);
+	void SpawnTempActor(const FGridPiece& Piece, UStaticMeshComponent* Mesh, FTransform Transform);
+	void HideTempActor(FGridPiece& Piece, bool bHide);
+	void DestroyTempActor(const FGridPiece& Piece);
+	FVector GetTransformedVector(const FIntVector2& Position);
 
-	void CopyCells(const TArray<EEnvironmentType>& TrueCells);
+	void Init(const TArray<EEnvironmentType> TrueCells, TMap<EEnvironmentType, TSubclassOf<AActor>> BuildingTypes);
 
 	virtual ETeamId GetTeamId() const override { return TeamId; }
 	void SetTeamId(const ETeamId NewTeamId) { TeamId = NewTeamId; }
@@ -73,6 +79,13 @@ public:
 	bool IsTargetVisible(const AActor* Target);
 
 	void SetGridManager(class AGridManager* NewGridManager) { GridManager = NewGridManager; }
+	void UpdateTempActor(const FGridPiece& Piece);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void M_UpdateTempActor(const FGridPiece& Piece);
+	
+	void PieceChanged(const FGridPiece& Piece);
+
 private:	
 	bool IsBlockingVision(const FIntVector2& Position, const FIntVector2& Direction);
 	EEnvironmentType& GetCell(const FIntVector2& Position);
@@ -81,4 +94,5 @@ private:
 	void ClearAllVisible();
 	void DrawVisible();
 	bool CheckVisible(const FVector2D& From, const FVector2D& To);
+	void UpdateGridIfOutOfSync(FIntVector2 Pos);
 };

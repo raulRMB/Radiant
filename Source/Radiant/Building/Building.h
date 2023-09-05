@@ -26,6 +26,9 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UWidgetComponent* InfoBarWidgetComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
+	class UStaticMeshComponent* Mesh;
+	
 	UPROPERTY(EditAnywhere, meta=(MakeEditWidget))
 	FVector WidgetLocation;
 
@@ -60,7 +63,10 @@ protected:
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 
 	virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;
+	bool IsVisibleForTeamLocal(ETeamId TargetTeamId) const;
 	bool IsVisibleForTeam(ETeamId TargetTeamId) const;
+
+	bool bShouldShow = true;
 	
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category=Team, meta=(AllowPrivateAccess=true))
 	ETeamId TeamId = ETeamId::Neutral;
@@ -82,7 +88,8 @@ protected:
 
 public:
 	ABuilding();
-	
+	UStaticMeshComponent* GetMesh() const;
+
 	void SetHealthBarColor();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UBuildingAttributeSet* GetAttributeSet() const;

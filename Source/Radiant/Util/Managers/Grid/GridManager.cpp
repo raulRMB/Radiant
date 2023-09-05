@@ -179,6 +179,14 @@ void AGridManager::AddVisibleActor(AActor* Actor)
 	}
 }
 
+void AGridManager::PieceChanged(const FGridPiece Piece)
+{
+	for(ATeamGridManager* TeamManager : TeamGridManagers)
+	{
+		TeamManager->PieceChanged(Piece);
+	}
+}
+
 void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 {
 	if(HasAuthority())
@@ -216,6 +224,7 @@ void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 		}
 		Actor->FinishSpawning(Transform);
 		Cells[TransformedPos.X + TransformedPos.Y * GridDimensions] = Piece.Type;
+		PieceChanged(Piece);
 	}
 }
 
@@ -228,6 +237,7 @@ void AGridManager::ClearPiece(const FGridPiece Piece)
 	}
 
 	Cells[Position.X + Position.Y * GridDimensions] = EEnvironmentType::EEnvironmentType_Empty;
+	PieceChanged(Piece);
 }
 
 bool AGridManager::CheckCanPlace(const FGridPiece Piece)
@@ -265,12 +275,14 @@ void AGridManager::BeginPlay()
 		TeamGridManager->SetGridManager(this);
 		TeamGridManagers.Add(TeamGridManager);
 		TeamGridManager->FinishSpawning(FTransform::Identity);
-
+		TeamGridManager->Init(Cells, BuildingTypes);
+		
 		TeamGridManager = GetWorld()->SpawnActorDeferred<ATeamGridManager>(TeamGridManagerClass, FTransform::Identity);
 		TeamGridManager->SetTeamId(ETeamId::Blue);
 		TeamGridManager->SetGridManager(this);
 		TeamGridManagers.Add(TeamGridManager);
 		TeamGridManager->FinishSpawning(FTransform::Identity);
+		TeamGridManager->Init(Cells, BuildingTypes);
 	}
 }
 
@@ -281,6 +293,18 @@ EEnvironmentType& AGridManager::GetCell(const FIntVector2& Position)
 		return Cells[0];
 	}
 	return Cells[static_cast<int32>(Position.X) + static_cast<int32>(Position.Y) * GridDimensions];
+}
+
+UStaticMeshComponent* AGridManager::GetMesh(EEnvironmentType Type)
+{
+	if(BuildingTypes.Contains(Type))
+	{
+		if(ABuilding* Building = Cast<ABuilding>(BuildingTypes[Type].GetDefaultObject()))
+		{
+			return Cast<UStaticMeshComponent>(Building->GetMesh());
+		}
+	}
+	return nullptr;
 }
 
 FVector AGridManager::GetTransformedVector(const FIntVector2& Position)
@@ -308,9 +332,4 @@ void AGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 void AGridManager::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	for(ATeamGridManager* TeamGridManager : TeamGridManagers)
-	{
-		TeamGridManager->CopyCells(Cells);
-	}
 }

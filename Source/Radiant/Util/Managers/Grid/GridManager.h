@@ -65,6 +65,7 @@ public:
 	void InitGrid();
 
 	void AddVisibleActor(AActor* Actor);
+	void PieceChanged(FGridPiece Piece);
 
 	uint32 CellSize = 200;
 	uint32 CellHalfSize = CellSize / 2;
@@ -80,9 +81,9 @@ public:
 	
 public:
 	FGridUpdateSignature OnGridUpdate;
-
-private:
+	UStaticMeshComponent* GetMesh(EEnvironmentType Type);
 	EEnvironmentType& GetCell(const FIntVector2& Position);
+private:
 
 	FVector GetTransformedVector(const FIntVector2& Position);
 	FIntVector2 GetTransformedPosition(const FIntVector2& Position);

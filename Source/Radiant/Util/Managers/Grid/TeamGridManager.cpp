@@ -8,10 +8,50 @@
 #include "Util/TempGridActor.h"
 #include "Enums/EnvironmentType.h"
 #include "Enums/VIsionRange.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerController.h"
 #include "Util/Util.h"
 #include "Util/Interfaces/TeamMember.h"
 
+void ATeamGridManager::OnRep_Cells()
+{
+	if(Initialized || HasAuthority())
+	{
+		return;
+	}
+	InitGrid();
+	Initialized = true;
+	SpawnInitialTempActors();
+}
+
+void ATeamGridManager::SpawnInitialTempActors()
+{
+	for(int x = 0; x < GridDimensions; x++)
+	{
+		for (int y = 0; y < GridDimensions; y++)
+		{
+			if(Cells[y * GridDimensions + x] == EEnvironmentType::EEnvironmentType_Empty)
+			{
+				continue;
+			}
+			FIntVector2 Position = FIntVector2(x, y);
+			FTransform SpawnTransform = FTransform(GetTransformedVector(Position));			
+			ATempGridActor* TempGridActor = GetWorld()->SpawnActorDeferred<ATempGridActor>(ATempGridActor::StaticClass(), SpawnTransform);
+			UStaticMeshComponent* Mesh = GridManager->GetMesh(Cells[y * GridDimensions + x]);
+			if(Mesh)
+			{
+				TempGridActor->SetMesh(Mesh);
+
+				// SpawnTransform.SetRotation(SpawnTransform.GetRotation() + Mesh->GetRelativeTransform().GetRotation());
+				// SpawnTransform.SetLocation(SpawnTransform.GetLocation() + Mesh->GetRelativeTransform().GetLocation());
+				SpawnTransform.SetScale3D(Mesh->GetComponentTransform().GetScale3D());
+				TempGridActor->SetActorTransform(SpawnTransform);
+			}
+			TempPieces[x + y * GridDimensions] = TempGridActor;
+			TempGridActor->FinishSpawning(SpawnTransform);
+		}
+	}
+}
 
 // Sets default values
 ATeamGridManager::ATeamGridManager()
@@ -24,9 +64,8 @@ ATeamGridManager::ATeamGridManager()
 // Called when the game starts or when spawned
 void ATeamGridManager::BeginPlay()
 {
-	Super::BeginPlay();
-
 	InitGrid();
+	Super::BeginPlay();
 }
 
 void ATeamGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -83,8 +122,11 @@ void ATeamGridManager::Tick(float DeltaTime)
 
 void ATeamGridManager::InitGrid()
 {
-	VisibleCells.Init(false, 128*128);
-	TempPieces.Init(nullptr, 128*128);
+	if(!Initialized)
+	{
+		VisibleCells.Init(false, 128*128);
+		TempPieces.Init(nullptr, 128*128);
+	}
 }
 
 void ATeamGridManager::AddVisibleActor(AActor* Actor)
@@ -97,9 +139,18 @@ void ATeamGridManager::RemoveVisibleActor(AActor* Actor)
 	VisibleActors.Remove(Actor);
 }
 
-void ATeamGridManager::SpawnTempActor(FGridPiece& Piece, UStaticMeshComponent* Mesh, FTransform Transform)
+bool ATeamGridManager::HasTempActor(FGridPiece& Piece)
 {
-	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions])
+	return TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] != nullptr;
+}
+
+void ATeamGridManager::SpawnTempActor(const FGridPiece& Piece, UStaticMeshComponent* Mesh, FTransform Transform)
+{
+	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] != nullptr)
+	{
+		return;
+	}
+	if(Piece.Type != EEnvironmentType::EEnvironmentType_Empty)
 	{
 		return;
 	}
@@ -110,16 +161,34 @@ void ATeamGridManager::SpawnTempActor(FGridPiece& Piece, UStaticMeshComponent* M
 	TempGridActor->FinishSpawning(Transform);
 }
 
-void ATeamGridManager::DestroyTempActor(FGridPiece& Piece)
+void ATeamGridManager::HideTempActor(FGridPiece& Piece, bool bHide)
 {
-	if(!TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions])
+	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] == nullptr)
+	{
+		return;
+	}
+	auto Actor = TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions];
+	Actor->SetActorHiddenInGame(bHide);
+}
+
+void ATeamGridManager::DestroyTempActor(const FGridPiece& Piece)
+{
+	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] == nullptr)
 	{
 		return;
 	}
 	TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions]->Destroy();
 }
 
-void ATeamGridManager::CopyCells(const TArray<EEnvironmentType>& TrueCells)
+FVector ATeamGridManager::GetTransformedVector(const FIntVector2& Position)
+{
+	double X = 127 - Position.Y;
+	double Y = Position.X;
+	
+	return FVector(X, Y, 0.f) * CellSize;
+}
+
+void ATeamGridManager::Init(const TArray<EEnvironmentType> TrueCells, TMap<EEnvironmentType, TSubclassOf<class AActor>> BuildingTypes)
 {
 	Cells = TrueCells;
 }
@@ -211,14 +280,30 @@ bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 	{
 		uint32 index = static_cast<uint32>(CurrentX) + static_cast<uint32>(CurrentY) * GridDimensions;
 		VisibleCells[index] = true;
-		if(IsBlockingVision(FIntVector2(CurrentX, CurrentY), DirectionInt))
+		if(HasAuthority())
 		{
-			break;
+			UpdateGridIfOutOfSync(FIntVector2(CurrentX, CurrentY));
 		}
+		// if(IsBlockingVision(FIntVector2(CurrentX, CurrentY), DirectionInt))
+		// {
+		// 	break;
+		// }
 		CurrentX += XIncrement;
 		CurrentY += YIncrement;
 	}
 	return false;
+}
+
+void ATeamGridManager::UpdateGridIfOutOfSync(FIntVector2 Pos)
+{
+	if(GridManager->GetCell(Pos) != GetCell(Pos))
+	{
+		FGridPiece NewData = FGridPiece();
+		NewData.Position = Pos;
+		NewData.Type = GridManager->GetCell(Pos);
+		M_UpdateTempActor(NewData);
+		Cells[Pos.X + Pos.Y * GridDimensions] = GridManager->GetCell(Pos);
+	}
 }
 
 bool ATeamGridManager::GetVisibleCell(const FIntVector2& Position)
@@ -270,6 +355,39 @@ bool ATeamGridManager::IsTargetVisible(const AActor* Target)
 {
 	FIntVector2 TargetPosition = FIntVector2((Target->GetActorLocation().Y + 100) / 200, 127 - (Target->GetActorLocation().X + 100) / 200);
 	return VisibleCells[TargetPosition.X + TargetPosition.Y * GridDimensions];
+}
+
+void ATeamGridManager::UpdateTempActor(const FGridPiece& Piece)
+{
+	DestroyTempActor(Piece);
+	if(Piece.Type != EEnvironmentType::EEnvironmentType_Empty)
+	{
+		FTransform SpawnTransform = FTransform(GetTransformedVector(Piece.Position));
+		SpawnTempActor(Piece, GridManager->GetMesh(Piece.Type), SpawnTransform);
+	}
+}
+
+void ATeamGridManager::M_UpdateTempActor_Implementation(const FGridPiece& Piece)
+{
+	UpdateTempActor(Piece);
+}
+
+void ATeamGridManager::PieceChanged(const FGridPiece& Piece)
+{
+	if(HasAuthority())
+	{
+		if(Piece.Position.X < 0 || Piece.Position.Y < 0 || Piece.Position.X >= GridDimensions || Piece.Position.Y >= GridDimensions)
+		{
+			return;
+		}
+		int32 Pos = Piece.Position.X + Piece.Position.Y * GridDimensions;
+		if(Cells.Num() < Pos || !VisibleCells[Pos])
+		{
+			return;
+		}
+		UpdateTempActor(Piece);
+		Cells[Pos] = Piece.Type;
+	}
 }
 
 

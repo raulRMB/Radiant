@@ -11,6 +11,7 @@
 #include "Player/RTPlayerState.h"
 #include "UI/AIInfoBar.h"
 #include "Util/Util.h"
+#include "Util/Managers/Grid/TeamGridManager.h"
 
 ABuilding::ABuilding()
 {
@@ -21,15 +22,23 @@ ABuilding::ABuilding()
 	AttributeSet = CreateDefaultSubobject<UBuildingAttributeSet>("AttributeSet");
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
 	SetRootComponent(CapsuleComponent);
-	//bAlwaysRelevant = true;
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Mesh->SetCanEverAffectNavigation(false);
+	Mesh->SetupAttachment(GetRootComponent());
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.bAllowTickOnDedicatedServer = false;
 }
 
+UStaticMeshComponent* ABuilding::GetMesh() const
+{
+	return Mesh;
+}
+
 bool ABuilding::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
-	return true;
 	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
 	{
 		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
@@ -40,12 +49,34 @@ bool ABuilding::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTar
 	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 }
 
+
+bool ABuilding::IsVisibleForTeamLocal(const ETeamId TargetTeamId) const
+{
+	if(TargetTeamId == GetTeamId())
+	{
+		return true;
+	}
+	if(ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
+	{
+		return TeamGridManager->IsTargetVisible(this);
+	}
+	return false;
+}
+
 bool ABuilding::IsVisibleForTeam(const ETeamId TargetTeamId) const
 {
-	// if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
-	// {
-	// 	return GM->IsTargetVisibleForTeam(this, TargetTeamId);
-	// }
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(this, ATeamGridManager::StaticClass(), Actors);
+	for (auto Actor : Actors)
+	{
+		if (ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(Actor))
+		{
+			if(TeamGridManager->GetTeamId() == TargetTeamId)
+			{
+				return TeamGridManager->IsTargetVisible(this);
+			}
+		}
+	}
 	return false;
 }
 
@@ -167,23 +198,13 @@ void ABuilding::Tick(float DeltaSeconds)
 {
 	if(!HasAuthority())
 	{
-		if(IsVisibleForTeam(UUtil::GetLocalPlayerTeamId(this)))
+		bShouldShow = IsVisibleForTeamLocal(UUtil::GetLocalPlayerTeamId(this));
+		SetActorHiddenInGame(!bShouldShow);
+		if(ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
 		{
-			//SetActorHiddenInGame(false);
-			// if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
-			// {
-			// 	GM->DestroyTempActor(GridPiece);
-			// }
-		} else
-		{
-			//SetActorHiddenInGame(true);
-			if(AGridManager* GM = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, GridManager->StaticClass())))
+			if(TeamGridManager->HasTempActor(GridPiece))
 			{
-				// if(GridPiece.Type != EEnvironmentType::EEnvironmentType_Empty)
-				// {
-				// 	UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
-				// 	GM->SpawnTempActor(GridPiece, Mesh, GetTransform());
-				// }`
+				TeamGridManager->HideTempActor(GridPiece, bShouldShow);
 			}
 		}
 	}
