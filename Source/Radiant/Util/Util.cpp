@@ -356,6 +356,40 @@ UDataTable* UUtil::GetItemDataTable()
 	return nullptr;
 }
 
+void UUtil::ReadTextureColors(UTexture2D* Texture, TArray<FColor>& Colors)
+{
+	TextureCompressionSettings OldCompressionSettings = Texture->CompressionSettings;
+	ETextureSourceEncoding OldSourceEncoding = Texture->SourceColorSettings.EncodingOverride;
+	TextureMipGenSettings OldMipGenSettings = Texture->MipGenSettings;
+	bool OldSRGB = Texture->SRGB;
+
+	Texture->CompressionSettings = TextureCompressionSettings::TC_VectorDisplacementmap;
+	Texture->MipGenSettings = TextureMipGenSettings::TMGS_NoMipmaps;
+	Texture->SourceColorSettings.EncodingOverride = ETextureSourceEncoding::TSE_Linear;
+	Texture->SRGB = false;
+	Texture->UpdateResource();
+	
+	FTexture2DMipMap* MipMap = &Texture->GetPlatformData()->Mips[0];
+	FByteBulkData* RawImageData = &MipMap->BulkData;
+	FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
+
+	Colors.SetNum(Texture->GetSizeX() * Texture->GetSizeY());
+	for(int i = 0; i < Texture->GetSizeX(); i++)
+	{
+		for(int j = 0; j < Texture->GetSizeY(); j++)
+		{
+			Colors.Add(FormattedImageData[i + j * Texture->GetSizeX()]);
+		}
+	}
+	RawImageData->Unlock();
+
+	Texture->CompressionSettings = OldCompressionSettings;
+	Texture->MipGenSettings = OldMipGenSettings;
+	Texture->SourceColorSettings.EncodingOverride = OldSourceEncoding;
+	Texture->SRGB = OldSRGB;
+	Texture->UpdateResource();
+}
+
 void UUtil::CheckVisible(const TArray<EEnvironmentType>& Grid, UTexture2D* TargetTexture, const FIntVector2& Position)
 {
 	TArray<TArray<bool>> MapState;

@@ -7,6 +7,7 @@
 #include "Structs/GridPiece.h"
 #include "Util/TempGridActor.h"
 #include "Enums/EnvironmentType.h"
+#include "Enums/VIsionRange.h"
 #include "Player/RTPlayerController.h"
 #include "Util/Util.h"
 #include "Util/Interfaces/TeamMember.h"
@@ -34,6 +35,7 @@ void ATeamGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(ATeamGridManager, Cells);
 	DOREPLIFETIME(ATeamGridManager, TeamId);
 	DOREPLIFETIME(ATeamGridManager, VisibleActors);
+	DOREPLIFETIME(ATeamGridManager, GridManager);
 }
 
 bool ATeamGridManager::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget,
@@ -172,7 +174,7 @@ EEnvironmentType& ATeamGridManager::GetCell(const FIntVector2& Position)
 	return Cells[Position.X + Position.Y * GridDimensions];
 }
 
-bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To, double Angle)
+bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 {
 	const double DX = To.X - From.X;
 	const double DY = To.Y - From.Y;
@@ -189,22 +191,22 @@ bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To, 
 	Direction.Normalize();
 
 	FIntVector2 DirectionInt = FIntVector2(DX, DY);
-	if (Angle > 0.52359877559 && Angle < 1.0471975512)
-	{
-		Direction = FVector2D(1, -1);
-	}
-	else if(Angle > 2.0943951024 && Angle < 2.61799387799)
-	{
-		Direction = FVector2D(-1, -1);
-	}
-	else if(Angle > 3.66519142919 && Angle < 4.18879020479)
-	{
-		Direction = FVector2D(-1, 1);
-	}
-	else if(Angle > 5.23598775598 && Angle < 5.75958653158)
-	{
-		Direction = FVector2D(1, 1);
-	}
+	// if (Angle > 0.52359877559 && Angle < 1.0471975512)
+	// {
+	// 	Direction = FVector2D(1, -1);
+	// }
+	// else if(Angle > 2.0943951024 && Angle < 2.61799387799)
+	// {
+	// 	Direction = FVector2D(-1, -1);
+	// }
+	// else if(Angle > 3.66519142919 && Angle < 4.18879020479)
+	// {
+	// 	Direction = FVector2D(-1, 1);
+	// }
+	// else if(Angle > 5.23598775598 && Angle < 5.75958653158)
+	// {
+	// 	Direction = FVector2D(1, 1);
+	// }
 	for(int i = 0; i <= SideLength; i++)
 	{
 		uint32 index = static_cast<uint32>(CurrentX) + static_cast<uint32>(CurrentY) * GridDimensions;
@@ -247,13 +249,17 @@ void ATeamGridManager::DrawVisible()
 				{
 					continue;
 				}
-				for(double Angle = 0.; Angle <= 2. * PI; Angle += 0.01)
+				if(!IsValid(GridManager))
 				{
-					double X = (Actor->GetActorLocation().Y + 100.) / 200.;
-					double Y = 127. - (Actor->GetActorLocation().X - 100.) / 200.;
+					return;
+				}
+				double X = (Actor->GetActorLocation().Y + 100.) / 200.;
+				double Y = 127. - (Actor->GetActorLocation().X - 100.) / 200.;
+				for(FIntVector2& Vec : GridManager->GetRange(EVisionRange::Long))
+				{
 					FVector2D From = FVector2D(X, Y);
-					FVector2D To = FVector2D(FMath::Cos(Angle) * 10. + X, FMath::Sin(Angle) * 10 + Y);
-					CheckVisible(From, To, Angle);
+					FVector2D To = FVector2D(X + Vec.X, Y + Vec.Y);
+					CheckVisible(From, To);
 				}
 			}
 		}

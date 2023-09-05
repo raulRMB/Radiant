@@ -41,6 +41,9 @@ class RADIANT_API ATeamGridManager : public AActor, public ITeamMember
 
 	UPROPERTY(Replicated, EditAnywhere)
 	ETeamId TeamId = ETeamId::Neutral;
+
+	UPROPERTY(Replicated)
+	class AGridManager* GridManager;
 	
 public:
 	ATeamGridManager();
@@ -68,6 +71,8 @@ public:
 	void SetTeamId(const ETeamId NewTeamId) { TeamId = NewTeamId; }
 
 	bool IsTargetVisible(const AActor* Target);
+
+	void SetGridManager(class AGridManager* NewGridManager) { GridManager = NewGridManager; }
 private:	
 	bool IsBlockingVision(const FIntVector2& Position, const FIntVector2& Direction);
 	EEnvironmentType& GetCell(const FIntVector2& Position);
@@ -75,5 +80,5 @@ private:
 	bool GetVisibleCell(const FIntVector2& Position);
 	void ClearAllVisible();
 	void DrawVisible();
-	bool CheckVisible(const FVector2D& From, const FVector2D& To, double Angle);
+	bool CheckVisible(const FVector2D& From, const FVector2D& To);
 };

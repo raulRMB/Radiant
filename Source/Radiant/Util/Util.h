@@ -78,6 +78,8 @@ public:
 
 	static class UDataTable* GetItemDataTable();
 
+	static void ReadTextureColors(class UTexture2D* Texture, TArray<FColor>& Colors);
+
 #pragma region Grid
 	static void CheckVisible(const TArray<EEnvironmentType>& Grid, class UTexture2D* TargetTexture, const FIntVector2& Position);
 private:

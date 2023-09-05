@@ -21,10 +21,9 @@ void UGABuildAccept::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			GridPiece.TeamId = Cast<ITeamMember>(GetOwningActorFromActorInfo())->GetTeamId();
 			GridPiece.Type = EnvironmentType;
 			FVector Mouse = UUtil::GetMousePosition(this, {});
-			Mouse.X = FMath::RoundToInt(Mouse.X / 200);
-			Mouse.Y = FMath::RoundToInt(Mouse.Y / 200);
-			GridPiece.Position = FIntVector2(Mouse.X, Mouse.Y);
-
+			int32 X = FMath::RoundToInt(Mouse.Y / 200);
+			int32 Y = 127 - FMath::RoundToInt(Mouse.X / 200);
+			GridPiece.Position = FIntVector2(X, Y);
 			Avatar->S_TryPlaceGridPiece(GridPiece, ItemName);
 		}
 	}

@@ -10,6 +10,7 @@
 
 class ATeamGridManager;
 struct FGridPiece;
+enum class EVisionRange : uint8;
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FGridUpdateSignature, const FIntVector2&, EEnvironmentType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FGridInitSignature, const TArray<EEnvironmentType>&);
@@ -39,6 +40,16 @@ class RADIANT_API AGridManager : public AActor
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATeamGridManager> TeamGridManagerClass;
+
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* VisionRangesTexture;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<FIntVector2> ShortRange;
+	UPROPERTY(VisibleAnywhere)
+	TArray<FIntVector2> MediumRange;
+	UPROPERTY(VisibleAnywhere)
+	TArray<FIntVector2> LongRange;
 	
 public:
 	AGridManager();
@@ -46,6 +57,11 @@ public:
 	UFUNCTION(CallInEditor)
 	void GenerateMap();
 
+	UFUNCTION(CallInEditor)
+	void GenerateVisionRanges();
+
+	TArray<FIntVector2>& GetRange(EVisionRange Range);
+	
 	void InitGrid();
 
 	void AddVisibleActor(AActor* Actor);
@@ -69,6 +85,7 @@ private:
 	EEnvironmentType& GetCell(const FIntVector2& Position);
 
 	FVector GetTransformedVector(const FIntVector2& Position);
+	FIntVector2 GetTransformedPosition(const FIntVector2& Position);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

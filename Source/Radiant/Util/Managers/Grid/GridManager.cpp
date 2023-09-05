@@ -5,7 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "TeamGridManager.h"
 #include "Building/Building.h"
-#include "Net/UnrealNetwork.h"
+#include "Enums/VIsionRange.h"
 #include "Structs/GridPiece.h"
 #include "Util/Util.h"
 
@@ -80,6 +80,54 @@ void AGridManager::GenerateMap()
 	
 }
 
+void AGridManager::GenerateVisionRanges()
+{
+	TArray<FColor> Colors;
+	UUtil::ReadTextureColors(VisionRangesTexture, Colors);
+
+	ShortRange.Empty();
+	MediumRange.Empty();
+	LongRange.Empty();
+
+	int SizeX = VisionRangesTexture->GetSizeX();
+	int SizeY = VisionRangesTexture->GetSizeX();
+	for(int x = 0; x < SizeX; x++)
+	{
+		for(int y = 0; y < SizeY; y++)
+		{
+			FColor PixelColor = Colors[y * SizeX + x];
+			
+			if(PixelColor.ToPackedRGBA() == 0X0000ffff)
+			{
+				ShortRange.Add({x - SizeX / 2, y - SizeY / 2});
+			}
+			else if(PixelColor.ToPackedRGBA() == 0X00ff00ff)
+			{
+				MediumRange.Add({x - SizeX / 2, y - SizeY / 2});
+			}
+			else if(PixelColor.ToPackedRGBA() == 0xff0000ff)
+			{
+				LongRange.Add({x - SizeX / 2, y - SizeY / 2});
+			}
+		}
+	}
+}
+
+TArray<FIntVector2>& AGridManager::GetRange(EVisionRange Range)
+{
+	switch (Range)
+	{
+	case EVisionRange::Short:
+		return ShortRange;
+	case EVisionRange::Medium:
+		return MediumRange;
+	case EVisionRange::Long:
+		return LongRange;
+	default:
+		return ShortRange;
+	}
+}
+
 void AGridManager::InitGrid()
 {
 	if(!bSpawnMap)
@@ -135,11 +183,13 @@ void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 {
 	if(HasAuthority())
 	{
-		if(Piece.Position.X < 0 || Piece.Position.Y < 0 || Piece.Position.X >= GridDimensions || Piece.Position.Y >= GridDimensions)
+		FIntVector2 TransformedPos = GetTransformedPosition(Piece.Position);
+		
+		if(TransformedPos.X < 0 || TransformedPos.Y < 0 || TransformedPos.X >= GridDimensions || TransformedPos.Y >= GridDimensions)
 		{
 			return;
 		}
-		int32 Pos = Piece.Position.X + Piece.Position.Y * GridDimensions;
+		int32 Pos = TransformedPos.X + TransformedPos.Y * GridDimensions;
 		if(Cells.Num() < Pos)
 		{
 			return;
@@ -156,7 +206,7 @@ void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 		{
 			return;
 		}
-		FTransform Transform = FTransform(FVector(Piece.Position.X, Piece.Position.Y, 0.f) * CellSize);
+		FTransform Transform = FTransform(GetTransformedVector(Piece.Position));
 		AActor* Actor = GetWorld()->SpawnActorDeferred<AActor>(BuildingTypes[Piece.Type], Transform);
 		if(ABuilding* Building = Cast<ABuilding>(Actor))
 		{
@@ -165,7 +215,7 @@ void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 			Building->InitGridValues(this, Piece);
 		}
 		Actor->FinishSpawning(Transform);
-		Cells[Piece.Position.X + Piece.Position.Y * GridDimensions] = Piece.Type;
+		Cells[TransformedPos.X + TransformedPos.Y * GridDimensions] = Piece.Type;
 	}
 }
 
@@ -212,11 +262,13 @@ void AGridManager::BeginPlay()
 	{
 		ATeamGridManager* TeamGridManager = GetWorld()->SpawnActorDeferred<ATeamGridManager>(TeamGridManagerClass, FTransform::Identity);
 		TeamGridManager->SetTeamId(ETeamId::Red);
+		TeamGridManager->SetGridManager(this);
 		TeamGridManagers.Add(TeamGridManager);
 		TeamGridManager->FinishSpawning(FTransform::Identity);
 
 		TeamGridManager = GetWorld()->SpawnActorDeferred<ATeamGridManager>(TeamGridManagerClass, FTransform::Identity);
 		TeamGridManager->SetTeamId(ETeamId::Blue);
+		TeamGridManager->SetGridManager(this);
 		TeamGridManagers.Add(TeamGridManager);
 		TeamGridManager->FinishSpawning(FTransform::Identity);
 	}
@@ -237,6 +289,15 @@ FVector AGridManager::GetTransformedVector(const FIntVector2& Position)
 	double Y = Position.X;
 	
 	return FVector(X, Y, 0.f) * CellSize;
+}
+
+FIntVector2 AGridManager::GetTransformedPosition(const FIntVector2& Position)
+{
+	return Position;
+	int32 X = 127 - Position.Y;
+	int32 Y = Position.X;
+	
+	return FIntVector2(X, Y);
 }
 
 void AGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
