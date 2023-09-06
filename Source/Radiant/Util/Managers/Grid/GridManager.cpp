@@ -295,6 +295,15 @@ EEnvironmentType& AGridManager::GetCell(const FIntVector2& Position)
 	return Cells[static_cast<int32>(Position.X) + static_cast<int32>(Position.Y) * GridDimensions];
 }
 
+ABuilding* AGridManager::GetBuildingType(EEnvironmentType Type)
+{
+	if(BuildingTypes.Contains(Type))
+	{
+		return BuildingTypes[Type]->GetDefaultObject<ABuilding>();
+	}
+	return nullptr;
+}
+
 UStaticMeshComponent* AGridManager::GetMesh(EEnvironmentType Type)
 {
 	if(BuildingTypes.Contains(Type))

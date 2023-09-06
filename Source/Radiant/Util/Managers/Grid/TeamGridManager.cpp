@@ -2,6 +2,8 @@
 
 
 #include "TeamGridManager.h"
+
+#include "Building/Building.h"
 #include "Net/UnrealNetwork.h"
 #include "Structs/GridPiece.h"
 #include "Util/TempGridActor.h"
@@ -39,10 +41,15 @@ void ATeamGridManager::SpawnInitialTempActors()
 			ATempGridActor* TempGridActor = GetWorld()->SpawnActorDeferred<ATempGridActor>(ATempGridActor::StaticClass(), SpawnTransform);
 			if(Mesh)
 			{
-				TempGridActor->SetActorScale3D(Mesh->GetRelativeScale3D());
-				TempGridActor->SetActorRotation(Mesh->GetRelativeRotation());
-				TempGridActor->SetActorLocation(TempGridActor->GetActorLocation() + Mesh->GetRelativeLocation());
-				TempGridActor->SetMesh(Mesh);
+				if(ABuilding* Building = GridManager->GetBuildingType(Cells[y * GridDimensions + x]))
+				{
+					TempGridActor->SetActorScale3D(Mesh->GetRelativeScale3D());
+					TempGridActor->SetActorRotation(Mesh->GetRelativeRotation());
+					TempGridActor->SetActorLocation(TempGridActor->GetActorLocation() + Mesh->GetRelativeLocation());
+					TempGridActor->SetMesh(Mesh);
+					TempGridActor->SetMaterial(Building->GetDarkMaterial());
+					TempGridActor->SetBox(Building->GetBox(), GetTransformedVector(Position));
+				}
 			}
 			TempPieces[x + y * GridDimensions] = TempGridActor;
 			TempGridActor->FinishSpawning(SpawnTransform);
@@ -154,7 +161,7 @@ bool ATeamGridManager::HasTempActor(FGridPiece& Piece)
 	return TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] != nullptr;
 }
 
-void ATeamGridManager::SpawnTempActor(const FGridPiece& Piece, UStaticMeshComponent* Mesh, FTransform Transform)
+void ATeamGridManager::SpawnTempActor(const FGridPiece& Piece, ABuilding* Building, FTransform Transform)
 {
 	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] != nullptr)
 	{
@@ -165,8 +172,9 @@ void ATeamGridManager::SpawnTempActor(const FGridPiece& Piece, UStaticMeshCompon
 		return;
 	}
 	ATempGridActor* TempGridActor = GetWorld()->SpawnActorDeferred<ATempGridActor>(ATempGridActor::StaticClass(), Transform);
-	TempGridActor->SetMesh(Mesh);
-	TempGridActor->SetActorTransform(Mesh->GetComponentTransform());
+	TempGridActor->SetMesh(Building->GetMesh());
+	TempGridActor->SetActorTransform(Building->GetMesh()->GetComponentTransform());
+	TempGridActor->SetBox(Building->GetBox(), GetTransformedVector(Piece.Position));
 	TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] = TempGridActor;
 	TempGridActor->FinishSpawning(Transform);
 }
@@ -214,34 +222,10 @@ bool ATeamGridManager::GetNeighbor(const FIntVector2& Position, const FIntVector
 	return true;
 }
 
-bool ATeamGridManager::IsBlockingVision(const FIntVector2& Position, const FIntVector2& Direction)
+bool ATeamGridManager::IsBlockingVision(const FIntVector2& Position)
 {	
 	EEnvironmentType& Cell = GetCell(Position);
 	if(Cell != EEnvironmentType::EEnvironmentType_Empty)
-	{
-		return true;
-	}
-	// TOP RIGHT
-	if(Direction == FIntVector2(1, -1) && GetNeighbor(Position, FIntVector2(1, 0), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty
-		&& GetNeighbor(Position, FIntVector2(0, -1), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty)
-	{
-		return true;
-	}
-	// TOP LEFT
-	if(Direction == FIntVector2(-1, -1) && GetNeighbor(Position, FIntVector2(-1, 0), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty
-		&& GetNeighbor(Position, FIntVector2(0, -1), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty)
-	{
-		return true;
-	}
-	// BOTTOM RIGHT
-	if(Direction == FIntVector2(1, 1) && GetNeighbor(Position, FIntVector2(1, 0), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty
-		&& GetNeighbor(Position, FIntVector2(0, 1), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty)
-	{
-		return true;
-	}
-	// BOTTOM LEFT
-	if(Direction == FIntVector2(-1, 1) && GetNeighbor(Position, FIntVector2(-1, 0), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty
-		&& GetNeighbor(Position, FIntVector2(0, 1), Cell) && Cell != EEnvironmentType::EEnvironmentType_Empty)
 	{
 		return true;
 	}
@@ -269,23 +253,7 @@ bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 	FVector2D Direction = FVector2D(DX, DY);
 	Direction.Normalize();
 
-	FIntVector2 DirectionInt = FIntVector2(DX, DY);
-	// if (Angle > 0.52359877559 && Angle < 1.0471975512)
-	// {
-	// 	Direction = FVector2D(1, -1);
-	// }
-	// else if(Angle > 2.0943951024 && Angle < 2.61799387799)
-	// {
-	// 	Direction = FVector2D(-1, -1);
-	// }
-	// else if(Angle > 3.66519142919 && Angle < 4.18879020479)
-	// {
-	// 	Direction = FVector2D(-1, 1);
-	// }
-	// else if(Angle > 5.23598775598 && Angle < 5.75958653158)
-	// {
-	// 	Direction = FVector2D(1, 1);
-	// }
+	int depth = 0;
 	for(int i = 0; i <= SideLength; i++)
 	{
 		uint32 index = static_cast<uint32>(CurrentX) + static_cast<uint32>(CurrentY) * GridDimensions;
@@ -294,7 +262,11 @@ bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 		{
 			UpdateGridIfOutOfSync(FIntVector2(CurrentX, CurrentY));
 		}
-		if(IsBlockingVision(FIntVector2(CurrentX, CurrentY), DirectionInt))
+		if(IsBlockingVision(FIntVector2(CurrentX, CurrentY)))
+		{
+			depth++;
+		}
+		if(depth >= 2)
 		{
 			break;
 		}
@@ -367,8 +339,8 @@ void ATeamGridManager::DrawVisible()
 				{
 					return;
 				}
-				double X = (Actor->GetActorLocation().Y + 110.) / 200.;
-				double Y = 127. - (Actor->GetActorLocation().X - 110.) / 200.;
+				double X = (Actor->GetActorLocation().Y + 200.) / 200.;
+				double Y = 127. - (Actor->GetActorLocation().X - 200.) / 200.;
 				for(FIntVector2& Vec : GridManager->GetRange(EVisionRange::Medium))
 				{
 					FVector2D From = FVector2D(X, Y);
@@ -392,7 +364,7 @@ void ATeamGridManager::UpdateTempActor(const FGridPiece& Piece)
 	if(Piece.Type != EEnvironmentType::EEnvironmentType_Empty)
 	{
 		FTransform SpawnTransform = FTransform(GetTransformedVector(Piece.Position));
-		SpawnTempActor(Piece, GridManager->GetMesh(Piece.Type), SpawnTransform);
+		SpawnTempActor(Piece, GridManager->GetBuildingType(Piece.Type), SpawnTransform);
 	}
 }
 

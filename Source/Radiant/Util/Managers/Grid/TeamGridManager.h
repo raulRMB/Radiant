@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Building/Building.h"
 #include "GameFramework/Actor.h"
 #include "Util/Interfaces/TeamMember.h"
 #include "TeamGridManager.generated.h"
@@ -69,7 +70,7 @@ public:
 	void AddVisibleActor(AActor* Actor);
 	void RemoveVisibleActor(AActor* Actor);
 	bool HasTempActor(struct FGridPiece& Piece);
-	void SpawnTempActor(const FGridPiece& Piece, UStaticMeshComponent* Mesh, FTransform Transform);
+	void SpawnTempActor(const FGridPiece& Piece, ABuilding* Building, FTransform Transform);
 	void HideTempActor(FGridPiece& Piece, bool bHide);
 	void DestroyTempActor(const FGridPiece& Piece);
 	FVector GetTransformedVector(const FIntVector2& Position);
@@ -90,7 +91,7 @@ public:
 	void PieceChanged(const FGridPiece& Piece);
 
 private:	
-	bool IsBlockingVision(const FIntVector2& Position, const FIntVector2& Direction);
+	bool IsBlockingVision(const FIntVector2& Position);
 	EEnvironmentType& GetCell(const FIntVector2& Position);
 	bool GetNeighbor(const FIntVector2& Position, const FIntVector2& Direction, EEnvironmentType& OutCell);
 	bool GetVisibleCell(const FIntVector2& Position);

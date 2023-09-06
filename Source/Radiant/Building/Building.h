@@ -21,13 +21,16 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	float MaxHealth = 500.f;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
-	class UCapsuleComponent* CapsuleComponent;
+	class UBoxComponent* Box;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UWidgetComponent* InfoBarWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
+	class USceneComponent* Root;
 	
 	UPROPERTY(EditAnywhere, meta=(MakeEditWidget))
 	FVector WidgetLocation;
@@ -107,6 +110,7 @@ public:
 	void InitGridValues(class AGridManager* NewGridManager, const FGridPiece& NewGridPiece);
 	
 	void DestroyBuilding();
+	const UBoxComponent* GetBox() const { return Box; }
 
 private:
 	

@@ -1,21 +1,19 @@
 ﻿// Copyright Radiant Studios
 
-
 #include "TempGridActor.h"
+#include "Components/BoxComponent.h"
 
-
-// Sets default values
 ATempGridActor::ATempGridActor()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Mesh->SetCollisionProfileName("NoCollision");
 	Mesh->SetGenerateOverlapEvents(false);
 	Mesh->SetCanEverAffectNavigation(false);
-	SetActorEnableCollision(false);
-	RootComponent = Mesh;
+	
+	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 }
 
 void ATempGridActor::SetMesh(const UStaticMeshComponent* NewMesh) const
@@ -28,16 +26,16 @@ void ATempGridActor::SetMaterial(UMaterialInterface* NewMaterial) const
 	Mesh->SetMaterial(0, NewMaterial);
 }
 
-// Called when the game starts or when spawned
-void ATempGridActor::BeginPlay()
+void ATempGridActor::SetBox(const UBoxComponent* NewBox, const FVector& Location) const
 {
-	IsComponentRelevantForNavigation(nullptr);
-	Super::BeginPlay();
-}
+	Box->SetBoxExtent(NewBox->GetScaledBoxExtent());
+	Box->SetWorldLocation(NewBox->GetRelativeLocation() + Location);
+	// Box->SetHiddenInGame(false);
 
-// Called every frame
-void ATempGridActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
+	Box->SetCollisionEnabled(NewBox->GetCollisionEnabled());
+	Box->SetCollisionObjectType(NewBox->GetCollisionObjectType());
 
+	Box->SetCollisionResponseToChannels(ECR_Ignore);
+	Box->SetCollisionResponseToChannel(ECC_Pawn, NewBox->GetCollisionResponseToChannel(ECC_Pawn));
+	Box->SetCanEverAffectNavigation(NewBox->CanEverAffectNavigation());
+}

@@ -1,6 +1,5 @@
 ﻿#include "Building.h"
-
-#include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/Buildings/BuildingAttributeSet.h"
@@ -16,17 +15,30 @@
 ABuilding::ABuilding()
 {
 	bReplicates = true;
+
+	Root = CreateDefaultSubobject<USceneComponent>("Root");
+	SetRootComponent(Root);
+	
+	Box = CreateDefaultSubobject<UBoxComponent>("Box");
+	Box->SetupAttachment(RootComponent);
+	Box->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Box->SetCollisionObjectType(ECC_Pawn);
+	Box->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	Box->SetCollisionResponseToChannel(ECC_CursorTarget, ECollisionResponse::ECR_Block);
+	Box->SetCollisionResponseToChannel(ECC_Pawn, ECollisionResponse::ECR_Block);
+	Box->SetCollisionResponseToChannel(ECC_Projectile, ECollisionResponse::ECR_Overlap);
+	
 	AbilitySystemComponent = CreateDefaultSubobject<URTAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	AttributeSet = CreateDefaultSubobject<UBuildingAttributeSet>("AttributeSet");
-	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
-	SetRootComponent(CapsuleComponent);
+	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Mesh->SetCanEverAffectNavigation(false);
-	Mesh->SetupAttachment(GetRootComponent());
+	Mesh->SetupAttachment(RootComponent);
+		
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.bAllowTickOnDedicatedServer = false;

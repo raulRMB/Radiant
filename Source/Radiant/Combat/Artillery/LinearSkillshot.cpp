@@ -54,11 +54,6 @@ void ALinearSkillshot::BeginPlay()
 		}
 		SetLifeSpan(LifeSpan);
 	}
-
-	if(AGridManager* GridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass())))
-	{
-		GridManager->AddVisibleActor(this);
-	}
 }
 
 void ALinearSkillshot::OnConstruction(const FTransform& Transform)

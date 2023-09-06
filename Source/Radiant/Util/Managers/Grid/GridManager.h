@@ -83,6 +83,7 @@ public:
 	FGridUpdateSignature OnGridUpdate;
 	UStaticMeshComponent* GetMesh(EEnvironmentType Type);
 	EEnvironmentType& GetCell(const FIntVector2& Position);
+	class ABuilding* GetBuildingType(EEnvironmentType Type);
 private:
 
 	FVector GetTransformedVector(const FIntVector2& Position);
