@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Util/Util.h"
 
 // Sets default values
 AAreaOfEffect::AAreaOfEffect()
@@ -16,6 +17,10 @@ AAreaOfEffect::AAreaOfEffect()
 	bReplicates = true;
 
 	HitBox = CreateDefaultSubobject<USphereComponent>(FName("Mesh"));
+	HitBox->SetCollisionObjectType(ECC_Artillery);
+	HitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	HitBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+	HitBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	SetRootComponent(HitBox);
 
 	TimerDisplay = CreateDefaultSubobject<UStaticMeshComponent>(FName("TimerDisplay"));

@@ -11,6 +11,7 @@
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerState.h"
+#include "Util/Util.h"
 
 // Sets default values
 ALinearSkillshot::ALinearSkillshot()
@@ -22,6 +23,7 @@ ALinearSkillshot::ALinearSkillshot()
 
 
 	HitBox = CreateDefaultSubobject<USphereComponent>(FName("HitBox"));
+	HitBox->SetCollisionObjectType(ECC_Artillery);
 	HitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	HitBox->SetCollisionResponseToAllChannels(ECR_Ignore);
 	HitBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);

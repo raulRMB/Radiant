@@ -26,7 +26,7 @@ ABuilding::ABuilding()
 	Box->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	Box->SetCollisionResponseToChannel(ECC_CursorTarget, ECollisionResponse::ECR_Block);
 	Box->SetCollisionResponseToChannel(ECC_Pawn, ECollisionResponse::ECR_Block);
-	Box->SetCollisionResponseToChannel(ECC_Projectile, ECollisionResponse::ECR_Overlap);
+	Box->SetCollisionResponseToChannel(ECC_Artillery, ECollisionResponse::ECR_Overlap);
 	
 	AbilitySystemComponent = CreateDefaultSubobject<URTAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);

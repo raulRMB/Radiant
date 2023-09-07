@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Util/Util.h"
 
 // Sets default values
 AHeatSeeking::AHeatSeeking()
@@ -20,6 +21,7 @@ AHeatSeeking::AHeatSeeking()
 
 	HitBox = CreateDefaultSubobject<USphereComponent>(TEXT("HitBox"));
 	HitBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	HitBox->SetCollisionObjectType(ECC_Artillery);
 	HitBox->SetCollisionResponseToAllChannels(ECR_Ignore);
 	HitBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	HitBox->OnComponentBeginOverlap.AddDynamic(this, &AHeatSeeking::OnOvelapBegin);
