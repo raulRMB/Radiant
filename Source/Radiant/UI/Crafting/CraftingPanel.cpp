@@ -24,6 +24,46 @@ void UCraftingPanel::OnFilterChanged(bool bIsChecked)
 	Init(InventoryComponent);
 }
 
+void UCraftingPanel::OnSupportFilterChanged()
+{
+	bSupportFilter = true;
+	bDamageFilter = false;
+	bTankFilter = false;
+	SetBackgroundColors();
+	Init(InventoryComponent);
+}
+
+void UCraftingPanel::OnDamageFilterChanged()
+{
+	bSupportFilter = false;
+	bDamageFilter = true;
+	bTankFilter = false;
+	SetBackgroundColors();
+	Init(InventoryComponent);
+}
+
+void UCraftingPanel::SetBackgroundColors()
+{
+	FButtonStyle Style = DamageFilter->WidgetStyle;
+	Style.Normal.TintColor = bDamageFilter ? SelectedColor : UnselectedColor;
+	DamageFilter->SetStyle(Style);
+	Style = SupportFilter->WidgetStyle;
+	Style.Normal.TintColor = bSupportFilter ? SelectedColor : UnselectedColor;
+	SupportFilter->SetStyle(Style);
+	Style = TankFilter->WidgetStyle;
+	Style.Normal.TintColor = bTankFilter ? SelectedColor : UnselectedColor;
+	TankFilter->SetStyle(Style);
+}
+
+void UCraftingPanel::OnTankFilterChanged()
+{
+	bSupportFilter = false;
+	bDamageFilter = false;
+	bTankFilter = true;
+	SetBackgroundColors();
+	Init(InventoryComponent);
+}
+
 void UCraftingPanel::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -31,27 +71,28 @@ void UCraftingPanel::NativeConstruct()
 	GearFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
 	MaterialFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
 	WeaponFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
-	GeneralFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
-	SupportFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
-	DamageFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
-	TankFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	//GeneralFilter->OnCheckStateChanged.AddDynamic(this, &UCraftingPanel::OnFilterChanged);
+	SupportFilter->OnClicked.AddDynamic(this, &UCraftingPanel::OnSupportFilterChanged);
+	DamageFilter->OnClicked.AddDynamic(this, &UCraftingPanel::OnDamageFilterChanged);
+	TankFilter->OnClicked.AddDynamic(this, &UCraftingPanel::OnTankFilterChanged);
+	SetBackgroundColors();
 }
 
 bool UCraftingPanel::ShouldIncludeClass(FItemData* ItemData)
 {
-	if(GeneralFilter->IsChecked() && ItemData->ClassType == EClassType::General)
+	if(ItemData->ClassType == EClassType::General)
 	{
 		return true;
 	}
-	if(SupportFilter->IsChecked() && ItemData->ClassType == EClassType::Support)
+	if(bSupportFilter && ItemData->ClassType == EClassType::Support)
 	{
 		return true;
 	}
-	if(DamageFilter->IsChecked() && ItemData->ClassType == EClassType::Damage)
+	if(bDamageFilter && ItemData->ClassType == EClassType::Damage)
 	{
 		return true;
 	}
-	if(TankFilter->IsChecked() && ItemData->ClassType == EClassType::Tank)
+	if(bTankFilter && ItemData->ClassType == EClassType::Tank)
 	{
 		return true;
 	}

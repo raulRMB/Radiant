@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
 #include "Data/ItemData.h"
 #include "CraftingPanel.generated.h"
 
@@ -31,17 +32,21 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	UCheckBox* WeaponFilter;
 
-	UPROPERTY(meta=(BindWidget))
-	UCheckBox* GeneralFilter;
+	bool bSupportFilter = false;
+	bool bTankFilter = false;
+	bool bDamageFilter = true;
+
+	FLinearColor SelectedColor = FLinearColor(0.6f, 0.6f, 0.6f, 1.f);
+	FLinearColor UnselectedColor = FLinearColor(0.15f, 0.15f, 0.15f, 1.f);
 	
 	UPROPERTY(meta=(BindWidget))
-	UCheckBox* SupportFilter;
+	UButton* SupportFilter;
 
 	UPROPERTY(meta=(BindWidget))
-	UCheckBox* DamageFilter;
+	UButton* DamageFilter;
 
 	UPROPERTY(meta=(BindWidget))
-	UCheckBox* TankFilter;
+	UButton* TankFilter;
 	
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* RecipeList;
@@ -92,7 +97,14 @@ class RADIANT_API UCraftingPanel : public UUserWidget
 	float NodeEdgeLineOffset = .25f; // Percentage of the HorizontalSeparation
 	UFUNCTION()
 	void OnFilterChanged(bool bIsChecked);
-	void NativeConstruct() override;
+	UFUNCTION()
+	void OnSupportFilterChanged();
+	UFUNCTION()
+	void OnDamageFilterChanged();
+	void SetBackgroundColors();
+	UFUNCTION()
+	void OnTankFilterChanged();
+	virtual void NativeConstruct() override;
 	bool ShouldIncludeClass(FItemData* ItemData);
 	bool ShouldInclude(FItemData* ItemData);
 	UPROPERTY(EditAnywhere)
