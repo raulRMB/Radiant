@@ -69,10 +69,7 @@ void URangedBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-	
-	RTLOGP("Target %s", *Target->GetName())
-	RTPRINTP("Target %s", *Target->GetName())
-	
+		
 	FVector Loc = Avatar->GetActorLocation();
 	Loc.Z = 0;
 	FVector Direction = (Target->GetActorLocation() - Loc).GetSafeNormal();
