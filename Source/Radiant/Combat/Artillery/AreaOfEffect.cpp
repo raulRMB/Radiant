@@ -126,7 +126,7 @@ void AAreaOfEffect::ApplyInstantEffects()
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	UKismetSystemLibrary::SphereOverlapComponents(this, HitBox->GetComponentLocation(), HitBox->GetScaledSphereRadius(),
-	                                              ObjectTypes, UCapsuleComponent::StaticClass(), TArray<AActor*>(),
+	                                              ObjectTypes, nullptr, TArray<AActor*>(),
 	                                              OverlappingActors);
 	for (auto Component : OverlappingActors)
 	{

@@ -10,6 +10,8 @@ AExtractor::AExtractor()
 	PrimaryActorTick.bCanEverTick = true;
 	SetReplicates(true);
 	AActor::SetReplicateMovement(false);
+	
+	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
 
 	ExtractorAttributeSet = CreateDefaultSubobject<UExtractorAttributeSet>(TEXT("ExtractorAttributeSet"));
 }
