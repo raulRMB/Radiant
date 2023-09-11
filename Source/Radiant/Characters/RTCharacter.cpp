@@ -9,6 +9,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Player/Avatar.h"
 #include "Player/RTPlayerController.h"
+#include "Util/NotificationActor.h"
 #include "Util/Util.h"
 #include "Util/Managers/Grid/TeamGridManager.h"
 
@@ -142,9 +143,12 @@ void ARTCharacter::Tick(float DeltaSeconds)
 
 	if(HasAuthority())
 	{
-		for(AActor* Actor : ActorsInVisionRadius)
+		for(int i = 0; i < ActorsInVisionRadius.Num(); i++)
 		{
-			CheckCanSeeTarget(Actor);
+			if(i < ActorsInVisionRadius.Num())
+			{
+				CheckCanSeeTarget(ActorsInVisionRadius[i]);
+			}
 		}
 	}
 }

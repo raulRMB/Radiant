@@ -96,7 +96,6 @@ protected:
 public:
 	ABuilding();
 	UStaticMeshComponent* GetMesh() const;
-
 	const FGridPiece& GetGridPiece() const { return GridPiece; }
 	void SetHealthBarColor();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

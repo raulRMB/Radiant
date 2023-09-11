@@ -66,7 +66,6 @@ UStaticMeshComponent* ABuilding::GetMesh() const
 bool ABuilding::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
 	bool bIsVisible = false;
-	
 	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
 	{
 		if(PC->GetTeamId() == GetTeamId())
@@ -77,20 +76,7 @@ bool ABuilding::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTar
 		{
 			bIsVisible = IsVisibleForTeam(PC->GetTeamId());
 		}
-		
-		if(bIsVisible)
-		{
-			if(ActorManager)
-			{
-				if(ATeamGridManager* TGM = ActorManager->GetTeamGridManager(PC->GetTeamId()))
-				{
-					// TGM->PieceChanged(this);
-				}
-			}
-
-		}
 	}
-	
 	return bIsVisible;
 }
 
@@ -110,7 +96,6 @@ void ABuilding::BeginPlay()
 	Super::BeginPlay();
 
 	ActorManager = GetGameInstance()->GetSubsystem<UActorManager>();
-	
 	GiveInitialAbilities();
 	
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
@@ -215,17 +200,6 @@ void ABuilding::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 void ABuilding::Tick(float DeltaSeconds)
 {
-	if(!HasAuthority())
-	{
-		ETeamId TempTeamId = UUtil::GetLocalPlayerTeamId(this);
-		if(ATeamGridManager* TeamGridManager = ActorManager->GetTeamGridManager(TempTeamId))
-		{
-			if(TeamGridManager->HasTempActor(GridPiece))
-			{
-				TeamGridManager->HideTempActor(GridPiece, bShouldShow);
-			}
-		}
-	}
 	Super::Tick(DeltaSeconds);
 }
 
@@ -246,7 +220,6 @@ void ABuilding::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			}
 		}
 	}
-
 	Super::EndPlay(EndPlayReason);
 }
 

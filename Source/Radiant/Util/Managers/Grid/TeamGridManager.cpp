@@ -10,6 +10,7 @@
 #include "Enums/EnvironmentType.h"
 #include "Enums/VIsionRange.h"
 #include "Player/RTPlayerController.h"
+#include "Util/NotificationActor.h"
 #include "Util/Util.h"
 #include "Util/Interfaces/TeamMember.h"
 
@@ -27,40 +28,41 @@ void ATeamGridManager::OnRep_Cells()
 
 void ATeamGridManager::SpawnInitialTempActors()
 {
-	for(int x = 0; x < GridDimensions; x++)
+	if(TempActorsEnabled)
 	{
-		for (int y = 0; y < GridDimensions; y++)
+		for(int x = 0; x < GridDimensions; x++)
 		{
-			if(Cells[y * GridDimensions + x] == EEnvironmentType::EEnvironmentType_Empty)
+			for (int y = 0; y < GridDimensions; y++)
 			{
-				continue;
-			}
-			FIntVector2 Position = FIntVector2(x, y);
-			FTransform SpawnTransform = FTransform(GetTransformedVector(Position));			
-			UStaticMeshComponent* Mesh = GridManager->GetMesh(Cells[y * GridDimensions + x]);
-			ATempGridActor* TempGridActor = GetWorld()->SpawnActorDeferred<ATempGridActor>(ATempGridActor::StaticClass(), SpawnTransform);
-			if(Mesh)
-			{
-				if(ABuilding* Building = GridManager->GetBuildingType(Cells[y * GridDimensions + x]))
+				if(Cells[y * GridDimensions + x] == EEnvironmentType::EEnvironmentType_Empty)
 				{
-					TempGridActor->SetActorScale3D(Mesh->GetRelativeScale3D());
-					TempGridActor->SetActorRotation(Mesh->GetRelativeRotation());
-					TempGridActor->SetActorLocation(TempGridActor->GetActorLocation() + Mesh->GetRelativeLocation());
-					TempGridActor->SetMesh(Mesh);
-					TempGridActor->SetMaterial(Building->GetDarkMaterial());
-					TempGridActor->SetBox(Building->GetBox(), GetTransformedVector(Position));
+					continue;
 				}
+				FIntVector2 Position = FIntVector2(x, y);
+				FTransform SpawnTransform = FTransform(GetTransformedVector(Position));			
+				UStaticMeshComponent* Mesh = GridManager->GetMesh(Cells[y * GridDimensions + x]);
+				ATempGridActor* TempGridActor = GetWorld()->SpawnActorDeferred<ATempGridActor>(ATempGridActor::StaticClass(), SpawnTransform);
+				if(Mesh)
+				{
+					if(ABuilding* Building = GridManager->GetBuildingType(Cells[y * GridDimensions + x]))
+					{
+						TempGridActor->SetActorScale3D(Mesh->GetRelativeScale3D());
+						TempGridActor->SetActorRotation(Mesh->GetRelativeRotation());
+						TempGridActor->SetActorLocation(TempGridActor->GetActorLocation() + Mesh->GetRelativeLocation());
+						TempGridActor->SetMesh(Mesh);
+						TempGridActor->SetMaterial(Building->GetDarkMaterial());
+						TempGridActor->SetBox(Building->GetBox(), GetTransformedVector(Position));
+					}
+				}
+				TempPieces[x + y * GridDimensions] = TempGridActor;
+				TempGridActor->FinishSpawning(SpawnTransform);
 			}
-			TempPieces[x + y * GridDimensions] = TempGridActor;
-			TempGridActor->FinishSpawning(SpawnTransform);
 		}
 	}
 }
 
-// Sets default values
 ATeamGridManager::ATeamGridManager()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 }
@@ -72,6 +74,14 @@ const TMap<AActor*, int32>& ATeamGridManager::GetActorsInVision()
 
 void ATeamGridManager::AddActorToActorsInVision(AActor* Actor)
 {
+	if(ANotificationActor* NA = Cast<ANotificationActor>(Actor))
+	{
+		if(NA->GetTeamId() == TeamId)
+		{
+			UpdateCellForClients(NA->GetGridPiece());
+			NA->Destroy();
+		}
+	}
 	if(int32* Count = ActorsInVision.Find(Actor))
 	{
 		(*Count)++;
@@ -107,11 +117,11 @@ bool ATeamGridManager::IsTargetInVision(const AActor* ArtCharacter) const
 	return ActorsInVision.Contains(ArtCharacter);
 }
 
-// Called when the game starts or when spawned
 void ATeamGridManager::BeginPlay()
 {
 	InitGrid();
 	Super::BeginPlay();
+	NotificationActors.Init(nullptr, 128*128);
 	UActorManager* ActorManager = GetGameInstance()->GetSubsystem<UActorManager>();
 	ActorManager->AddTeamGridManager(TeamId, this);
 }
@@ -138,13 +148,7 @@ bool ATeamGridManager::IsNetRelevantFor(const AActor* RealViewer, const AActor* 
 void ATeamGridManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if(HasAuthority())
-	{
-		// ClearAllVisible();
-		// DrawVisible();
-	}
-	else
+	if(!HasAuthority())
 	{
 		if(TeamId == ETeamId::Neutral || VisibleCells.Num() == 0 || TeamId != UUtil::GetLocalPlayerTeamId(this))
 		{
@@ -152,32 +156,36 @@ void ATeamGridManager::Tick(float DeltaTime)
 		}
 		ClearAllVisible();
 		DrawVisible();
-		FTexture2DMipMap* MipMap = &FOWRenderTarget->GetPlatformData()->Mips[0];
-		FByteBulkData* RawImageData = &MipMap->BulkData;
-		FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
-		for(int i = 0; i < 128; i++)
-		{
-			for(int j = 0; j < 128; j++)
-			{
-				FormattedImageData[i + j * 128] = VisibleCells[i + j * 128] ? FColor::White : FColor::Black;
-			}
-		}
-		RawImageData->Unlock();
-		FOWRenderTarget->UpdateResource();
-
-		MipMap = &MinimapRenderTarget->GetPlatformData()->Mips[0];
-		RawImageData = &MipMap->BulkData;
-		FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
-		for(int i = 0; i < 128; i++)
-		{
-			for(int j = 0; j < 128; j++)
-			{
-				FormattedImageData[i + j * 128] = GetColorForType(Cells[i + j * 128]);
-			}
-		}
-		RawImageData->Unlock();
-		MinimapRenderTarget->UpdateResource();
+		DrawMiniMap();
 	}
+}
+
+void ATeamGridManager::DrawMiniMap()
+{
+	FTexture2DMipMap* MipMap = &FOWRenderTarget->GetPlatformData()->Mips[0];
+	FByteBulkData* RawImageData = &MipMap->BulkData;
+	FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
+	for(int i = 0; i < 128; i++)
+	{
+		for(int j = 0; j < 128; j++)
+		{
+			FormattedImageData[i + j * 128] = VisibleCells[i + j * 128] ? FColor::White : FColor::Black;
+		}
+	}
+	RawImageData->Unlock();
+	FOWRenderTarget->UpdateResource();
+	MipMap = &MinimapRenderTarget->GetPlatformData()->Mips[0];
+	RawImageData = &MipMap->BulkData;
+	FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
+	for(int i = 0; i < 128; i++)
+	{
+		for(int j = 0; j < 128; j++)
+		{
+			FormattedImageData[i + j * 128] = GetColorForType(Cells[i + j * 128]);
+		}
+	}
+	RawImageData->Unlock();
+	MinimapRenderTarget->UpdateResource();
 }
 
 void ATeamGridManager::InitGrid()
@@ -201,11 +209,19 @@ void ATeamGridManager::RemoveVisibleActor(AActor* Actor)
 
 bool ATeamGridManager::HasTempActor(FGridPiece& Piece)
 {
+	if(!TempActorsEnabled)
+	{
+		return false;
+	}
 	return TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] != nullptr;
 }
 
 void ATeamGridManager::SpawnTempActor(const FGridPiece& Piece, ABuilding* Building, FTransform Transform)
 {
+	if(!TempActorsEnabled)
+	{
+		return;
+	}
 	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] != nullptr)
 	{
 		return;
@@ -224,7 +240,7 @@ void ATeamGridManager::SpawnTempActor(const FGridPiece& Piece, ABuilding* Buildi
 
 void ATeamGridManager::HideTempActor(FGridPiece& Piece, bool bHide)
 {
-	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] == nullptr)
+	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] == nullptr || !TempActorsEnabled)
 	{
 		return;
 	}
@@ -234,7 +250,7 @@ void ATeamGridManager::HideTempActor(FGridPiece& Piece, bool bHide)
 
 void ATeamGridManager::DestroyTempActor(const FGridPiece& Piece)
 {
-	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] == nullptr)
+	if(TempPieces[Piece.Position.X + Piece.Position.Y * GridDimensions] == nullptr || !TempActorsEnabled)
 	{
 		return;
 	}
@@ -301,10 +317,6 @@ bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 	{
 		uint32 index = static_cast<uint32>(CurrentX) + static_cast<uint32>(CurrentY) * GridDimensions;
 		VisibleCells[index] = true;
-		if(HasAuthority())
-		{
-			UpdateGridIfOutOfSync(FIntVector2(CurrentX, CurrentY));
-		}
 		if(IsBlockingVision(FIntVector2(CurrentX, CurrentY)))
 		{
 			depth++;
@@ -317,19 +329,6 @@ bool ATeamGridManager::CheckVisible(const FVector2D& From, const FVector2D& To)
 		CurrentY += YIncrement;
 	}
 	return false;
-}
-
-
-void ATeamGridManager::UpdateGridIfOutOfSync(FIntVector2 Pos)
-{
-	if(GridManager->GetCell(Pos) != GetCell(Pos))
-	{
-		FGridPiece NewData = FGridPiece();
-		NewData.Position = Pos;
-		NewData.Type = GridManager->GetCell(Pos);
-		M_UpdateTempActor(NewData);
-		Cells[Pos.X + Pos.Y * GridDimensions] = GridManager->GetCell(Pos);
-	}
 }
 
 FColor ATeamGridManager::GetColorForType(const EEnvironmentType& Type)
@@ -430,14 +429,41 @@ void ATeamGridManager::PieceChanged(const ABuilding* Building)
 			return;
 		}
 		int32 Pos = Piece.Position.X + Piece.Position.Y * GridDimensions;
-		if(Cells.Num() < Pos || !ActorsInVision.Contains(Building))
+		if(Cells.Num() < Pos)
 		{
 			return;
 		}
-		Cells[Pos] = GridManager->GetCell(Piece.Position);
-		Piece.Type = Cells[Pos];
-		M_UpdateTempActor(Piece);
+		if(ActorsInVision.Contains(Building))
+		{
+			UpdateCellForClients(Piece);
+		} else
+		{
+			SpawnNotificationActor(Piece);
+		}
 	}
+}
+
+void ATeamGridManager::UpdateCellForClients(FGridPiece Piece)
+{
+	int32 Pos = Piece.Position.X + Piece.Position.Y * GridDimensions;
+	Cells[Pos] = GridManager->GetCell(Piece.Position);
+	Piece.Type = Cells[Pos];
+	M_UpdateTempActor(Piece);
+}
+
+void ATeamGridManager::SpawnNotificationActor(FGridPiece Piece)
+{
+	FTransform SpawnTransform = FTransform(GetTransformedVector(Piece.Position));
+	ANotificationActor* NA = GetWorld()->SpawnActorDeferred<ANotificationActor>(ANotificationActor::StaticClass(), SpawnTransform);
+	NA->SetGridPiece(Piece);
+	NA->SetTeamId(TeamId);
+	NA->FinishSpawning(SpawnTransform);
+	int32 Pos = Piece.Position.X + Piece.Position.Y * GridDimensions;
+	if(NotificationActors[Pos] != nullptr)
+	{
+		NotificationActors[Pos]->Destroy();
+	}
+	NotificationActors[Pos] = NA;
 }
 
 

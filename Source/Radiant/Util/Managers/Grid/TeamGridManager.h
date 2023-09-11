@@ -9,6 +9,7 @@
 #include "Util/Interfaces/TeamMember.h"
 #include "TeamGridManager.generated.h"
 
+class ANotificationActor;
 enum class ETeamId : uint8;
 enum class EEnvironmentType : uint8;
 
@@ -23,12 +24,15 @@ class RADIANT_API ATeamGridManager : public AActor, public ITeamMember
 	UPROPERTY()
 	TArray<bool> VisibleCells;
 
+	UPROPERTY()
+	TArray<ANotificationActor*> NotificationActors;
+	
 	UFUNCTION()
 	void OnRep_Cells();
 	void SpawnInitialTempActors();
 
 	bool Initialized = false;
-	
+	bool TempActorsEnabled = true;
 	UPROPERTY()
 	TArray<class AActor*> TempPieces;
 	
@@ -74,15 +78,12 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	void DrawMiniMap();
 
 	void InitGrid();
 
 	void AddVisibleActor(AActor* Actor);
 	void RemoveVisibleActor(AActor* Actor);
-	bool HasTempActor(struct FGridPiece& Piece);
-	void SpawnTempActor(const FGridPiece& Piece, ABuilding* Building, FTransform Transform);
-	void HideTempActor(FGridPiece& Piece, bool bHide);
-	void DestroyTempActor(const FGridPiece& Piece);
 	FVector GetTransformedVector(const FIntVector2& Position);
 
 	void Init(const TArray<EEnvironmentType> TrueCells, TMap<EEnvironmentType, TSubclassOf<AActor>> BuildingTypes);
@@ -93,12 +94,18 @@ public:
 	bool IsTargetVisible(const AActor* Target);
 
 	void SetGridManager(class AGridManager* NewGridManager) { GridManager = NewGridManager; }
+;
 	void UpdateTempActor(const FGridPiece& Piece);
-
+	bool HasTempActor(struct FGridPiece& Piece);
+	void SpawnTempActor(const FGridPiece& Piece, ABuilding* Building, FTransform Transform);
+	void HideTempActor(FGridPiece& Piece, bool bHide);
+	void DestroyTempActor(const FGridPiece& Piece);
 	UFUNCTION(NetMulticast, Reliable)
 	void M_UpdateTempActor(const FGridPiece& Piece);
 
 	void PieceChanged(const ABuilding* Building);
+	void UpdateCellForClients(FGridPiece Piece);
+	void SpawnNotificationActor(FGridPiece Piece);
 
 private:	
 	bool IsBlockingVision(const FIntVector2& Position);
@@ -108,6 +115,5 @@ private:
 	void ClearAllVisible();
 	void DrawVisible();
 	bool CheckVisible(const FVector2D& From, const FVector2D& To);
-	void UpdateGridIfOutOfSync(FIntVector2 Pos);
 	FColor GetColorForType(const EEnvironmentType& Type);
 };
