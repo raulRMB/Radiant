@@ -146,8 +146,16 @@ void AGridManager::InitGrid()
 					continue;
 				}
 				FIntVector2 Position = FIntVector2(x, y);
-				FTransform SpawnTransform = FTransform(GetTransformedVector(Position));			
-				AActor* Actor = GetWorld()->SpawnActorDeferred<AActor>(BuildingTypes[Cells[y * GridDimensions + x]], SpawnTransform);
+				FTransform SpawnTransform = FTransform(GetTransformedVector(Position));
+				AActor* Actor;
+				if(Cast<ABuilding>(BuildingTypes[Cells[y * GridDimensions + x]]))
+				{
+					Actor = GetWorld()->SpawnActorDeferred<ABuilding>(BuildingTypes[Cells[y * GridDimensions + x]], SpawnTransform);
+				}
+				else
+				{
+					Actor = GetWorld()->SpawnActorDeferred<AActor>(BuildingTypes[Cells[y * GridDimensions + x]], SpawnTransform);
+				}
 				
 				if(ABuilding* Building = Cast<ABuilding>(Actor))
 				{

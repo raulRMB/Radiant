@@ -1,9 +1,7 @@
 ﻿#include "Extractor.h"
-#include "GAS/AttributeSets/Buildings/ExtractorAttributeSet.h"
+#include "GAS/AttributeSets/RTBaseAttributeSet.h"
 #include "Items/WorldItem.h"
 #include "Net/UnrealNetwork.h"
-#include "Objectives/Vein.h"
-#include "Util/Util.h"
 
 AExtractor::AExtractor()
 {
@@ -13,16 +11,12 @@ AExtractor::AExtractor()
 	
 	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
 
-	ExtractorAttributeSet = CreateDefaultSubobject<UExtractorAttributeSet>(TEXT("ExtractorAttributeSet"));
+	ExtractorAttributeSet = CreateDefaultSubobject<URTBaseAttributeSet>(TEXT("ExtractorAttributeSet"));
 }
 
 void AExtractor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ExtractorAttributeSet->InitCapacity(1000.f);
-	ExtractorAttributeSet->InitExtractionRate(1.f);
-	ExtractorAttributeSet->InitRadianite(0.f);
 }
 
 void AExtractor::Tick(float DeltaSeconds)

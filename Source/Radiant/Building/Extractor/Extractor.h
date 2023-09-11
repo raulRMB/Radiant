@@ -20,7 +20,7 @@ class AExtractor : public ABuilding
 	class AVein* Vein;
 
 	UPROPERTY()
-	class UExtractorAttributeSet* ExtractorAttributeSet;
+	class URTBaseAttributeSet* ExtractorAttributeSet;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWorldItem> WorldItemClass;

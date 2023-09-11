@@ -1,8 +1,9 @@
 ﻿#include "Building.h"
+
+#include "GameplayEffectExtension.h"
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
-#include "GAS/AttributeSets/Buildings/BuildingAttributeSet.h"
 #include "Items/WorldItem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -28,11 +29,21 @@ ABuilding::ABuilding()
 	Box->SetCollisionResponseToChannel(ECC_CursorTarget, ECollisionResponse::ECR_Block);
 	Box->SetCollisionResponseToChannel(ECC_Pawn, ECollisionResponse::ECR_Block);
 	Box->SetCollisionResponseToChannel(ECC_Artillery, ECollisionResponse::ECR_Overlap);
+	Box->SetCollisionResponseToChannel(ECC_Vision, ECollisionResponse::ECR_Overlap);
 	
 	AbilitySystemComponent = CreateDefaultSubobject<URTAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
-	AttributeSet = CreateDefaultSubobject<UBuildingAttributeSet>("AttributeSet");
+	
+	AttributeSet = CreateDefaultSubobject<URTBaseAttributeSet>("AttributeSet");
+	AttributeSet->InitHealth(MaxHealth);
+	AttributeSet->InitMaxHealth(MaxHealth);
+	AttributeSet->InitLevel(1.f);
+	AttributeSet->InitArmor(20.f);
+	AttributeSet->InitAttackDamage(10.f);
+	AttributeSet->InitAttackSpeed(1.f);
+	AttributeSet->InitMovementSpeed(0.f);
+	AttributeSet->InitAttackRange(100.f);
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -100,17 +111,9 @@ void ABuilding::BeginPlay()
 
 	ActorManager = GetGameInstance()->GetSubsystem<UActorManager>();
 	
-	if (!AttributeSet)
-	{
-		AttributeSet = NewObject<UBuildingAttributeSet>(this);
-	}
 	GiveInitialAbilities();
-	AttributeSet->InitMaxHealth(MaxHealth);
-	AttributeSet->InitHealth(MaxHealth);
-	AttributeSet->InitAttackDamage(10.f);
-
+	
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(
 		this, &ABuilding::OnHealthChanged);
 }
@@ -217,8 +220,6 @@ void ABuilding::Tick(float DeltaSeconds)
 		ETeamId TempTeamId = UUtil::GetLocalPlayerTeamId(this);
 		if(ATeamGridManager* TeamGridManager = ActorManager->GetTeamGridManager(TempTeamId))
 		{
-			// bShouldShow = TeamGridManager->IsTargetInVision(this);
-			// SetActorHiddenInGame(!bShouldShow);
 			if(TeamGridManager->HasTempActor(GridPiece))
 			{
 				TeamGridManager->HideTempActor(GridPiece, bShouldShow);
@@ -272,7 +273,7 @@ UAbilitySystemComponent* ABuilding::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-UBuildingAttributeSet* ABuilding::GetAttributeSet() const
+URTBaseAttributeSet* ABuilding::GetAttributeSet() const
 {
 	return AttributeSet;
 }

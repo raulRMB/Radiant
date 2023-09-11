@@ -20,7 +20,7 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	AActor* TmpActor;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats, meta=(AllowPrivateAccess=true))
-	float MaxHealth = 500.f;
+	float MaxHealth = 200.f;  
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UBoxComponent* Box;
@@ -81,8 +81,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
 	class URTAbilitySystemComponent* AbilitySystemComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Components, meta=(AllowPrivateAccess=true))
-	class UBuildingAttributeSet* AttributeSet;
+	UPROPERTY(VisibleAnywhere)
+	class URTBaseAttributeSet* AttributeSet;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AActor> DestroyParticles;
@@ -100,7 +100,7 @@ public:
 	const FGridPiece& GetGridPiece() const { return GridPiece; }
 	void SetHealthBarColor();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UBuildingAttributeSet* GetAttributeSet() const;
+	URTBaseAttributeSet* GetAttributeSet() const;
 	virtual ETeamId GetTeamId() const override { return TeamId; }
 
 	UMaterialInterface* GetDarkMaterial() const { return DarkMaterial; }
