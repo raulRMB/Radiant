@@ -17,13 +17,13 @@ ANotificationActor::ANotificationActor()
 	Box->SetCollisionResponseToChannel(ECC_Vision, ECollisionResponse::ECR_Overlap);
 	Box->SetCollisionResponseToChannel(ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	Box->SetBoxExtent(FVector(100.f, 100.f, 50.f));
+	Box->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 	Box->SetupAttachment(RootComponent);
 }
 
 void ANotificationActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ANotificationActor::SetTeamId(ETeamId NewTeamId)
