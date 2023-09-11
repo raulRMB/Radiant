@@ -10,6 +10,7 @@
 #include "Player/RTPlayerState.h"
 #include "UI/AIInfoBar.h"
 #include "Util/Util.h"
+#include "Util/Managers/ActorManager.h"
 #include "Util/Managers/Grid/TeamGridManager.h"
 
 ABuilding::ABuilding()
@@ -42,6 +43,8 @@ ABuilding::ABuilding()
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	PrimaryActorTick.bAllowTickOnDedicatedServer = false;
+
+	NetUpdateFrequency = 10.f;
 }
 
 UStaticMeshComponent* ABuilding::GetMesh() const
@@ -51,56 +54,56 @@ UStaticMeshComponent* ABuilding::GetMesh() const
 
 bool ABuilding::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
+	bool bIsVisible = false;
+	
 	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
 	{
-		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
+		if(PC->GetTeamId() == GetTeamId())
 		{
-			return IsVisibleForTeam(PS->GetTeamId());
+			bIsVisible = true;
+		}
+		else
+		{
+			bIsVisible = IsVisibleForTeam(PC->GetTeamId());
+		}
+		
+		if(bIsVisible)
+		{
+			if(ActorManager)
+			{
+				if(ATeamGridManager* TGM = ActorManager->GetTeamGridManager(PC->GetTeamId()))
+				{
+					// TGM->PieceChanged(this);
+				}
+			}
+
 		}
 	}
-	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+	
+	return bIsVisible;
 }
 
-
-bool ABuilding::IsVisibleForTeamLocal(const ETeamId TargetTeamId) const
+bool ABuilding::IsVisibleForTeam(const ETeamId TargetTeamId) const
 {
 	if(TargetTeamId == GetTeamId())
 	{
 		return true;
 	}
-	if(ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
-	{
-		return TeamGridManager->IsTargetVisible(this);
-	}
-	return false;
-}
-
-bool ABuilding::IsVisibleForTeam(const ETeamId TargetTeamId) const
-{
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(this, ATeamGridManager::StaticClass(), Actors);
-	for (auto Actor : Actors)
-	{
-		if (ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(Actor))
-		{
-			if(TeamGridManager->GetTeamId() == TargetTeamId)
-			{
-				return TeamGridManager->IsTargetVisible(this);
-			}
-		}
-	}
-	return false;
+	
+	ATeamGridManager* TeamGridManager = ActorManager ? ActorManager->GetTeamGridManager(TargetTeamId) : nullptr;
+	return TeamGridManager ? TeamGridManager->IsTargetInVision(this) : false;
 }
 
 void ABuilding::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ActorManager = GetGameInstance()->GetSubsystem<UActorManager>();
+	
 	if (!AttributeSet)
 	{
 		AttributeSet = NewObject<UBuildingAttributeSet>(this);
 	}
-	NetUpdateFrequency = 10.f;
-	NetCullDistanceSquared = 75000000.0f;
 	GiveInitialAbilities();
 	AttributeSet->InitMaxHealth(MaxHealth);
 	AttributeSet->InitHealth(MaxHealth);
@@ -147,7 +150,8 @@ void ABuilding::DestroyBuilding()
 {
 	if(GridManager)
 	{
-		GridManager->ClearPiece(GridPiece);
+		GridManager->ClearPiece(this);
+		OnDeathNotify.Broadcast(this);
 	}
 	Destroy();
 }
@@ -210,10 +214,11 @@ void ABuilding::Tick(float DeltaSeconds)
 {
 	if(!HasAuthority())
 	{
-		bShouldShow = IsVisibleForTeamLocal(UUtil::GetLocalPlayerTeamId(this));
-		SetActorHiddenInGame(!bShouldShow);
-		if(ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
+		ETeamId TempTeamId = UUtil::GetLocalPlayerTeamId(this);
+		if(ATeamGridManager* TeamGridManager = ActorManager->GetTeamGridManager(TempTeamId))
 		{
+			// bShouldShow = TeamGridManager->IsTargetInVision(this);
+			// SetActorHiddenInGame(!bShouldShow);
 			if(TeamGridManager->HasTempActor(GridPiece))
 			{
 				TeamGridManager->HideTempActor(GridPiece, bShouldShow);

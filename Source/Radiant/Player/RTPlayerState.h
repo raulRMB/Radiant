@@ -78,9 +78,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerStats();
 
+	void SetTarget(AActor* NewTarget);
+private:
 	UFUNCTION(Server, Reliable)
 	void S_SetTarget(AActor* NewTargetId);
-
+public:
 	UFUNCTION()
 	virtual void OnRep_UsernameChanged();
 

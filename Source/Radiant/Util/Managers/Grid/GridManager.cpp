@@ -8,6 +8,7 @@
 #include "Enums/VIsionRange.h"
 #include "Structs/GridPiece.h"
 #include "Util/Util.h"
+#include "Util/Managers/ActorManager.h"
 
 AGridManager::AGridManager()
 {
@@ -179,11 +180,11 @@ void AGridManager::AddVisibleActor(AActor* Actor)
 	}
 }
 
-void AGridManager::PieceChanged(const FGridPiece Piece)
+void AGridManager::PieceChanged(const ABuilding* Building)
 {
 	for(ATeamGridManager* TeamManager : TeamGridManagers)
 	{
-		TeamManager->PieceChanged(Piece);
+		TeamManager->PieceChanged(Building);
 	}
 }
 
@@ -224,12 +225,14 @@ void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 		}
 		Actor->FinishSpawning(Transform);
 		Cells[TransformedPos.X + TransformedPos.Y * GridDimensions] = Piece.Type;
-		PieceChanged(Piece);
+		//PieceChanged(Piece);
 	}
 }
 
-void AGridManager::ClearPiece(const FGridPiece Piece)
+void AGridManager::ClearPiece(const ABuilding* Building)
 {
+	FGridPiece Piece = Building->GetGridPiece();
+	
 	FIntVector2 Position = Piece.Position;
 	if(Position.X < 0 || Position.Y < 0 || Position.X >= GridDimensions || Position.Y >= GridDimensions)
 	{
@@ -237,7 +240,7 @@ void AGridManager::ClearPiece(const FGridPiece Piece)
 	}
 
 	Cells[Position.X + Position.Y * GridDimensions] = EEnvironmentType::EEnvironmentType_Empty;
-	PieceChanged(Piece);
+	PieceChanged(Building);
 }
 
 bool AGridManager::CheckCanPlace(const FGridPiece Piece)
@@ -266,8 +269,11 @@ void AGridManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitGrid();
 
+	ActorManager = GetGameInstance()->GetSubsystem<UActorManager>();
+	
+	InitGrid();
+	
 	if(HasAuthority())
 	{
 		ATeamGridManager* TeamGridManager = GetWorld()->SpawnActorDeferred<ATeamGridManager>(TeamGridManagerClass, FTransform::Identity);
@@ -284,6 +290,7 @@ void AGridManager::BeginPlay()
 		TeamGridManager->FinishSpawning(FTransform::Identity);
 		TeamGridManager->Init(Cells, BuildingTypes);
 	}
+	
 }
 
 EEnvironmentType& AGridManager::GetCell(const FIntVector2& Position)

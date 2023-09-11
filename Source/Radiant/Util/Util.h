@@ -12,6 +12,7 @@
 #define ECC_Ground ECollisionChannel::ECC_GameTraceChannel2
 #define ECC_Artillery ECollisionChannel::ECC_GameTraceChannel3
 #define ECC_Floor ECollisionChannel::ECC_GameTraceChannel4
+#define ECC_Vision ECollisionChannel::ECC_GameTraceChannel5
 
 #define RTPRINTP(f, x) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f), x));
 #define RTPRINT(f) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f)));
@@ -23,6 +24,8 @@
 #define RTLOGP3(x, a, b, c) UE_LOG(LogTemp, Warning, TEXT(x), a, b, c);
 #define RTLOGP4(x, a, b, c, e) UE_LOG(LogTemp, Warning, TEXT(x), a, b, c, e);
 #define RTPRINTF(s, x) FText::FromString(FString::Printf(TEXT(s), x))
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeathNotifySignature, class AActor* /*Unit*/);
 
 UCLASS()
 class RADIANT_API UUtil : public UBlueprintFunctionLibrary

@@ -65,19 +65,22 @@ public:
 	void InitGrid();
 
 	void AddVisibleActor(AActor* Actor);
-	void PieceChanged(FGridPiece Piece);
+	void PieceChanged(const class ABuilding* Building);
 
 	uint32 CellSize = 200;
 	uint32 CellHalfSize = CellSize / 2;
 
 	void PlacePieceAtMouse(const FGridPiece Piece);
-	void ClearPiece(const FGridPiece Piece);
+	void ClearPiece(const class ABuilding* Building);
 	bool CheckCanPlace(const FGridPiece Piece);
 
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* RenderTarget;
+
+	UPROPERTY()
+	class UActorManager* ActorManager;
 	
 public:
 	FGridUpdateSignature OnGridUpdate;

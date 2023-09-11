@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Building/Building.h"
+#include "Characters/RTCharacter.h"
 #include "GameFramework/Actor.h"
 #include "Util/Interfaces/TeamMember.h"
 #include "TeamGridManager.generated.h"
@@ -51,9 +52,18 @@ class RADIANT_API ATeamGridManager : public AActor, public ITeamMember
 
 	UPROPERTY(Replicated)
 	class AGridManager* GridManager;
+
+	UPROPERTY(EditAnywhere)
+	TMap<class AActor*, int32> ActorsInVision;
 	
 public:
 	ATeamGridManager();
+
+	const TMap<AActor*, int32>& GetActorsInVision();
+	void AddActorToActorsInVision(class AActor* Actor);
+	void DecrementActorFromActorsInVision(class AActor* Actor);
+	void RemoveActorFromActorsInVision(class AActor* Actor);
+	bool IsTargetInVision(const AActor* ArtCharacter) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -87,8 +97,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void M_UpdateTempActor(const FGridPiece& Piece);
-	
-	void PieceChanged(const FGridPiece& Piece);
+
+	void PieceChanged(const ABuilding* Building);
 
 private:	
 	bool IsBlockingVision(const FIntVector2& Position);

@@ -5,9 +5,11 @@
 #include "Util/Interfaces/TeamMember.h"
 #include "Structs/GridPiece.h"
 #include "Util/Managers/Grid/GridManager.h"
+#include "Util/Util.h"
 #include "Building.generated.h"
 
 struct FOnAttributeChangeData;
+
 
 UCLASS()
 class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMember, public ITargetable
@@ -59,6 +61,9 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* DarkMaterial;
 
+	UPROPERTY()
+	class UActorManager* ActorManager;
+
 protected:
 	UPROPERTY()
 	class UAIInfoBar* InfoBar;
@@ -66,7 +71,6 @@ protected:
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 
 	virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;
-	bool IsVisibleForTeamLocal(ETeamId TargetTeamId) const;
 	bool IsVisibleForTeam(ETeamId TargetTeamId) const;
 
 	bool bShouldShow = true;
@@ -93,6 +97,7 @@ public:
 	ABuilding();
 	UStaticMeshComponent* GetMesh() const;
 
+	const FGridPiece& GetGridPiece() const { return GridPiece; }
 	void SetHealthBarColor();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UBuildingAttributeSet* GetAttributeSet() const;
@@ -112,6 +117,8 @@ public:
 	void DestroyBuilding();
 	const UBoxComponent* GetBox() const { return Box; }
 
+	FDeathNotifySignature OnDeathNotify;
+	
 private:
 	
 	void OnHealthChanged(const FOnAttributeChangeData& Data);

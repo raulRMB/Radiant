@@ -126,6 +126,12 @@ void ARTPlayerState::SetPlayerStats()
 	AttributeSet->SetCurrentRespawnTime(AttributeSet->GetMaxRespawnTime());
 }
 
+void ARTPlayerState::SetTarget(AActor* NewTarget)
+{
+	Target = NewTarget;
+	S_SetTarget(NewTarget);
+}
+
 void ARTPlayerState::OnRep_UsernameChanged()
 {
 	GetPawn<AAvatar>()->SetOverheadBarText(Username);

@@ -9,19 +9,19 @@
 #include "Util/TempGridActor.h"
 #include "Enums/EnvironmentType.h"
 #include "Enums/VIsionRange.h"
-#include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerController.h"
 #include "Util/Util.h"
 #include "Util/Interfaces/TeamMember.h"
 
 void ATeamGridManager::OnRep_Cells()
-{
+{	
 	if(Initialized || HasAuthority())
 	{
 		return;
 	}
 	InitGrid();
 	Initialized = true;
+	
 	SpawnInitialTempActors();
 }
 
@@ -65,11 +65,55 @@ ATeamGridManager::ATeamGridManager()
 	bReplicates = true;
 }
 
+const TMap<AActor*, int32>& ATeamGridManager::GetActorsInVision()
+{
+	return ActorsInVision;
+}
+
+void ATeamGridManager::AddActorToActorsInVision(AActor* Actor)
+{
+	if(int32* Count = ActorsInVision.Find(Actor))
+	{
+		(*Count)++;
+	}
+	else
+	{
+		ActorsInVision.Add(Actor, 1);
+	}
+}
+
+void ATeamGridManager::DecrementActorFromActorsInVision(AActor* Actor)
+{
+	if(Actor)
+	{
+		if(int32* Count = ActorsInVision.Find(Actor))
+		{
+			(*Count)--;
+			if(*Count <= 0)
+			{
+				ActorsInVision.Remove(Actor);
+			}
+		}
+	}
+}
+
+void ATeamGridManager::RemoveActorFromActorsInVision(AActor* Actor)
+{
+	ActorsInVision.Remove(Actor);
+}
+
+bool ATeamGridManager::IsTargetInVision(const AActor* ArtCharacter) const
+{
+	return ActorsInVision.Contains(ArtCharacter);
+}
+
 // Called when the game starts or when spawned
 void ATeamGridManager::BeginPlay()
 {
 	InitGrid();
 	Super::BeginPlay();
+	UActorManager* ActorManager = GetGameInstance()->GetSubsystem<UActorManager>();
+	ActorManager->AddTeamGridManager(TeamId, this);
 }
 
 void ATeamGridManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -91,15 +135,14 @@ bool ATeamGridManager::IsNetRelevantFor(const AActor* RealViewer, const AActor* 
 	return false;
 }
 
-// Called every frame
 void ATeamGridManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	if(HasAuthority())
 	{
-		ClearAllVisible();
-		DrawVisible();
+		// ClearAllVisible();
+		// DrawVisible();
 	}
 	else
 	{
@@ -300,7 +343,7 @@ FColor ATeamGridManager::GetColorForType(const EEnvironmentType& Type)
 	case EEnvironmentType::EEnvironmentType_Grass:
 		return FColor(95, 185, 38);
 	case EEnvironmentType::EEnvironmentType_Wall:
-		return FColor(93,84,53);
+		return FColor(255,25,10);
 	default:
 		return FColor(3,3, 6);
 
@@ -370,11 +413,16 @@ void ATeamGridManager::UpdateTempActor(const FGridPiece& Piece)
 
 void ATeamGridManager::M_UpdateTempActor_Implementation(const FGridPiece& Piece)
 {
-	UpdateTempActor(Piece);
+	if(!HasAuthority())
+	{
+		UpdateTempActor(Piece);
+	}
 }
 
-void ATeamGridManager::PieceChanged(const FGridPiece& Piece)
+void ATeamGridManager::PieceChanged(const ABuilding* Building)
 {
+	FGridPiece Piece = Building->GetGridPiece();
+	
 	if(HasAuthority())
 	{
 		if(Piece.Position.X < 0 || Piece.Position.Y < 0 || Piece.Position.X >= GridDimensions || Piece.Position.Y >= GridDimensions)
@@ -382,12 +430,13 @@ void ATeamGridManager::PieceChanged(const FGridPiece& Piece)
 			return;
 		}
 		int32 Pos = Piece.Position.X + Piece.Position.Y * GridDimensions;
-		if(Cells.Num() < Pos || !VisibleCells[Pos])
+		if(Cells.Num() < Pos || !ActorsInVision.Contains(Building))
 		{
 			return;
 		}
-		UpdateTempActor(Piece);
-		Cells[Pos] = Piece.Type;
+		Cells[Pos] = GridManager->GetCell(Piece.Position);
+		Piece.Type = Cells[Pos];
+		M_UpdateTempActor(Piece);
 	}
 }
 

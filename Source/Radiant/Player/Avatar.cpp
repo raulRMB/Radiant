@@ -63,6 +63,7 @@ AAvatar::AAvatar()
 
 	OverHeadInfoBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("InfoBar");
 	OverHeadInfoBarWidgetComponent->SetupAttachment(RootComponent);
+	SetupVisionRadius();
 }
 
 void AAvatar::SetMeshForClass(EClassType Class)
@@ -289,7 +290,7 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 			return;
 		}
 		Target = HitResult.GetActor();
-		GetPlayerState<ARTPlayerState>()->S_SetTarget(HitResult.GetActor());
+		GetRTPS()->SetTarget(Target);
 	}
 	else
 	{
@@ -525,10 +526,9 @@ void AAvatar::PossessedBy(AController* NewController)
 	}
 	GiveInitialAbilities();
 
-	if (UActorManager* ActorManager = GetGameInstance()->GetSubsystem<UActorManager>())
-	{
-		ActorManager->AddPlayer(this);
-	}
+	GetActorManager()->AddPlayer(this);
+
+	TeamGridManager = GetActorManager()->GetTeamGridManager(GetTeamId());
 }
 
 void AAvatar::OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData)
@@ -659,17 +659,17 @@ void AAvatar::SetIsDead(const bool NewIsDead)
 
 bool AAvatar::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
-	if(RealViewer == GetController())
-	{
-		return true;
-	}
-	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
-	{
-		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
-		{
-			return IsVisibleForTeam(PS->GetTeamId());
-		}
-	}
+	// if(RealViewer == GetController())
+	// {
+	// 	return true;
+	// }
+	// if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
+	// {
+	// 	if(auto PS = PC->GetPlayerState<ARTPlayerState>())
+	// 	{
+	// 		return IsVisibleForTeam(PS->GetTeamId());
+	// 	}
+	// }
 	return Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 }
 
@@ -679,27 +679,23 @@ bool AAvatar::IsVisibleForTeamLocal(const ETeamId TargetTeamId) const
 	{
 		return true;
 	}
-	if(ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
+	if(!IsValid(TeamGridManager))
 	{
-		return TeamGridManager->IsTargetVisible(this);
+		return false;
 	}
-	return false;
+	return TeamGridManager->IsTargetVisible(this);
 }
 
 bool AAvatar::IsVisibleForTeam(ETeamId TargetTeamId) const
 {
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(this, ATeamGridManager::StaticClass(), Actors);
-	for (auto Actor : Actors)
+	if(IsValid(TeamGridManager))
 	{
-		if (ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(Actor))
+		if(TeamGridManager->GetTeamId() == TargetTeamId)
 		{
-			if(TeamGridManager->GetTeamId() == TargetTeamId)
-			{
-				return TeamGridManager->IsTargetVisible(this);
-			}
+			return TeamGridManager->IsTargetVisible(this);
 		}
 	}
+	
 	return false;
 }
 
@@ -1057,10 +1053,13 @@ void AAvatar::ShowStats()
 		ARTPlayerController* PC = GetController<ARTPlayerController>();
 		if (PC)
 		{
-			PC->GetHUD<ARTHUD>()->SetFPS(FPS);
-			if (GetPlayerState())
+			if(ARTHUD* HUD = PC->GetHUD<ARTHUD>())
 			{
-				PC->GetHUD<ARTHUD>()->SetMS(GetPlayerState()->GetPingInMilliseconds());
+				HUD->SetFPS(FPS);
+				if (GetPlayerState())
+				{
+					HUD->SetMS(GetPlayerState()->GetPingInMilliseconds());
+				}
 			}
 		}
 	}
@@ -1071,10 +1070,10 @@ void AAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(!HasAuthority())
-	{
-		SetActorHiddenInGame(!IsVisibleForTeamLocal(UUtil::GetLocalPlayerTeamId(this)));
-	}
+	// if(!HasAuthority())
+	// {
+	// 	SetActorHiddenInGame(!IsVisibleForTeamLocal(UUtil::GetLocalPlayerTeamId(this)));
+	// }
 	
 	FPS = 1.0 / DeltaTime;
 	HandleCamera(DeltaTime);

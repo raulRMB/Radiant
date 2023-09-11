@@ -90,12 +90,18 @@ void ARTHUD::HideLoadScreen()
 
 void ARTHUD::SetFPS(float FPS)
 {
-	InfoPanel->SetFPS(FPS);
+	if(InfoPanel)
+	{
+		InfoPanel->SetFPS(FPS);
+	}
 }
 
 void ARTHUD::SetMS(float MS)
 {
-	InfoPanel->SetMS(MS);
+	if(InfoPanel)
+	{
+		InfoPanel->SetMS(MS);
+	}
 }
 
 void ARTHUD::ToggleStore()

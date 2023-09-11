@@ -19,3 +19,17 @@ void UActorManager::RemovePlayer(AAvatar* Player)
 	Players.Remove(Player);
 	OnPlayersUpdated.Broadcast(Player, true);
 }
+
+ATeamGridManager* UActorManager::GetTeamGridManager(const ETeamId TeamId) const
+{
+	if(TeamGridManagers.Contains(TeamId))
+	{
+		return TeamGridManagers.FindRef(TeamId);
+	}
+	return nullptr;
+}
+
+void UActorManager::AddTeamGridManager(const ETeamId TeamId, ATeamGridManager* TeamGridManager)
+{
+	TeamGridManagers.Add(TeamId, TeamGridManager);
+}
