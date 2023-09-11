@@ -39,7 +39,7 @@ ABuilding::ABuilding()
 	AttributeSet->InitHealth(MaxHealth);
 	AttributeSet->InitMaxHealth(MaxHealth);
 	AttributeSet->InitLevel(1.f);
-	AttributeSet->InitArmor(20.f);
+	AttributeSet->InitArmor(19.f);
 	AttributeSet->InitAttackDamage(10.f);
 	AttributeSet->InitAttackSpeed(1.f);
 	AttributeSet->InitMovementSpeed(0.f);
@@ -101,6 +101,11 @@ void ABuilding::BeginPlay()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(
 		this, &ABuilding::OnHealthChanged);
+
+	if(!HasAuthority() && bShouldRotate)
+	{
+		Mesh->AddLocalRotation(FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f));
+	}
 }
 
 

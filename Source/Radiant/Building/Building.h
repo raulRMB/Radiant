@@ -20,7 +20,10 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 	AActor* TmpActor;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats, meta=(AllowPrivateAccess=true))
-	float MaxHealth = 200.f;  
+	float MaxHealth = 200.f;
+
+	UPROPERTY(EditAnywhere)
+	uint8 bShouldRotate : 1;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Components, meta=(AllowPrivateAccess=true))
 	class UBoxComponent* Box;
