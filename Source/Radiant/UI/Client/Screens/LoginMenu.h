@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlayFabError.h"
 #include "Blueprint/UserWidget.h"
 #include "LoginMenu.generated.h"
 
@@ -50,7 +49,6 @@ private:
 	void OnRegisterButtonHovered();
 	UFUNCTION()
 	void QuitGame();
-	void HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	UFUNCTION()
 	virtual void NativeConstruct() override;
 	void ResetPage();

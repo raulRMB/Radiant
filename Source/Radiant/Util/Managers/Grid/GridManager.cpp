@@ -83,35 +83,35 @@ void AGridManager::GenerateMap()
 
 void AGridManager::GenerateVisionRanges()
 {
-	TArray<FColor> Colors;
-	UUtil::ReadTextureColors(VisionRangesTexture, Colors);
-
-	ShortRange.Empty();
-	MediumRange.Empty();
-	LongRange.Empty();
-
-	int SizeX = VisionRangesTexture->GetSizeX();
-	int SizeY = VisionRangesTexture->GetSizeX();
-	for(int x = 0; x < SizeX; x++)
-	{
-		for(int y = 0; y < SizeY; y++)
-		{
-			FColor PixelColor = Colors[y * SizeX + x];
-			
-			if(PixelColor.ToPackedRGBA() == 0X0000ffff)
-			{
-				ShortRange.Add({x - SizeX / 2, y - SizeY / 2});
-			}
-			else if(PixelColor.ToPackedRGBA() == 0X00ff00ff)
-			{
-				MediumRange.Add({x - SizeX / 2, y - SizeY / 2});
-			}
-			else if(PixelColor.ToPackedRGBA() == 0xff0000ff)
-			{
-				LongRange.Add({x - SizeX / 2, y - SizeY / 2});
-			}
-		}
-	}
+	// TArray<FColor> Colors;
+	// UUtil::ReadTextureColors(VisionRangesTexture, Colors);
+	//
+	// ShortRange.Empty();
+	// MediumRange.Empty();
+	// LongRange.Empty();
+	//
+	// int SizeX = VisionRangesTexture->GetSizeX();
+	// int SizeY = VisionRangesTexture->GetSizeX();
+	// for(int x = 0; x < SizeX; x++)
+	// {
+	// 	for(int y = 0; y < SizeY; y++)
+	// 	{
+	// 		FColor PixelColor = Colors[y * SizeX + x];
+	// 		
+	// 		if(PixelColor.ToPackedRGBA() == 0X0000ffff)
+	// 		{
+	// 			ShortRange.Add({x - SizeX / 2, y - SizeY / 2});
+	// 		}
+	// 		else if(PixelColor.ToPackedRGBA() == 0X00ff00ff)
+	// 		{
+	// 			MediumRange.Add({x - SizeX / 2, y - SizeY / 2});
+	// 		}
+	// 		else if(PixelColor.ToPackedRGBA() == 0xff0000ff)
+	// 		{
+	// 			LongRange.Add({x - SizeX / 2, y - SizeY / 2});
+	// 		}
+	// 	}
+	// }
 }
 
 TArray<FIntVector2>& AGridManager::GetRange(EVisionRange Range)

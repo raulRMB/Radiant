@@ -21,7 +21,6 @@ void ULoginMenu::NativeConstruct()
 	PasswordTextBox->OnTextCommitted.AddDynamic(this, &ULoginMenu::OnEnterPressed);
 	ExitButton->OnClicked.AddDynamic(this, &ULoginMenu::QuitGame);
 	UserNameTextBox->SetFocus();
-	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLoginErrorMessage.AddUObject(this, &ULoginMenu::HandleError);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetSwitchPage.AddUObject(this, &ULoginMenu::ResetPage);
 }
 
@@ -67,16 +66,4 @@ void ULoginMenu::OnRegisterButtonHovered()
 void ULoginMenu::QuitGame()
 {
 	FGenericPlatformMisc::RequestExit(false);
-}
-
-void ULoginMenu::HandleError(const PlayFab::FPlayFabCppError& Error)
-{
-	if (Error.ErrorCode == 1000)
-	{
-		ErrorMessage->SetText(FText::FromString("Login Failed. Please check your username and password."));
-	}
-	else
-	{
-		ErrorMessage->SetText(FText::FromString(Error.ErrorMessage));
-	}
 }

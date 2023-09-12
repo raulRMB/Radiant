@@ -2,8 +2,6 @@
 
 
 #include "RadiantGameInstance.h"
-#include "PlayFabGSDK.h"
-#include "GSDKUtils.h"
 #include "AbilitySystemGlobals.h"
 #include "EngineUtils.h"
 #include "Data/CraftingItemData.h"
@@ -32,22 +30,22 @@ void URadiantGameInstance::Init()
 
 	if (IsDedicatedServerInstance())
 	{
-		FOnGSDKShutdown_Dyn OnGsdkShutdown;
-		OnGsdkShutdown.BindDynamic(this, &URadiantGameInstance::OnGSDKShutdown);
-		FOnGSDKHealthCheck_Dyn OnGsdkHealthCheck;
-		OnGsdkHealthCheck.BindDynamic(this, &URadiantGameInstance::OnGSDKHealthCheck);
-		FOnGSDKServerActive_Dyn OnGSDKServerActive;
-		OnGSDKServerActive.BindDynamic(this, &URadiantGameInstance::OnGSDKServerActive);
-		FOnGSDKReadyForPlayers_Dyn OnGSDKReadyForPlayers;
-		OnGSDKReadyForPlayers.BindDynamic(this, &URadiantGameInstance::OnGSDKReadyForPlayers);
+		//FOnGSDKShutdown_Dyn OnGsdkShutdown;
+		//OnGsdkShutdown.BindDynamic(this, &URadiantGameInstance::OnGSDKShutdown);
+		//FOnGSDKHealthCheck_Dyn OnGsdkHealthCheck;
+		//OnGsdkHealthCheck.BindDynamic(this, &URadiantGameInstance::OnGSDKHealthCheck);
+		//FOnGSDKServerActive_Dyn OnGSDKServerActive;
+		//OnGSDKServerActive.BindDynamic(this, &URadiantGameInstance::OnGSDKServerActive);
+		//FOnGSDKReadyForPlayers_Dyn OnGSDKReadyForPlayers;
+		//OnGSDKReadyForPlayers.BindDynamic(this, &URadiantGameInstance::OnGSDKReadyForPlayers);
 
-		UGSDKUtils::RegisterGSDKShutdownDelegate(OnGsdkShutdown);
-		UGSDKUtils::RegisterGSDKHealthCheckDelegate(OnGsdkHealthCheck);
-		UGSDKUtils::RegisterGSDKServerActiveDelegate(OnGSDKServerActive);
-		UGSDKUtils::RegisterGSDKReadyForPlayers(OnGSDKReadyForPlayers);
+		//UGSDKUtils::RegisterGSDKShutdownDelegate(OnGsdkShutdown);
+		//UGSDKUtils::RegisterGSDKHealthCheckDelegate(OnGsdkHealthCheck);
+		//UGSDKUtils::RegisterGSDKServerActiveDelegate(OnGSDKServerActive);
+		//UGSDKUtils::RegisterGSDKReadyForPlayers(OnGSDKReadyForPlayers);
 	}
 #if UE_SERVER
-	UGSDKUtils::SetDefaultServerHostPort();
+	//UGSDKUtils::SetDefaultServerHostPort();
 #endif
 
 	UAbilitySystemGlobals::Get().InitGlobalData();
@@ -58,7 +56,7 @@ void URadiantGameInstance::OnStart()
 	Super::OnStart();
 
 	UE_LOG(LogTemp, Warning, TEXT("Reached onStart!"));
-	UGSDKUtils::ReadyForPlayers();
+	//UGSDKUtils::ReadyForPlayers();
 }
 
 void URadiantGameInstance::OnGSDKShutdown()

@@ -22,7 +22,6 @@ void ULobbyMenu::NativeConstruct()
 	LogoutButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnLogoutButtonClicked);
 	ExitButton->OnClicked.AddDynamic(this, &ULobbyMenu::QuitGame);
 	QueueSelector->OnSelectionChanged.AddDynamic(this, &ULobbyMenu::OnQueueSelectionChanged);
-	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnLobbyErrorMessage.AddUObject(this, &ULobbyMenu::HandleError);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnWidgetSwitchPage.AddUObject(this, &ULobbyMenu::ResetPage);
 	GetGameInstance()->GetSubsystem<UClientSubsystem>()->OnMatchmakingStatusChanged.BindUObject(
 		this, &ULobbyMenu::OnButtonToggle);
@@ -58,11 +57,6 @@ void ULobbyMenu::OnCancelMatchmakingButtonHovered()
 void ULobbyMenu::QuitGame()
 {
 	FGenericPlatformMisc::RequestExit(false);
-}
-
-void ULobbyMenu::HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError)
-{
-	ErrorMessage->SetText(FText::FromString(PlayFabCppError.ErrorMessage));
 }
 
 void ULobbyMenu::OnQueueSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)

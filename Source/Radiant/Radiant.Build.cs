@@ -15,10 +15,6 @@ public class Radiant : ModuleRules
 			"Engine",
 			"InputCore",
 			"EnhancedInput",
-			"PlayFabGSDK",
-			"PlayFab",
-			"PlayFabCpp",
-			"PlayFabCommon",
 			"UMG",
 			"Json",
 			"JsonUtilities",
@@ -28,7 +24,6 @@ public class Radiant : ModuleRules
 			"SlateCore",
 			"AIModule",
 			"NavigationSystem",
-			"PFSDK",
 			"CableComponent"
 		});
 		bEnableUndefinedIdentifierWarnings = false;

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlayFabError.h"
 #include "Blueprint/UserWidget.h"
 #include "RegisterMenu.generated.h"
 
@@ -33,7 +32,6 @@ class RADIANT_API URegisterMenu : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* ErrorMessage;
 
-	void HandleError(const PlayFab::FPlayFabCppError& PlayFabCppError);
 	virtual void NativeConstruct() override;
 	void ResetPage();
 
