@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 // #include "PFEntityKey.h"
+// #include "PFLobby.h"
+//#include "PFEntityKey.h"
 #include "PlayFab.h"
 #include "PlayFabClientDataModels.h"
 #include "PlayFabMultiplayerDataModels.h"
@@ -12,6 +14,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ClientSubsystem.generated.h"
 
+struct PFLobbyInviteListenerStatusChangedStateChange;
 DECLARE_DELEGATE_TwoParams(FMatchmakingStatus, bool, FString)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabLoginErrorMessage, const PlayFab::FPlayFabCppError&)
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayFabRegisterErrorMessage, const PlayFab::FPlayFabCppError&)
@@ -105,7 +108,9 @@ private:
 
 	/********************************* C++ API ***************************************/
 
-	// void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult& Result);
-
+	//void InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult& Result);
+	//bool HandleInvitationListenerStatusChange(const PFLobbyInviteListenerStatusChangedStateChange& invitationListenerStateChange);
+	//HRESULT AllowInvitations(const PFEntityKey* entity);
+	
 	/********************************* C++ API END ***********************************/
 };

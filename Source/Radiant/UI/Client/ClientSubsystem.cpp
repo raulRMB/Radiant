@@ -1,9 +1,10 @@
+#if !UE_SERVER
 // Copyright Radiant Studios
-
 
 #include "ClientSubsystem.h"
 
 #include "PlayFab.h"
+//#include "sio_client.h"
 #include "PlayFabClientDataModels.h"
 #include "PlayFabMultiplayerDataModels.h"
 #include "PlayFabRuntimeSettings.h"
@@ -16,14 +17,20 @@
 // #include "PFSDK/Include/PFMultiplayer.h"
 // #include "PFSDK/Include/PFMatchmaking.h"
 // #include "PFSDK/Include/PFLobby.h"
-#include "Util/Util.h"
-
-//static PFMultiplayerHandle g_pfmHandle = nullptr;
+// #include "Util/Util.h"
+//
+// static PFMultiplayerHandle g_pfmHandle = nullptr;
 
 void UClientSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
+	//sio::client h;
+// connection_listener l(h);
+//     
+// 	h.set_open_listener(std::bind(&connection_listener::on_connected, &l));
+// 	h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));
+// 	h.set_fail_listener(std::bind(&connection_listener::on_fail, &l));	
+	//h.connect("http://127.0.0.1:3000");
 	GetMutableDefault<UPlayFabRuntimeSettings>()->TitleId = TEXT("DAAB1");
 
 	clientAPI = IPlayFabModuleInterface::Get().GetClientAPI();
@@ -80,7 +87,7 @@ void UClientSubsystem::StartMatchmaking()
 	Request.Creator = PlayFab::MultiplayerModels::FMatchmakingPlayer();
 	Request.Creator.Entity.Id = EntityId;
 	Request.Creator.Entity.Type = EntityType;
-
+	
 	TArray<TSharedPtr<FJsonValue>> Latencies;
 
 	TSharedPtr<FJsonObject> EastUsWrapper = MakeShareable(new FJsonObject());
@@ -190,7 +197,7 @@ void UClientSubsystem::OnLoginSuccess(const PlayFab::ClientModels::FLoginResult&
 	                          PlayFab::FPlayFabErrorDelegate::CreateUObject(this, &UClientSubsystem::OnError));
 
 
-	// InitMultiplayerApi(Result);
+	//InitMultiplayerApi(Result);
 }
 
 // void UClientSubsystem::InitMultiplayerApi(const PlayFab::ClientModels::FLoginResult& Result)
@@ -218,6 +225,67 @@ void UClientSubsystem::OnLoginSuccess(const PlayFab::ClientModels::FLoginResult&
 // 		// handle set entity token failure
 // 		RTPRINT("FAILED 2")
 // 	}
+// 	hr = AllowInvitations(&entityKey);
+// 	if(FAILED(hr))
+// 	{
+// 		RTPRINT("FAILED 3")
+// 	}
+// 	
+// 	PFLobbyInviteListenerStatusChangedStateChange invite;
+// 	invite.listeningEntity = entityKey;
+// }
+// bool UClientSubsystem::HandleInvitationListenerStatusChange(const PFLobbyInviteListenerStatusChangedStateChange& invitationListenerStateChange)
+// {
+// 	PFLobbyInviteListenerStatus status;
+// 	HRESULT hr = PFMultiplayerGetLobbyInviteListenerStatus(
+// 		g_pfmHandle,
+// 		&invitationListenerStateChange.listeningEntity,
+// 		&status);
+// 	if(FAILED(hr))
+// 	{
+// 		RTPRINT("Failed 4")
+// 	}
+//
+// 	switch (status)
+// 	{
+// 	case PFLobbyInviteListenerStatus::NotListening:
+// 		{
+// 			RTPRINT("Idle")
+// 			break;
+// 		}
+// 	case PFLobbyInviteListenerStatus::Listening:
+// 		{
+// 			RTPRINT("Listening")
+// 			return true;
+// 		}
+// 	case PFLobbyInviteListenerStatus::NotAuthorized:
+// 		{
+// 			RTPRINT("Invitation listener not authorized!"); // this is likely an issue with the listener's entity token.
+// 			break;
+// 		}
+// 	default:
+// 		{
+// 			RTPRINT("Error");
+// 			break;
+// 		}
+// 	}
+// 	return false;
+// }
+//
+// HRESULT UClientSubsystem::AllowInvitations(const PFEntityKey* entity)
+// {
+// 	return PFMultiplayerStartListeningForLobbyInvites(g_pfmHandle, entity);
+// }
+//
+// HRESULT SendInvite(PFLobbyHandle lobby, const PFEntityKey* sender, const PFEntityKey* receiver)
+// {
+// 	return PFLobbySendInvite(lobby, sender, receiver, nullptr);
+// }
+//
+// void HandleInvitationNotification(const PFLobbyInviteReceivedStateChange& invite)
+// {
+// 	RTPRINT("invited to lobby");
+// 	// pass invite.connectionString to PFMultiplayerJoinLobby
 // }
 
 
@@ -320,3 +388,5 @@ void UClientSubsystem::OnError(const PlayFab::FPlayFabCppError& ErrorResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *ErrorResult.ErrorMessage);
 }
+
+#endif
