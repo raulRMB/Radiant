@@ -1,26 +1,63 @@
 ﻿// Copyright Radiant Studios
 
-
 #include "SocketActor.h"
+#include "SocketIOClientComponent.h"
+#include "SIOJsonValue.h"
+#include "Util.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Chaos/AABB.h"
+#include "Kismet/GameplayStatics.h"
 
-
-// Sets default values
-ASocketActor::ASocketActor()
+void ASocketActor::OnConnected(FString SocketId, FString SessionId, bool bIsReconnection)
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	RTPRINT("Connected to socket");
 }
 
-// Called when the game starts or when spawned
+void ASocketActor::OnDisconnected(TEnumAsByte<ESIOConnectionCloseReason> Reason)
+{
+	RTPRINT("Disconnected from socket");
+}
+
+ASocketActor::ASocketActor()
+{
+	PrimaryActorTick.bCanEverTick = true;
+	SocketIOClientComponent = CreateDefaultSubobject<USocketIOClientComponent>(TEXT("SocketIOClientComponent"));
+}
+
+void ASocketActor::JoinQueue(FString Queue)
+{
+	USIOJsonValue* Json = USIOJsonValue::ConstructJsonValueString(GetWorld(), FString("{queue: '") + Queue + FString("'}"));
+	SocketIOClientComponent->Emit(FString("joinQueue"), Json);
+}
+
+TFunction<void(const FString&, const TSharedPtr<FJsonValue>&)> ASocketActor::OnMatchFound()
+{
+	auto Callback = [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
+	{
+		FString Port = Message->AsObject()->GetStringField("port");
+		FName Address = FName("127.0.0.1:" + Port);
+		UGameplayStatics::OpenLevel(GetWorld(), FName(Address));
+	};
+	return Callback;
+}
+
 void ASocketActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ASocketActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	SocketIOClientComponent->OnConnected.AddDynamic(this, &ASocketActor::OnConnected);
+	SocketIOClientComponent->OnDisconnected.AddDynamic(this, &ASocketActor::OnDisconnected);
+	SocketIOClientComponent->Connect(FString("http://localhost:3000"));
+	SocketIOClientComponent->OnNativeEvent(FString("matchFound"), OnMatchFound());
+	//
+	// SocketIOClientComponent->OnNativeEvent(FString("matchFound"), [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
+	// {
+	// 	RTPRINT("Match found");
+	// });
 }
 

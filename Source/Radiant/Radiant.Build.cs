@@ -24,7 +24,9 @@ public class Radiant : ModuleRules
 			"SlateCore",
 			"AIModule",
 			"NavigationSystem",
-			"CableComponent"
+			"CableComponent",
+			"SIOJson",
+			"SocketIOClient"
 		});
 		bEnableUndefinedIdentifierWarnings = false;
 

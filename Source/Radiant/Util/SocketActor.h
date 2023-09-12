@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SocketIONative.h"
 #include "GameFramework/Actor.h"
 #include "SocketActor.generated.h"
 
@@ -10,17 +11,17 @@ UCLASS()
 class RADIANT_API ASocketActor : public AActor
 {
 	GENERATED_BODY()
+	UPROPERTY(VisibleAnywhere)
+	class USocketIOClientComponent* SocketIOClientComponent;
 
-	
 public:
-	// Sets default values for this actor's properties
+	UFUNCTION()
+	void OnConnected(FString SocketId, FString SessionId, bool bIsReconnection);
+	UFUNCTION()
+	void OnDisconnected(TEnumAsByte<ESIOConnectionCloseReason> Reason);
 	ASocketActor();
-
+	void JoinQueue(FString Queue);
+	TFunction<void(const FString&, const TSharedPtr<FJsonValue>&)> OnMatchFound();
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 };

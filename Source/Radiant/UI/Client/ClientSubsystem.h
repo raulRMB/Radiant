@@ -42,6 +42,7 @@ public:
 	void Setup();
 	UFUNCTION(BlueprintCallable)
 	void SetQueueName(const FString& QueueName);
+	FString GetQueueName() const { return QueueName; }
 	UFUNCTION(BlueprintCallable)
 	bool IsUserMatchmaking();
 	UFUNCTION()

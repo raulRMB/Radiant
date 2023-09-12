@@ -8,6 +8,8 @@
 #include "Components/ComboBox.h"
 #include "Components/ComboBoxString.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
+#include "Util/SocketActor.h"
 #include "Util/Util.h"
 
 
@@ -41,7 +43,11 @@ void ULobbyMenu::ResetPage()
 void ULobbyMenu::OnFindMatchButtonClicked()
 {
 	OnFindMatchButtonClicked_BP();
-	GetGameInstance()->GetSubsystem<UClientSubsystem>()->StartMatchmaking();
+	auto subsystem = GetGameInstance()->GetSubsystem<UClientSubsystem>();
+	if(ASocketActor* Socket = Cast<ASocketActor>(UGameplayStatics::GetActorOfClass(this, ASocketActor::StaticClass())))
+	{
+		Socket->JoinQueue(subsystem->GetQueueName());
+	}
 }
 
 void ULobbyMenu::OnFindMatchButtonHovered()
