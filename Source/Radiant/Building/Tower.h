@@ -41,6 +41,7 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 	TObjectPtr<class AActor> GetTarget() const;
+	const FVector& GetGemSocketOffset() const { return GemOffset; }
 
 private:
 	UFUNCTION()

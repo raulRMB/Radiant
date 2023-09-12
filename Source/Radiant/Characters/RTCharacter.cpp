@@ -5,6 +5,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
+#include "Items/WorldItem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/Avatar.h"
@@ -65,8 +66,7 @@ void ARTCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	ActorManager = GetGameInstance()->GetSubsystem<UActorManager>();
-	
-	
+
 	if(HasAuthority())
 	{
 		VisionRadius->OnComponentBeginOverlap.AddDynamic(this, &ARTCharacter::OnVisionBeginOverlap);
@@ -121,7 +121,7 @@ void ARTCharacter::CheckCanSeeTarget(AActor* Target)
 		for(FHitResult& HitResult : HitResults)
 		{
 			if(HitResult.GetActor() == Target && !ActorsInVision.Contains(Target))
-			{
+			{	
 				ActorsInVision.Add(Target);
 				TeamGridManager->AddActorToActorsInVision(Target);
 			}

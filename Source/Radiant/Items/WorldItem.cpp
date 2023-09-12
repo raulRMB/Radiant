@@ -36,38 +36,25 @@ AWorldItem::AWorldItem()
 
 bool AWorldItem::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
-	if(const ARTPlayerController* PC = Cast<ARTPlayerController>(RealViewer))
+	if(const ITeamMember* TeamMember = Cast<ITeamMember>(RealViewer))
 	{
-		if(auto PS = PC->GetPlayerState<ARTPlayerState>())
-		{
-			return IsVisibleForTeam(PS->GetTeamId());
-		}
+		return IsVisibleForTeam(TeamMember->GetTeamId());
 	}
 	return false;
 }
 
-bool AWorldItem::IsVisibleForTeamLocal(const ETeamId TargetTeamId) const
+bool AWorldItem::IsVisibleForTeam(const ETeamId TargetTeamId) const
 {
-	if(ATeamGridManager* GM = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
-	{
-		return GM->IsTargetVisible(this);
-	}
-	return false;
+	UActorManager* AM = GetGameInstance()->GetSubsystem<UActorManager>();
+	ATeamGridManager* TeamGridManager = AM ? AM->GetTeamGridManager(TargetTeamId) : nullptr;
+	return TeamGridManager ? TeamGridManager->IsTargetInVision(this) : false;
 }
 
-bool AWorldItem::IsVisibleForTeam(ETeamId TargetTeamId) const
+bool AWorldItem::IsLocallyVisible() const
 {
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(this, ATeamGridManager::StaticClass(), Actors);
-	for (auto Actor : Actors)
+	if(ATeamGridManager* TGM = Cast<ATeamGridManager>(UGameplayStatics::GetActorOfClass(this, ATeamGridManager::StaticClass())))
 	{
-		if (ATeamGridManager* TeamGridManager = Cast<ATeamGridManager>(Actor))
-		{
-			if(TeamGridManager->GetTeamId() == TargetTeamId)
-			{
-				return TeamGridManager->IsTargetVisible(this);
-			}
-		}
+		return TGM->IsTargetInVision(this);
 	}
 	return false;
 }
@@ -145,10 +132,6 @@ void AWorldItem::BeginPlay()
 
 void AWorldItem::Tick(float DeltaTime)
 {
-	if(!HasAuthority())
-	{
-		SetActorHiddenInGame(!IsVisibleForTeamLocal(UUtil::GetLocalPlayerTeamId(this)));
-	}
 	if(HasAuthority() && Target)
 	{
 		if(!Target->IsMagnetized)

@@ -199,7 +199,6 @@ void ABuilding::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABuilding, TeamId);
 	DOREPLIFETIME(ABuilding, bHideLevel);
-	DOREPLIFETIME(ABuilding, TmpActor);
 	DOREPLIFETIME(ABuilding, GridPiece);
 }
 

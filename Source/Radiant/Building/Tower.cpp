@@ -17,6 +17,8 @@ ATower::ATower()
 	AttackRadius->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	AttackRadius->SetCollisionResponseToAllChannels(ECR_Ignore);
 	AttackRadius->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	
+	PrimaryActorTick.bAllowTickOnDedicatedServer = true;
 }
 
 void ATower::BeginPlay()
@@ -24,38 +26,44 @@ void ATower::BeginPlay()
 	Super::BeginPlay();
 	AttackRadius->OnComponentBeginOverlap.AddDynamic(this, &ATower::BeingOverlap);
 	AttackRadius->OnComponentEndOverlap.AddDynamic(this, &ATower::EndOverlap);
+
+	GetAttributeSet()->SetAttackDamage(AttackDamage);
 }
 
 void ATower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	TArray<AActor*> OverlappingActors;
-	if (IsValid(Target))
+
+	if(HasAuthority())
 	{
-		FGameplayEventData EventData;
-		EventData.Target = Target;
-		EventData.Instigator = this;
-		GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Trigger.Tower.Attack"),
-		                                                 &EventData);
-	}
-	else
-	{
-		AttackRadius->GetOverlappingActors(OverlappingActors);
-		if (OverlappingActors.Num() > 0)
+		if (IsValid(Target))
 		{
-			for (AActor* Actor : OverlappingActors)
-			{
-				auto TeamMember = Cast<ITeamMember>(Actor);
-				if (TeamMember && TeamMember->GetTeamId() != GetTeamId())
-				{
-					Target = Actor;
-					break;
-				}
-			}
+			FGameplayEventData EventData;
+			EventData.Target = Target;
+			EventData.Instigator = this;
+			GetAbilitySystemComponent()->HandleGameplayEvent(FGameplayTag::RequestGameplayTag("Trigger.Tower.Attack"),
+															 &EventData);
 		}
 		else
 		{
-			Target = nullptr;
+			TArray<AActor*> OverlappingActors;
+			AttackRadius->GetOverlappingActors(OverlappingActors);
+			if (OverlappingActors.Num() > 0)
+			{
+				for (AActor* Actor : OverlappingActors)
+				{
+					auto TeamMember = Cast<ITeamMember>(Actor);
+					if (TeamMember && TeamMember->GetTeamId() != GetTeamId())
+					{
+						Target = Actor;
+						break;
+					}
+				}
+			}
+			else
+			{
+				Target = nullptr;
+			}
 		}
 	}
 }

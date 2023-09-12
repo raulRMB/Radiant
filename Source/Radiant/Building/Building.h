@@ -16,9 +16,6 @@ class ABuilding : public AActor, public IAbilitySystemInterface, public ITeamMem
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Replicated)
-	AActor* TmpActor;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stats, meta=(AllowPrivateAccess=true))
 	float MaxHealth = 200.f;
 

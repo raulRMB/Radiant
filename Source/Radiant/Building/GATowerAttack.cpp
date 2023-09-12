@@ -19,11 +19,13 @@ void UGATowerAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = GetOwningActorFromActorInfo();
 		ATower* Tower = Cast<ATower>(GetAvatarActorFromActorInfo());
+		FTransform Transform = Tower->GetTransform();
+		Transform.AddToTranslation(Tower->GetGemSocketOffset());
 		AHeatSeeking* Projectile = GetWorld()->SpawnActorDeferred<AHeatSeeking>(
-			ProjectileClass, Tower->GetTransform(), GetOwningActorFromActorInfo(), nullptr,
+			ProjectileClass, Transform, GetOwningActorFromActorInfo(), nullptr,
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		Projectile->SetTarget(Tower->GetTarget());
-		Projectile->FinishSpawning(Tower->GetTransform());
+		Projectile->FinishSpawning(Transform);
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
