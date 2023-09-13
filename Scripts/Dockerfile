@@ -11,4 +11,4 @@ WORKDIR /server
 
 COPY --chown=ue:ue . /server
 USER root
-CMD chown -R ue.ue $PF_SERVER_LOG_DIRECTORY && su ue -c "./RadiantServer.sh --1v1"
+CMD su ue -c "./RadiantServer.sh"

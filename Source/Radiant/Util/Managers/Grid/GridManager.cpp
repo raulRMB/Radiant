@@ -21,7 +21,7 @@ AGridManager::AGridManager()
 
 void AGridManager::GenerateMap()
 {
-#if !UE_BUILD_SHIPPING
+#if !UE_BUILD_SHIPPING 
 
 	Cells.Empty();
 	Cells.Init(EEnvironmentType::EEnvironmentType_Empty, MapTexture->GetSizeX() * MapTexture->GetSizeY());
