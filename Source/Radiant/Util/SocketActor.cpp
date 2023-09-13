@@ -41,7 +41,8 @@ TFunction<void(const FString&, const TSharedPtr<FJsonValue>&)> ASocketActor::OnM
 	auto Callback = [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
 	{
 		FString Port = Message->AsObject()->GetStringField("port");
-		FName Address = FName("127.0.0.1:" + Port);
+		FString IP = Message->AsObject()->GetStringField("ip");
+		FName Address = FName(IP + ":" + Port);
 		UGameplayStatics::OpenLevel(GetWorld(), FName(Address));
 	};
 	return Callback;

@@ -1,0 +1,31 @@
+mixin list(server)
+  tr(id=server.name)
+    td=server.name
+    td=server.port
+    td=server.status
+    td
+      button.yellow(onclick='restartServer("' + server.name + '")') Restart
+      button.red(onclick='deleteServer("' + server.name + '")') Delete
+doctype html
+html
+  head
+    style
+      include index.css
+  body
+    main
+      h1 Server Manager
+      .container
+        button.green#addServer Add Server
+        table
+          thead
+            tr
+              th="Server"
+              th="Port"
+              th="Status"
+              th="Actions"
+          tbody 
+            each server in servers
+              +list(server)
+    script(src='/socketio/socket.io.js')
+    script
+      include index.js
