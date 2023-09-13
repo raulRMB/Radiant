@@ -7,6 +7,7 @@ const threeVthree = new Queue(6)
 let serverManager;
 
 function getQueue(queueName) {
+  console.log(queueName)
     switch(queueName) {
       case '1v1':
         return oneVone;
@@ -15,7 +16,7 @@ function getQueue(queueName) {
       case '3v3':
         return threeVthree;
       default:
-        return oneVone;
+        return null;
     }
 }
 
@@ -43,8 +44,10 @@ function notifyPlayerOfMatch(player, gameServer) {
 export default {
     joinQueue: (socket, queueName) => {
         const queue = getQueue(queueName)
-        queue.enqueue(socket)
-        checkForMatch(queue)
+        if(queue) {
+          queue.enqueue(socket)
+          checkForMatch(queue)
+        }
     },
     setServerManager: (sm) => {
         serverManager = sm

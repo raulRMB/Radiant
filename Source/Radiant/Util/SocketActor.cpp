@@ -32,6 +32,7 @@ ASocketActor::ASocketActor()
 
 void ASocketActor::JoinQueue(FString Queue)
 {
+	RTPRINTP("%s", *Queue);
 	USIOJsonValue* Json = USIOJsonValue::ConstructJsonValueString(GetWorld(), FString("{queue: '") + Queue + FString("'}"));
 	SocketIOClientComponent->Emit(FString("joinQueue"), Json);
 }
@@ -53,7 +54,7 @@ void ASocketActor::BeginPlay()
 	Super::BeginPlay();
 	SocketIOClientComponent->OnConnected.AddDynamic(this, &ASocketActor::OnConnected);
 	SocketIOClientComponent->OnDisconnected.AddDynamic(this, &ASocketActor::OnDisconnected);
-	SocketIOClientComponent->Connect(FString("http://localhost:3000"));
+	SocketIOClientComponent->Connect(SocketIOClientComponent->URLParams.AddressAndPort);
 	SocketIOClientComponent->OnNativeEvent(FString("matchFound"), OnMatchFound());
 	//
 	// SocketIOClientComponent->OnNativeEvent(FString("matchFound"), [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
