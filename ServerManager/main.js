@@ -22,6 +22,10 @@ app.use("/socketio", express.static(path.join(__dirname, "node_modules/socket.io
 app.get('/', (req, res) => res.render('index', {servers: serverManager.getServers()}))
 
 io.on('connection', (socket) => {
+  console.log("Connected")
+  socket.on("disconnect", (reason) => {
+    console.log(`Disconnected: ${reason}`)
+  });
   socket.on('joinQueue', (msg) => queueManager.joinQueue(socket, msg.queue))
   socket.on('addServer', async () => await serverManager.add())
   socket.on('restartServer', async (msg) => await serverManager.restart(msg.name))

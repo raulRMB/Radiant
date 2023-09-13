@@ -215,7 +215,7 @@ void ABuilding::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		{
 			if(AWorldItem* WorldItem = GetWorld()->SpawnActorDeferred<AWorldItem>(DropItemClass, GetActorTransform()))
 			{
-				WorldItem->InitItem(DropItemName, 10);
+				WorldItem->InitItem(DropItemName, 30);
 				WorldItem->FinishSpawning(GetActorTransform());
 			}
 			if (DestroyParticles)
