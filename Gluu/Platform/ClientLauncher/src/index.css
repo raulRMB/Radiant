@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@keyframes grow_border {
+  from {
+    transform: scale3d(1, 1, 1);
+    border-width: 2px;
+  }
+
+  to {
+    transform: scale3d(1.06, 1.06, 1.06);
+    border-width: 5px;
+  }
+}
+@keyframes pulse_flash {
+  from {
+    border-color: rgb(203 213 225);
+  }
+  50% {
+    border-color: rgba(170, 206, 249, 0.841);
+  }
+  to {
+    border-color: rgb(203 213 225);
+  }
+}
+.animate_grow_border {
+  animation-name: grow_border;
+  animation-timing-function: ease, ease-in-out;
+  animation-duration: 0.15s, 2s;
+  animation-fill-mode: both, both;
+  animation-iteration-count: 1, infinite;
+}
+@keyframes grow {
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+
+  to {
+    transform: scale3d(1.06, 1.06, 1.06);
+  }
+}
+.animate_grow {
+  animation-name: grow;
+  animation-timing-function: ease;
+  animation-duration: 0.15s;
+  animation-fill-mode: both;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+.animate_fadeInUp {
+  animation-name: fadeInUp;
+  animation-timing-function: ease-in-out;
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+@keyframes fadeInUpTwo {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20%, 0);
+  }
+
+  to {
+    opacity: 0.6;
+    transform: translate3d(0, 0, 0);
+  }
+}
+.animate_fadeInUpTwo {
+  animation-name: fadeInUpTwo;
+  animation-timing-function: ease-in-out;
+  animation-duration: 0.4s;
+  animation-fill-mode: both;
+}

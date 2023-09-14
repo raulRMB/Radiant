@@ -43,6 +43,9 @@ Platforms/HoloLens/Config/HoloLensEngine.ini
 *.VC.db
 *.VC.opendb
 
+Gluu/dist/*
+**/node_modules/*
+
 # Precompiled Assets
 SourceArt/**/*.png
 SourceArt/**/*.tga

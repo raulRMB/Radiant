@@ -8,6 +8,7 @@ import nodeCleanup from 'node-cleanup';
 
 import serverManager from './src/servers/serverManager.js'
 import queueManager from './src/matchmaking/queueManager.js'
+import userManager from './src/db/db.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -22,10 +23,24 @@ app.use("/socketio", express.static(path.join(__dirname, "node_modules/socket.io
 app.get('/', (req, res) => res.render('index', {servers: serverManager.getServers()}))
 
 io.on('connection', (socket) => {
-  console.log("Connected")
+  socket.use((packet,next) => {
+    if(packet[0] === 'login' || packet[0] === 'disconnect') {
+      next()
+    }
+    else if(userManager.hasSession(socket)) {
+      next()
+    }
+    else {
+      console.log('failed authed')
+      next(new Error('Not Authorized'))
+    }
+  })
   socket.on("disconnect", (reason) => {
     console.log(`Disconnected: ${reason}`)
-  });
+  })
+  socket.on('login', (msg) => {
+    userManager.login(msg.username, msg.password, socket)
+  })
   socket.on('joinQueue', (msg) => queueManager.joinQueue(socket, msg.queue))
   socket.on('addServer', async () => await serverManager.add())
   socket.on('restartServer', async (msg) => await serverManager.restart(msg.name))
@@ -33,7 +48,7 @@ io.on('connection', (socket) => {
 })
 
 queueManager.setServerManager(serverManager)
-serverManager.addMulti(5)
+//serverManager.addMulti(1)
 
 nodeCleanup(function (exitCode, signal) {
   console.log('Stopping servers...')

@@ -7,7 +7,6 @@ const threeVthree = new Queue(6)
 let serverManager;
 
 function getQueue(queueName) {
-  console.log(queueName)
     switch(queueName) {
       case '1v1':
         return oneVone;

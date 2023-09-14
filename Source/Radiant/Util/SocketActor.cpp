@@ -32,9 +32,10 @@ ASocketActor::ASocketActor()
 
 void ASocketActor::JoinQueue(FString Queue)
 {
-	RTPRINTP("%s", *Queue);
-	USIOJsonValue* Json = USIOJsonValue::ConstructJsonValueString(GetWorld(), FString("{queue: '") + Queue + FString("'}"));
-	SocketIOClientComponent->Emit(FString("joinQueue"), Json);
+	USIOJsonObject* Json = USIOJsonObject::ConstructJsonObject(GetWorld());
+	Json->SetStringField("queue", Queue);
+	USIOJsonValue* JsonValue = USIOJsonValue::ConstructJsonValueObject(Json, GetWorld());
+	SocketIOClientComponent->Emit(FString("joinQueue"), JsonValue);
 }
 
 TFunction<void(const FString&, const TSharedPtr<FJsonValue>&)> ASocketActor::OnMatchFound()
