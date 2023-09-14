@@ -26,7 +26,6 @@ UAttackDamageCalculation::UAttackDamageCalculation()
 
 float UAttackDamageCalculation::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
-	// Gather the tags from the source and target as that can affect which buffs should be used
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
@@ -65,8 +64,6 @@ float UAttackDamageCalculation::CalculateBaseMagnitude_Implementation(const FGam
 	{
 		MitigatedDamage = Damage * (2 - 100 / (100 - EffectiveArmor));
 	}
-
-	RTLOGP("Damage: %.2f", MitigatedDamage)
 	
 	return -MitigatedDamage;
 }

@@ -6,8 +6,10 @@
 #include "GameFramework/GameState.h"
 #include "RTGameState.generated.h"
 
+class AAvatar;
 DECLARE_DELEGATE_TwoParams(FOnHeroDeath, uint32, uint32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FRadianiteChangedSignature, double XP, uint32 Level);
+DECLARE_MULTICAST_DELEGATE(FTeamLevelupSignature);
 
 UCLASS()
 class RADIANT_API ARTGameState : public AGameState
@@ -42,7 +44,7 @@ public:
 	
 	FRadianiteChangedSignature OnRedRadianiteChangedDelegate;
 	FRadianiteChangedSignature OnBlueRadianiteChangedDelegate;
-	
+
 	UFUNCTION(Server, Reliable)
 	void OnHeroDeath(AAvatar* Hero);
 
@@ -58,6 +60,8 @@ public:
 	FOnHeroDeath OnHeroDeathDelegate;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	int32 GetTeamLevel(ETeamId TeamId) const;
 
 protected:
 	virtual void BeginPlay() override;

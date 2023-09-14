@@ -41,6 +41,7 @@ protected:
 	class AActor* Target;
 	UPROPERTY(Replicated, VisibleAnywhere)
 	ETeamId TeamId = ETeamId::Neutral;
+	uint32 TeamLevel = 0;
 	UPROPERTY(ReplicatedUsing=OnRep_UsernameChanged, VisibleAnywhere)
 	FString Username = "";
 
@@ -49,7 +50,9 @@ protected:
 
 	UPROPERTY(Replicated, VisibleAnywhere)
 	uint8 bIsDead : 1;
-	
+
+	UPROPERTY()
+	TArray<FActiveGameplayEffectHandle> ActiveGearEffectHandles;
 public:
 	UFUNCTION(Client, Reliable)
 	void GameEnding(ETeamId Won);
@@ -67,10 +70,11 @@ public:
 	class ARTPlayerController* GetRTController() const;
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentClass, VisibleAnywhere)
 	EClassType CurrentClass = EClassType::General;
+	UFUNCTION()
+	void OnRadiantiteChanged(double X, unsigned I);
 	virtual void BeginPlay() override;
 
-	FUpdateRadianiteSignature OnUpdateRadianite;
-	void OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData);
+	void UpdateGearActiveEffectLevel();
 	ARTPlayerState();
 
 	FGameplayAbilitySpecHandle WeaponAbilityHandle;

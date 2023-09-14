@@ -81,6 +81,11 @@ void ARTGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME_CONDITION(ARTGameState, RedRadianite, COND_None);
 }
 
+int32 ARTGameState::GetTeamLevel(ETeamId TeamId) const
+{
+	return TeamId == ETeamId::Blue ? BlueLevel : RedLevel;
+}
+
 void ARTGameState::BeginPlay()
 {
 	Super::BeginPlay();

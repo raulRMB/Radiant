@@ -67,7 +67,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Init();
-	void UpdateRadianite(float X) const;
 	void Bind(class ARTPlayerState* PS);
 
 	UFUNCTION()

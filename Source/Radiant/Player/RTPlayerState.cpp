@@ -15,6 +15,7 @@
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Modes/Base/RTPlayerStart.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/Minimap.h"
 #include "UI/RTHUD.h"
@@ -70,16 +71,39 @@ ARTPlayerController* ARTPlayerState::GetRTController() const
 	return Cast<ARTPlayerController>(GetPlayerController());
 }
 
+void ARTPlayerState::OnRadiantiteChanged(double Radianite, unsigned Level)
+{
+	if(Level > TeamLevel)
+	{
+		TeamLevel = Level;
+		UpdateGearActiveEffectLevel();
+	}
+}
+
 void ARTPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 
 	AttributeSet->SetArmor(100.f);
+
+	ARTGameState* GS = GetWorld()->GetGameState<ARTGameState>();
+	if(GetTeamId() == ETeamId::Blue)
+	{
+		GS->OnBlueRadianiteChangedDelegate.AddUObject(this, &ARTPlayerState::OnRadiantiteChanged);
+	}
+	else
+	{
+		GS->OnRedRadianiteChangedDelegate.AddUObject(this, &ARTPlayerState::OnRadiantiteChanged);
+	}
 }
 
-void ARTPlayerState::OnRadianiteChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+void ARTPlayerState::UpdateGearActiveEffectLevel()
 {
-	OnUpdateRadianite.Broadcast(OnAttributeChangeData.NewValue);
+	uint32 Level = GetWorld()->GetGameState<ARTGameState>()->GetTeamLevel(GetTeamId());
+	for(FActiveGameplayEffectHandle Handle : ActiveGearEffectHandles)
+	{
+		GetAbilitySystemComponent()->SetActiveGameplayEffectLevel(Handle, Level); 
+	}
 }
 
 ARTPlayerState::ARTPlayerState()
@@ -114,8 +138,6 @@ ARTPlayerState::ARTPlayerState()
 	AttributeSet->InitRadianite(500.f);
 	AttributeSet->InitAttackSpeed(1.f);
 	AttributeSet->InitAttackRange(0.f);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetRadianiteAttribute()).AddUObject(
-		this, &ARTPlayerState::OnRadianiteChanged);
 }
 
 void ARTPlayerState::SetPlayerStats()
@@ -339,8 +361,13 @@ void ARTPlayerState::S_EquipGear_Implementation(const FName& WeaponName)
 		{
 			for(const TSubclassOf<UGameplayEffect>& EffectClass : GearData->GameplayEffects)
 			{
+				float Level = GetWorld()->GetGameState<ARTGameState>()->GetTeamLevel(GetTeamId());
 				UGameplayEffect* Effect = EffectClass.GetDefaultObject();
-				AbilitySystemComponent->ApplyGameplayEffectToSelf(Effect, 1.f, AbilitySystemComponent->MakeEffectContext());
+				FActiveGameplayEffectHandle ActiveGameplayEffectHandle = AbilitySystemComponent->ApplyGameplayEffectToSelf(Effect, Level, AbilitySystemComponent->MakeEffectContext());
+				if(ActiveGameplayEffectHandle.WasSuccessfullyApplied())
+				{
+					ActiveGearEffectHandles.AddUnique(ActiveGameplayEffectHandle);
+				}
 			}
 		}
 	}
@@ -367,7 +394,23 @@ void ARTPlayerState::S_UnequipGear_Implementation(const FName& GearName)
 			}
 			for(const TSubclassOf<UGameplayEffect>& EffectClass : GearData->GameplayEffects)
 			{
-				GetAbilitySystemComponent()->RemoveActiveGameplayEffectBySourceEffect(EffectClass, GetAbilitySystemComponent());
+				for(FActiveGameplayEffectHandle Handle : ActiveGearEffectHandles)
+				{
+					if(const FActiveGameplayEffect* Spec = AbilitySystemComponent->GetActiveGameplayEffect(Handle))
+					{
+						if(Spec->Spec.Def->GetClass() == EffectClass)
+						{
+							AbilitySystemComponent->RemoveActiveGameplayEffect(Handle);
+							ActiveGearEffectHandles.Remove(Handle);
+							break;
+						}
+					}
+					else
+					{
+						ActiveGearEffectHandles.Remove(Handle);
+						break;
+					}
+				}
 			}
 		}
 	}

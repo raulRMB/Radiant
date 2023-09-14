@@ -78,17 +78,10 @@ void URTInfoPanel::Init()
 		this, &URTInfoPanel::OnHeroDeath);
 }
 
-void URTInfoPanel::UpdateRadianite(float Amount) const
-{
-	Radianite->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Amount)));
-}
-
 void URTInfoPanel::Bind(ARTPlayerState* PS)
 {
 	if (PS)
 	{
-		UpdateRadianite(PS->GetAttributeSet()->GetRadianite());
-		PS->OnUpdateRadianite.AddUObject(this, &URTInfoPanel::UpdateRadianite);
 		PlayerStats->Bind(PS);
 	}
 }
