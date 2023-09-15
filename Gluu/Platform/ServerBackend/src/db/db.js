@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3'
 import { randomBytes, scrypt } from 'crypto'
+import sEvents from '../../../socketEvents.mjs'
 const db = new Database('./data/database.db')
 db.pragma('journal_mode = WAL')
 
@@ -8,7 +9,10 @@ const register = db.prepare('INSERT INTO users (username, password_hash, salt) V
 
 const userPS = db.prepare('SELECT * FROM users WHERE username = ?')
 
-let sessions = {}
+let queueManager
+
+let sessionsIdToUser = {}
+let sessionsUsernameToSocket = {}
 
 const api = {
     registerUser: (username, password) => {
@@ -27,19 +31,30 @@ const api = {
             scrypt(password, user.salt, 64, (err, derived_key) => {
                 if(!err) {
                     const validPass = derived_key.equals(user.password_hash)
-                    console.log(validPass ? 'logged in' : 'login failed')
+                    console.log(validPass ? `${username} logged in` : `login attempt failed for: ${username}`)
                     if(validPass) {
-                        sessions[socket.id] = user;
-                        socket.emit('loggedIn')
+                        const existingSocket = sessionsUsernameToSocket[user.username]
+                        if(existingSocket) {
+                            existingSocket.emit(sEvents.notify.logout)
+                            userManager.leaveQueue(existingSocket)
+                        }
+                        user.socket = socket
+                        sessionsIdToUser[socket.id] = user
+                        sessionsUsernameToSocket[user.username] = socket
+                        socket.emit(sEvents.notify.loginResponse)
                     }
                 }
             })
         }
     },
-    getSessionUser: (socket) => sessions[socket.id],
-    hasSession: (socket) => sessions[socket.id] !== undefined
+    getSessionUser: (socket) => sessionsIdToUser[socket.id],
+    getSocketFromUsername: (username) => sessionsUsernameToSocket[username],
+    hasSession: (socket) => sessionsIdToUser[socket.id] !== undefined,
+    setReferences: (qm) => {
+        queueManager = qm
+    }
 }
 
-//api.registerUser('mash', 'test123')
+//api.registerUser('mash2', 'test123')
 
 export default api

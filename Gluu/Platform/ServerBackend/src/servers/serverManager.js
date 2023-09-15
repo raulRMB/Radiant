@@ -67,7 +67,7 @@ const api = {
         ip = util.getIP()
     },
 
-    addMulti: async (num) => {
+    addServers: async (num) => {
         for(let i = 0; i < num; i++) {
             api.add()
         }

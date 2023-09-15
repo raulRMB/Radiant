@@ -1,10 +1,14 @@
 import Queue from './queue.js'
+import sEvent from '../../../socketEvents.mjs'
 
 const oneVone = new Queue(2)
 const twoVtwo = new Queue(4)
 const threeVthree = new Queue(6)
 
+const inQueueOrMatch = new Map();
+
 let serverManager;
+let userManager;
 
 function getQueue(queueName) {
     switch(queueName) {
@@ -24,16 +28,15 @@ function checkForMatch(queue) {
       const gameServer = serverManager.startMatch()
       if(gameServer) {
         for(let i = 0; i < queue.matchSize; i++) {
-          const player = queue.dequeue()
-          notifyPlayerOfMatch(player, gameServer)
+          const playerSocket = userManager.getSocketFromUsername(queue.dequeue())
+          notifyPlayerOfMatch(playerSocket, gameServer)
         }
       }
     }
 }
 
-function notifyPlayerOfMatch(player, gameServer) {
-    console.log(gameServer)
-    player.emit('matchFound', {
+function notifyPlayerOfMatch(playerSocket, gameServer) {
+    playerSocket.emit(sEvent.notify.matchFound, {
       serverId: gameServer.name,
       port: gameServer.port,
       ip: gameServer.ip
@@ -43,12 +46,27 @@ function notifyPlayerOfMatch(player, gameServer) {
 export default {
     joinQueue: (socket, queueName) => {
         const queue = getQueue(queueName)
-        if(queue) {
-          queue.enqueue(socket)
+        const user = userManager.getSessionUser(socket)
+        if(user && queue && !inQueueOrMatch.has(user.username)) {
+          inQueueOrMatch.set(user.username, queueName)
+          queue.enqueue(user.username)
+          console.log(`${user.username} joined queue - ${queueName}`)
+          socket.emit(sEvent.notify.joinQueueResponse, {success: true})
           checkForMatch(queue)
         }
     },
-    setServerManager: (sm) => {
+    leaveQueue: (socket) => {
+      const user = userManager.getSessionUser(socket)
+      if(user && inQueueOrMatch.has(user.username)) {
+        const queue = getQueue(inQueueOrMatch.get(user.username))
+        queue.remove(user.username)
+        inQueueOrMatch.delete(user.username)
+        console.log(`${user.username} left queue`)
+        socket.emit(sEvent.notify.cancelQueueResponse, {success: true})
+      }
+    },
+    setReferences: (sm, um) => {
         serverManager = sm
+        userManager = um
     }
 }
