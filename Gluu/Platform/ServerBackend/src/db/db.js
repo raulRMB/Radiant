@@ -36,7 +36,7 @@ const api = {
                         const existingSocket = sessionsUsernameToSocket[user.username]
                         if(existingSocket) {
                             existingSocket.emit(sEvents.notify.logout)
-                            userManager.leaveQueue(existingSocket)
+                            queueManager.leaveQueue(existingSocket)
                         }
                         user.socket = socket
                         sessionsIdToUser[socket.id] = user

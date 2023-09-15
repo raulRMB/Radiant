@@ -8,6 +8,7 @@ import sEvents from '../../../../socketEvents.mjs'
 export default () => {
   const [appLoaded, setAppLoaded] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [inMatch, setInMatch] = useState(false)
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default () => {
       setLoggedIn(false)
     })
     socket.on(sEvents.notify.matchFound, (msg) => {
+      setInMatch(true)
       window.electron.ipcRenderer.send('matchFound', msg);
     })
     return () => {
@@ -46,6 +48,6 @@ export default () => {
     console.log('SOCKET CONNECTED', socketConnected);
   }, [socketConnected]);
   return (
-  loggedIn ? <Lobby socket={socket}/> : <Login socket={socket}/>
+    loggedIn ? (inMatch ? <p>In Match...</p> : <Lobby socket={socket}/>) : <Login socket={socket}/>
   );
 };
