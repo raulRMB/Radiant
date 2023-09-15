@@ -61,6 +61,34 @@ void ATeamGridManager::SpawnInitialTempActors()
 	}
 }
 
+void ATeamGridManager::InitializeCanvas()
+{
+	FOWPixels = std::make_unique<uint8[]>(128 * 128 * 4);
+	FOWUpdateTextureRegion = std::make_unique<FUpdateTextureRegion2D>(0, 0, 0, 0, 128, 128);
+	MinimapPixels = std::make_unique<uint8[]>(128 * 128 * 4);
+	MinimapPixelsUpdateTextureRegion = std::make_unique<FUpdateTextureRegion2D>(0, 0, 0, 0, 128, 128);
+}
+
+void ATeamGridManager::SetPixelColor(uint8*& Pointer, FColor Color)
+{
+	*Pointer = Color.B;
+	*(Pointer + 1) = Color.G;
+	*(Pointer + 2) = Color.R;
+	*(Pointer + 3) = 255;
+}
+
+void ATeamGridManager::UpdateCanvas() const
+{
+	if(FOWUpdateTextureRegion)
+	{
+		FOWCanvas->UpdateTextureRegions(0, 1, FOWUpdateTextureRegion.get(), 4 * FOWCanvas->GetSizeX(), 4, FOWPixels.get());
+	}
+	if(MinimapPixelsUpdateTextureRegion)
+	{
+		MinimapCanvas->UpdateTextureRegions(0, 1, MinimapPixelsUpdateTextureRegion.get(), 4 * MinimapCanvas->GetSizeX(), 4, MinimapPixels.get());
+	}
+}
+
 ATeamGridManager::ATeamGridManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -119,6 +147,8 @@ bool ATeamGridManager::IsTargetInVision(const AActor* ArtCharacter) const
 
 void ATeamGridManager::BeginPlay()
 {
+	InitializeCanvas();
+	
 	InitGrid();
 	Super::BeginPlay();
 	NotificationActors.Init(nullptr, 128*128);
@@ -162,30 +192,19 @@ void ATeamGridManager::Tick(float DeltaTime)
 
 void ATeamGridManager::DrawMiniMap()
 {
-	FTexture2DMipMap* MipMap = &FOWRenderTarget->GetPlatformData()->Mips[0];
-	FByteBulkData* RawImageData = &MipMap->BulkData;
-	FColor* FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
-	for(int i = 0; i < 128; i++)
+	uint8* FOWPixel = FOWPixels.get();
+	uint8* MinimapPixel = MinimapPixels.get();
+	for(int y = 0; y < 128; y++)
 	{
-		for(int j = 0; j < 128; j++)
+		for(int x = 0; x < 128; x++)
 		{
-			FormattedImageData[i + j * 128] = VisibleCells[i + j * 128] ? FColor::White : FColor::Black;
+			SetPixelColor(MinimapPixel, GetColorForType(Cells[x + y * 128]));
+			MinimapPixel+=4;
+			SetPixelColor(FOWPixel, VisibleCells[x + y * 128] ? FColor::White : FColor::Black);
+			FOWPixel+=4;
 		}
 	}
-	RawImageData->Unlock();
-	FOWRenderTarget->UpdateResource();
-	MipMap = &MinimapRenderTarget->GetPlatformData()->Mips[0];
-	RawImageData = &MipMap->BulkData;
-	FormattedImageData = static_cast<FColor*>(RawImageData->Lock(LOCK_READ_WRITE));
-	for(int i = 0; i < 128; i++)
-	{
-		for(int j = 0; j < 128; j++)
-		{
-			FormattedImageData[i + j * 128] = GetColorForType(Cells[i + j * 128]);
-		}
-	}
-	RawImageData->Unlock();
-	MinimapRenderTarget->UpdateResource();
+	UpdateCanvas();
 }
 
 void ATeamGridManager::InitGrid()

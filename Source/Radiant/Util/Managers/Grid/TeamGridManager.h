@@ -44,12 +44,21 @@ class RADIANT_API ATeamGridManager : public AActor, public ITeamMember
 
 	uint32 CellSize = 200;
 	uint32 CellHalfSize = CellSize / 2;
-
+	
 	UPROPERTY(EditAnywhere)
-	class UTexture2D* FOWRenderTarget;
+	class UTexture2D* FOWCanvas;
+	std::unique_ptr<uint8[]> FOWPixels;
+	std::unique_ptr<FUpdateTextureRegion2D> FOWUpdateTextureRegion;
+	
+	UPROPERTY(Transient, EditAnywhere)
+	class UTexture2D* MinimapCanvas;
+	std::unique_ptr<uint8[]> MinimapPixels;
+	std::unique_ptr<FUpdateTextureRegion2D> MinimapPixelsUpdateTextureRegion;
 
-	UPROPERTY(EditAnywhere)
-	class UTexture2D* MinimapRenderTarget;
+	void InitializeCanvas();
+	static void SetPixelColor(uint8*& Pointer, FColor Color);
+	void UpdateCanvas() const;
+
 	
 	UPROPERTY(Replicated, EditAnywhere)
 	ETeamId TeamId = ETeamId::Neutral;
