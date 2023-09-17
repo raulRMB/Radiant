@@ -15,7 +15,7 @@ export const Lobby = ({ socket }) => {
       formData.forEach((value, key) => {
           lobbyData[key] = value;
       });
-      socket.emit(sEvents.joinQueue, {queue: '1v1'})
+      socket.emit(sEvents.joinQueue, lobbyData)
     } else {
       socket.emit(sEvents.cancelQueue)
     }
@@ -41,10 +41,10 @@ export const Lobby = ({ socket }) => {
     <form method="post" className="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3" onSubmit={handleSubmit}>
       <div className="flex items-center justify-between flex-col gap-2">
       <h3 className='text-white w-full text-left font-bold'>Select Queue:</h3>
-      <select disabled={inQueue} class="block appearance-none w-full bg-gray-800 border border-gray-500 text-white py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-gray-800 focus:border-gray-500" id="grid-state">
-          <option>1v1</option>
-          <option>2v2</option>
-          <option>3v3</option>
+      <select name="queue" disabled={inQueue} class="block appearance-none w-full bg-gray-800 border border-gray-500 text-white py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-gray-800 focus:border-gray-500" id="grid-state">
+          <option value="1v1">1v1</option>
+          <option value="2v2">2v2</option>
+          <option value="3v3">3v3</option>
         </select>
         <button type="submit" className="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           {buttonText}
