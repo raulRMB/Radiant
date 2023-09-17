@@ -6,12 +6,14 @@ db.pragma('journal_mode = WAL')
 
 db.exec('CREATE TABLE IF NOT EXISTS users(username UNIQUE, password_hash UNIQUE, salt UNIQUE, displayName)')
 db.exec('CREATE TABLE IF NOT EXISTS friendrequests(sender, recipient, active)')
+db.exec('CREATE TABLE IF NOT EXISTS friends(user1, user2, PRIMARY KEY (user1, user2))')
 const register = db.prepare('INSERT INTO users (username, password_hash, salt, displayName) VALUES (@username, @password_hash, @salt, @displayName)')
 
 const createFriendRequest = db.prepare('INSERT INTO friendrequests (sender, recipient, active) VALUES (@sender, @recipient, @active)')
 
 const userPS = db.prepare('SELECT * FROM users WHERE username = ?')
 const findActiveInvite = db.prepare('SELECT * FROM friendrequests WHERE sender = ? AND recipient = ? AND active = 1')
+const acceptFriendRequest = db.prepare('INSERT INTO friends (user1, user2) VALUES (@user1, @user2)')
 
 let queueManager
 
@@ -73,6 +75,15 @@ const api = {
                     recipientSocket.emit(sEvents.notify.friendRequestReceived, {from: sender.displayName})
                 }
             }
+        }
+    },
+    acceptFriend: (socket, username) => {
+        const sender = userPS.get(username.toUpperCase())
+        const recipient = api.getSessionUser(socket)
+        const activeInvite = findActiveInvite.get(sender.username, recipient.username)
+        if(activeInvite) {
+            acceptFriendRequest.run({user1: sender.username, user2: recipient.username})
+            acceptFriendRequest.run({user1: recipient.username, user2: sender.username})
         }
     },
     getSessionUser: (socket) => sessionsIdToUser[socket.id],

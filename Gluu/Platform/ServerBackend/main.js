@@ -40,6 +40,7 @@ io.on(sEvent.connect, (socket) => {
   socket.on(sEvent.removeServer, async (msg) => await serverManager.remove(msg.name))
   socket.on(sEvent.cancelQueue, () => queueManager.leaveQueue(socket))
   socket.on(sEvent.addFriend, (msg) => userManager.addFriend(socket, msg.username))
+  socket.on(sEvent.acceptFriendRequest, msg => userManager.acceptFriend(socket, msg.username))
 })
 
 queueManager.setReferences(serverManager, userManager)

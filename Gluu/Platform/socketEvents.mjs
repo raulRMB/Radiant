@@ -9,6 +9,7 @@ export default {
     addServer: 'addServer',
     restartServer: 'restartServer',
     removeServer: 'removeServer',
+    acceptFriendRequest: 'acceptFriendRequest',
     notify: {
 	    logout: 'logout',
 	    cancelQueueResponse: 'cancelQueueResponse',

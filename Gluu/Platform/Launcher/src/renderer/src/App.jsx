@@ -47,6 +47,7 @@ export default () => {
     const disconnectHandler = () => {
       setSocketConnected(false);
       console.log('disconnected')
+      setNotifications([])
       setLoggedIn(false)
     };
     socket.on(sEvents.connect, connectHandler);
@@ -61,7 +62,7 @@ export default () => {
         console.log(msg)
         setNotifications(notifications => {
           const copy = [...notifications]
-          copy.push(<Notification title="Friend Request" message={`${msg.from} sent you a friend request.`}/>)
+          copy.push(<Notification title="Friend Request" message={`${msg.from} sent you a friend request.`} socket={socket} username={msg.from}/>)
           return copy
         });
     })
@@ -92,14 +93,16 @@ export default () => {
   )
 };
 
-const Notification = ({title, message}) => {
+const Notification = ({title, message, socket, username}) => {
   return (
       <div className="w-full bg-gray-600 border border-1 mb-1 px-3 py-4 text-white border-slate-600">
           <div className="flex text-left flex-col items-center justify-left">
               <h3 className="text-slate-100 font-bold text-lg">{title}</h3>
               <p>{message}</p>
               <div className='w-full flex flex-row justify-around'>
-                  <button className={`rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
+                  <button onClick={() => {
+                    socket.emit(sEvents.acceptFriendRequest, {username})
+                  }} className={`rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
                       <FaCheck size={18} color='green'/>
                   </button>
                   <button className={` rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
