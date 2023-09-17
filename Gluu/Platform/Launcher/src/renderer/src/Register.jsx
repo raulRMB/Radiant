@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaPlug, FaHandshake } from 'react-icons/fa';
 import 'animate.css';
 
-export const Register = ({ socket, setRegisterOpen }) => {
+export const Register = ({setRegisterOpen }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -11,7 +11,7 @@ export const Register = ({ socket, setRegisterOpen }) => {
     formData.forEach((value, key) => {
       loginData[key] = value;
     });
-    socket.emit('login', loginData)
+    //socket.emit('login', loginData)
   }
 
   return (

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FaPlug, FaHandshake } from 'react-icons/fa';
+import useStore from './store';
 import 'animate.css';
 
-export const Login = ({ socket, setRegisterOpen }) => {
-
+export const Login = ({ setRegisterOpen }) => {
+  const store = useStore()
   const handleSubmit = e => {
     e.preventDefault();
     const formData = new FormData(e.target)
@@ -11,7 +12,7 @@ export const Login = ({ socket, setRegisterOpen }) => {
     formData.forEach((value, key) => {
       loginData[key] = value;
     });
-    socket.emit('login', loginData)
+    store.Login(loginData)
   }
 
   return (

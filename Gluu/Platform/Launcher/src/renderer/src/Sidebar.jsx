@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FaCaretLeft, FaCaretRight, FaUsers, FaBell, FaCheck } from 'react-icons/fa';
 import { FaXmark } from 'react-icons/fa6'
-import sEvents from '../../../../socketEvents.mjs'
+import useStore from './store';
+import { observer } from 'mobx-react';
 
 const FriendCard = ({username, status}) => {
     const getColorFromStatus = () => {
@@ -35,18 +36,49 @@ const FriendsList = () => {
     )
 }
 
-const Notifications = ({notifications}) => {
+const Notifications = observer(() => {
+    const notifications = []
+    const store = useStore()
+    store.notifications.forEach(notification => {
+        notifications.push(<Notification 
+            title={notification.title} 
+            message={notification.message}
+            username={notification.username}
+        />)
+    })
     return (
         <div className='w-full'>
             {notifications}
         </div>
     )
-}
+})
 
-export const Sidebar = ({socket, notifications}) => {
+const Notification = ({title, message, username}) => {
+    const store = useStore()
+    return (
+        <div className="w-full bg-gray-600 border border-1 mb-1 px-3 py-4 text-white border-slate-600">
+            <div className="flex text-left flex-col items-center justify-left">
+                <h3 className="text-slate-100 font-bold text-lg">{title}</h3>
+                <p>{message}</p>
+                <div className='w-full flex flex-row justify-around'>
+                    <button onClick={() => {
+                      store.AcceptFriendRequest(username)
+                    }} className={`rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
+                        <FaCheck size={18} color='green'/>
+                    </button>
+                    <button className={` rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
+                        <FaXmark size={18} color='red'/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+  }
+
+const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [tab, setTab] = useState('Friends')
-
+    const store = useStore()
     const bgCol = 'bg-gray-800'
 
     const getTab = () => {
@@ -55,12 +87,12 @@ export const Sidebar = ({socket, notifications}) => {
         }
         switch(tab) {
             case 'Friends': return <FriendsList/>
-            case 'Notifications': return <Notifications notifications={notifications} socket={socket}/>
+            case 'Notifications': return <Notifications/>
         }
     }
     const handleAddFriend = (event) => {
         if (event.key === 'Enter') {
-            socket.emit(sEvents.addFriend, {username: event.target.value})
+            store.SendFriendRequest(event.target.value)
             event.target.value = ''
         }
       }
@@ -90,3 +122,5 @@ export const Sidebar = ({socket, notifications}) => {
         </>
     )
 }
+
+export default observer(Sidebar)

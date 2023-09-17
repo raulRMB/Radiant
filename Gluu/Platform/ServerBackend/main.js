@@ -4,7 +4,7 @@ import { Server } from 'socket.io'
 import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url';
-import nodeCleanup from 'node-cleanup';
+//import nodeCleanup from 'node-cleanup';
 import util from './src/util/util.js'
 
 import serverManager from './src/servers/serverManager.js'
@@ -47,17 +47,17 @@ queueManager.setReferences(serverManager, userManager)
 userManager.setReferences(queueManager)
 //serverManager.addServers(1)
 
-nodeCleanup(function (exitCode, signal) {
-  console.log('Stopping servers...')
-  if (signal) {
-    if(serverManager.count() == 0) {
-      process.kill(process.pid, signal)
-    } else {
-      serverManager.stopAll(signal)
-      nodeCleanup.uninstall()
-    }
-    return false
-  }
-});
+//nodeCleanup(function (exitCode, signal) {
+  // console.log('Stopping servers...')
+  // if (signal) {
+  //   if(serverManager.count() == 0) {
+  //     process.kill(process.pid, signal)
+  //   } else {
+  //     serverManager.stopAll(signal)
+  //     nodeCleanup.uninstall()
+  //   }
+  //   return false
+  // }
+//});
 
 server.listen(port, () => console.log(`Running on port ${port}`))
