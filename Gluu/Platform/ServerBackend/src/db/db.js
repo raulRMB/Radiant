@@ -4,10 +4,14 @@ import sEvents from '../../../socketEvents.mjs'
 const db = new Database('./data/database.db')
 db.pragma('journal_mode = WAL')
 
-db.exec('CREATE TABLE IF NOT EXISTS users(username UNIQUE, password_hash UNIQUE, salt UNIQUE)')
-const register = db.prepare('INSERT INTO users (username, password_hash, salt) VALUES (@username, @password_hash, @salt)')
+db.exec('CREATE TABLE IF NOT EXISTS users(username UNIQUE, password_hash UNIQUE, salt UNIQUE, displayName)')
+db.exec('CREATE TABLE IF NOT EXISTS friendrequests(sender, recipient, active)')
+const register = db.prepare('INSERT INTO users (username, password_hash, salt, displayName) VALUES (@username, @password_hash, @salt, @displayName)')
+
+const createFriendRequest = db.prepare('INSERT INTO friendrequests (sender, recipient, active) VALUES (@sender, @recipient, @active)')
 
 const userPS = db.prepare('SELECT * FROM users WHERE username = ?')
+const findActiveInvite = db.prepare('SELECT * FROM friendrequests WHERE sender = ? AND recipient = ? AND active = 1')
 
 let queueManager
 
@@ -20,13 +24,14 @@ const api = {
         scrypt(password, salt, 64, (err, derived_key) => {
             if(!err) {
                 //db.transaction(() => {
-                    register.run({username, password_hash: derived_key, salt})
+                    const upperCaseUsername = username.toUpperCase()
+                    register.run({username: upperCaseUsername, password_hash: derived_key, salt, displayName: username})
                 //})
             }
         })
     },
     login: (username, password, socket) => {
-        const user = userPS.get(username)
+        const user = userPS.get(username.toUpperCase())
         if(user) {
             scrypt(password, user.salt, 64, (err, derived_key) => {
                 if(!err) {
@@ -35,8 +40,7 @@ const api = {
                     if(validPass) {
                         const existingSocket = sessionsUsernameToSocket[user.username]
                         if(existingSocket) {
-                            existingSocket.emit(sEvents.notify.logout)
-                            queueManager.leaveQueue(existingSocket)
+                            api.logout(existingSocket)
                         }
                         user.socket = socket
                         sessionsIdToUser[socket.id] = user
@@ -47,6 +51,30 @@ const api = {
             })
         }
     },
+    logout: (socket) => {
+        socket.emit(sEvents.notify.logout)
+        queueManager.leaveQueue(socket)
+        const user = api.getSessionUser(socket)
+        delete sessionsUsernameToSocket[user.username]
+        delete sessionsIdToUser[socket.id]
+    },
+    addFriend: (socket, username) => {
+        const recipient = userPS.get(username.toUpperCase())
+        const sender = api.getSessionUser(socket)
+        if(recipient) {
+            if(recipient.username === sender.username) {
+                return
+            }
+            const activeInvite = findActiveInvite.get(sender.username, recipient.username)
+            if(!activeInvite) {
+                createFriendRequest.run({sender: sender.username, recipient: recipient.username, active: 1})
+                const recipientSocket = api.getSocketFromUsername(recipient.username)
+                if(recipientSocket) {
+                    recipientSocket.emit(sEvents.notify.friendRequestReceived, {from: sender.displayName})
+                }
+            }
+        }
+    },
     getSessionUser: (socket) => sessionsIdToUser[socket.id],
     getSocketFromUsername: (username) => sessionsUsernameToSocket[username],
     hasSession: (socket) => sessionsIdToUser[socket.id] !== undefined,
@@ -55,6 +83,10 @@ const api = {
     }
 }
 
-//api.registerUser('mash2', 'test123')
+const initTestData = () => {
+    api.registerUser('mash', 'test123')
+    api.registerUser('mash2', 'test123')
+}
+//initTestData()
 
 export default api

@@ -33,16 +33,18 @@ io.on(sEvent.connect, (socket) => {
     }
   })
   socket.on(sEvent.login, (msg) => userManager.login(msg.username, msg.password, socket))
+  socket.on(sEvent.logout, () => userManager.logout(socket))
   socket.on(sEvent.joinQueue, (msg) => queueManager.joinQueue(socket, msg.queue))
   socket.on(sEvent.addServer, async () => await serverManager.add())
   socket.on(sEvent.restartServer, async (msg) => await serverManager.restart(msg.name))
   socket.on(sEvent.removeServer, async (msg) => await serverManager.remove(msg.name))
   socket.on(sEvent.cancelQueue, () => queueManager.leaveQueue(socket))
+  socket.on(sEvent.addFriend, (msg) => userManager.addFriend(socket, msg.username))
 })
 
 queueManager.setReferences(serverManager, userManager)
 userManager.setReferences(queueManager)
-serverManager.addServers(1)
+//serverManager.addServers(1)
 
 nodeCleanup(function (exitCode, signal) {
   console.log('Stopping servers...')

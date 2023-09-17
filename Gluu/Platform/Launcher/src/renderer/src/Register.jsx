@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaPlug, FaHandshake } from 'react-icons/fa';
 import 'animate.css';
 
-export const Login = ({ socket, setRegisterOpen }) => {
+export const Register = ({ socket, setRegisterOpen }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -17,7 +17,7 @@ export const Login = ({ socket, setRegisterOpen }) => {
   return (
   <div className="w-full bg-gray-800 h-screen flex items-center justify-center flex-col">
     <div className='w-1/3 flex items-center justify-center flex-col'>
-    <h2 className="text-white text-6xl p-4">Radiant</h2>
+    <h2 className="text-white text-6xl p-4">Register Account</h2>
     <form method="post" className="w-full bg-white shadow-md rounded px-8 pt-6 pb-4 mb-4" onSubmit={handleSubmit}>
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
@@ -33,11 +33,11 @@ export const Login = ({ socket, setRegisterOpen }) => {
       </div>
       <div className="flex items-center justify-between">
         <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-          Login
+          Register
         </button>
       </div>
     </form>
-    <p className='text-right text-blue-500 w-full hover:text-blue-300 hover:cursor-pointer' onClick={() => setRegisterOpen(true)}>Register Account?</p>
+    <p className='text-right text-blue-500 w-full hover:text-blue-300 hover:cursor-pointer' onClick={() => setRegisterOpen(false)}>Back</p>
     </div>
   </div>
   );

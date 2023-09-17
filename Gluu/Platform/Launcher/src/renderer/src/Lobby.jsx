@@ -37,12 +37,17 @@ export const Lobby = ({ socket }) => {
 
   const buttonText = inQueue ? 'Cancel Finding Match...' : 'Find Match' 
   return (
-  <div className="w-full bg-gray-800 h-screen flex items-center justify-center flex-col">
-    <h2 className="text-white text-4xl">Lobby</h2>
-    <form method="post" className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3" onSubmit={handleSubmit}>
-      <div className="flex items-center justify-between">
-        <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        {buttonText}
+  <div className="w-full bg-black h-screen flex items-center justify-center flex-col">
+    <form method="post" className="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3" onSubmit={handleSubmit}>
+      <div className="flex items-center justify-between flex-col gap-2">
+      <h3 className='text-white w-full text-left font-bold'>Select Queue:</h3>
+      <select disabled={inQueue} class="block appearance-none w-full bg-gray-800 border border-gray-500 text-white py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-gray-800 focus:border-gray-500" id="grid-state">
+          <option>1v1</option>
+          <option>2v2</option>
+          <option>3v3</option>
+        </select>
+        <button type="submit" className="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          {buttonText}
         </button>
       </div>
     </form>
