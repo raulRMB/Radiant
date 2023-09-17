@@ -61,6 +61,7 @@ export const Sidebar = ({socket, notifications}) => {
     const handleAddFriend = (event) => {
         if (event.key === 'Enter') {
             socket.emit(sEvents.addFriend, {username: event.target.value})
+            event.target.value = ''
         }
       }
     const selectedCss = 'border border-gray-600 bg-gray-800'
