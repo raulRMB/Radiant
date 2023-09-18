@@ -15,6 +15,7 @@ export default {
 	    cancelQueueResponse: 'cancelQueueResponse',
     	matchFound: 'matchFound',
         loginResponse: 'loginResponse',
+        newFriendAdded: 'newFriendAdded',
         joinQueueResponse: 'joinQueueResponse',
         friendRequestReceived: 'friendRequestReceived'
     }

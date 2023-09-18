@@ -10,10 +10,13 @@ db.exec('CREATE TABLE IF NOT EXISTS friends(user1, user2, PRIMARY KEY (user1, us
 const register = db.prepare('INSERT INTO users (username, password_hash, salt, displayName) VALUES (@username, @password_hash, @salt, @displayName)')
 
 const createFriendRequest = db.prepare('INSERT INTO friendrequests (sender, recipient, active) VALUES (@sender, @recipient, @active)')
+const areFriends = db.prepare('SELECT * FROM friends WHERE user1 = ? AND user2 = ?')
 
 const userPS = db.prepare('SELECT * FROM users WHERE username = ?')
 const findActiveInvite = db.prepare('SELECT * FROM friendrequests WHERE sender = ? AND recipient = ? AND active = 1')
 const acceptFriendRequest = db.prepare('INSERT INTO friends (user1, user2) VALUES (@user1, @user2)')
+
+const getFriends = db.prepare('SELECT users.username, users.displayName AS displayName FROM friends INNER JOIN users ON friends.user2 = users.username WHERE friends.user1 = ?')
 
 let queueManager
 
@@ -47,7 +50,10 @@ const api = {
                         user.socket = socket
                         sessionsIdToUser[socket.id] = user
                         sessionsUsernameToSocket[user.username] = socket
-                        socket.emit(sEvents.notify.loginResponse)
+                        const loginData = {
+                            friendsList: getFriends.all(user.username)
+                        }
+                        socket.emit(sEvents.notify.loginResponse, loginData)
                     }
                 }
             })
@@ -68,7 +74,8 @@ const api = {
                 return
             }
             const activeInvite = findActiveInvite.get(sender.username, recipient.username)
-            if(!activeInvite) {
+            const hasFriend = areFriends.get(sender.username, recipient.username)
+            if(!activeInvite && !hasFriend) {
                 createFriendRequest.run({sender: sender.username, recipient: recipient.username, active: 1})
                 const recipientSocket = api.getSocketFromUsername(recipient.username)
                 if(recipientSocket) {
@@ -78,12 +85,19 @@ const api = {
         }
     },
     acceptFriend: (socket, username) => {
-        const sender = userPS.get(username.toUpperCase())
-        const recipient = api.getSessionUser(socket)
-        const activeInvite = findActiveInvite.get(sender.username, recipient.username)
-        if(activeInvite) {
-            acceptFriendRequest.run({user1: sender.username, user2: recipient.username})
-            acceptFriendRequest.run({user1: recipient.username, user2: sender.username})
+        if(username) {
+            const sender = userPS.get(username.toUpperCase())
+            const recipient = api.getSessionUser(socket)
+            const activeInvite = findActiveInvite.get(sender.username, recipient.username)
+            if(activeInvite) {
+                acceptFriendRequest.run({user1: sender.username, user2: recipient.username})
+                acceptFriendRequest.run({user1: recipient.username, user2: sender.username})
+                socket.emit(sEvents.notify.newFriendAdded, {username: sender.username, displayName: sender.displayName})
+                const friendThatSentRequestSocket = api.getSocketFromUsername(sender.username)
+                if(friendThatSentRequestSocket) {
+                    friendThatSentRequestSocket.emit(sEvents.notify.newFriendAdded, {username: recipient.username, displayName: recipient.displayName})
+                }
+            }
         }
     },
     getSessionUser: (socket) => sessionsIdToUser[socket.id],

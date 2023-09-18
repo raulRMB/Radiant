@@ -12,6 +12,7 @@ class Store {
     loggedIn = false
 
     notifications = []
+    friends = []
 
     constructor() {
         if (import.meta.env.VITE_ENV === 'production') {
@@ -23,12 +24,17 @@ class Store {
             inQueue: observable,
             loggedIn: observable,
             notifications: observable,
-            setInQueue: action,
+            friends: observable,
             setupSocketEvents: action,
             onConnected: action,
             onDisconneced: action,
+            joinQueueResponse: action,
+            onMatchFound: action,
             onLoginNotify: action,
             onLogoutNotify: action,
+            newFriendAdded: action,
+            AcceptFriendRequest: action,
+            onCancelQueueResponse: action,
             onFriendRequestReceived: action,
             Logout: action
         })
@@ -38,16 +44,13 @@ class Store {
     setupSocketEvents = () => {
         this.socket.on(sEvents.connect, () => this.onConnected());
         this.socket.on(sEvents.disconnect, () => this.onDisconneced());
-        this.socket.on(sEvents.notify.loginResponse, () => this.onLoginNotify())
+        this.socket.on(sEvents.notify.loginResponse, (msg) => this.onLoginNotify(msg))
         this.socket.on(sEvents.notify.logout, () => this.onLogoutNotify())
         this.socket.on(sEvents.notify.friendRequestReceived, (msg) => this.onFriendRequestReceived(msg.from))
         this.socket.on(sEvents.notify.matchFound, (msg) => this.onMatchFound(msg))
         this.socket.on(sEvents.notify.joinQueueResponse, msg => this.joinQueueResponse(msg.success))
-        this.socket.on(sEvents.notify.cancelQueueResponse, () => this.setInQueue(false))
-    }
-
-    setInQueue(val) {
-        this.inQueue = val
+        this.socket.on(sEvents.notify.cancelQueueResponse, () => this.onCancelQueueResponse())
+        this.socket.on(sEvents.notify.newFriendAdded, (msg) => this.newFriendAdded(msg))
     }
 
     onConnected() {
@@ -55,10 +58,16 @@ class Store {
         this.connected = true
     }
 
+    newFriendAdded(friend) {
+        console.log(friend)
+        this.friends.push(friend)
+    }
+
     onDisconneced() {
         console.log('disconnected')
         this.connected = false
         this.notifications = []
+        this.friends = []
         this.loggedIn = false
     }
 
@@ -69,7 +78,12 @@ class Store {
 
     onLogoutNotify() {
         this.notifications = []
+        this.friends = []
         this.loggedIn = false
+    }
+
+    onCancelQueueResponse() {
+        this.inQueue = false
     }
 
     onFriendRequestReceived(from) {
@@ -80,7 +94,10 @@ class Store {
         })
     }
 
-    onLoginNotify() {
+    onLoginNotify(msg) {
+        msg.friendsList.forEach(friend => {
+            this.friends.push(friend)
+        })
         this.loggedIn = true
     }
 
@@ -98,7 +115,7 @@ class Store {
 
     joinQueueResponse = (success) => {
         if(success) {
-            store.setInQueue(true)
+            this.inQueue = true;
         }
     }
 
@@ -111,9 +128,13 @@ class Store {
     }
 
     AcceptFriendRequest = (username) => {
+        console.log(username)
+        const index = this.notifications.findIndex(n => n.from === username && n.title === "Friend Request")
+        if (index > -1) {
+            this.notifications.splice(index, 1)
+        }
         this.socket.emit(sEvents.acceptFriendRequest, {username})
     }
-
 }
 
 const store = new Store()

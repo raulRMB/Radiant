@@ -23,27 +23,28 @@ const FriendCard = ({username, status}) => {
     )
 }
 
-const FriendsList = () => {
+const FriendsList = observer(() => {
+    const friends = []
+    const store = useStore()
+    store.friends.forEach(friend => {
+        friends.push(<FriendCard username={friend.displayName} status="Online"/>)
+    })
     return (
         <div className='w-full'>
-            {/* <FriendCard username="SuperMassive" status="Online"/>
-            <FriendCard username="Mashcroft" status="In Game"/>
-            <FriendCard username="Nelii" status="Away"/>
-            <FriendCard username="Arlix" status="Offline"/>
-            <FriendCard username="Chewy" status="Offline"/>
-            <FriendCard username="Mert" status="Offline"/> */}
+            {friends}
         </div>
     )
-}
+})
 
 const Notifications = observer(() => {
     const notifications = []
     const store = useStore()
     store.notifications.forEach(notification => {
+        console.log(notification.username)
         notifications.push(<Notification 
             title={notification.title} 
             message={notification.message}
-            username={notification.username}
+            from={notification.from}
         />)
     })
     return (
@@ -53,7 +54,7 @@ const Notifications = observer(() => {
     )
 })
 
-const Notification = ({title, message, username}) => {
+const Notification = ({title, message, from}) => {
     const store = useStore()
     return (
         <div className="w-full bg-gray-600 border border-1 mb-1 px-3 py-4 text-white border-slate-600">
@@ -62,7 +63,7 @@ const Notification = ({title, message, username}) => {
                 <p>{message}</p>
                 <div className='w-full flex flex-row justify-around'>
                     <button onClick={() => {
-                      store.AcceptFriendRequest(username)
+                      store.AcceptFriendRequest(from)
                     }} className={`rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
                         <FaCheck size={18} color='green'/>
                     </button>
@@ -108,7 +109,7 @@ const Sidebar = () => {
                     { isOpen ? <FaCaretRight size={20} color='gray'/> : <FaCaretLeft size={20} color='gray'/> }
                 </div>
                 <div className={`absolute bottom-0 w-full bg-gray-900 ${isOpen ? '' : 'hidden'}`}>
-                    <input onKeyDown={handleAddFriend} className='text-white w-full bg-gray-600 p-2 mb-1' placeholder='Add Friend...'/>
+                    <input onKeyDown={handleAddFriend} className={`${tab === 'Notifications' ? 'hidden' : ''} text-white w-full bg-gray-600 p-2 mb-1`} placeholder='Add Friend...'/>
                     <div className='w-full flex flex-row justify-around'>
                         <button onClick={() => setTab('Friends')} className={`rounded-md w-1/2 p-3 flex justify-center items-center ${tab === 'Friends' ? selectedCss : ''}`}>
                             <FaUsers size={18}/>
