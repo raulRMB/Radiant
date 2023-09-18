@@ -17,6 +17,7 @@ export default {
         loginResponse: 'loginResponse',
         newFriendAdded: 'newFriendAdded',
         joinQueueResponse: 'joinQueueResponse',
+        friendsStatusChanged: 'friendsStatusChanged',
         friendRequestReceived: 'friendRequestReceived'
     }
 }

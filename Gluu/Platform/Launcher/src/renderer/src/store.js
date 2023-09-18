@@ -46,11 +46,12 @@ class Store {
         this.socket.on(sEvents.disconnect, () => this.onDisconneced());
         this.socket.on(sEvents.notify.loginResponse, (msg) => this.onLoginNotify(msg))
         this.socket.on(sEvents.notify.logout, () => this.onLogoutNotify())
-        this.socket.on(sEvents.notify.friendRequestReceived, (msg) => this.onFriendRequestReceived(msg.from))
+        this.socket.on(sEvents.notify.friendRequestReceived, (msg) => this.onFriendRequestReceived(msg))
         this.socket.on(sEvents.notify.matchFound, (msg) => this.onMatchFound(msg))
         this.socket.on(sEvents.notify.joinQueueResponse, msg => this.joinQueueResponse(msg.success))
         this.socket.on(sEvents.notify.cancelQueueResponse, () => this.onCancelQueueResponse())
         this.socket.on(sEvents.notify.newFriendAdded, (msg) => this.newFriendAdded(msg))
+        this.socket.on(sEvents.notify.friendsStatusChanged, (msg) => this.friendsStatusChanged(msg))
     }
 
     onConnected() {
@@ -61,6 +62,13 @@ class Store {
     newFriendAdded(friend) {
         console.log(friend)
         this.friends.push(friend)
+    }
+
+    friendsStatusChanged(msg) {
+        const friend = this.friends.find(friend => friend.username === msg.username)
+        if(friend) {
+            friend.status = msg.status
+        }
     }
 
     onDisconneced() {
@@ -86,17 +94,26 @@ class Store {
         this.inQueue = false
     }
 
-    onFriendRequestReceived(from) {
+    onFriendRequestReceived(msg) {
         this.notifications.push({
             title: "Friend Request",
-            message: `${from} sent you a friend request.`,
-            from: from
+            message: `${msg.displayName} sent you a friend request.`,
+            from: msg.from,
+            username: msg.username 
         })
     }
 
     onLoginNotify(msg) {
         msg.friendsList.forEach(friend => {
             this.friends.push(friend)
+        })
+        msg.notifications.forEach(notification => {
+            this.notifications.push({
+                title: "Friend Request",
+                message: `${notification.displayName} sent you a friend request.`,
+                from: notification.displayName,
+                username: notification.username
+            })
         })
         this.loggedIn = true
     }
@@ -129,7 +146,7 @@ class Store {
 
     AcceptFriendRequest = (username) => {
         console.log(username)
-        const index = this.notifications.findIndex(n => n.from === username && n.title === "Friend Request")
+        const index = this.notifications.findIndex(n => n.username === username && n.title === "Friend Request")
         if (index > -1) {
             this.notifications.splice(index, 1)
         }

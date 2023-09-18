@@ -28,6 +28,7 @@ io.on(sEvent.connect, (socket) => {
   util.authMiddleware(socket, userManager)
   socket.on(sEvent.disconnect, (reason) => {
     const user = userManager.getSessionUser(socket)
+    userManager.changeUserStatus(socket, 'Offline')
     if(user) {
       console.log(`${user.username} disconnected - ${reason}`)
     }

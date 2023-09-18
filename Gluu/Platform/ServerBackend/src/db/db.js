@@ -11,10 +11,12 @@ const register = db.prepare('INSERT INTO users (username, password_hash, salt, d
 
 const createFriendRequest = db.prepare('INSERT INTO friendrequests (sender, recipient, active) VALUES (@sender, @recipient, @active)')
 const areFriends = db.prepare('SELECT * FROM friends WHERE user1 = ? AND user2 = ?')
+const getFriendRequests = db.prepare('SELECT users.username, users.displayName AS displayName FROM friendrequests INNER JOIN users ON friendrequests.sender = users.username WHERE recipient = ? AND active = 1')
 
 const userPS = db.prepare('SELECT * FROM users WHERE username = ?')
 const findActiveInvite = db.prepare('SELECT * FROM friendrequests WHERE sender = ? AND recipient = ? AND active = 1')
 const acceptFriendRequest = db.prepare('INSERT INTO friends (user1, user2) VALUES (@user1, @user2)')
+const deactivateInvite = db.prepare('UPDATE friendrequests SET active = 0 WHERE sender = ? AND recipient = ? AND active = 1')
 
 const getFriends = db.prepare('SELECT users.username, users.displayName AS displayName FROM friends INNER JOIN users ON friends.user2 = users.username WHERE friends.user1 = ?')
 
@@ -50,17 +52,47 @@ const api = {
                         user.socket = socket
                         sessionsIdToUser[socket.id] = user
                         sessionsUsernameToSocket[user.username] = socket
+                        const friendRequests = getFriendRequests.all(user.username)
                         const loginData = {
+                            notifications: friendRequests,
                             friendsList: getFriends.all(user.username)
                         }
+                        loginData.friendsList.forEach(friend => {
+                            const friendsSocket = api.getSocketFromUsername(friend.username)
+                            friend.status = friendsSocket === undefined ? 'Offline' : 'Online'
+                            if(friendsSocket) {
+                                friendsSocket.emit(sEvents.notify.friendsStatusChanged, {
+                                    username: user.username,
+                                    status: 'Online',
+                                    displayName: user.displayName
+                                })
+                            }
+                        })
                         socket.emit(sEvents.notify.loginResponse, loginData)
                     }
                 }
             })
         }
     },
+    changeUserStatus: (socket, status) => {
+        const user = api.getSessionUser(socket)
+        if(user) {
+            const friends = getFriends.all(user.username)
+            friends.forEach(friend => {
+                const friendsSocket = api.getSocketFromUsername(friend.username)
+                if(friendsSocket) {
+                    friendsSocket.emit(sEvents.notify.friendsStatusChanged, {
+                        username: user.username,
+                        status: status,
+                        displayName: user.displayName
+                    })
+                }
+            })
+        }
+    },
     logout: (socket) => {
         socket.emit(sEvents.notify.logout)
+        api.changeUserStatus(socket, 'Offline')
         queueManager.leaveQueue(socket)
         const user = api.getSessionUser(socket)
         delete sessionsUsernameToSocket[user.username]
@@ -79,7 +111,7 @@ const api = {
                 createFriendRequest.run({sender: sender.username, recipient: recipient.username, active: 1})
                 const recipientSocket = api.getSocketFromUsername(recipient.username)
                 if(recipientSocket) {
-                    recipientSocket.emit(sEvents.notify.friendRequestReceived, {from: sender.displayName})
+                    recipientSocket.emit(sEvents.notify.friendRequestReceived, {username: sender.username, displayName: sender.displayName})
                 }
             }
         }
@@ -88,14 +120,18 @@ const api = {
         if(username) {
             const sender = userPS.get(username.toUpperCase())
             const recipient = api.getSessionUser(socket)
+            console.log(sender)
+            console.log(recipient)
             const activeInvite = findActiveInvite.get(sender.username, recipient.username)
             if(activeInvite) {
+                console.log('invite found')
                 acceptFriendRequest.run({user1: sender.username, user2: recipient.username})
                 acceptFriendRequest.run({user1: recipient.username, user2: sender.username})
-                socket.emit(sEvents.notify.newFriendAdded, {username: sender.username, displayName: sender.displayName})
+                deactivateInvite.run(sender.username, recipient.username)
                 const friendThatSentRequestSocket = api.getSocketFromUsername(sender.username)
+                socket.emit(sEvents.notify.newFriendAdded, {username: sender.username, displayName: sender.displayName, status: friendThatSentRequestSocket ? 'Online' : 'Offline'})
                 if(friendThatSentRequestSocket) {
-                    friendThatSentRequestSocket.emit(sEvents.notify.newFriendAdded, {username: recipient.username, displayName: recipient.displayName})
+                    friendThatSentRequestSocket.emit(sEvents.notify.newFriendAdded, {username: recipient.username, displayName: recipient.displayName, status: 'Online'})
                 }
             }
         }
@@ -111,7 +147,9 @@ const api = {
 const initTestData = () => {
     api.registerUser('mash', 'test123')
     api.registerUser('mash2', 'test123')
+    api.registerUser('mash3', 'test123')
+    api.registerUser('mash4', 'test123')
 }
-//initTestData()
+initTestData()
 
 export default api

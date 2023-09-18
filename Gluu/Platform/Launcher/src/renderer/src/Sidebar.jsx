@@ -27,7 +27,12 @@ const FriendsList = observer(() => {
     const friends = []
     const store = useStore()
     store.friends.forEach(friend => {
-        friends.push(<FriendCard username={friend.displayName} status="Online"/>)
+        friends.push(<FriendCard username={friend.displayName} status={friend.status}/>)
+    })
+    friends.sort((a, b) => {
+        const x = a.props.status === 'Online' ? 1 : -1
+        const y = b.props.status === 'Online' ? 1 : -1
+        return y - x
     })
     return (
         <div className='w-full'>
@@ -40,11 +45,11 @@ const Notifications = observer(() => {
     const notifications = []
     const store = useStore()
     store.notifications.forEach(notification => {
-        console.log(notification.username)
         notifications.push(<Notification 
             title={notification.title} 
             message={notification.message}
             from={notification.from}
+            username={notification.username}
         />)
     })
     return (
@@ -54,7 +59,7 @@ const Notifications = observer(() => {
     )
 })
 
-const Notification = ({title, message, from}) => {
+const Notification = ({title, message, from, username}) => {
     const store = useStore()
     return (
         <div className="w-full bg-gray-600 border border-1 mb-1 px-3 py-4 text-white border-slate-600">
@@ -63,7 +68,7 @@ const Notification = ({title, message, from}) => {
                 <p>{message}</p>
                 <div className='w-full flex flex-row justify-around'>
                     <button onClick={() => {
-                      store.AcceptFriendRequest(from)
+                      store.AcceptFriendRequest(username)
                     }} className={`rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
                         <FaCheck size={18} color='green'/>
                     </button>
