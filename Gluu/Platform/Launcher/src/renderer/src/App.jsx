@@ -1,51 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { Login } from './Login'
-import { Lobby } from './Lobby'
+import Lobby from './Lobby'
 import './assets/index.css';
-import { socket } from './socket.js';
-import sEvents from '../../../../socketEvents.mjs'
+import useStore from './store';
+import { observer } from 'mobx-react';
+import { Logout } from './Logout';
+import { Register } from './Register';
+import Sidebar from './Sidebar';
 
-export default () => {
-  const [appLoaded, setAppLoaded] = useState(false);
-  const [socketConnected, setSocketConnected] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
+const App = () => {
 
-  useEffect(() => {
-    setAppLoaded(true);
-  }, []);
+  const store = useStore()
 
-  useEffect(() => {
-    if (!appLoaded) {
-      return () => undefined;
+  const [registerOpen, setRegisterOpen] = useState(false)
+
+  const getRoute = () => {
+    if(!store.loggedIn) {
+      if(registerOpen) {
+        return <Register setRegisterOpen={setRegisterOpen}/>
+      }
+      return <Login setRegisterOpen={setRegisterOpen}/>
     }
-    const connectHandler = () => {
-      setSocketConnected(true);
-    };
-    const disconnectHandler = () => {
-      setSocketConnected(false);
-      console.log('disconnected')
-      setLoggedIn(false)
-    };
-    socket.on(sEvents.connect, connectHandler);
-    socket.on(sEvents.disconnect, disconnectHandler);
-    socket.on(sEvents.notify.loginResponse, () => setLoggedIn(true))
-    socket.on(sEvents.notify.logout, () => {
-      console.log('logout')
-      setLoggedIn(false)
-    })
-    socket.on(sEvents.notify.matchFound, (msg) => {
-      window.electron.ipcRenderer.send('matchFound', msg);
-    })
-    return () => {
-      socket.off(sEvents.connect, connectHandler);
-      socket.off(sEvents.disconnect, disconnectHandler);
-    };
-  }, [appLoaded]);
+    if(store.inMatch) {
+      return <p>In Match...</p>
+    } else {
+      return <Lobby/>
+    }
+  }
 
-  useEffect(() => {
-    console.log('SOCKET CONNECTED', socketConnected);
-  }, [socketConnected]);
   return (
-  loggedIn ? <Lobby socket={socket}/> : <Login socket={socket}/>
-  );
+    <>
+      {getRoute()}
+      {store.loggedIn ? <Sidebar/> : null}
+      {store.loggedIn ? <Logout/> : null}
+    </>
+  )
 };
+
+export default observer(App)

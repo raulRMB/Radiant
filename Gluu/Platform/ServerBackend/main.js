@@ -4,7 +4,7 @@ import { Server } from 'socket.io'
 import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url';
-import nodeCleanup from 'node-cleanup';
+//import nodeCleanup from 'node-cleanup';
 import util from './src/util/util.js'
 
 import serverManager from './src/servers/serverManager.js'
@@ -33,28 +33,31 @@ io.on(sEvent.connect, (socket) => {
     }
   })
   socket.on(sEvent.login, (msg) => userManager.login(msg.username, msg.password, socket))
+  socket.on(sEvent.logout, () => userManager.logout(socket))
   socket.on(sEvent.joinQueue, (msg) => queueManager.joinQueue(socket, msg.queue))
   socket.on(sEvent.addServer, async () => await serverManager.add())
   socket.on(sEvent.restartServer, async (msg) => await serverManager.restart(msg.name))
   socket.on(sEvent.removeServer, async (msg) => await serverManager.remove(msg.name))
   socket.on(sEvent.cancelQueue, () => queueManager.leaveQueue(socket))
+  socket.on(sEvent.addFriend, (msg) => userManager.addFriend(socket, msg.username))
+  socket.on(sEvent.acceptFriendRequest, msg => userManager.acceptFriend(socket, msg.username))
 })
 
 queueManager.setReferences(serverManager, userManager)
 userManager.setReferences(queueManager)
-serverManager.addServers(1)
+//serverManager.addServers(1)
 
-nodeCleanup(function (exitCode, signal) {
-  console.log('Stopping servers...')
-  if (signal) {
-    if(serverManager.count() == 0) {
-      process.kill(process.pid, signal)
-    } else {
-      serverManager.stopAll(signal)
-      nodeCleanup.uninstall()
-    }
-    return false
-  }
-});
+//nodeCleanup(function (exitCode, signal) {
+  // console.log('Stopping servers...')
+  // if (signal) {
+  //   if(serverManager.count() == 0) {
+  //     process.kill(process.pid, signal)
+  //   } else {
+  //     serverManager.stopAll(signal)
+  //     nodeCleanup.uninstall()
+  //   }
+  //   return false
+  // }
+//});
 
 server.listen(port, () => console.log(`Running on port ${port}`))

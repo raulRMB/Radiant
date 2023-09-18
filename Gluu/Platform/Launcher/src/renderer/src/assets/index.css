@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 body {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
   display: flex;
   flex-direction: column;
   font-family:
@@ -18,6 +21,11 @@ body {
     sans-serif;
   color: #86a5b1;
   background-color: #2f3241;
+}
+
+.semi {
+  border-bottom-left-radius: 10rem;
+  border-top-left-radius: 10rem;
 }
 
 * {
