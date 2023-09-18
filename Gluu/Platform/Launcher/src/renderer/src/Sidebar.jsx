@@ -1,10 +1,41 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { FaCaretLeft, FaCaretRight, FaUsers, FaBell, FaCheck } from 'react-icons/fa';
 import { FaXmark } from 'react-icons/fa6'
+import useWindowDimensions from './useWindowDimensions';
 import useStore from './store';
 import { observer } from 'mobx-react';
 
-const FriendCard = ({username, status}) => {
+const FriendCard = ({username, status, displayName}) => {
+    const store = useStore()
+    const contextMenu = useRef(null)
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const [open, setOpen] = useState(false);
+    const [position, setPosition] = useState({x: 0, y: 0});
+    const [clickPosition, setClickPosition] = useState({x: 0, y: 0});
+    const { height, width } = useWindowDimensions();
+    useLayoutEffect(() => {
+        const click = {x: clickPosition.x * width, y: clickPosition.y * height}
+        const x = click.x + dimensions.width > width ? width - dimensions.width : click.x
+        const y = click.y + dimensions.height > height ? height - dimensions.height : click.y
+        setPosition({x, y})
+    }, [clickPosition, dimensions, width, height])
+    useLayoutEffect(() => {
+        if (contextMenu.current) {
+            setDimensions({
+              width: contextMenu.current.offsetWidth,
+              height: contextMenu.current.offsetHeight
+            });
+        }
+      }, [contextMenu, open]);
+    useEffect(() => {
+        const handleClick = (e) => {
+            if(!e.target.classList.contains('menuButton')) {
+                setOpen(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClick);
+        return () => document.removeEventListener("mousedown", handleClick);
+    }, [open]);
     const getColorFromStatus = () => {
         switch(status) {
             case 'Online': return 'bg-green-200'
@@ -14,10 +45,28 @@ const FriendCard = ({username, status}) => {
         }
     }
     return (
-        <div className="w-full bg-gray-600 border border-1 px-3 mb-1 py-4 text-white hover:bg-gray-700 border-slate-600">
-            <div className="flex flex-row items-center justify-left">
-                <div className={`rounded-full ${getColorFromStatus()} w-3 h-3 mx-1`}></div>
-                <h3>{username}</h3>
+        <div>
+            <div onContextMenu={(e) => {
+                e.preventDefault()
+                setClickPosition({x: e.pageX / width, y: e.pageY / height})
+                setOpen(true)
+            }} className="w-full bg-gray-600 border border-1 px-3 mb-1 py-4 text-white hover:bg-gray-700 border-slate-600">
+                <div className="flex flex-row items-center justify-left">
+                    <div className={`rounded-full ${getColorFromStatus()} w-3 h-3 mx-1`}></div>
+                    <h3>{displayName}</h3>
+                </div>
+            </div>
+            <div ref={contextMenu} className={`${!open ? 'hidden' : ''} fixed text-sm whitespace-nowrap bg-gray-600 border border-gray-800`} style={{top: position.y, left: position.x}}>
+                <ul>
+                    <li onClick={() => {
+                        store.sendInvite(username)
+                        setOpen(false)
+                    }} className='menuButton py-2 px-6 border-gray-700 border-b hover:bg-gray-800 hover:text-white'>Invite To Game</li>
+                    <li onClick={() => {
+                        store.removeFriend(username)
+                        setOpen(false)
+                    }} className='menuButton py-2 px-6 border-gray-700 border-b hover:bg-gray-800 hover:text-white'>Remove Friend</li>
+                </ul>
             </div>
         </div>
     )
@@ -27,7 +76,7 @@ const FriendsList = observer(() => {
     const friends = []
     const store = useStore()
     store.friends.forEach(friend => {
-        friends.push(<FriendCard username={friend.displayName} status={friend.status}/>)
+        friends.push(<FriendCard username={friend.username} displayName={friend.displayName} status={friend.status}/>)
     })
     friends.sort((a, b) => {
         const x = a.props.status === 'Online' ? 1 : -1

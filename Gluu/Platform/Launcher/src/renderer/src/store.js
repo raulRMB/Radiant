@@ -33,6 +33,7 @@ class Store {
             onLoginNotify: action,
             onLogoutNotify: action,
             newFriendAdded: action,
+            onFriendRemoved: action,
             AcceptFriendRequest: action,
             onCancelQueueResponse: action,
             onFriendRequestReceived: action,
@@ -51,6 +52,7 @@ class Store {
         this.socket.on(sEvents.notify.joinQueueResponse, msg => this.joinQueueResponse(msg.success))
         this.socket.on(sEvents.notify.cancelQueueResponse, () => this.onCancelQueueResponse())
         this.socket.on(sEvents.notify.newFriendAdded, (msg) => this.newFriendAdded(msg))
+        this.socket.on(sEvents.notify.friendRemoved, (msg) => this.onFriendRemoved(msg.username))
         this.socket.on(sEvents.notify.friendsStatusChanged, (msg) => this.friendsStatusChanged(msg))
     }
 
@@ -103,6 +105,13 @@ class Store {
         })
     }
 
+    onFriendRemoved(username) {
+        const index = this.friends.findIndex(n => n.username === username)
+        if (index > -1) {
+            this.friends.splice(index, 1)
+        }
+    }
+
     onLoginNotify(msg) {
         msg.friendsList.forEach(friend => {
             this.friends.push(friend)
@@ -145,12 +154,19 @@ class Store {
     }
 
     AcceptFriendRequest = (username) => {
-        console.log(username)
         const index = this.notifications.findIndex(n => n.username === username && n.title === "Friend Request")
         if (index > -1) {
             this.notifications.splice(index, 1)
         }
         this.socket.emit(sEvents.acceptFriendRequest, {username})
+    }
+
+    removeFriend = (username) => {
+        this.socket.emit(sEvents.removeFriend, {username})
+    }
+
+    sendInvite = (username) => {
+        console.log(`Send invite to ${username}`)
     }
 }
 

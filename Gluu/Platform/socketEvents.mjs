@@ -10,12 +10,14 @@ export default {
     restartServer: 'restartServer',
     removeServer: 'removeServer',
     acceptFriendRequest: 'acceptFriendRequest',
+    removeFriend: 'removeFriend',
     notify: {
 	    logout: 'logout',
 	    cancelQueueResponse: 'cancelQueueResponse',
     	matchFound: 'matchFound',
         loginResponse: 'loginResponse',
         newFriendAdded: 'newFriendAdded',
+        friendRemoved: 'friendRemoved',
         joinQueueResponse: 'joinQueueResponse',
         friendsStatusChanged: 'friendsStatusChanged',
         friendRequestReceived: 'friendRequestReceived'

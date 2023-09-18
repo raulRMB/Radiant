@@ -17,7 +17,7 @@ const userPS = db.prepare('SELECT * FROM users WHERE username = ?')
 const findActiveInvite = db.prepare('SELECT * FROM friendrequests WHERE sender = ? AND recipient = ? AND active = 1')
 const acceptFriendRequest = db.prepare('INSERT INTO friends (user1, user2) VALUES (@user1, @user2)')
 const deactivateInvite = db.prepare('UPDATE friendrequests SET active = 0 WHERE sender = ? AND recipient = ? AND active = 1')
-
+const removeFriend = db.prepare('DELETE FROM friends WHERE user1 = ? AND user2 = ?')
 const getFriends = db.prepare('SELECT users.username, users.displayName AS displayName FROM friends INNER JOIN users ON friends.user2 = users.username WHERE friends.user1 = ?')
 
 let queueManager
@@ -136,6 +136,17 @@ const api = {
             }
         }
     },
+    removeFriend: (socket, username) => {
+        const f1 = userPS.get(username.toUpperCase())
+        const f2 = api.getSessionUser(socket)
+        removeFriend.run(f1.username, f2.username)
+        removeFriend.run(f2.username, f1.username)
+        socket.emit(sEvents.notify.friendRemoved, {username: f1.username})
+        const friendSocket = api.getSocketFromUsername(f1.username)
+        if(friendSocket) {
+            friendSocket.emit(sEvents.notify.friendRemoved, {username: f2.username})
+        }
+    },
     getSessionUser: (socket) => sessionsIdToUser[socket.id],
     getSocketFromUsername: (username) => sessionsUsernameToSocket[username],
     hasSession: (socket) => sessionsIdToUser[socket.id] !== undefined,
@@ -150,6 +161,6 @@ const initTestData = () => {
     api.registerUser('mash3', 'test123')
     api.registerUser('mash4', 'test123')
 }
-initTestData()
+//initTestData()
 
 export default api
