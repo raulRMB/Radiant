@@ -168,7 +168,12 @@ const Sidebar = () => {
                         <button onClick={() => setTab('Friends')} className={`rounded-md w-1/2 p-3 flex justify-center items-center ${tab === 'Friends' ? selectedCss : ''}`}>
                             <FaUsers size={18}/>
                         </button>
-                        <button onClick={() => setTab('Notifications')} className={` rounded-md w-1/2 p-3 flex justify-center items-center ${tab === 'Notifications' ? selectedCss : ''}`}>
+                        <button onClick={() => setTab('Notifications')} className={`rounded-md w-1/2 p-3 flex justify-center items-center ${tab === 'Notifications' ? selectedCss : ''}`}>
+                            <div className={`${store.notifications.length < 1 ? 'hidden' : ''} relative`}>
+                                <div style={{top: '-18px', right: '-28px'}} className='absolute bg-red-400 text-xs font-bold text-slate-100 h-4 w-4 rounded-full flex items-center justify-center'>
+                                    <p>{store.notifications.length}</p>
+                                </div>
+                            </div>
                             <FaBell size={18}/>
                         </button>
                     </div>
