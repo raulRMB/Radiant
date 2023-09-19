@@ -10,7 +10,7 @@ blocks = dict()
 
 def process_file(path, relPath) -> dict:
     outDict = {}
-    fast = fastcdc(path, 16384, 32768, 65536, True, sha256)
+    fast = fastcdc(path, 65536 * .5, 65536, 65536 * 2, True, sha256)
     results = list(fast)
     idx = 0
     for result in results:
