@@ -28,13 +28,13 @@ io.on(sEvent.connect, (socket) => {
   util.authMiddleware(socket, userManager)
   socket.on(sEvent.disconnect, (reason) => {
     const user = userManager.getSessionUser(socket)
-    userManager.changeUserStatus(socket, 'Offline')
+    userManager.logout(socket, false)
     if(user) {
       console.log(`${user.username} disconnected - ${reason}`)
     }
   })
   socket.on(sEvent.login, (msg) => userManager.login(msg.username, msg.password, socket))
-  socket.on(sEvent.logout, () => userManager.logout(socket))
+  socket.on(sEvent.logout, () => userManager.logout(socket, true))
   socket.on(sEvent.joinQueue, (msg) => queueManager.joinQueue(socket, msg.queue))
   socket.on(sEvent.addServer, async () => await serverManager.add())
   socket.on(sEvent.restartServer, async (msg) => await serverManager.restart(msg.name))
@@ -43,6 +43,8 @@ io.on(sEvent.connect, (socket) => {
   socket.on(sEvent.addFriend, (msg) => userManager.addFriend(socket, msg.username))
   socket.on(sEvent.acceptFriendRequest, msg => userManager.acceptFriend(socket, msg.username))
   socket.on(sEvent.removeFriend, msg => userManager.removeFriend(socket, msg.username))
+  socket.on(sEvent.inviteToLobby, msg => userManager.sendInviteToLobby(socket, msg.username, msg.lobbyId))
+  socket.on(sEvent.acceptLobbyInvite, msg => userManager.joinLobby(socket, msg.lobbyId))
 })
 
 queueManager.setReferences(serverManager, userManager)

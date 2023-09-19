@@ -29,11 +29,11 @@ const App = () => {
   }
 
   return (
-    <>
+    <div className='flex justify-between'>
       {getRoute()}
       {store.loggedIn ? <Sidebar/> : null}
       {store.loggedIn ? <Logout/> : null}
-    </>
+    </div>
   )
 };
 

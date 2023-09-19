@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3'
-import { randomBytes, scrypt } from 'crypto'
+import { randomBytes, scrypt, randomUUID } from 'crypto'
 import sEvents from '../../../socketEvents.mjs'
 const db = new Database('./data/database.db')
 db.pragma('journal_mode = WAL')
@@ -24,6 +24,7 @@ let queueManager
 
 let sessionsIdToUser = {}
 let sessionsUsernameToSocket = {}
+let lobbies = {}
 
 const api = {
     registerUser: (username, password) => {
@@ -37,6 +38,66 @@ const api = {
             }
         })
     },
+    createLobby: (socket) => {
+        const user = api.getSessionUser(socket)
+        const id = randomUUID()
+        lobbies[id] = {
+            openLobby: false,
+            id: id,
+            players: [{
+                username: user.username,
+                displayName: user.displayName
+            }],
+            leader: user.username
+        }
+        user.lobbyId = id
+        return id
+    },
+    joinLobby: (socket, id) => {
+        const user = api.getSessionUser(socket)
+        const lobby = lobbies[id]
+        lobby.players.push({
+            username: user.username,
+            displayName: user.displayName
+        })
+        api.leaveLobby(user.lobbyId, user)
+        user.lobbyId = id
+        api.notifyLobbyUpdate(lobby.id)
+    },
+    notifyLobbyUpdate: (id) => {
+        const lobby = lobbies[id]
+        lobby.players.forEach(player => {
+            const socket = api.getSocketFromUsername(player.username)
+            socket.emit(sEvents.notify.lobbyInfo, lobby)
+        })
+    },
+    sendInviteToLobby: (socket, username, lobbyId) => {
+        const from = api.getSessionUser(socket)
+        const user = userPS.get(username.toUpperCase())
+        const lobby = lobbies[lobbyId]
+        if(user && lobby) {
+            const socket = api.getSocketFromUsername(user.username)
+            if(socket) {
+                socket.emit(sEvents.notify.lobbyInviteReceived, {from: from.displayName, lobbyId: lobby.id})
+            }
+        }
+    },
+    leaveLobby: (id, user) => {
+        if(lobbies[id].players.length === 1) {
+            delete lobbies[id]
+        } else {
+            let isLeader;
+            const index = lobbies[id].players.findIndex(player => player.username === user.username)
+            if (index > -1) {
+                isLeader = lobbies[id].players[index].username === lobbies[id].leader
+                lobbies[id].players.splice(index, 1)
+            }
+            if(isLeader) {
+                lobbies[id].leader = lobbies[id].players[0].username
+            }
+            api.notifyLobbyUpdate(id)
+        }
+    },
     login: (username, password, socket) => {
         const user = userPS.get(username.toUpperCase())
         if(user) {
@@ -47,7 +108,7 @@ const api = {
                     if(validPass) {
                         const existingSocket = sessionsUsernameToSocket[user.username]
                         if(existingSocket) {
-                            api.logout(existingSocket)
+                            api.logout(existingSocket, true)
                         }
                         user.socket = socket
                         sessionsIdToUser[socket.id] = user
@@ -55,7 +116,8 @@ const api = {
                         const friendRequests = getFriendRequests.all(user.username)
                         const loginData = {
                             notifications: friendRequests,
-                            friendsList: getFriends.all(user.username)
+                            friendsList: getFriends.all(user.username),
+                            user: user.username
                         }
                         loginData.friendsList.forEach(friend => {
                             const friendsSocket = api.getSocketFromUsername(friend.username)
@@ -69,6 +131,8 @@ const api = {
                             }
                         })
                         socket.emit(sEvents.notify.loginResponse, loginData)
+                        const lobbyId = api.createLobby(socket)
+                        api.notifyLobbyUpdate(lobbyId)
                     }
                 }
             })
@@ -90,13 +154,20 @@ const api = {
             })
         }
     },
-    logout: (socket) => {
-        socket.emit(sEvents.notify.logout)
+    logout: (socket, notify) => {
+        if(notify) {
+            socket.emit(sEvents.notify.logout)
+        }
         api.changeUserStatus(socket, 'Offline')
         queueManager.leaveQueue(socket)
         const user = api.getSessionUser(socket)
-        delete sessionsUsernameToSocket[user.username]
-        delete sessionsIdToUser[socket.id]
+        if(user) {
+            if(user.lobbyId) {
+                api.leaveLobby(user.lobbyId, user)
+            }
+            delete sessionsUsernameToSocket[user.username]
+            delete sessionsIdToUser[socket.id]
+        }
     },
     addFriend: (socket, username) => {
         const recipient = userPS.get(username.toUpperCase())

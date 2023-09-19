@@ -10,6 +10,9 @@ class Store {
     inQueue = false
     inMatch = false
     loggedIn = false
+    username = null
+
+    lobby = null
 
     notifications = []
     friends = []
@@ -23,6 +26,8 @@ class Store {
         makeObservable(this, {
             inQueue: observable,
             loggedIn: observable,
+            lobby: observable,
+            username: observable,
             notifications: observable,
             friends: observable,
             setupSocketEvents: action,
@@ -37,6 +42,8 @@ class Store {
             AcceptFriendRequest: action,
             onCancelQueueResponse: action,
             onFriendRequestReceived: action,
+            onLobbyInfo: action,
+            onLobbyInvite: action,
             Logout: action
         })
         this.setupSocketEvents()
@@ -54,11 +61,22 @@ class Store {
         this.socket.on(sEvents.notify.newFriendAdded, (msg) => this.newFriendAdded(msg))
         this.socket.on(sEvents.notify.friendRemoved, (msg) => this.onFriendRemoved(msg.username))
         this.socket.on(sEvents.notify.friendsStatusChanged, (msg) => this.friendsStatusChanged(msg))
+        this.socket.on(sEvents.notify.lobbyInfo, msg => this.onLobbyInfo(msg))
+        this.socket.on(sEvents.notify.lobbyInviteReceived, msg => this.onLobbyInvite(msg))
     }
 
     onConnected() {
         console.log('connect')
         this.connected = true
+    }
+
+    onLobbyInvite(data) {
+        console.log(data)
+        this.notifications.push({
+            title: "Invite",
+            message: `${data.from} invited you to a lobby.`,
+            lobbyId: data.lobbyId,
+        })
     }
 
     newFriendAdded(friend) {
@@ -81,6 +99,11 @@ class Store {
         this.loggedIn = false
     }
 
+    onLobbyInfo(data) {
+        console.log(data)
+        this.lobby = data
+    }
+
     onMatchFound(data) {
         this.inMatch = true
         //window.electron.ipcRenderer.send('matchFound', data);
@@ -90,6 +113,14 @@ class Store {
         this.notifications = []
         this.friends = []
         this.loggedIn = false
+    }
+
+    acceptLobbyInvite(lobbyId) {
+        const index = this.notifications.findIndex(n => n.lobbyId === lobbyId && n.title === "Invite")
+        if (index > -1) {
+            this.notifications.splice(index, 1)
+        }
+        this.socket.emit(sEvents.acceptLobbyInvite, {lobbyId})
     }
 
     onCancelQueueResponse() {
@@ -124,6 +155,7 @@ class Store {
                 username: notification.username
             })
         })
+        this.username = msg.user
         this.loggedIn = true
     }
 
@@ -165,8 +197,17 @@ class Store {
         this.socket.emit(sEvents.removeFriend, {username})
     }
 
+    isLeader = () => {
+        if(!this.lobby) {
+            return false
+        }
+        return this.lobby.leader === this.username
+    }
+
     sendInvite = (username) => {
-        console.log(`Send invite to ${username}`)
+        if(this.lobby) {
+            this.socket.emit(sEvents.inviteToLobby, {username, lobbyId: this.lobby.id})
+        }
     }
 }
 

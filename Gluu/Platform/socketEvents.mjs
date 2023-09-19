@@ -10,6 +10,8 @@ export default {
     restartServer: 'restartServer',
     removeServer: 'removeServer',
     acceptFriendRequest: 'acceptFriendRequest',
+    inviteToLobby: 'inviteToLobby',
+    acceptLobbyInvite: 'acceptLobbyInvite',
     removeFriend: 'removeFriend',
     notify: {
 	    logout: 'logout',
@@ -18,8 +20,10 @@ export default {
         loginResponse: 'loginResponse',
         newFriendAdded: 'newFriendAdded',
         friendRemoved: 'friendRemoved',
+        lobbyInfo: 'lobbyInfo',
         joinQueueResponse: 'joinQueueResponse',
         friendsStatusChanged: 'friendsStatusChanged',
-        friendRequestReceived: 'friendRequestReceived'
+        friendRequestReceived: 'friendRequestReceived',
+        lobbyInviteReceived: 'lobbyInviteReceived'
     }
 }

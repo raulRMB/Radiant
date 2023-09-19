@@ -3,6 +3,7 @@ import { FaCaretLeft, FaCaretRight, FaUsers, FaBell, FaCheck } from 'react-icons
 import { FaXmark } from 'react-icons/fa6'
 import useWindowDimensions from './useWindowDimensions';
 import useStore from './store';
+import usePopup from './usePopup';
 import { observer } from 'mobx-react';
 
 const FriendCard = ({username, status, displayName}) => {
@@ -90,16 +91,29 @@ const FriendsList = observer(() => {
     )
 })
 
+const buildNotification = (notification) => {
+    if(notification.title === "Friend Request") {
+        return <FriendNotification 
+        title={notification.title} 
+        message={notification.message}
+        from={notification.from}
+        username={notification.username}
+    />
+    }
+    else if(notification.title === "Invite") {
+        return <InviteNotification 
+        title={notification.title} 
+        message={notification.message}
+        lobbyId={notification.lobbyId}
+    />
+    }
+}
+
 const Notifications = observer(() => {
     const notifications = []
     const store = useStore()
     store.notifications.forEach(notification => {
-        notifications.push(<Notification 
-            title={notification.title} 
-            message={notification.message}
-            from={notification.from}
-            username={notification.username}
-        />)
+        notifications.push(buildNotification(notification))
     })
     return (
         <div className='w-full'>
@@ -108,7 +122,29 @@ const Notifications = observer(() => {
     )
 })
 
-const Notification = ({title, message, from, username}) => {
+const InviteNotification = ({title, message, lobbyId}) => {
+    const store = useStore()
+    return (
+        <div className="w-full bg-gray-600 border border-1 mb-1 px-3 py-4 text-white border-slate-600">
+            <div className="flex text-left flex-col items-center justify-left">
+                <h3 className="text-slate-100 font-bold text-lg">{title}</h3>
+                <p>{message}</p>
+                <div className='w-full flex flex-row justify-around'>
+                    <button onClick={() => {
+                      store.acceptLobbyInvite(lobbyId)
+                    }} className={`rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
+                        <FaCheck size={18} color='green'/>
+                    </button>
+                    <button className={` rounded-md w-1/2 p-3 flex justify-center hover:bg-gray-700 items-center border border-gray-600 bg-gray-800`}>
+                        <FaXmark size={18} color='red'/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+  }
+
+const FriendNotification = ({title, message, from, username}) => {
     const store = useStore()
     return (
         <div className="w-full bg-gray-600 border border-1 mb-1 px-3 py-4 text-white border-slate-600">
@@ -133,6 +169,7 @@ const Notification = ({title, message, from, username}) => {
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [tab, setTab] = useState('Friends')
+    const friendRequestSent = usePopup(false)
     const store = useStore()
     const bgCol = 'bg-gray-800'
 
@@ -148,13 +185,22 @@ const Sidebar = () => {
     const handleAddFriend = (event) => {
         if (event.key === 'Enter') {
             store.SendFriendRequest(event.target.value)
+            friendRequestSent.open()
             event.target.value = ''
+            event.target.blur()
         }
       }
     const selectedCss = 'border border-gray-600 bg-gray-800'
     return (
         <>
-            <div className={`fixed top-0 right-0 ${bgCol} ${isOpen ? 'w-60' : 'w-0'} h-screen`}>
+            <div className={friendRequestSent.style}>
+                <div className="flex flex-col w-1/2 bg-gray-900 border border-gray-800 px-5 py-10 items-center justify-center rounded-sm">
+                    <h2 className="text-white text-xl mb-3">Friend Request Sent</h2>
+                    <button className={`w-1/2 bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`} onClick={friendRequestSent.closeOnClick}>Ok</button>
+                </div>
+            </div>
+
+            <div className={`relative ${bgCol} ${isOpen ? 'w-1/4' : 'w-0'} h-screen`}>
                 <div className="w-full bg-gray-900 p-2 font-bold">
                     <h2 className='text-slate-400 text-center'>{tab}</h2>
                 </div>
