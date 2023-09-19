@@ -199,9 +199,11 @@ const Sidebar = () => {
                     <button className={`w-1/2 bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`} onClick={friendRequestSent.closeOnClick}>Ok</button>
                 </div>
             </div>
-
-            <div className={`relative ${bgCol} ${isOpen ? 'w-1/4' : 'w-0'} h-screen`}>
-                <div className="w-full bg-gray-900 p-2 font-bold">
+            <div onClick={() => setIsOpen(!isOpen)} style={{padding: '0.1rem'}} className={`${isOpen ? 'hidden' : 'block'} fixed right-0 ${bgCol} semi top-1/2`}>
+                { isOpen ? <FaCaretRight size={20} color='gray'/> : <FaCaretLeft size={20} color='gray'/> }
+            </div>
+            <div className={`relative ${bgCol} ${isOpen ? 'w-1/4' : 'w-0 hidden'} h-screen`}>
+                <div className={`${isOpen ? 'w-full' : 'w-0'} bg-gray-900 p-2 font-bold`}>
                     <h2 className='text-slate-400 text-center'>{tab}</h2>
                 </div>
                 {getTab()}
