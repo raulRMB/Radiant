@@ -10,6 +10,7 @@ Platforms/HoloLens/Config/HoloLensEngine.ini
 *.obj
 **/build/**/*
 **/outputs/**/*
+**/chonks/**/*
 **/__pycache__/**/*
 
 # Precompiled Headers

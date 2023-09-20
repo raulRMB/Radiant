@@ -12,6 +12,6 @@ def rBinRange(blockInfo, installDirectory, blockHash):
         return data
     
 def rRequestFile(hash):
-    with open("C:/Radiant/Fast/server/outputs/" + hash, 'rb') as file:
+    with open("C:/Radiant/Fast/server/chonks/" + hash, 'rb') as file:
         return file.read(-1)
     

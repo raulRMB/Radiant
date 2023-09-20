@@ -38,15 +38,23 @@ def resolve(block):
         # we dont have this block, so we need to download it
         return rwbin.rRequestFile(block["hash"])
 
+
 for file in newBuild["fileinfo"]:
+    if clientMap and file in oldBuild["fileinfo"]:
+        if newBuild["fileinfo"][file]["hash"] == oldBuild["fileinfo"][file]["hash"]:
+            fileDir = installDirectory + '/' + file
+            os.path.exists(fileDir)
+            os.rename(fileDir, fileDir + "-tem2345p")
+            continue
+    
     filePath = installDirectory + '/' + file + "-tem2345p"
     os.makedirs(os.path.dirname(filePath), exist_ok=True)
     if os.path.exists(filePath):
         os.remove(filePath)
-    
+
     tempFile = open(filePath, 'wb')
-    for block in newBuild["fileinfo"][file]:
-        binData = resolve(newBuild["fileinfo"][file][block])
+    for block in newBuild["fileinfo"][file]["blocks"]:
+        binData = resolve(newBuild["fileinfo"][file]["blocks"][block])
         tempFile.write(binData)
     tempFile.close()
         
