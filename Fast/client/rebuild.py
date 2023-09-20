@@ -4,6 +4,7 @@ import rwbin
 from fastcdc import fastcdc
 from hashlib import sha256
 
+filesToPatch = list()
 installDirectory = "C:/Radiant/Fast/client/build"
 appDataPath = "C:/Radiant/Fast/"
 clientMap : dict = None
@@ -11,43 +12,39 @@ if os.path.exists(appDataPath + 'client/maps.json'):
     clientMap = open(appDataPath + 'client/maps.json')
 serverMap = open(appDataPath + 'server/maps.json')
 
+tempSuffix = "-TEM241P-I2-AM-TEMP"
+
 newBuild = json.load(serverMap)
+oldBuild : dict = None
 if clientMap:
     oldBuild = json.load(clientMap)
     
 blocks = dict()
-def process_file(path, relPath) -> dict:
+def runFastOnFile(path) -> dict:
     fast = fastcdc(path, 65536 * .5, 65536, 65536 * 2, True, sha256)
     results = list(fast)
     idx = 0
     for result in results:
         blocks[result.hash] = result.data
         idx += 1
+        
+for file in newBuild["fileinfo"]:
+    if oldBuild == None or (file not in oldBuild["fileinfo"] or newBuild["fileinfo"][file]["hash"] != oldBuild["fileinfo"][file]["hash"]):
+        filesToPatch.append(file)
 
-for root, subdirs, files in os.walk(os.path.abspath(installDirectory)):
-    for filename in files:
-        file_path = os.path.join(root, filename)
-        relPath = os.path.relpath(file_path, installDirectory)
-        relPath = relPath.replace(os.sep, '/')
-        process_file(file_path, relPath)
+for file in filesToPatch:
+    filePath = installDirectory + '/' + file
+    if os.path.exists(filePath):
+        runFastOnFile(filePath)
 
 def resolve(block):
     if block["hash"] in blocks:
         return blocks[block["hash"]]
     else:
-        # we dont have this block, so we need to download it
         return rwbin.rRequestFile(block["hash"])
 
-
-for file in newBuild["fileinfo"]:
-    if clientMap and file in oldBuild["fileinfo"]:
-        if newBuild["fileinfo"][file]["hash"] == oldBuild["fileinfo"][file]["hash"]:
-            fileDir = installDirectory + '/' + file
-            os.path.exists(fileDir)
-            os.rename(fileDir, fileDir + "-tem2345p")
-            continue
-    
-    filePath = installDirectory + '/' + file + "-tem2345p"
+for file in filesToPatch:  
+    filePath = installDirectory + '/' + file + tempSuffix
     os.makedirs(os.path.dirname(filePath), exist_ok=True)
     if os.path.exists(filePath):
         os.remove(filePath)
@@ -59,14 +56,16 @@ for file in newBuild["fileinfo"]:
     tempFile.close()
         
 for root, subdirs, files in os.walk(os.path.abspath(installDirectory)):
-    for clientMap in files:
-        fileName = os.path.join(root, clientMap)
-        if clientMap.endswith("-tem2345p"):
-            name = os.path.join(root, clientMap.replace("-tem2345p", ""))
+    for file in files:
+        fileName = os.path.join(root, file)
+        relName = os.path.relpath(fileName, installDirectory)
+        relName = relName.replace(os.sep, '/')
+        if file.endswith("-tem2345p"):
+            name = os.path.join(root, file.replace("-tem2345p", ""))
             if os.path.exists(name):
                 os.remove(name)
             os.rename(fileName, name)
-        else:
+        elif relName not in newBuild["fileinfo"]:
             os.remove(fileName)
     
     if not os.listdir(root):
