@@ -115,16 +115,14 @@ void ARTCharacter::CheckCanSeeTarget(AActor* Target)
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams CollisionQueryParams;
 	CollisionQueryParams.AddIgnoredActor(this);
-	GetWorld()->LineTraceMultiByChannel(HitResults, GetActorLocation(), Target->GetActorLocation(), ECC_Vision, CollisionQueryParams);
+	GetWorld()->LineTraceMultiByChannel(HitResults, GetActorLocation(), Target->GetActorLocation(), ECC_Terrain, CollisionQueryParams);
+
 	if(HitResults.Num() <= 3)
 	{
-		for(FHitResult& HitResult : HitResults)
+		if(!ActorsInVision.Contains(Target))
 		{
-			if(HitResult.GetActor() == Target && !ActorsInVision.Contains(Target))
-			{	
-				ActorsInVision.Add(Target);
-				TeamGridManager->AddActorToActorsInVision(Target);
-			}
+			ActorsInVision.Add(Target);
+			TeamGridManager->AddActorToActorsInVision(Target);
 		}
 	}
 	else

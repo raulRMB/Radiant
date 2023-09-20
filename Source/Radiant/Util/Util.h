@@ -13,6 +13,7 @@
 #define ECC_Artillery ECollisionChannel::ECC_GameTraceChannel3
 #define ECC_Floor ECollisionChannel::ECC_GameTraceChannel4
 #define ECC_Vision ECollisionChannel::ECC_GameTraceChannel5
+#define ECC_Terrain ECollisionChannel::ECC_GameTraceChannel6
 
 #define RTPRINTP(f, x) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f), x));
 #define RTPRINT(f) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(f)));
