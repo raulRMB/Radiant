@@ -1,13 +1,8 @@
 {
-    "bundles": {
-        "0e5e954b6b12cab8001fc9c30752c7384f9cb0b1b00769a00d47e46d21ffc636": [
-            "2d3ca615de1ee1f2b07b696c6b7c5ad349538aec3f2737af568419615f95bfac"
-        ]
-    },
     "text.txt": {
-        "hash": "0e5e954b6b12cab8001fc9c30752c7384f9cb0b1b00769a00d47e46d21ffc636",
+        "hash": "3a1ddfbfd5becc8e32530450bb3ac40238ebb41e74c490974d97c29b14e9781c",
         "blocks": [
-            "2d3ca615de1ee1f2b07b696c6b7c5ad349538aec3f2737af568419615f95bfac"
+            "9d8eb6f2cbce67f54fc78d076e08ddc75286fa8d87b6828d1de24de6cc671e31"
         ]
     },
     "images/canada.png": {

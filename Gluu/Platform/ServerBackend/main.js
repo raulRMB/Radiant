@@ -3,6 +3,7 @@ import http from 'http'
 import { Server } from 'socket.io'
 import express from 'express'
 import path from 'path'
+import fs from 'fs'
 import { fileURLToPath } from 'url';
 //import nodeCleanup from 'node-cleanup';
 import util from './src/util/util.js'
@@ -23,6 +24,20 @@ const io = new Server(server)
 app.set('view engine', 'pug')
 app.use("/socketio", express.static(path.join(__dirname, "node_modules/socket.io/client-dist")))
 app.get('/', (req, res) => res.render('index', {servers: serverManager.getServers()}))
+
+app.get('/patch/block/:id', (req, res) => {
+  if(req.params.id) {
+    const path = `./patchData/blocks/${req.params.id}`
+    fs.stat(path, function(err, stat) {
+      if (err == null) {
+        res.sendFile(path, { root: __dirname })
+      } else {
+        res.send('block not found')
+        console.log(`File doesn't exist ${err}`)
+      }
+    });
+  }
+})
 
 io.on(sEvent.connect, (socket) => {
   util.authMiddleware(socket, userManager)

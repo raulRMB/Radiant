@@ -1,5 +1,6 @@
 import os
 import json
+import requests
 from fastcdc import fastcdc
 from hashlib import sha256
 import threading
@@ -29,6 +30,8 @@ def main():
     newBuild, oldBuild = loadPatchData()
     filesToPatch = getFilesToPatch(newBuild, oldBuild)
     localBlocks = generateBlocksForFilesToPatch(filesToPatch)
+    whichBlocksAreMissing(filesToPatch, newBuild, localBlocks)
+    whichBundlesShouldWeDownload(newBuild, localBlocks)
     patchFiles(newBuild, localBlocks, filesToPatch)
     cleanupDir(newBuild)
     open(appDataPath + '/changelog.json', 'w').write(str(json.dumps(changeLog)))
@@ -37,6 +40,33 @@ def main():
 def ensureDirsExist():
     os.makedirs(os.path.abspath(installDirectory), exist_ok=True)
     os.makedirs(os.path.abspath(appDataPath), exist_ok=True)
+
+def whichBlocksAreMissing(filesToPatch, newBuild, localBlocks):
+    missingBlocks = []
+    for file in filesToPatch:
+        for block in newBuild[file]["blocks"]:
+            if block not in localBlocks:
+                missingBlocks.append(block)
+    return missingBlocks
+
+def whichBundlesShouldWeDownload(newBuild, localBlocks):
+    bundlePercent = {}
+    for hash in localBlocks:
+        print(hash)
+    for bundle in newBuild["bundles"]:
+        localCount = 0
+        size = 0
+        for block in newBuild["bundles"][bundle]:
+            #print(block)
+            if block in localBlocks:
+                localCount += 1
+            size += 1
+        bundlePercent[bundle] = localCount / size
+        # print(localCount)
+        # if localCount > 0:
+        #     print(localCount)
+    return bundlePercent
+        
 
 def loadPatchData():
     clientMap : dict = None
@@ -65,6 +95,8 @@ def runFastOnFile(args) -> dict:
 def getFilesToPatch(newBuild, oldBuild):
     filesToPatch = list()
     for file in newBuild:
+        if file == "bundles":
+            continue
         if oldBuild == None or file not in oldBuild or newBuild[file]["hash"] != oldBuild[file]["hash"] or invalidFileMetadata(file):
             print(file + " needs patching")
             filesToPatch.append(file)
@@ -82,10 +114,13 @@ def generateBlocksForFilesToPatch(filesToPatch):
     return blocks
 
 def resolveBlock(block, localBlocks):
+    print(len(localBlocks))
     if block in localBlocks:
         return localBlocks[block]
     else:
         return mockRequestBlock(block)
+        res = requests.get('http://localhost:3000/patch/block/' + block)
+        return res.content
 
 def invalidFileMetadata(file):
     filePath = installDirectory + '/' + file
@@ -113,7 +148,7 @@ def patchFiles(newBuild, localBlocks, filesToPatch):
     args = []
     for file in filesToPatch:
         args.append((file, newBuild, localBlocks))
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
         for _ in executor.map(applyPatchToFile, args):
             pass
 
