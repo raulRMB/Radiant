@@ -8,6 +8,7 @@ Platforms/HoloLens/Config/HoloLensEngine.ini
 *.lo
 *.o
 *.obj
+**/.DS_Store
 **/build/**/*
 **/outputs/**/*
 **/chonks/**/*
