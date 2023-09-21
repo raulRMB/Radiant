@@ -39,6 +39,32 @@ app.get('/patch/block/:id', (req, res) => {
   }
 })
 
+app.get('/patch/info/latest', (req, res) => {
+  const path = `./patchData/patchData.json`
+  fs.stat(path, function(err, stat) {
+    if (err == null) {
+      res.sendFile(path, { root: __dirname })
+    } else {
+      res.send('bundle not found')
+      console.log(`File doesn't exist ${err}`)
+    }
+  });
+  })
+
+app.get('/patch/bundle/:id', (req, res) => {
+  if(req.params.id) {
+    const path = `./patchData/bundles/${req.params.id}`
+    fs.stat(path, function(err, stat) {
+      if (err == null) {
+        res.sendFile(path, { root: __dirname })
+      } else {
+        res.send('bundle not found')
+        console.log(`File doesn't exist ${err}`)
+      }
+    });
+  }
+})
+
 io.on(sEvent.connect, (socket) => {
   util.authMiddleware(socket, userManager)
   socket.on(sEvent.disconnect, (reason) => {

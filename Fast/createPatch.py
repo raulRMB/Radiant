@@ -4,24 +4,58 @@ import json
 import time
 import os
 import concurrent.futures
+import zstandard as zstd
+import multiprocessing
 
 directory = "test/fakeBuild"
-outputPath = "test/fakePatchServer"
+outputPath = "../Gluu/Platform/ServerBackend/patchData"
 blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536
-blockSet = set()
+blockSet = {}
 
-bundleSize = 65
-blocksProcessed = 0
-bundle = []
-bundleData = b""
 
 def main():
     ensureDirsExist()
     data = processDir(directory)
+    buildBundles(data)
     writePatchData(data)
     cleanupBlocks(data)
+
+def buildBundles(data):
+    blocksProcessed = 0
+    bundleList = {}
+    bundleData = b''
+    length = 0
+    for block in blockSet:
+        result = blockSet[block]
+        bundleList[blocksProcessed] = {"hash": result.hash, "length": len(result.data), "blockOffset": length}   
+        length += len(result.data)
+        bundleData = bundleData + result.data
+        if(blocksProcessed == 59):
+            if(len(bundleData) != length):
+                print("!")
+            createBundle(bundleList, bundleData, data)
+            bundleList = {}
+            bundleData = b''
+            blocksProcessed = 0
+            length = 0
+        else:
+            blocksProcessed += 1
+
+def getBundleId(bundleList):
+    return sha256(str(bundleList).encode('utf-8')).hexdigest()
+
+def writeBundle(bundleList, bundleData, id):
+    outputFilename = os.path.join(bundlePath + '/' + id)
+    if not os.path.exists(outputFilename):
+            with open(outputFilename, 'wb') as outputFile:
+                outputFile.write(bundleData)
+
+def createBundle(bundleList, bundleData, data):
+    id = getBundleId(bundleList)
+    writeBundle(bundleList, bundleData, id)
+    data["bundles"][id] = bundleList
 
 def ensureDirsExist():
     os.makedirs(os.path.abspath(directory), exist_ok=True)
@@ -40,44 +74,26 @@ def cleanupBlocks(data):
             pass
 
 def removeBlock(path):
-    os.remove(path)
+    os.remove(path.replace(os.sep, '/'))
 
 def getRelPath(filePath, directory):
     relPath = os.path.relpath(filePath, directory)
     return relPath.replace(os.sep, '/')
 
 def processBlock(result, fileData, fileHash, data):
+    #c = zstd.ZstdCompressor(level=19)
+    #compressed = c.compress(result.data)
     outputFilename = os.path.join(blockPath, result.hash)
     if not os.path.exists(outputFilename):
         with open(outputFilename, 'wb') as outputFile:
             outputFile.write(result.data)
     fileHash.append(result.hash)
-    blockSet.add(result.hash)
+    blockSet[result.hash] = result
     fileData["blocks"].append(result.hash)
-    bundle.append(result.hash)
-    global blocksProcessed 
-    handleBundling(data, result.data)
 
-def handleBundling(data, binary):
-    global blocksProcessed
-    global bundleData
-    if(blocksProcessed % bundleSize == 0):
-        global bundle
-        bundleId = sha256(''.join(bundle).encode('utf-8')).hexdigest()
-        data["bundles"][bundleId] = bundle
-        outputFilename = os.path.join(bundlePath + '/' + bundleId)
-        if not os.path.exists(outputFilename):
-            with open(outputFilename, 'wb') as outputFile:
-                outputFile.write(bundleData)
-        bundle = []
-        bundleData = b""
-    else:
-        bundleData = bundleData + binary
-    blocksProcessed += 1
-    
 def processFile(args):
     path = args[0]
-    relPath = args[1] 
+    relPath = args[1]
     data = args[2]
     fileData = {"hash" : "", "blocks": []}
     fast = fastcdc(path, blockSize * .5, blockSize, blockSize * 2, True, sha256)

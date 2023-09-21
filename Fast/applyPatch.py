@@ -1,11 +1,21 @@
 import os
 import json
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from fastcdc import fastcdc
 from hashlib import sha256
 import threading
 import time
 import concurrent.futures
+
+serverUrl = "http://localhost:3000"
+
+session = requests.Session()
+retry = Retry(connect=3, backoff_factor=0.5)
+adapter = HTTPAdapter(max_retries=retry)
+session.mount('http://', adapter)
+session.mount('https://', adapter)
 
 def loadChangeLog():
     try:
@@ -17,7 +27,7 @@ def loadChangeLog():
         return changeLogFile
 
 
-serverPath = "test/fakePatchServer"
+serverPath = "../Gluu/Platform/ServerBackend/patchData"
 installDirectory = "test/fakeClient/installDir"
 appDataPath = "test/fakeClient/appData"
 tempSuffix = "-temp-85ce84a3-8b4a-4c47-b1c7-17c2a8c6a69b"
@@ -30,50 +40,60 @@ def main():
     newBuild, oldBuild = loadPatchData()
     filesToPatch = getFilesToPatch(newBuild, oldBuild)
     localBlocks = generateBlocksForFilesToPatch(filesToPatch)
-    whichBlocksAreMissing(filesToPatch, newBuild, localBlocks)
-    whichBundlesShouldWeDownload(newBuild, localBlocks)
+    missingBlocks = whichBlocksAreMissing(filesToPatch, newBuild, localBlocks)
+    bundlePercents = whichBundlesShouldWeDownload(newBuild, missingBlocks)
+    downloadBundles(bundlePercents, newBuild, localBlocks)
     patchFiles(newBuild, localBlocks, filesToPatch)
     cleanupDir(newBuild)
     open(appDataPath + '/changelog.json', 'w').write(str(json.dumps(changeLog)))
     open(appDataPath + '/patchData.json', 'w').write(str(json.dumps(newBuild)))
+
+def downloadBundles(bundlePercents, newBuild, localBlocks):
+    for bundle in bundlePercents:
+        if bundlePercents[bundle] >= 0.5:
+            print('requesting bundle: ' + bundle)
+            res = session.get(serverUrl + '/patch/bundle/' + bundle)
+            for i in newBuild["bundles"][bundle]:
+                block = newBuild["bundles"][bundle][i]
+                length = block["length"]
+                offset = block["blockOffset"]
+                splice = res.content[offset:(offset + length)]
+                localBlocks[block["hash"]] = splice
+                if(len(splice) != length):
+                    print(len(splice))
+                    print(length)
+
 
 def ensureDirsExist():
     os.makedirs(os.path.abspath(installDirectory), exist_ok=True)
     os.makedirs(os.path.abspath(appDataPath), exist_ok=True)
 
 def whichBlocksAreMissing(filesToPatch, newBuild, localBlocks):
-    missingBlocks = []
+    missingBlocks = set()
     for file in filesToPatch:
         for block in newBuild[file]["blocks"]:
             if block not in localBlocks:
-                missingBlocks.append(block)
+                missingBlocks.add(block)
     return missingBlocks
 
-def whichBundlesShouldWeDownload(newBuild, localBlocks):
+def whichBundlesShouldWeDownload(newBuild, missingBlocks):
     bundlePercent = {}
-    for hash in localBlocks:
-        print(hash)
     for bundle in newBuild["bundles"]:
-        localCount = 0
-        size = 0
+        bundleSize = 0
+        blocksInThisBundleWeNeed = 0
         for block in newBuild["bundles"][bundle]:
-            #print(block)
-            if block in localBlocks:
-                localCount += 1
-            size += 1
-        bundlePercent[bundle] = localCount / size
-        # print(localCount)
-        # if localCount > 0:
-        #     print(localCount)
+            if newBuild["bundles"][bundle][block]["hash"] in missingBlocks:
+                blocksInThisBundleWeNeed += 1
+            bundleSize += 1
+        if bundleSize != 0:
+            bundlePercent[bundle] = blocksInThisBundleWeNeed / bundleSize
     return bundlePercent
         
-
 def loadPatchData():
     clientMap : dict = None
     if os.path.exists(appDataPath + '/patchData.json'):
         clientMap = open(appDataPath + '/patchData.json')
-    serverMap = open(serverPath + '/patchData.json')
-    newBuild = json.load(serverMap)
+    newBuild = session.get(serverUrl + '/patch/info/latest').json()
     oldBuild : dict = None
     if clientMap:
         oldBuild = json.load(clientMap)
@@ -98,7 +118,6 @@ def getFilesToPatch(newBuild, oldBuild):
         if file == "bundles":
             continue
         if oldBuild == None or file not in oldBuild or newBuild[file]["hash"] != oldBuild[file]["hash"] or invalidFileMetadata(file):
-            print(file + " needs patching")
             filesToPatch.append(file)
     return filesToPatch
 
@@ -114,12 +133,12 @@ def generateBlocksForFilesToPatch(filesToPatch):
     return blocks
 
 def resolveBlock(block, localBlocks):
-    print(len(localBlocks))
     if block in localBlocks:
         return localBlocks[block]
     else:
-        return mockRequestBlock(block)
-        res = requests.get('http://localhost:3000/patch/block/' + block)
+        print('requesting block: ' + block)
+        res = session.get('http://localhost:3000/patch/block/' + block)
+        localBlocks[block] = res.content
         return res.content
 
 def invalidFileMetadata(file):
