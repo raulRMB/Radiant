@@ -4,7 +4,7 @@ import json
 import time
 import os
 import concurrent.futures
-import zstandard as zstd
+# import zstandard as zstd
 import multiprocessing
 
 directory = "test/fakeBuild"
@@ -25,19 +25,17 @@ def main():
 def buildBundles(data):
     blocksProcessed = 0
     bundleList = {}
-    bundleData = b''
+    bundleData = []
     length = 0
     for block in blockSet:
         result = blockSet[block]
         bundleList[blocksProcessed] = {"hash": result.hash, "length": len(result.data), "blockOffset": length}   
         length += len(result.data)
-        bundleData = bundleData + result.data
+        bundleData.append(result.data)
         if(blocksProcessed == 59):
-            if(len(bundleData) != length):
-                print("!")
-            createBundle(bundleList, bundleData, data)
+            createBundle(bundleList, b''.join(bundleData), data)
             bundleList = {}
-            bundleData = b''
+            bundleData = []
             blocksProcessed = 0
             length = 0
         else:
