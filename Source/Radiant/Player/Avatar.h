@@ -163,6 +163,9 @@ public:
 	void S_Demolish(ETeamId PlayerTeamId, ABuilding* Building);
 
 	class ARTPlayerState* GetRTPS() const;
+
+	UFUNCTION(Server, Reliable)
+	void S_BufferMoveTo(const FHitResult& HitResult);
 	
 	virtual void PossessedBy(AController* NewController) override;
 	void OnXPChanged(const FOnAttributeChangeData& OnAttributeChangeData);

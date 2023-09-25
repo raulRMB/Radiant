@@ -15,8 +15,14 @@ class RADIANT_API UMeleeBasicAttack : public UGAAnimated
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class UGameplayEffect>> Effects;
+	TSubclassOf<class UGameplayEffect> MovementStoppedEffect;
+
+	FActiveGameplayEffectHandle MovementStoppedEffectHandle;
 	
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class UGameplayEffect>> Effects;
+	uint8 bHasRemovedMovementStoppedEffect : 1;
+
 	virtual void OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	virtual void OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	virtual void OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) override;
@@ -29,6 +35,9 @@ class RADIANT_API UMeleeBasicAttack : public UGAAnimated
 	
 	UFUNCTION()
 	void OnUnsetUncancelable(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void RemoveMovementStoppedEffect();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

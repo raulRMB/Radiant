@@ -74,7 +74,7 @@ void UAbilityTask_PathTo::Activate()
 void UAbilityTask_PathTo::TickTask(float DeltaTime)
 {
 	Super::TickTask(DeltaTime);
-	
+
 	if(!bCanMove)
 	{
 		EndTask();

@@ -11,21 +11,25 @@
 void UMeleeBasicAttack::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnAnimCancelled(EventTag, EventData);
+	RemoveMovementStoppedEffect();
 }
 
 void UMeleeBasicAttack::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnAnimCompleted(EventTag, EventData);
+	RemoveMovementStoppedEffect();
 }
 
 void UMeleeBasicAttack::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnAnimInterrupted(EventTag, EventData);
+	RemoveMovementStoppedEffect();
 }
 
 void UMeleeBasicAttack::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnAnimBlendOut(EventTag, EventData);
+	RemoveMovementStoppedEffect();
 }
 
 void UMeleeBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -56,11 +60,23 @@ void UMeleeBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEven
 void UMeleeBasicAttack::OnSetUncancelable(FGameplayEventData Payload)
 {
 	bIsCancelable = false;
+	MovementStoppedEffectHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(MovementStoppedEffect.GetDefaultObject(), 1.f, GetAbilitySystemComponentFromActorInfo()->MakeEffectContext());
 }
 
 void UMeleeBasicAttack::OnUnsetUncancelable(FGameplayEventData Payload)
 {
-	bIsCancelable = true;	
+	bIsCancelable = true;
+	RemoveMovementStoppedEffect();
+}
+
+void UMeleeBasicAttack::RemoveMovementStoppedEffect()
+{
+	if(bHasRemovedMovementStoppedEffect)
+	{
+		return;
+	}
+	bHasRemovedMovementStoppedEffect = true;
+	GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(MovementStoppedEffectHandle, 1);
 }
 
 void UMeleeBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,

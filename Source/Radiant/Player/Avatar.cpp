@@ -513,6 +513,11 @@ ARTPlayerState* AAvatar::GetRTPS() const
 	return GetPlayerState<ARTPlayerState>();
 }
 
+void AAvatar::S_BufferMoveTo_Implementation(const FHitResult& HitResult)
+{
+	
+}
+
 void AAvatar::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -701,7 +706,8 @@ bool AAvatar::IsVisibleForTeam(ETeamId TargetTeamId) const
 
 void AAvatar::M_PlayDeathMontage_Implementation()
 {
-	GetCapsuleComponent()->SetCollisionObjectType(ECC_PhysicsBody);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Artillery, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	PlayAnimMontage(DeathMontage);
 }
 
@@ -950,6 +956,15 @@ void AAvatar::AttackMove(const FInputActionValue& Value)
 			}
 		}
 	}
+
+	// if(AbilitySystemComponent->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("States.Movement.Stopped")))
+	// {
+	// 	S_BufferMoveTo(HitResult);
+	// }
+	// else
+	// {
+	// 	
+	// }
 
 	FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName("Ability.PathTo"));
 	CastAbility(Tag);
