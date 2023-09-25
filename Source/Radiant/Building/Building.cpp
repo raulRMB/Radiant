@@ -95,6 +95,9 @@ void ABuilding::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AttributeSet->SetMaxHealth(MaxHealth);
+	AttributeSet->SetHealth(MaxHealth);
+	
 	ActorManager = GetGameInstance()->GetSubsystem<UActorManager>();
 	GiveInitialAbilities();
 	

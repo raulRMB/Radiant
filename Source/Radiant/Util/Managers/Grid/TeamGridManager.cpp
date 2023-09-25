@@ -403,18 +403,18 @@ void ATeamGridManager::DrawVisible()
 				double X = (Actor->GetActorLocation().Y + 200.) / 200.;
 				double Y = 127. - (Actor->GetActorLocation().X - 200.) / 200.;
 
-				// for(float Rad = 0.f; Rad < TWO_PI; Rad += 0.01f)
-				// {
-				// 	FVector2D From = FVector2D(X, Y);
-				// 	FVector2D To = FVector2D(X + FMath::Cos(Rad) * 10, Y + FMath::Sin(Rad) * 10);
-				// 	CheckVisible(From, To);
-				// }
-				for(FIntVector2& Vec : GridManager->GetRange(EVisionRange::Medium))
+				for(float Rad = 0.f; Rad < TWO_PI; Rad += 0.01f)
 				{
 					FVector2D From = FVector2D(X, Y);
-					FVector2D To = FVector2D(X + Vec.X, Y + Vec.Y);
+					FVector2D To = FVector2D(X + FMath::Cos(Rad) * 20, Y + FMath::Sin(Rad) * 20);
 					CheckVisible(From, To);
 				}
+				// for(FIntVector2& Vec : GridManager->GetRange(EVisionRange::Medium))
+				// {
+				// 	FVector2D From = FVector2D(X, Y);
+				// 	FVector2D To = FVector2D(X + Vec.X, Y + Vec.Y);
+				// 	CheckVisible(From, To);
+				// }
 			}
 		}
 	}
