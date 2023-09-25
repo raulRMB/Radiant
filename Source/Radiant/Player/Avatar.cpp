@@ -706,8 +706,7 @@ bool AAvatar::IsVisibleForTeam(ETeamId TargetTeamId) const
 
 void AAvatar::M_PlayDeathMontage_Implementation()
 {
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Artillery, ECR_Ignore);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	HitBox->SetCollisionResponseToAllChannels(ECR_Ignore);
 	PlayAnimMontage(DeathMontage);
 }
 
