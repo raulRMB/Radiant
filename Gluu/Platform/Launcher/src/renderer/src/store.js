@@ -12,6 +12,9 @@ class Store {
     loggedIn = false
     username = null
 
+    patching = false
+    patchingPercent = 0
+
     lobby = null
 
     notifications = []
@@ -28,14 +31,18 @@ class Store {
             inQueue: observable,
             loggedIn: observable,
             lobby: observable,
+            patching: observable,
+            patchingPercent: observable,
             username: observable,
             notifications: observable,
             friends: observable,
             setupSocketEvents: action,
+            updatePatchingPercent: action,
             onConnected: action,
             onDisconneced: action,
             joinQueueResponse: action,
             onMatchFound: action,
+            checkForUpdate: action,
             onLoginNotify: action,
             onLogoutNotify: action,
             newFriendAdded: action,
@@ -47,7 +54,18 @@ class Store {
             onLobbyInvite: action,
             Logout: action
         })
+        window.electron.ipcRenderer.on('patching-update', (event, data) => {
+            if(data != 'DONE') {
+                this.updatePatchingPercent(data)
+            } else {
+                this.patching = false
+            }
+        });     
         this.setupSocketEvents()
+    }
+
+    updatePatchingPercent(data) {
+        this.patchingPercent = data
     }
 
     checkForUpdate = async () => {
@@ -55,7 +73,8 @@ class Store {
         const json = await res.json()
         // TODO set version number somewhere
         if(json.version != 1) {
-            window.electron.ipcRenderer.send('update');
+            this.patching = true
+            window.electron.ipcRenderer.send('update')
         }
     }
 

@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow } from 'electron'
-import { exec } from 'child_process'
+import { exec, spawn } from 'child_process'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -11,19 +11,29 @@ ipcMain.on('matchFound', (event, msg) => {
   });
 });
 
+
+let mainWindow
+
 ipcMain.on('update', (event, msg) => {
-  exec('python3 ./patch.py', (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(stdout);
+  const patcher = spawn('python3', ['-u', './patch.py']);
+
+  patcher.stdout.on('data', function (data) {
+    mainWindow.webContents.send('patching-update',  data.toString());
+    console.log(data.toString());
+  });
+
+  patcher.stderr.on('data', function (data) {
+    console.log('stderr: ' + data.toString());
+  });
+
+  patcher.on('exit', function (code) {
+    console.log('child process exited with code ' + code.toString());
   });
 })
 
 function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,

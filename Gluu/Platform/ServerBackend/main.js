@@ -14,6 +14,8 @@ import userManager from './src/db/db.js'
 import sEvent from '../socketEvents.mjs'
 import cors from 'cors'
 
+import crypto from 'crypto'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const port = 3000
@@ -56,7 +58,12 @@ app.get('/patch/info/latest', (req, res) => {
 })
 
 app.get('/patch/version', (req, res) => {
-  res.json({version: 2})
+  const path = `./patchData/patchData.json`
+  const fileBuffer = fs.readFileSync(path);
+  const hashSum = crypto.createHash('sha256');
+  hashSum.update(fileBuffer);
+  const hex = hashSum.digest('hex');
+  res.json({version: hex})
 })
 
 app.get('/patch/bundle/:id', (req, res) => {

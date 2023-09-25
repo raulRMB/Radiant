@@ -33,8 +33,9 @@ folderName = "/RadiantGames"
 platform = platform.system()
 
 if platform == 'Windows':
-    installDirectory = "C:/Program Files" + folderName
-    appDataPath = os.getenv('LOCALAPPDATA') + folderName
+    installDirectory = "C:/Program Files" + folderName + '/install'
+    appDataPath = "C:/Program Files" + folderName + '/data'
+    # appDataPath = os.getenv('LOCALAPPDATA').replace(os.sep, '/') + folderName
 elif platform == 'Darwin':
     installDirectory = '/Applications' + folderName
     appDataPath = expanduser("~") + '/Library/Application Support' + folderName
@@ -50,27 +51,45 @@ def main():
     localBlocks = generateBlocksForFilesToPatch(filesToPatch)
     missingBlocks = whichBlocksAreMissing(filesToPatch, newBuild, localBlocks)
     bundlePercents = whichBundlesShouldWeDownload(newBuild, missingBlocks)
-    downloadBundles(bundlePercents, newBuild, localBlocks)
+    bundles = bundlesToDownload(bundlePercents)
+    downloadBundles(bundles, newBuild, localBlocks)
     patchFiles(newBuild, localBlocks, filesToPatch)
     cleanupDir(newBuild)
-    open(appDataPath + '/changelog.json', 'w').write(str(json.dumps(changeLog)))
-    open(appDataPath + '/patchData.json', 'w').write(str(json.dumps(newBuild)))
+    writeJsonDataToFile(changeLog, appDataPath + '/changelog.json')
+    writeJsonDataToFile(newBuild, appDataPath + '/patchData.json')
 
-def downloadBundles(bundlePercents, newBuild, localBlocks):
+def writeJsonDataToFile(data, file):
+    try:
+        x = open(file, 'w')
+        x.write(str(json.dumps(data)))
+        x.close()
+    except Exception as e:
+        print(e)
+
+def bundlesToDownload(bundlePercents):
+    toDownload = []
     for bundle in bundlePercents:
         if bundlePercents[bundle] >= 0.5:
-            print('requesting bundle: ' + bundle)
-            res = session.get(serverUrl + '/patch/bundle/' + bundle)
-            for i in newBuild["bundles"][bundle]:
-                block = newBuild["bundles"][bundle][i]
-                length = block["length"]
-                offset = block["blockOffset"]
-                splice = res.content[offset:(offset + length)]
-                localBlocks[block["hash"]] = splice
+            toDownload.append(bundle)
+    return toDownload
+
+def downloadBundles(bundles, newBuild, localBlocks):
+    count = 0
+    total = len(bundles)
+    for bundle in bundles:
+        res = session.get(serverUrl + '/patch/bundle/' + bundle)
+        for i in newBuild["bundles"][bundle]:
+            block = newBuild["bundles"][bundle][i]
+            length = block["length"]
+            offset = block["blockOffset"]
+            splice = res.content[offset:(offset + length)]
+            localBlocks[block["hash"]] = splice
+        count += 1
+        print(f'{count/total}')
 
 def ensureDirsExist():
-    os.makedirs(os.path.abspath(installDirectory), exist_ok=True)
-    os.makedirs(os.path.abspath(appDataPath), exist_ok=True)
+    os.makedirs(os.path.abspath(installDirectory).replace(os.sep, '/'), exist_ok=True)
+    os.makedirs(os.path.abspath(appDataPath).replace(os.sep, '/'), exist_ok=True)
 
 def whichBlocksAreMissing(filesToPatch, newBuild, localBlocks):
     missingBlocks = set()
@@ -136,7 +155,7 @@ def resolveBlock(block, localBlocks):
     if block in localBlocks:
         return localBlocks[block]
     else:
-        print('requesting block: ' + block)
+        # print('requesting block: ' + block)
         res = session.get('http://localhost:3000/patch/block/' + block)
         if res.status_code == 404:
             raise Exception(f'Block not found! {block}') 
@@ -145,6 +164,8 @@ def resolveBlock(block, localBlocks):
 
 def invalidFileMetadata(file):
     filePath = installDirectory + '/' + file
+    if not os.path.exists(filePath):
+        return True
     size = str(os.path.getsize(filePath))
     lastMod = str(os.path.getmtime(filePath))
     try:
@@ -223,4 +244,5 @@ def cleanupFile(args):
 
 start_time = time.time()
 main()
-print("--- %s seconds ---" % (time.time() - start_time))
+# print("--- %s seconds ---" % (time.time() - start_time))
+print("DONE", end='')
