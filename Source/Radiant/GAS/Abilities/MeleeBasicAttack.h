@@ -23,9 +23,12 @@ class RADIANT_API UMeleeBasicAttack : public UGAAnimated
 	virtual void OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	
 	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
+
+	UFUNCTION()
+	void OnSetUncancelable(FGameplayEventData Payload);
 	
 	UFUNCTION()
-	void OnUncancellableEventRecieved(FGameplayEventData EventData);
+	void OnUnsetUncancelable(FGameplayEventData Payload);
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

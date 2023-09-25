@@ -10,25 +10,21 @@
 
 void UMeleeBasicAttack::OnAnimCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	bIsCancelable = true;
 	Super::OnAnimCancelled(EventTag, EventData);
 }
 
 void UMeleeBasicAttack::OnAnimCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	bIsCancelable = true;
 	Super::OnAnimCompleted(EventTag, EventData);
 }
 
 void UMeleeBasicAttack::OnAnimInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	bIsCancelable = true;
 	Super::OnAnimInterrupted(EventTag, EventData);
 }
 
 void UMeleeBasicAttack::OnAnimBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	bIsCancelable = true;
 	Super::OnAnimBlendOut(EventTag, EventData);
 }
 
@@ -57,13 +53,18 @@ void UMeleeBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEven
 	ReturnToDefault();
 }
 
-void UMeleeBasicAttack::OnUncancellableEventRecieved(FGameplayEventData EventData)
+void UMeleeBasicAttack::OnSetUncancelable(FGameplayEventData Payload)
 {
 	bIsCancelable = false;
 }
 
+void UMeleeBasicAttack::OnUnsetUncancelable(FGameplayEventData Payload)
+{
+	bIsCancelable = true;	
+}
+
 void UMeleeBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-                                   const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+                                        const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	URTAbility::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
@@ -83,10 +84,16 @@ void UMeleeBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	SetMouseWorldLocation(Target->GetActorLocation());
 
-	UAbilityTask_WaitGameplayEvent* WaitEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, FGameplayTag::RequestGameplayTag("Notify.Uncancellable"));
-	WaitEvent->EventReceived.AddDynamic(this, &UMeleeBasicAttack::OnUncancellableEventRecieved);
-	WaitEvent->ReadyForActivation();
-
 	float AttackSpeed = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSet()->GetAttackSpeed();
 	BindAnimations(AttackSpeed);
+
+	FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.State.Uncancelable.Set"));
+	UAbilityTask_WaitGameplayEvent* Task = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
+	Task->EventReceived.AddDynamic(this, &UMeleeBasicAttack::OnSetUncancelable);
+	Task->Activate();
+
+	EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.State.Uncancelable.Unset"));
+	UAbilityTask_WaitGameplayEvent* Task2 = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
+	Task2->EventReceived.AddDynamic(this, &UMeleeBasicAttack::OnUnsetUncancelable);
+	Task2->Activate();
 }
