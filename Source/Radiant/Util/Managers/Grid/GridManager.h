@@ -61,7 +61,8 @@ public:
 	void GenerateVisionRanges();
 
 	TArray<FIntVector2>& GetRange(EVisionRange Range);
-	
+
+	UFUNCTION(CallInEditor)
 	void InitGrid();
 
 	void AddVisibleActor(AActor* Actor);

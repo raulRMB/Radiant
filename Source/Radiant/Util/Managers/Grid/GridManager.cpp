@@ -230,10 +230,10 @@ void AGridManager::PlacePieceAtMouse(const FGridPiece Piece)
 			Building->S_SetTeamId(Piece.TeamId);
 			Building->M_ShowInfoBar(true, 1.f);
 			Building->InitGridValues(this, Piece);
+			PieceChanged(Building);
 		}
 		Actor->FinishSpawning(Transform);
 		Cells[TransformedPos.X + TransformedPos.Y * GridDimensions] = Piece.Type;
-		//PieceChanged(Piece);
 	}
 }
 
