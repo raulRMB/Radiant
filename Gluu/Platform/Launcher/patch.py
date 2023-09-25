@@ -1,6 +1,9 @@
 import os
 import json
 import requests
+import platform
+from os.path import expanduser
+
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from fastcdc import fastcdc
@@ -26,10 +29,15 @@ def loadChangeLog():
         changeLogFile = {}
         return changeLogFile
 
-installDirectory = "C:\Program Files\RadiantGames"
-appData = os.getenv('LOCALAPPDATA')
-print(appData)
-appDataPath = appData + '/RadiantGames"
+folderName = "/RadiantGames"
+platform = platform.system()
+
+if platform == 'Windows':
+    installDirectory = "C:/Program Files" + folderName
+    appDataPath = os.getenv('LOCALAPPDATA') + folderName
+elif platform == 'Darwin':
+    installDirectory = '/Applications' + folderName
+    appDataPath = expanduser("~") + '/Library/Application Support' + folderName
 tempSuffix = "-temp-85ce84a3-8b4a-4c47-b1c7-17c2a8c6a69b"
 blockSize = 65536
 
@@ -59,10 +67,6 @@ def downloadBundles(bundlePercents, newBuild, localBlocks):
                 offset = block["blockOffset"]
                 splice = res.content[offset:(offset + length)]
                 localBlocks[block["hash"]] = splice
-                if(len(splice) != length):
-                    print(len(splice))
-                    print(length)
-
 
 def ensureDirsExist():
     os.makedirs(os.path.abspath(installDirectory), exist_ok=True)
@@ -148,6 +152,8 @@ def invalidFileMetadata(file):
 
 def setFileMetadata(file):
     filePath = installDirectory + '/' + file
+    if ".DS_Store" in filePath:
+        return
     size = str(os.path.getsize(filePath))
     lastMod = str(os.path.getmtime(filePath))
     changeLog[file] = {"size": size, "lastMod": lastMod}
@@ -208,6 +214,8 @@ def cleanupFile(args):
         os.rename(fileName, name)
         setFileMetadata(relName.replace(tempSuffix, ""))
     elif relName not in newBuild:
+        if relName == ".DS_Store":
+            return
         del changeLog[relName]
         os.remove(fileName)
 
