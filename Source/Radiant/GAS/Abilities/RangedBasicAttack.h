@@ -29,5 +29,10 @@ class RADIANT_API URangedBasicAttack : public UGAAnimated
 	
 	virtual void OnAnimEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
+	UFUNCTION()
+	void OnSetUnancelable(FGameplayEventData EventData);
+	UFUNCTION()
+	void OnUnsetUncancelable(FGameplayEventData EventData);
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

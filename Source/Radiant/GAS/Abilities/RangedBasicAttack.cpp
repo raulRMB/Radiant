@@ -2,6 +2,7 @@
 
 #include "GAS/Abilities/RangedBasicAttack.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Player/Avatar.h"
 #include "GAS/Tasks/PlayMontageAndWaitForEvent.h"
 #include "Player/RTPlayerState.h"
@@ -43,8 +44,18 @@ void URangedBasicAttack::OnAnimEventReceived(FGameplayTag EventTag, FGameplayEve
 	ReturnToDefault();
 }
 
+void URangedBasicAttack::OnSetUnancelable(FGameplayEventData EventData)
+{
+	bIsCancelable = false;
+}
+
+void URangedBasicAttack::OnUnsetUncancelable(FGameplayEventData EventData)
+{
+	bIsCancelable = true;
+}
+
 void URangedBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-                                   const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+                                         const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	URTAbility::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
@@ -66,4 +77,14 @@ void URangedBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 	float AttackSpeed = Cast<ARTPlayerState>(GetOwningActorFromActorInfo())->GetAttributeSet()->GetAttackSpeed();
 	BindAnimations(AttackSpeed);
+
+	FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.State.Uncancelable.Set"));
+	UAbilityTask_WaitGameplayEvent* Task = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
+	Task->EventReceived.AddDynamic(this, &URangedBasicAttack::OnSetUnancelable);
+	Task->Activate();
+
+	EventTag = FGameplayTag::RequestGameplayTag(FName("Ability.State.Uncancelable.Unset"));
+	UAbilityTask_WaitGameplayEvent* Task2 = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
+	Task2->EventReceived.AddDynamic(this, &URangedBasicAttack::OnUnsetUncancelable);
+	Task2->Activate();
 }
