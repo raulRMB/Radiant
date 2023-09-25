@@ -36,7 +36,7 @@ app.get('/patch/block/:id', (req, res) => {
       if (err == null) {
         res.sendFile(path, { root: __dirname })
       } else {
-        res.send('block not found')
+        res.sendStatus(404)
         console.log(`File doesn't exist ${err}`)
       }
     });

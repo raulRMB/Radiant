@@ -138,6 +138,8 @@ def resolveBlock(block, localBlocks):
     else:
         print('requesting block: ' + block)
         res = session.get('http://localhost:3000/patch/block/' + block)
+        if res.status_code == 404:
+            raise Exception(f'Block not found! {block}') 
         localBlocks[block] = res.content
         return res.content
 

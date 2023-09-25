@@ -20,6 +20,7 @@ def main():
     data = processDir(directory)
     buildBundles(data)
     writePatchData(data)
+    validateBlocks(data)
     cleanupBlocks(data)
 
 def buildBundles(data):
@@ -41,6 +42,22 @@ def buildBundles(data):
         else:
             blocksProcessed += 1
     createBundle(bundleList, b''.join(bundleData), data)
+
+def validateBlocks(data):
+    missing = []
+    blockCount = 0
+    for file in data:
+        if file == "bundles":
+            continue
+        for block in data[file]["blocks"]:
+            blockCount += 1
+            outputFilename = os.path.join(blockPath + '/' + block)
+            if not os.path.exists(outputFilename):
+                missing.append(block)
+    if(len(missing) > 0):
+        print(f'Missing {len(missing)} of {blockCount} blocks!')
+    else:
+        print('Validated that patchData matches blocks')
 
 def getBundleId(bundleList):
     return sha256(str(bundleList).encode('utf-8')).hexdigest()
