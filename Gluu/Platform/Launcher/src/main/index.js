@@ -11,6 +11,16 @@ ipcMain.on('matchFound', (event, msg) => {
   });
 });
 
+ipcMain.on('update', (event, msg) => {
+  exec('python3 ./patch.py', (err, stdout, stderr) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(stdout);
+  });
+})
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
