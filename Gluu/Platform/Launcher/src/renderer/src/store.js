@@ -23,6 +23,7 @@ class Store {
         } else {
             this.socket = io(`http://localhost:3000`, { transports: ['websocket'] });
         }
+        this.checkForUpdate()
         makeObservable(this, {
             inQueue: observable,
             loggedIn: observable,
@@ -47,6 +48,15 @@ class Store {
             Logout: action
         })
         this.setupSocketEvents()
+    }
+
+    checkForUpdate = async () => {
+        const res = await fetch('http://localhost:3000/patch/version')
+        const json = await res.json()
+        // TODO set version number somewhere
+        if(json.version != 1) {
+            window.electron.ipcRenderer.send('update');
+        }
     }
 
     setupSocketEvents = () => {

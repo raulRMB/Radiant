@@ -12,6 +12,7 @@ import serverManager from './src/servers/serverManager.js'
 import queueManager from './src/matchmaking/queueManager.js'
 import userManager from './src/db/db.js'
 import sEvent from '../socketEvents.mjs'
+import cors from 'cors'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -23,6 +24,9 @@ const io = new Server(server)
 
 app.set('view engine', 'pug')
 app.use("/socketio", express.static(path.join(__dirname, "node_modules/socket.io/client-dist")))
+app.use(cors({
+  origin: '*'
+}));
 app.get('/', (req, res) => res.render('index', {servers: serverManager.getServers()}))
 
 app.get('/patch/block/:id', (req, res) => {
@@ -49,7 +53,11 @@ app.get('/patch/info/latest', (req, res) => {
       console.log(`File doesn't exist ${err}`)
     }
   });
-  })
+})
+
+app.get('/patch/version', (req, res) => {
+  res.json({version: 2})
+})
 
 app.get('/patch/bundle/:id', (req, res) => {
   if(req.params.id) {

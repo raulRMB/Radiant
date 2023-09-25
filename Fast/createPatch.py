@@ -40,6 +40,7 @@ def buildBundles(data):
             length = 0
         else:
             blocksProcessed += 1
+    createBundle(bundleList, b''.join(bundleData), data)
 
 def getBundleId(bundleList):
     return sha256(str(bundleList).encode('utf-8')).hexdigest()
