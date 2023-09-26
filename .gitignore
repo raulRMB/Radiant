@@ -47,7 +47,7 @@ Platforms/HoloLens/Config/HoloLensEngine.ini
 *.sdf
 *.VC.db
 *.VC.opendb
-Gluu/Platform/ServerBackend/patchData/**/*
+Gluu/Backend/data/patchData/**/*
 Gluu/dist/*
 **/node_modules/*
 

@@ -8,12 +8,11 @@ import concurrent.futures
 import multiprocessing
 
 directory = "test/fakeBuild"
-outputPath = "../Gluu/Platform/ServerBackend/patchData"
+outputPath = "../Gluu/Backend/data/patchData"
 blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536
 blockSet = {}
-
 
 def main():
     ensureDirsExist()
