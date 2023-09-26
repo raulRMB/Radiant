@@ -19,8 +19,11 @@ const io = new Server(server)
 
 app.set('view engine', 'pug')
 app.use("/socketio", express.static(path.join(__dirname, "node_modules/socket.io/client-dist")))
+app.use("/", express.static(path.join(__dirname, "static")))
 app.use(cors({origin: '*'}))
-app.get('/', (req, res) => res.render('index', {servers: serverManager.getServers()}))
+//app.get('/', (req, res) => res.sendFile('index', {servers: serverManager.getServers()}))
+
+//app.get('/download', (req, res) => res.sendFile('./data/client/Radiant-Setup.exe', { root: __dirname }))
 
 import clientAPI from './src/clientAPI/clientAPI.js'
 clientAPI(io)
