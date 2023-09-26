@@ -1,6 +1,7 @@
 import sEvent from '../../../socketEvents.mjs'
 import userManager from './users/users.js'
 import queueManager from './matchmaking/queueManager.js'
+import lobbies from './lobbies/lobbies.js'
 
 const authMiddleware = (socket, userManager) => {
     socket.use((packet,next) => {
@@ -29,8 +30,8 @@ export default (io) => {
       socket.on(sEvent.addFriend, (msg) => userManager.addFriend(socket, msg.username))
       socket.on(sEvent.acceptFriendRequest, msg => userManager.acceptFriend(socket, msg.username))
       socket.on(sEvent.removeFriend, msg => userManager.removeFriend(socket, msg.username))
-      socket.on(sEvent.inviteToLobby, msg => userManager.sendInviteToLobby(socket, msg.username, msg.lobbyId))
-      socket.on(sEvent.acceptLobbyInvite, msg => userManager.joinLobby(socket, msg.lobbyId))
+      socket.on(sEvent.inviteToLobby, msg => lobbies.sendInviteToLobby(socket, msg.username, msg.lobbyId))
+      socket.on(sEvent.acceptLobbyInvite, msg => lobbies.joinLobby(socket, msg.lobbyId))
       // socket.on(sEvent.addServer, async () => await serverManager.add())
       // socket.on(sEvent.restartServer, async (msg) => await serverManager.restart(msg.name))
       // socket.on(sEvent.removeServer, async (msg) => await serverManager.remove(msg.name))

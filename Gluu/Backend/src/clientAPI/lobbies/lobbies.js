@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto'
 import sEvents from '../../../../socketEvents.mjs'
 import userManager from '../users/users.js'
+
 let lobbies = {}
 
 const api = {
@@ -39,7 +40,7 @@ const api = {
     },
     sendInviteToLobby: (socket, username, lobbyId) => {
         const from = userManager.getSessionUser(socket)
-        const user = userPS.get(username.toUpperCase())
+        const user = userManager.getUserFromUsername(username)
         const lobby = lobbies[lobbyId]
         if(user && lobby) {
             const socket = userManager.getSocketFromUsername(user.username)

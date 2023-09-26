@@ -163,6 +163,7 @@ const api = {
             friendSocket.emit(sEvents.notify.friendRemoved, {username: f2.username})
         }
     },
+    getUserFromUsername: (username) => {return userPS.get(username.toUpperCase())},
     getSessionUser: (socket) => sessionsIdToUser[socket.id],
     getSocketFromUsername: (username) => sessionsUsernameToSocket[username],
     hasSession: (socket) => sessionsIdToUser[socket.id] !== undefined,
