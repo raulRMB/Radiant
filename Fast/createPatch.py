@@ -135,7 +135,7 @@ def processDir(installDirectory):
 
 def writePatchData(data):
     maps = open(outputPath + "/patchData.json", "w")
-    maps.write(str(json.dumps(data, indent=4)))
+    maps.write(str(json.dumps(data)))
     maps.close()
 
 start_time = time.time()

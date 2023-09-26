@@ -3,6 +3,9 @@ import { exec, spawn } from 'child_process'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import fs from 'fs'
+import { homedir } from 'os'
+import crypto from 'crypto'
 
 const { ipcMain } = require('electron')
 ipcMain.on('matchFound', (event, msg) => {
@@ -11,15 +14,40 @@ ipcMain.on('matchFound', (event, msg) => {
   });
 });
 
-
 let mainWindow
+const folderName = "/RadiantGames"
+let installDirectory
+let appDataPath
+if(process.platform == 'win32') {
+  installDirectory = "C:/Program Files" + folderName + '/install'
+  appDataPath = "C:/Program Files" + folderName + '/data'
+}
+else if(process.platform == 'darwin') {
+  installDirectory = '/Applications' + folderName
+  appDataPath =  homedir() + '/Library/Application Support' + folderName
+}
+
+const getVersionHash = async () => {
+  const path = `${appDataPath}/patchData.json`
+  try{
+    fs.accessSync(path, fs.constants.F_OK);
+  }catch(e){
+    return null
+  }
+  const fileBuffer = fs.readFileSync(path);
+  const hashSum = crypto.createHash('sha256');
+  hashSum.update(fileBuffer);
+  return hashSum.digest('hex');
+}
+
+const version = getVersionHash();
+ipcMain.handle('get-version', () => version);
 
 ipcMain.on('update', (event, msg) => {
   const patcher = spawn('python3', ['-u', './patch.py']);
 
   patcher.stdout.on('data', function (data) {
     mainWindow.webContents.send('patching-update',  data.toString());
-    console.log(data.toString());
   });
 
   patcher.stderr.on('data', function (data) {

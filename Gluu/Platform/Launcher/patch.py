@@ -85,7 +85,7 @@ def downloadBundles(bundles, newBuild, localBlocks):
             splice = res.content[offset:(offset + length)]
             localBlocks[block["hash"]] = splice
         count += 1
-        print(f'{count/total}')
+        print(f'{round(count/total * 100)}', end='')
 
 def ensureDirsExist():
     os.makedirs(os.path.abspath(installDirectory).replace(os.sep, '/'), exist_ok=True)
@@ -155,7 +155,6 @@ def resolveBlock(block, localBlocks):
     if block in localBlocks:
         return localBlocks[block]
     else:
-        # print('requesting block: ' + block)
         res = session.get('http://localhost:3000/patch/block/' + block)
         if res.status_code == 404:
             raise Exception(f'Block not found! {block}') 

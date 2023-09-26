@@ -26,9 +26,7 @@ const io = new Server(server)
 
 app.set('view engine', 'pug')
 app.use("/socketio", express.static(path.join(__dirname, "node_modules/socket.io/client-dist")))
-app.use(cors({
-  origin: '*'
-}));
+app.use(cors({origin: '*'}))
 app.get('/', (req, res) => res.render('index', {servers: serverManager.getServers()}))
 
 app.get('/patch/block/:id', (req, res) => {

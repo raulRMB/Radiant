@@ -26,7 +26,6 @@ class Store {
         } else {
             this.socket = io(`http://localhost:3000`, { transports: ['websocket'] });
         }
-        this.checkForUpdate()
         makeObservable(this, {
             inQueue: observable,
             loggedIn: observable,
@@ -54,10 +53,12 @@ class Store {
             onLobbyInvite: action,
             Logout: action
         })
+        this.checkForUpdate()
         window.electron.ipcRenderer.on('patching-update', (event, data) => {
             if(data != 'DONE') {
                 this.updatePatchingPercent(data)
             } else {
+                this.patchingPercent = 100
                 this.patching = false
             }
         });     
@@ -71,8 +72,8 @@ class Store {
     checkForUpdate = async () => {
         const res = await fetch('http://localhost:3000/patch/version')
         const json = await res.json()
-        // TODO set version number somewhere
-        if(json.version != 1) {
+        const version = await window.electron.ipcRenderer.invoke('get-version')
+        if(json.version != version) {
             this.patching = true
             window.electron.ipcRenderer.send('update')
         }
