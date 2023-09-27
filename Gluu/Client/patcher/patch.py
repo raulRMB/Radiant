@@ -11,10 +11,13 @@ from hashlib import sha256
 import threading
 import time
 import concurrent.futures
+from concurrent.futures import as_completed
+from requests_futures.sessions import FuturesSession
 
 serverUrl = "http://localhost:3000"
 
 session = requests.Session()
+asyncsession = FuturesSession()
 retry = Retry(connect=3, backoff_factor=0.5)
 adapter = HTTPAdapter(max_retries=retry)
 session.mount('http://', adapter)
@@ -76,13 +79,19 @@ def bundlesToDownload(bundlePercents):
 def downloadBundles(bundles, newBuild, localBlocks):
     count = 0
     total = len(bundles)
+    futures = []
     for bundle in bundles:
-        res = session.get(serverUrl + '/patch/bundle/' + bundle)
+        res = asyncsession.get(serverUrl + '/patch/bundle/' + bundle)
+        futures.append(res)
+        count += 1
+    count = 0
+    for future in as_completed(futures):
+        resp = future.result()
         for i in newBuild["bundles"][bundle]:
             block = newBuild["bundles"][bundle][i]
             length = block["length"]
             offset = block["blockOffset"]
-            splice = res.content[offset:(offset + length)]
+            splice = resp.content[offset:(offset + length)]
             localBlocks[block["hash"]] = splice
         count += 1
         print(f'{round(count/total * 100)}', end='')
