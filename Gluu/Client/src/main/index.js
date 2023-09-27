@@ -7,6 +7,8 @@ import fs from 'fs'
 import path from 'path'
 import { homedir } from 'os'
 import crypto from 'crypto'
+import checkElevated from 'native-is-elevated'
+const isElevated = checkElevated();
 
 const { ipcMain } = require('electron')
 ipcMain.on('matchFound', (event, msg) => {
@@ -33,12 +35,12 @@ const getVersionHash = async () => {
   try{
     fs.accessSync(path, fs.constants.F_OK);
   }catch(e){
-    return null
+    return {hash: null, isElevated}
   }
   const fileBuffer = fs.readFileSync(path);
   const hashSum = crypto.createHash('sha256');
   hashSum.update(fileBuffer);
-  return hashSum.digest('hex');
+  return {hash: hashSum.digest('hex'), isElevated};
 }
 
 const version = getVersionHash();
@@ -47,9 +49,9 @@ ipcMain.handle('get-version', () => version);
 function findPatcherScript() {
   const possibilities = [
     // In packaged app
-    path.join(process.resourcesPath, "patcher", "patch.py"),
+    path.join(process.resourcesPath, "patcher", "dist", "patch.exe"),
     // In development
-    "./patcher/patch.py",
+    "./patcher/dist/patch.exe",
   ];
   for (const path of possibilities) {
     if (fs.existsSync(path)) {

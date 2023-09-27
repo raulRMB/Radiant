@@ -37,6 +37,7 @@
     "electron-updater": "^6.1.1",
     "mobx": "^6.10.2",
     "mobx-react": "^9.0.1",
+    "native-is-elevated": "^0.7.0",
     "react-icons": "^4.11.0",
     "socket.io-client": "^4.7.2"
   },

@@ -35,8 +35,12 @@ const api = {
         scrypt(msg.password, salt, 64, (err, derived_key) => {
             if(!err) {
                 const upperCaseUsername = msg.username.toUpperCase()
-                registerTransaction(upperCaseUsername, derived_key, salt, msg.username)
-                api.login(msg.username, msg.password, socket)
+                try {
+                    registerTransaction(upperCaseUsername, derived_key, salt, msg.username)
+                    api.login(msg.username, msg.password, socket)
+                } catch(e) {
+                    console.log(e)
+                }
             }
         })     
     },

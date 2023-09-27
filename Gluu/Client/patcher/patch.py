@@ -1,30 +1,31 @@
 import os
 import json
-import requests
 import platform
 from os.path import expanduser
 
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+import requests
+import asyncio
+import concurrent.futures
+import aiohttp
+import aiofiles
+import aiofiles.os
+
 from fastcdc import fastcdc
 from hashlib import sha256
-import threading
 import time
-import concurrent.futures
-from concurrent.futures import as_completed
-from requests_futures.sessions import FuturesSession
 
-serverUrl = "http://localhost:3000"
+serverUrl = "https://rtb.nyc3.cdn.digitaloceanspaces.com"
 
-session = requests.Session()
-asyncsession = FuturesSession()
-retry = Retry(connect=3, backoff_factor=0.5)
-adapter = HTTPAdapter(max_retries=retry)
-session.mount('http://', adapter)
-session.mount('https://', adapter)
-
-asyncsession.mount('http://', adapter)
-asyncsession.mount('https://', adapter)
+async def fetch(s, url, id, json=False):
+    async with s.get(url) as r:
+        if r.status != 200:
+            r.raise_for_status()
+        if json:
+            data = await r.json()
+        else:
+            data = await r.read()
+        await asyncio.sleep(0)
+        return data, id
 
 def loadChangeLog():
     try:
@@ -50,19 +51,31 @@ blockSize = 65536
 
 changeLog = loadChangeLog()
 
-def main():
-    ensureDirsExist()
+async def main():
+    
+    start_time = time.time()
+    await ensureDirsExist()
     newBuild, oldBuild = loadPatchData()
     filesToPatch = getFilesToPatch(newBuild, oldBuild)
-    localBlocks = generateBlocksForFilesToPatch(filesToPatch)
-    missingBlocks = whichBlocksAreMissing(filesToPatch, newBuild, localBlocks)
-    bundlePercents = whichBundlesShouldWeDownload(newBuild, missingBlocks)
-    bundles = bundlesToDownload(bundlePercents)
-    downloadBundles(bundles, newBuild, localBlocks)
-    patchFiles(newBuild, localBlocks, filesToPatch)
+    localBlocks = generateBlocks(filesToPatch)
+    missingBlocks = getMissingBlocks(filesToPatch, newBuild, localBlocks)
+    bundleInfo = analyzeBundles(newBuild, missingBlocks)
+    missingBlocks, bundles = bundlesToDownload(bundleInfo, missingBlocks)
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+    connector = aiohttp.TCPConnector(limit=3000)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        await downloadBundles(bundles, newBuild, localBlocks, session)
+        await downloadBlocks(missingBlocks)
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+    await patchFiles(newBuild, localBlocks, filesToPatch)
     cleanupDir(newBuild)
     writeJsonDataToFile(changeLog, appDataPath + '/changelog.json')
     writeJsonDataToFile(newBuild, appDataPath + '/patchData.json')
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 def writeJsonDataToFile(data, file):
     try:
@@ -72,37 +85,45 @@ def writeJsonDataToFile(data, file):
     except Exception as e:
         print(e)
 
-def bundlesToDownload(bundlePercents):
-    toDownload = []
-    for bundle in bundlePercents:
-        if bundlePercents[bundle] >= 0.5:
-            toDownload.append(bundle)
-    return toDownload
+def bundlesToDownload(bundleInfo, missingBlocks):
+    toDownload = {}
+    for bundle in bundleInfo:
+        if bundleInfo[bundle]["percentNeeded"] >= 0.5:
+            toDownload[bundle] = bundleInfo[bundle]["blocksNeeded"]
+            for block in bundleInfo[bundle]["blocksNeeded"]:
+                missingBlocks.remove(block)
+    return missingBlocks, toDownload
 
-def downloadBundles(bundles, newBuild, localBlocks):
-    count = 0
-    total = len(bundles)
-    futures = []
+async def downloadBlocks(missingBlocks):
+    tasks = []
+    for block in missingBlocks:
+        task = asyncio.create_task(fetch(s, serverUrl + '/patchData/blocks/' + block, block))
+        tasks.append(task)
+    for task in asyncio.as_completed(tasks):
+        resp, id = await task
+        localBlocks[id] = resp
+
+async def downloadBundles(bundles, newBuild, localBlocks, s):
+    tasks = []
     for bundle in bundles:
-        res = asyncsession.get(serverUrl + '/patch/bundle/' + bundle)
-        futures.append(res)
-        
-    for future in as_completed(futures):
-        resp = future.result()
-        for i in newBuild["bundles"][bundle]:
-            block = newBuild["bundles"][bundle][i]
+        task = asyncio.create_task(fetch(s, serverUrl + '/patchData/bundles/' + bundle, bundle))
+        tasks.append(task)
+    for task in asyncio.as_completed(tasks):
+        resp, id = await task
+        for i in newBuild["bundles"][id]:
+            block = newBuild["bundles"][id][i]
+            if block["hash"] in localBlocks:
+                continue
             length = block["length"]
             offset = block["blockOffset"]
-            splice = resp.content[offset:(offset + length)]
+            splice = resp[offset:(offset + length)]
             localBlocks[block["hash"]] = splice
-        count += 1
-        print(f'{round(count/total * 100)}', end='')
 
-def ensureDirsExist():
-    os.makedirs(os.path.abspath(installDirectory).replace(os.sep, '/'), exist_ok=True)
-    os.makedirs(os.path.abspath(appDataPath).replace(os.sep, '/'), exist_ok=True)
+async def ensureDirsExist():
+    await aiofiles.os.makedirs(os.path.abspath(installDirectory).replace(os.sep, '/'), exist_ok=True)
+    await aiofiles.os.makedirs(os.path.abspath(appDataPath).replace(os.sep, '/'), exist_ok=True)
 
-def whichBlocksAreMissing(filesToPatch, newBuild, localBlocks):
+def getMissingBlocks(filesToPatch, newBuild, localBlocks):
     missingBlocks = set()
     for file in filesToPatch:
         for block in newBuild[file]["blocks"]:
@@ -110,24 +131,26 @@ def whichBlocksAreMissing(filesToPatch, newBuild, localBlocks):
                 missingBlocks.add(block)
     return missingBlocks
 
-def whichBundlesShouldWeDownload(newBuild, missingBlocks):
-    bundlePercent = {}
+def analyzeBundles(newBuild, missingBlocks):
+    bundleInfo = {}
     for bundle in newBuild["bundles"]:
         bundleSize = 0
         blocksInThisBundleWeNeed = 0
+        neededBlocks = []
         for block in newBuild["bundles"][bundle]:
             if newBuild["bundles"][bundle][block]["hash"] in missingBlocks:
+                neededBlocks.append(newBuild["bundles"][bundle][block]["hash"])
                 blocksInThisBundleWeNeed += 1
             bundleSize += 1
         if bundleSize != 0:
-            bundlePercent[bundle] = blocksInThisBundleWeNeed / bundleSize
-    return bundlePercent
+            bundleInfo[bundle] = {"percentNeeded": blocksInThisBundleWeNeed / bundleSize, "blocksNeeded": neededBlocks}
+    return bundleInfo
         
 def loadPatchData():
     clientMap : dict = None
     if os.path.exists(appDataPath + '/patchData.json'):
         clientMap = open(appDataPath + '/patchData.json')
-    newBuild = session.get(serverUrl + '/patch/info/latest').json()
+    newBuild = requests.get(serverUrl + '/patchData/patchData.json').json()
     oldBuild : dict = None
     if clientMap:
         oldBuild = json.load(clientMap)
@@ -151,7 +174,7 @@ def getFilesToPatch(newBuild, oldBuild):
             filesToPatch.append(file)
     return filesToPatch
 
-def generateBlocksForFilesToPatch(filesToPatch):
+def generateBlocks(filesToPatch):
     blocks = dict()
     args = []
     for file in filesToPatch:
@@ -161,16 +184,6 @@ def generateBlocksForFilesToPatch(filesToPatch):
         for _ in executor.map(runFastOnFile, args):
             pass   
     return blocks
-
-def resolveBlock(block, localBlocks):
-    if block in localBlocks:
-        return localBlocks[block]
-    else:
-        res = session.get('http://localhost:3000/patch/block/' + block)
-        if res.status_code == 404:
-            raise Exception(f'Block not found! {block}') 
-        localBlocks[block] = res.content
-        return res.content
 
 def invalidFileMetadata(file):
     filePath = installDirectory + '/' + file
@@ -198,22 +211,20 @@ def createTempFile(file):
         os.remove(filePath)
     return open(filePath, 'wb')
 
-def patchFiles(newBuild, localBlocks, filesToPatch):
+async def patchFiles(newBuild, localBlocks, filesToPatch):
     args = []
     for file in filesToPatch:
         args.append((file, newBuild, localBlocks))
-    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
-        for _ in executor.map(applyPatchToFile, args):
-            pass
+    for call in args:
+        await applyPatchToFile(call)
 
-def applyPatchToFile(args):
+async def applyPatchToFile(args):
     file = args[0]
     newBuild = args[1]
     localBlocks = args[2]
     tempFile = createTempFile(file)
     for block in newBuild[file]["blocks"]:
-        binData = resolveBlock(block, localBlocks)
-        tempFile.write(binData)
+        tempFile.write(localBlocks[block])
     tempFile.close()
 
 def cleanupDir(newBuild):
@@ -252,7 +263,8 @@ def cleanupFile(args):
         del changeLog[relName]
         os.remove(fileName)
 
-start_time = time.time()
-main()
-# print("--- %s seconds ---" % (time.time() - start_time))
-print("DONE", end='')
+if __name__ == '__main__':
+    # start_time = time.time()
+    asyncio.run(main())
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    print("DONE", end='')

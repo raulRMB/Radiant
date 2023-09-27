@@ -77,10 +77,12 @@ class Store {
         const res = await fetch('http://localhost:3000/patch/version')
         const json = await res.json()
         const version = await window.electron.ipcRenderer.invoke('get-version')
-        console.log(`${json.version} - ${version}`)
-        if(json.version != version) {
+        console.log(`${json.version} - ${version.hash}`)
+        if(json.version != version.hash && version.isElevated) {
             this.patching = true
             window.electron.ipcRenderer.send('update')
+        } else {
+            console.log('r')
         }
     }
 
