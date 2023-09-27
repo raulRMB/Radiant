@@ -23,6 +23,9 @@ adapter = HTTPAdapter(max_retries=retry)
 session.mount('http://', adapter)
 session.mount('https://', adapter)
 
+asyncsession.mount('http://', adapter)
+asyncsession.mount('https://', adapter)
+
 def loadChangeLog():
     try:
         changeLogFile = open(appDataPath + '/changelog.json')
@@ -83,8 +86,7 @@ def downloadBundles(bundles, newBuild, localBlocks):
     for bundle in bundles:
         res = asyncsession.get(serverUrl + '/patch/bundle/' + bundle)
         futures.append(res)
-        count += 1
-    count = 0
+        
     for future in as_completed(futures):
         resp = future.result()
         for i in newBuild["bundles"][bundle]:
