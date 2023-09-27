@@ -6,7 +6,7 @@ import lobbies from './lobbies/lobbies.js'
 const authMiddleware = (socket, userManager) => {
     socket.use((packet,next) => {
         const event = packet[0]
-        if(event === sEvent.login || event === sEvent.disconnected) {
+        if(event === sEvent.login || event === sEvent.disconnected || event === sEvent.register) {
           next()
         }
         else if(userManager.hasSession(socket)) {
@@ -25,6 +25,7 @@ export default (io) => {
       socket.on(sEvent.disconnect, (msg) => userManager.disconnect(socket, msg))
       socket.on(sEvent.login, (msg) => userManager.login(msg.username, msg.password, socket))
       socket.on(sEvent.logout, () => userManager.logout(socket, true))
+      socket.on(sEvent.register, (msg) => userManager.registerUser(socket, msg))
       socket.on(sEvent.joinQueue, (msg) => queueManager.joinQueue(socket, msg.queue))
       socket.on(sEvent.cancelQueue, () => queueManager.leaveQueue(socket))
       socket.on(sEvent.addFriend, (msg) => userManager.addFriend(socket, msg.username))

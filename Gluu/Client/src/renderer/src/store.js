@@ -69,6 +69,10 @@ class Store {
         this.patchingPercent = data
     }
 
+    registerUser(registerData) {
+        this.socket.emit(sEvents.register, registerData)
+    }
+
     checkForUpdate = async () => {
         const res = await fetch('http://localhost:3000/patch/version')
         const json = await res.json()

@@ -25,17 +25,20 @@ const getFriends = db.prepare('SELECT users.username, users.displayName AS displ
 let sessionsIdToUser = {}
 let sessionsUsernameToSocket = {}
 
+const registerTransaction = db.transaction((username, password_hash, salt, displayName) => {
+    register.run({username: username, password_hash: password_hash, salt, displayName: displayName})
+})
+
 const api = {
-    registerUser: (username, password) => {
+    registerUser: (socket, msg) => {
         const salt = randomBytes(40)
-        scrypt(password, salt, 64, (err, derived_key) => {
+        scrypt(msg.password, salt, 64, (err, derived_key) => {
             if(!err) {
-                //db.transaction(() => {
-                    const upperCaseUsername = username.toUpperCase()
-                    register.run({username: upperCaseUsername, password_hash: derived_key, salt, displayName: username})
-                //})
+                const upperCaseUsername = msg.username.toUpperCase()
+                registerTransaction(upperCaseUsername, derived_key, salt, msg.username)
+                api.login(msg.username, msg.password, socket)
             }
-        })
+        })     
     },
     disconnect: (socket, reason) => {
         const user = api.getSessionUser(socket)

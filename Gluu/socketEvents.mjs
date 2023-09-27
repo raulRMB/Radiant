@@ -4,6 +4,7 @@ export default {
     joinQueue: 'joinQueue',
     login: 'login',
     logout: 'logout',
+    register: 'register',
     addFriend: 'addFriend',
     cancelQueue: 'cancelQueue',
     addServer: 'addServer',

@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FaPlug, FaHandshake } from 'react-icons/fa';
+import useStore from './store';
 import 'animate.css';
 
 export const Register = ({setRegisterOpen }) => {
 
+  const store = useStore()
   const handleSubmit = e => {
     e.preventDefault();
     const formData = new FormData(e.target)
@@ -11,7 +13,7 @@ export const Register = ({setRegisterOpen }) => {
     formData.forEach((value, key) => {
       registerData[key] = value;
     });
-    socket.emit('register', registerData)
+    store.registerUser(registerData)
   }
 
   return (
