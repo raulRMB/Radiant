@@ -22,6 +22,8 @@ def main():
     data = processDir(directory)
     train_time = time.time()
     dict_data = zstd.train_dictionary(blockSize, random.sample(uncompressedBlockData, 1000))
+    with open(outputPath + '/dictionary', 'wb') as outputFile:
+        outputFile.write(dict_data.as_bytes())
     print("--- train time %s seconds ---" % (time.time() - train_time))
     buildBlocks(dict_data)
     buildBundles(data)

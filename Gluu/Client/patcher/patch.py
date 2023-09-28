@@ -64,7 +64,7 @@ async def main():
     print("--- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
-    connector = aiohttp.TCPConnector(limit=500)
+    connector = aiohttp.TCPConnector(limit=15)
     async with aiohttp.ClientSession(connector=connector) as session:
         await downloadBundles(bundles, newBuild, localBlocks, session)
         await downloadBlocks(missingBlocks)
