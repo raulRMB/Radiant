@@ -9,7 +9,7 @@ import multiprocessing
 import random
 
 directory = "test/fakeBuild"
-outputPath = "../Gluu/Backend/data/patchData"
+outputPath = "../Backend/data/patchData"
 blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536

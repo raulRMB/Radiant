@@ -9,12 +9,13 @@ import concurrent.futures
 import aiohttp
 import aiofiles
 import aiofiles.os
+import zstandard
 
 from fastcdc import fastcdc
 from hashlib import sha256
 import time
 
-serverUrl = "https://rtb.nyc3.cdn.digitaloceanspaces.com"
+serverUrl = "http://localhost:3000"
 
 async def fetch(s, url, id, json=False):
     async with s.get(url) as r:
@@ -51,6 +52,11 @@ blockSize = 65536
 
 changeLog = loadChangeLog()
 
+def loadDecompressor():
+    data = requests.get(serverUrl + '/patchData/dictionary').content
+    dict_data = zstandard.ZstdCompressionDict(data)
+    return zstandard.ZstdDecompressor(dict_data=dict_data)
+
 async def main():
     
     start_time = time.time()
@@ -63,11 +69,13 @@ async def main():
     missingBlocks, bundles = bundlesToDownload(bundleInfo, missingBlocks)
     print("--- %s seconds ---" % (time.time() - start_time))
 
+    dc1 = loadDecompressor()
+    dc2 = loadDecompressor()
     start_time = time.time()
     connector = aiohttp.TCPConnector(limit=15)
     async with aiohttp.ClientSession(connector=connector) as session:
-        await downloadBundles(bundles, newBuild, localBlocks, session)
-        await downloadBlocks(missingBlocks)
+        await downloadBundles(bundles, newBuild, localBlocks, session, dc1)
+        await downloadBlocks(missingBlocks, dc2)
     print("--- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
@@ -94,16 +102,16 @@ def bundlesToDownload(bundleInfo, missingBlocks):
                 missingBlocks.remove(block)
     return missingBlocks, toDownload
 
-async def downloadBlocks(missingBlocks):
+async def downloadBlocks(missingBlocks, dc):
     tasks = []
     for block in missingBlocks:
         task = asyncio.create_task(fetch(s, serverUrl + '/patchData/blocks/' + block, block))
         tasks.append(task)
     for task in asyncio.as_completed(tasks):
         resp, id = await task
-        localBlocks[id] = resp
+        localBlocks[id] = dc.decompress(resp)
 
-async def downloadBundles(bundles, newBuild, localBlocks, s):
+async def downloadBundles(bundles, newBuild, localBlocks, s, dc):
     tasks = []
     for bundle in bundles:
         task = asyncio.create_task(fetch(s, serverUrl + '/patchData/bundles/' + bundle, bundle))
@@ -117,7 +125,7 @@ async def downloadBundles(bundles, newBuild, localBlocks, s):
             length = block["length"]
             offset = block["blockOffset"]
             splice = resp[offset:(offset + length)]
-            localBlocks[block["hash"]] = splice
+            localBlocks[block["hash"]] = dc.decompress(splice)
 
 async def ensureDirsExist():
     await aiofiles.os.makedirs(os.path.abspath(installDirectory).replace(os.sep, '/'), exist_ok=True)
