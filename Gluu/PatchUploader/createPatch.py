@@ -21,7 +21,9 @@ def main():
     ensureDirsExist()
     data = processDir(directory)
     train_time = time.time()
-    dict_data = zstd.train_dictionary(blockSize, random.sample(uncompressedBlockData, 1000))
+    dict_data = zstd.train_dictionary(blockSize, random.sample(uncompressedBlockData, 2000))
+    if os.path.exists(outputPath + '/dictionary'):
+        os.remove(outputPath + '/dictionary')
     with open(outputPath + '/dictionary', 'wb') as outputFile:
         outputFile.write(dict_data.as_bytes())
     print("--- train time %s seconds ---" % (time.time() - train_time))
@@ -33,7 +35,7 @@ def main():
 
 def buildBlocks(dict_data):
     b_time = time.time()
-    c = zstd.ZstdCompressor(level=3, dict_data=dict_data, threads=-1)
+    c = zstd.ZstdCompressor(level=5, dict_data=dict_data, threads=-1)
     for block in blockSet:
         compressed = c.compress(blockSet[block].data)
         blockSet[block] = compressed
