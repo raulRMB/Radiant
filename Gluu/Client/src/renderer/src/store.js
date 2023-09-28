@@ -205,7 +205,7 @@ class Store {
     }
 
     JoinQueue = (lobbyData) => {
-        this.socket.emit(sEvents.joinQueue, lobbyData)
+        this.socket.emit(sEvents.joinQueue, {selectionData: lobbyData, id: this.lobby.id})
     }
 
     joinQueueResponse = (success) => {

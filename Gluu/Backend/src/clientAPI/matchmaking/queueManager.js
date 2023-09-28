@@ -1,11 +1,12 @@
-import Queue from './queue.js'
 import sEvent from '../../../../socketEvents.mjs'
 import userManager from '../users/users.js'
+import MatchmakingQueue from './matchmakingQueue.js'
+import lobbies from '../lobbies/lobbies.js'
 import { randomUUID } from 'crypto'
 
-const oneVone = new Queue(2)
-const twoVtwo = new Queue(4)
-const threeVthree = new Queue(6)
+const oneVone = new MatchmakingQueue(2)
+const twoVtwo = new MatchmakingQueue(4)
+const threeVthree = new MatchmakingQueue(6)
 
 const inQueue = new Map()
 
@@ -26,11 +27,12 @@ function getQueue(queueName) {
 }
 
 function checkForMatch(queue) {
-    if(queue.length >= queue.matchSize) {
+    teams = queue.getTeamsForMatch()
+    if(teams != null) {
       const gameServer = serverManager.startMatch()
       const newMatch = {
         id: randomUUID(),
-        teams: [] 
+        teams 
       }
       if(gameServer) {
         for(let i = 0; i < queue.matchSize; i++) {
@@ -50,13 +52,18 @@ function notifyPlayerOfMatch(playerSocket, gameServer) {
 }
 
 export default {
-    joinQueue: (socket, queueName) => {
-        const queue = getQueue(queueName)
+    joinQueue: (socket, data) => {
+        const queueString = data.selectionData.queue 
+        const lobby = lobbies.getLobby(data.id) 
         const user = userManager.getSessionUser(socket)
-        if(user && queue && !inQueue.has(user.username)) {
-          inQueue.set(user.username, queueName)
-          queue.enqueue(user.username)
-          console.log(`${user.username} joined queue - ${queueName}`)
+        if(user.username !== lobby.leader) {
+          return // someone other than leader is attempting to fuck with the lobby
+        }
+        const queue = getQueue(queueName)
+        if(user && queue && !inQueue.has(lobby.id)) {
+          inQueue.set(lobby.id, queueString)
+          queue.join(lobby)
+          console.log(`${lobby.id} joined queue - ${queueName}`)
           socket.emit(sEvent.notify.joinQueueResponse, {success: true})
           checkForMatch(queue)
         }

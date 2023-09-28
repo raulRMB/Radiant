@@ -1,36 +1,60 @@
 export default class Queue {
     constructor(size) {
-      this.first = undefined
       this.last = undefined
+      this.first = undefined
       this.count = 0
-      this._matchSize = size
+      this._ticketSize = size
     }
-    enqueue(element) {
-      var tmp = this.last
-      this.last = {
+    skip(element) {
+      if(!element) {
+        return
+      }
+      var tmp = this.first
+      this.first = {
         element,
         next: undefined,
         prev: tmp
-      };
+      }
+      if(this.count === 0) {
+        this.last = this.first
+      }
+      if(tmp) {
+        tmp.next = this.first
+      }
+      this.count++
+    }
+    enqueue(element) {
+      if(!element) {
+        return
+      }
+      var tmp = this.last
+      this.last = {
+        element,
+        next: tmp,
+        prev: undefined
+      }
       if(this.count === 0) {
         this.first = this.last
       }
       if(tmp) {
-        tmp.next = this.last
+        tmp.prev = this.last
       }
       this.count++
     }
     dequeue() {
-      const item = this.last;
-      this.last = item ? item.prev : undefined
+      if(this.isEmpty) {
+        return
+      }
+      const item = this.first;
+      this.first = item ? item.prev : undefined
       this.count--
       return item.element
     }
     peek() {
-      return this.last.element
+      return this.first ? this.first.element : undefined
     }
     remove(element) {
-      let head = this.first
+      let head = this.last
       while(head !== undefined) {
         if(head.element === element) {
           if(head.next) {
@@ -39,7 +63,7 @@ export default class Queue {
           if(head.prev) {
             head.prev.next = head.next
           } else {
-            this.first = undefined
+            this.last = undefined
           }
           this.count--
           break
@@ -53,7 +77,7 @@ export default class Queue {
     get isEmpty() {
       return this.count === 0;
     }
-    get matchSize() {
-        return this._matchSize
+    get ticketSize() {
+      return this._ticketSize
     }
 }

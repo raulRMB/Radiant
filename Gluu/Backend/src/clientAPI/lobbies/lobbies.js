@@ -49,6 +49,9 @@ const api = {
             }
         }
     },
+    getLobby: (id) => {
+        return lobbies[id]
+    },
     leaveLobby: (id, user) => {
         if(lobbies[id].players.length === 1) {
             delete lobbies[id]

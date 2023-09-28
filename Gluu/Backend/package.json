@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test --recursive"
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +17,9 @@
     "node-cleanup": "^2.1.2",
     "pug": "^3.0.2",
     "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0",
+    "unit.js": "^2.1.1"
   }
 }
