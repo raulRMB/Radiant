@@ -4,8 +4,9 @@ import json
 import time
 import os
 import concurrent.futures
-# import zstandard as zstd
+import zstandard as zstd
 import multiprocessing
+import random
 
 directory = "test/fakeBuild"
 outputPath = "../Gluu/Backend/data/patchData"
@@ -14,14 +15,32 @@ bundlePath = outputPath + "/bundles"
 blockSize = 65536
 blockSet = {}
 
+uncompressedBlockData = []
+
 def main():
     ensureDirsExist()
     data = processDir(directory)
+    train_time = time.time()
+    dict_data = zstd.train_dictionary(blockSize, random.sample(uncompressedBlockData, 1000))
+    print("--- train time %s seconds ---" % (time.time() - train_time))
+    buildBlocks(dict_data)
     buildBundles(data)
     writePatchData(data)
     validateBlocks(data)
     cleanupBlocks(data)
 
+def buildBlocks(dict_data):
+    b_time = time.time()
+    c = zstd.ZstdCompressor(level=3, dict_data=dict_data, threads=-1)
+    for block in blockSet:
+        compressed = c.compress(blockSet[block].data)
+        blockSet[block] = compressed
+        outputFilename = os.path.join(blockPath, block)
+        if not os.path.exists(outputFilename):
+            with open(outputFilename, 'wb') as outputFile:
+                outputFile.write(compressed)
+    print("--- block time %s seconds ---" % (time.time() - b_time))
+    
 def buildBundles(data):
     blocksProcessed = 0
     bundleList = {}
@@ -29,9 +48,9 @@ def buildBundles(data):
     length = 0
     for block in blockSet:
         result = blockSet[block]
-        bundleList[blocksProcessed] = {"hash": result.hash, "length": len(result.data), "blockOffset": length}   
-        length += len(result.data)
-        bundleData.append(result.data)
+        bundleList[blocksProcessed] = {"hash": block, "length": len(result), "blockOffset": length}   
+        length += len(result)
+        bundleData.append(result)
         if(blocksProcessed == 59):
             createBundle(bundleList, b''.join(bundleData), data)
             bundleList = {}
@@ -95,17 +114,6 @@ def getRelPath(filePath, directory):
     relPath = os.path.relpath(filePath, directory)
     return relPath.replace(os.sep, '/')
 
-def processBlock(result, fileData, fileHash, data):
-    #c = zstd.ZstdCompressor(level=19)
-    #compressed = c.compress(result.data)
-    outputFilename = os.path.join(blockPath, result.hash)
-    if not os.path.exists(outputFilename):
-        with open(outputFilename, 'wb') as outputFile:
-            outputFile.write(result.data)
-    fileHash.append(result.hash)
-    blockSet[result.hash] = result
-    fileData["blocks"].append(result.hash)
-
 def processFile(args):
     path = args[0]
     relPath = args[1]
@@ -115,7 +123,10 @@ def processFile(args):
     results = list(fast)
     fileHash = list()
     for result in results:
-        processBlock(result, fileData, fileHash, data)
+        uncompressedBlockData.append(result.data)
+        blockSet[result.hash] = result
+        fileHash.append(result.hash)
+        fileData["blocks"].append(result.hash)
     fileData["hash"] = sha256(''.join(fileHash).encode('utf-8')).hexdigest()
     data[relPath] = fileData
 
