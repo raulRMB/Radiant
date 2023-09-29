@@ -4,9 +4,9 @@ import MatchmakingQueue from './matchmakingQueue.js'
 import lobbies from '../lobbies/lobbies.js'
 import { randomUUID } from 'crypto'
 
-const oneVone = new MatchmakingQueue(2)
-const twoVtwo = new MatchmakingQueue(4)
-const threeVthree = new MatchmakingQueue(6)
+const oneVone = new MatchmakingQueue(1)
+const twoVtwo = new MatchmakingQueue(2)
+const threeVthree = new MatchmakingQueue(3)
 
 const inQueue = new Map()
 
@@ -27,18 +27,28 @@ function getQueue(queueName) {
 }
 
 function checkForMatch(queue) {
-    teams = queue.getTeamsForMatch()
+    const teams = queue.getTeams()
     if(teams != null) {
-      const gameServer = serverManager.startMatch()
+      const gameServer = {
+        name: 'server-1',
+        port: 8080,
+        ip: '127.0.0.1'
+      }//serverManager.startMatch()
       const newMatch = {
         id: randomUUID(),
         teams 
       }
-      if(gameServer) {
-        for(let i = 0; i < queue.matchSize; i++) {
-          const playerSocket = userManager.getSocketFromUsername(queue.dequeue())
-          notifyPlayerOfMatch(playerSocket, gameServer)
-        }
+      // check for valid game server
+      if(true) {
+        teams.forEach(team => {
+          console.log(team)
+          team.lobbies.forEach(lobby => {
+            lobby.players.forEach(player => {
+              const playerSocket = userManager.getSocketFromUsername(player.username)
+              notifyPlayerOfMatch(playerSocket, gameServer)
+            })
+          })
+        })
       }
     }
 }
@@ -54,27 +64,45 @@ function notifyPlayerOfMatch(playerSocket, gameServer) {
 export default {
     joinQueue: (socket, data) => {
         const queueString = data.selectionData.queue 
-        const lobby = lobbies.getLobby(data.id) 
+        const lobby = lobbies.getLobby(data.id)
         const user = userManager.getSessionUser(socket)
         if(user.username !== lobby.leader) {
           return // someone other than leader is attempting to fuck with the lobby
         }
-        const queue = getQueue(queueName)
+        const queue = getQueue(queueString)
+        if(lobby.players.length > queue.getTeamSize()) {
+          socket.emit(sEvent.notify.joinQueueResponse, {success: false, message: "Too many players for queue"})
+          return
+        }
         if(user && queue && !inQueue.has(lobby.id)) {
+          lobby.queueType = queueString
           inQueue.set(lobby.id, queueString)
           queue.join(lobby)
-          console.log(`${lobby.id} joined queue - ${queueName}`)
+          //console.log(`${lobby.id} joined queue - ${queueString}`)
           socket.emit(sEvent.notify.joinQueueResponse, {success: true})
           checkForMatch(queue)
         }
     },
-    leaveQueue: (socket) => {
+    leaveQueue: (socket, lobbyId) => {
       const user = userManager.getSessionUser(socket)
-      if(user && inQueue.has(user.username)) {
-        const queue = getQueue(inQueue.get(user.username))
-        queue.remove(user.username)
-        inQueue.delete(user.username)
-        console.log(`${user.username} left queue`)
+      const lobby = lobbies.getLobby(lobbyId)
+      if(!lobby) {
+        return
+      }
+      let playerInLobby = false
+      lobby.players.forEach(player => {
+        if(player.username === user.username) {
+          playerInLobby = true
+        }
+      })
+      if(!playerInLobby) {
+        return
+      }
+      const queue = getQueue(lobby.queueType)
+      if(user && inQueue.has(lobby.id) && queue) {
+        queue.leave(lobby)
+        inQueue.delete(lobby.id)
+        //console.log(`${lobby.id} left queue`)
         socket.emit(sEvent.notify.cancelQueueResponse, {success: true})
       }
     },

@@ -39,7 +39,11 @@ const App = () => {
       return <Login setRegisterOpen={setRegisterOpen}/>
     }
     if(store.inMatch) {
-      return <p>In Match...</p>
+      return (
+        <div className="w-full h-screen flex items-center justify-center text-center bg-gray-900 text-slate-300">
+          <p className='text-3xl'>Waiting For Match To End...</p>
+        </div>
+      )
     } else {
       return <Lobby/>
     }

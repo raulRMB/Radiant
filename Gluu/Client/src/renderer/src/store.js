@@ -28,6 +28,7 @@ class Store {
         }
         makeObservable(this, {
             inQueue: observable,
+            inMatch: observable,
             loggedIn: observable,
             lobby: observable,
             patching: observable,
@@ -131,6 +132,8 @@ class Store {
     onDisconneced() {
         console.log('disconnected')
         this.connected = false
+        this.inQueue = false
+        this.inMatch = false
         this.notifications = []
         this.friends = []
         this.loggedIn = false
@@ -143,12 +146,15 @@ class Store {
 
     onMatchFound(data) {
         this.inMatch = true
+        this.inQueue = false
+        console.log('MATCH FOUND!')
         //window.electron.ipcRenderer.send('matchFound', data);
     }
 
     onLogoutNotify() {
         this.notifications = []
         this.friends = []
+        this.inQueue = false
         this.loggedIn = false
     }
 
@@ -215,7 +221,7 @@ class Store {
     }
 
     CancelQueue = () => {
-        this.socket.emit(sEvents.cancelQueue)
+        this.socket.emit(sEvents.cancelQueue, {lobbyId: this.lobby.id})
     }
 
     SendFriendRequest = (username) => {

@@ -21,7 +21,7 @@ export default class Queue {
       if(tmp) {
         tmp.next = this.first
       }
-      this.count++
+      this.count += 1
     }
     enqueue(element) {
       if(!element) {
@@ -39,7 +39,7 @@ export default class Queue {
       if(tmp) {
         tmp.prev = this.last
       }
-      this.count++
+      this.count += 1
     }
     dequeue() {
       if(this.isEmpty) {
@@ -47,16 +47,20 @@ export default class Queue {
       }
       const item = this.first;
       this.first = item ? item.prev : undefined
-      this.count--
+      this.count -= 1
       return item.element
     }
     peek() {
       return this.first ? this.first.element : undefined
     }
-    remove(element) {
+    remove(func) {
+      if(this.isEmpty) {
+        return
+      }
       let head = this.last
       while(head !== undefined) {
-        if(head.element === element) {
+        let found = func(head.element)
+        if(found) {
           if(head.next) {
             head.next.prev = head.prev
           }
@@ -65,8 +69,8 @@ export default class Queue {
           } else {
             this.last = undefined
           }
-          this.count--
-          break
+          this.count -= 1
+          return head.element
         }
         head = head.next
       }
