@@ -7,6 +7,17 @@ import concurrent.futures
 import zstandard as zstd
 import multiprocessing
 import random
+from boto3 import session
+from botocore.client import Config
+from dotenv import load_dotenv
+from pydo import Client
+
+
+load_dotenv()
+
+ACCESS_KEY = os.getenv('ACCESS_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
+DO_TOKEN = os.getenv('DO_TOKEN')
 
 directory = "test/fakeBuild"
 outputPath = "../Backend/data/patchData"
@@ -14,8 +25,12 @@ blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536
 blockSet = {}
+bundleSet = {}
 
 uncompressedBlockData = []
+
+clientDO = Client(DO_TOKEN)
+
 
 def main():
     ensureDirsExist()
@@ -31,7 +46,27 @@ def main():
     buildBundles(data)
     writePatchData(data)
     validateBlocks(data)
-    cleanupBlocks(data)
+    cleanup(data, blockPath, blockSet)
+    cleanup(data, bundlePath, data["bundles"])
+
+s3cmd = 'python C:/s3cmd/s3cmd'
+testData = 'C:/DigitalOcean/test.txt'
+bucketFile = 's3://rtb/test1.txt'
+
+def updatePatchVersionFile():
+    sesh = session.Session()
+    client = sesh.client(
+        's3',
+        region_name='nyc3',
+        endpoint_url='https://nyc3.digitaloceanspaces.com',
+        aws_access_key_id=ACCESS_KEY,
+        aws_secret_access_key=SECRET_KEY)
+
+    fileName = 'test/test1.txt'
+    client.upload_file(testData, 'rtb', fileName, {'ACL': 'public-read', 'ContentType': 'binary/octet-stream'})
+
+    purge_req = {"files": [fileName]}
+    clientDO.cdn.purge_cache("12148a1d-4fdf-4925-a0c7-fad213c75b7b", purge_req)
 
 def buildBlocks(dict_data):
     b_time = time.time()
@@ -100,12 +135,12 @@ def ensureDirsExist():
     os.makedirs(os.path.abspath(blockPath), exist_ok=True)
     os.makedirs(os.path.abspath(bundlePath), exist_ok=True)
 
-def cleanupBlocks(data):
+def cleanup(data, path, _set):
     args = []
-    if os.path.exists(blockPath):
-        for root, dirs, files in os.walk(blockPath):
+    if os.path.exists(path):
+        for root, dirs, files in os.walk(path):
             for file in files:
-                if(file not in blockSet):
+                if(file not in _set):
                     args.append(os.path.join(root, file))
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         for _ in executor.map(removeBlock, args):
