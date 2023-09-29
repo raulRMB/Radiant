@@ -61,6 +61,8 @@ void UPlayMontageAndWaitForEvent::OnAbilityCancelled()
 			OnCancelled.Broadcast(FGameplayTag(), FGameplayEventData());
 		}
 	}
+
+	EndTask();
 }
 
 void UPlayMontageAndWaitForEvent::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -107,6 +109,7 @@ void UPlayMontageAndWaitForEvent::Activate()
 {
 	if (Ability == nullptr)
 	{
+		EndTask();
 		return;
 	}
 
@@ -149,11 +152,13 @@ void UPlayMontageAndWaitForEvent::Activate()
 		}
 		else
 		{
+			EndTask();
 			UE_LOG(LogTemp, Warning, TEXT("UGDAbilityTask_PlayMontageAndWaitForEvent call to PlayMontage failed!"));
 		}
 	}
 	else
 	{
+		EndTask();
 		UE_LOG(LogTemp, Warning, TEXT("UGDAbilityTask_PlayMontageAndWaitForEvent called on invalid AbilitySystemComponent"));
 	}
 
@@ -162,6 +167,7 @@ void UPlayMontageAndWaitForEvent::Activate()
 		UE_LOG(LogTemp, Warning, TEXT("UGDAbilityTask_PlayMontageAndWaitForEvent called in Ability %s failed to play montage %s; Task Instance Name %s."), *Ability->GetName(), *GetNameSafe(MontageToPlay), *InstanceName.ToString());
 		if (ShouldBroadcastAbilityTaskDelegates())
 		{
+			EndTask();
 			//ABILITY_LOG(Display, TEXT("%s: OnCancelled"), *GetName());
 			OnCancelled.Broadcast(FGameplayTag(), FGameplayEventData());
 		}
@@ -177,6 +183,8 @@ void UPlayMontageAndWaitForEvent::ExternalCancel()
 	OnAbilityCancelled();
 
 	Super::ExternalCancel();
+
+	EndTask();
 }
 
 void UPlayMontageAndWaitForEvent::OnDestroy(bool AbilityEnded)
@@ -237,6 +245,7 @@ bool UPlayMontageAndWaitForEvent::StopPlayingMontage()
 		}
 	}
 
+	EndTask();
 	return false;
 }
 
