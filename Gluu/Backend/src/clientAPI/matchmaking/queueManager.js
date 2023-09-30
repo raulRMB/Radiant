@@ -31,8 +31,8 @@ function checkForMatch(queue) {
     if(teams != null) {
       const gameServer = {
         name: 'server-1',
-        port: 8080,
-        ip: '127.0.0.1'
+        port: 7777,
+        ip: '178.128.233.82'
       }//serverManager.startMatch()
       const newMatch = {
         id: randomUUID(),

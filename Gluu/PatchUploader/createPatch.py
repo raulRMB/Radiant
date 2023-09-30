@@ -23,7 +23,7 @@ outputPath = "../Backend/data/patchData"
 blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536
-blockSet = {}
+blockSet = list()
 
 uncompressedBlockData = []
 
@@ -52,34 +52,34 @@ def main():
     validateBlocks(data)
     updateBucketBlocks(data)
     updateBucketBundles(data)
-    updatePatchData(data)
-    updateCompressionDictionary(dict_data)
-    updateBucketPatchVersion(data)
+    updatePatchData()
+    updateCompressionDictionary()
+    # updateBucketPatchVersion(data)
     cleanup(data, blockPath, blockSet)
     cleanup(data, bundlePath, data["bundles"])
     
-def updatePatchData(data):
+def updatePatchData():
     botoClient.upload_file(outputPath + '/patchData.json', 'rtb', 'patchData/patchData.json', {'ACL': 'public-read', 'ContentType': 'application/json'})
     purge_req = {"files": ["patchData/patchData.json"]}
     clientDO.cdn.purge_cache("12148a1d-4fdf-4925-a0c7-fad213c75b7b", purge_req)
     
-def updateCompressionDictionary(dict_data):
-    botoClient.upload_file(outputPath + '/dictionary', 'rtb', 'patchData/dictionary', {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
+def updateCompressionDictionary():
+    botoClient.upload_file(outputPath + '/dictionary', 'rtb', 'patchData/dictionary', {'ACL': 'public-read'})
     purge_req = {"files": ["patchData/dictionary"]}
     clientDO.cdn.purge_cache("12148a1d-4fdf-4925-a0c7-fad213c75b7b", purge_req)
 
 def updateBucketBundles(data):
     obj = botoClient.get_object(Bucket='rtb', Key='patchData/patchData.json')
     jo = json.loads(obj['Body'].read().decode('utf-8'))
-    for bundle in jo['bundles']:
-        if bundle not in data['bundles']:
-            print(f'Delete bundle: {bundle}')
-            botoClient.delete_object(Bucket='rtb', Key='patchData/bundles/' + bundle)
+    # for bundle in jo['bundles']:
+    #     if bundle not in data['bundles']:
+    #         print(f'Delete bundle: {bundle}')
+    #         botoClient.delete_object(Bucket='rtb', Key='patchData/bundles/' + bundle)
                 
     for bundle in data['bundles']:
-        if bundle not in jo['bundles']:
-            print(f'Upload bundle: {bundle}')
-            botoClient.upload_file(bundlePath + '/' + bundle, 'rtb', 'patchData/bundles/' + bundle, {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
+        # if bundle not in jo['bundles']:
+        print(f'Upload bundle: {bundle}')
+        botoClient.upload_file(bundlePath + '/' + bundle, 'rtb', 'patchData/bundles/' + bundle, {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
 
 def updateBucketBlocks(data):
     obj = botoClient.get_object(Bucket='rtb', Key='patchData/patchData.json')
@@ -96,7 +96,7 @@ def updateBucketBlocks(data):
         if file == "bundles":
             continue
         for block in data[file]["blocks"]:
-            if block not in jo[file]["blocks"]:
+            if file not in jo or block not in jo[file]["blocks"]:
                 print(f'Upload block: {block}')
                 botoClient.upload_file(blockPath + '/' + block, 'rtb', 'patchData/blocks/' + block, {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
 

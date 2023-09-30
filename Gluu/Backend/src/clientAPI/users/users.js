@@ -52,6 +52,8 @@ const api = {
         }
     },
     login: (username, password, socket) => {
+        if (!socket) 
+            return
         const user = userPS.get(username.toUpperCase())
         if(user) {
             scrypt(password, user.salt, 64, (err, derived_key) => {
@@ -177,11 +179,11 @@ const api = {
 }
 
 const initTestData = () => {
-    api.registerUser('mash', 'test123')
-    api.registerUser('mash2', 'test123')
-    api.registerUser('mash3', 'test123')
-    api.registerUser('mash4', 'test123')
+    api.registerUser(null, {username : 'mash', password : 'test123'})
+    api.registerUser(null, {username : 'mash1', password : 'test123'})
+    api.registerUser(null, {username : 'mash2', password : 'test123'})
+    api.registerUser(null, {username : 'mash3', password : 'test123'})
 }
-//initTestData()
+// initTestData()
 
 export default api

@@ -43,15 +43,19 @@ const getVersionHash = async () => {
   return {hash: hashSum.digest('hex'), isElevated};
 }
 
-const version = getVersionHash();
-ipcMain.handle('get-version', () => version);
+ipcMain.handle('get-version', async () => {
+  const version = getVersionHash();
+  const res = await fetch('https://rtb.nyc3.cdn.digitaloceanspaces.com/patchData/version.txt')
+  const hash = await res.text()
+  return {remote : hash, local : version.hash}
+});
 
 function findPatcherScript() {
   const possibilities = [
     // In packaged app
-    path.join(process.resourcesPath, "patcher", "dist", "patch.exe"),
+    path.join(process.resourcesPath, "patcher", "patch.py"),
     // In development
-    "./patcher/dist/patch.exe",
+    "./patcher/patch.py",
   ];
   for (const path of possibilities) {
     if (fs.existsSync(path)) {

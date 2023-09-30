@@ -22,9 +22,9 @@ class Store {
 
     constructor() {
         if (import.meta.env.VITE_ENV === 'production') {
-            this.socket = io(`https://${window.location.host}`, { transports: ['websocket'] });
+            this.socket = io(`178.128.233.82:3000`, { transports: ['websocket'] });
         } else {
-            this.socket = io(`http://localhost:3000`, { transports: ['websocket'] });
+            this.socket = io(`178.128.233.82:3000`, { transports: ['websocket'] });
         }
         makeObservable(this, {
             inQueue: observable,
@@ -75,11 +75,8 @@ class Store {
     }
 
     checkForUpdate = async () => {
-        const res = await fetch('http://localhost:3000/patch/version')
-        const json = await res.json()
-        const version = await window.electron.ipcRenderer.invoke('get-version')
-        console.log(`${json.version} - ${version.hash}`)
-        if(json.version != version.hash && version.isElevated) {
+        const resp = await window.electron.ipcRenderer.invoke('get-version')
+        if(resp.remote != resp.local) {
             this.patching = true
             window.electron.ipcRenderer.send('update')
         } else {

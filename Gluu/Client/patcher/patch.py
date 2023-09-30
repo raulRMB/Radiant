@@ -15,7 +15,7 @@ from fastcdc import fastcdc
 from hashlib import sha256
 import time
 
-serverUrl = "http://localhost:3000"
+serverUrl = "https://rtb.nyc3.cdn.digitaloceanspaces.com"
 
 async def fetch(s, url, id, json=False):
     async with s.get(url) as r:
