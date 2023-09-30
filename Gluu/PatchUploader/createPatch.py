@@ -11,6 +11,7 @@ from boto3 import session
 from botocore.client import Config
 from dotenv import load_dotenv
 from pydo import Client
+from collections import OrderedDict
 
 load_dotenv()
 
@@ -23,7 +24,7 @@ outputPath = "../Backend/data/patchData"
 blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536
-blockSet = list()
+blockSet = OrderedDict()
 
 uncompressedBlockData = []
 
