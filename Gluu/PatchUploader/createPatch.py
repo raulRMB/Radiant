@@ -12,7 +12,6 @@ from botocore.client import Config
 from dotenv import load_dotenv
 from pydo import Client
 
-
 load_dotenv()
 
 ACCESS_KEY = os.getenv('ACCESS_KEY')
@@ -25,12 +24,17 @@ blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536
 blockSet = {}
-bundleSet = {}
 
 uncompressedBlockData = []
 
 clientDO = Client(DO_TOKEN)
-
+sesh = session.Session()
+botoClient = sesh.client(
+    's3',
+    region_name='nyc3',
+    endpoint_url='https://nyc3.digitaloceanspaces.com',
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY)
 
 def main():
     ensureDirsExist()
@@ -46,26 +50,69 @@ def main():
     buildBundles(data)
     writePatchData(data)
     validateBlocks(data)
+    updateBucketBlocks(data)
+    updateBucketBundles(data)
+    updatePatchData(data)
+    updateCompressionDictionary(dict_data)
+    updateBucketPatchVersion(data)
     cleanup(data, blockPath, blockSet)
     cleanup(data, bundlePath, data["bundles"])
+    
+def updatePatchData(data):
+    botoClient.upload_file(outputPath + '/patchData.json', 'rtb', 'patchData/patchData.json', {'ACL': 'public-read', 'ContentType': 'application/json'})
+    purge_req = {"files": ["patchData/patchData.json"]}
+    clientDO.cdn.purge_cache("12148a1d-4fdf-4925-a0c7-fad213c75b7b", purge_req)
+    
+def updateCompressionDictionary(dict_data):
+    botoClient.upload_file(outputPath + '/dictionary', 'rtb', 'patchData/dictionary', {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
+    purge_req = {"files": ["patchData/dictionary"]}
+    clientDO.cdn.purge_cache("12148a1d-4fdf-4925-a0c7-fad213c75b7b", purge_req)
 
-s3cmd = 'python C:/s3cmd/s3cmd'
-testData = 'C:/DigitalOcean/test.txt'
-bucketFile = 's3://rtb/test1.txt'
+def updateBucketBundles(data):
+    obj = botoClient.get_object(Bucket='rtb', Key='patchData/patchData.json')
+    jo = json.loads(obj['Body'].read().decode('utf-8'))
+    for bundle in jo['bundles']:
+        if bundle not in data['bundles']:
+            print(f'Delete bundle: {bundle}')
+            botoClient.delete_object(Bucket='rtb', Key='patchData/bundles/' + bundle)
+                
+    for bundle in data['bundles']:
+        if bundle not in jo['bundles']:
+            print(f'Upload bundle: {bundle}')
+            botoClient.upload_file(bundlePath + '/' + bundle, 'rtb', 'patchData/bundles/' + bundle, {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
 
-def updatePatchVersionFile():
-    sesh = session.Session()
-    client = sesh.client(
-        's3',
-        region_name='nyc3',
-        endpoint_url='https://nyc3.digitaloceanspaces.com',
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_KEY)
+def updateBucketBlocks(data):
+    obj = botoClient.get_object(Bucket='rtb', Key='patchData/patchData.json')
+    jo = json.loads(obj['Body'].read().decode('utf-8'))
+    for file in jo:
+        if file == "bundles":
+            continue
+        for block in jo[file]["blocks"]:
+            if block not in blockSet:
+                print(f'Delete block: {block}')
+                botoClient.delete_object(Bucket='rtb', Key='patchData/blocks/' + block)
+                
+    for file in data:
+        if file == "bundles":
+            continue
+        for block in data[file]["blocks"]:
+            if block not in jo[file]["blocks"]:
+                print(f'Upload block: {block}')
+                botoClient.upload_file(blockPath + '/' + block, 'rtb', 'patchData/blocks/' + block, {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
 
-    fileName = 'test/test1.txt'
-    client.upload_file(testData, 'rtb', fileName, {'ACL': 'public-read', 'ContentType': 'binary/octet-stream'})
-
-    purge_req = {"files": [fileName]}
+def updateBucketPatchVersion(data):
+    hash = sha256(str(data).encode('utf-8')).hexdigest()
+    bucketFileName = 'patchData/version.txt'
+    localFileName = './temp.txt'
+    fileData = open(localFileName, 'w')
+    fileData.write(hash)
+    fileData.close()
+    
+    botoClient.upload_file(localFileName, 'rtb', bucketFileName, {'ACL': 'public-read', 'ContentType': 'plain/text'})
+    
+    os.remove(localFileName)
+    
+    purge_req = {"files": [bucketFileName]}
     clientDO.cdn.purge_cache("12148a1d-4fdf-4925-a0c7-fad213c75b7b", purge_req)
 
 def buildBlocks(dict_data):
