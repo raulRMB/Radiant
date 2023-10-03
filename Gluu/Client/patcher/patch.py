@@ -15,7 +15,7 @@ from fastcdc import fastcdc
 from hashlib import sha256
 import time
 
-#serverUrl = "http://localhost:3000"
+# serverUrl = "http://localhost:3000"
 serverUrl = "https://rtb.nyc3.cdn.digitaloceanspaces.com"
 
 async def fetch(s, url, id, json=False):
@@ -76,7 +76,7 @@ async def main():
     connector = aiohttp.TCPConnector(limit=15)
     async with aiohttp.ClientSession(connector=connector) as session:
         await downloadBundles(bundles, newBuild, localBlocks, session, dc1)
-        await downloadBlocks(missingBlocks, session, dc2)
+        await downloadBlocks(localBlocks, missingBlocks, session, dc2)
     print("--- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
@@ -104,7 +104,7 @@ def bundlesToDownload(bundleInfo, missingBlocks):
                     missingBlocks.remove(block)
     return missingBlocks, toDownload
 
-async def downloadBlocks(missingBlocks, s, dc):
+async def downloadBlocks(localBlocks, missingBlocks, s, dc):
     tasks = []
     for block in missingBlocks:
         task = asyncio.create_task(fetch(s, serverUrl + '/patchData/blocks/' + block, block))

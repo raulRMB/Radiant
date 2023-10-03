@@ -12,6 +12,9 @@ from botocore.client import Config
 from dotenv import load_dotenv
 from pydo import Client
 from collections import OrderedDict
+import botocore
+import boto3
+import boto3.s3.transfer as s3transfer
 
 load_dotenv()
 
@@ -24,7 +27,7 @@ outputPath = "../Backend/data/patchData"
 blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536
-updateDictionary = True
+updateDictionary = False
 blockSet = OrderedDict()
 
 uncompressedBlockData = []
@@ -38,6 +41,34 @@ botoClient = sesh.client(
     aws_access_key_id=ACCESS_KEY,
     aws_secret_access_key=SECRET_KEY)
 
+
+def fast_upload(session, bucketname, s3dir, filelist, workers=20):
+    botocore_config = botocore.config.Config(max_pool_connections=workers)
+    s3client = sesh.client(
+    's3',
+    region_name='nyc3',
+    endpoint_url='https://nyc3.digitaloceanspaces.com',
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    config=botocore_config)
+    
+    transfer_config = s3transfer.TransferConfig(
+        use_threads=True,
+        max_concurrency=workers,
+    )    
+    s3t = s3transfer.create_transfer_manager(s3client, transfer_config)
+    for src in filelist:
+        dst = os.path.join(s3dir, src['relPath'])
+        dst = dst.replace(os.sep, '/')
+        s3t.upload(
+            src['filePath'], bucketname, dst,
+            extra_args={'ACL': 'public-read'},
+            # subscribers=[
+            #     s3transfer.ProgressCallbackInvoker(progress_func),
+            # ],
+        )
+    s3t.shutdown()  # wait for all the upload tasks to finish
+
 def main():
     ensureDirsExist()
     data = processDir(directory)
@@ -50,7 +81,7 @@ def main():
     buildBundles(data)
     writePatchData(data)
     validateBlocks(data)
-    # uploadToCDN(data)
+    uploadToCDN(data)
     cleanup(data, blockPath, blockSet)
     cleanup(data, bundlePath, data["bundles"])
 
@@ -59,11 +90,19 @@ def load_dict():
         return zstd.ZstdCompressionDict(dictFile.read())
     
 def uploadToCDN(data):
-    updateBucketBlocks(data)
-    updateBucketBundles(data)
-    updatePatchData()
-    updateCompressionDictionary()
+    # updatePatchData()
+    # updateBucketBlocks(data)
+    # updateBucketBundles(data)
+    # updateCompressionDictionary()
     updateBucketPatchVersion(data)
+    fileList = []
+    for root, subdirs, files in os.walk(outputPath):
+        for filename in files:
+            filePath = os.path.join(root, filename)
+            relPath = getRelPath(filePath, outputPath)
+            fileList.append({'relPath':relPath, 'filePath':filePath})
+    
+    fast_upload(boto3.Session(), 'rtb', 'patchData', fileList)
 
 def updatePatchData():
     botoClient.upload_file(outputPath + '/patchData.json', 'rtb', 'patchData/patchData.json', {'ACL': 'public-read', 'ContentType': 'application/json'})
@@ -103,21 +142,21 @@ def updateBucketBundles(data):
 def updateBucketBlocks(data):
     obj = botoClient.get_object(Bucket='rtb', Key='patchData/patchData.json')
     jo = json.loads(obj['Body'].read().decode('utf-8'))
-    for file in jo:
-        if file == "bundles":
-            continue
-        for block in jo[file]["blocks"]:
-            if block not in blockSet:
-                print(f'Delete block: {block}')
-                botoClient.delete_object(Bucket='rtb', Key='patchData/blocks/' + block)
+    # for file in jo:
+    #     if file == "bundles":
+    #         continue
+    #     for block in jo[file]["blocks"]:
+    #         if block not in blockSet:
+    #             print(f'Delete block: {block}')
+    #             botoClient.delete_object(Bucket='rtb', Key='patchData/blocks/' + block)
                 
     for file in data:
         if file == "bundles":
             continue
         for block in data[file]["blocks"]:
-            if file not in jo or block not in jo[file]["blocks"]:
-                print(f'Upload block: {block}')
-                botoClient.upload_file(blockPath + '/' + block, 'rtb', 'patchData/blocks/' + block, {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
+            # if file not in jo or block not in jo[file]["blocks"]:
+            print(f'Upload block: {block}')
+            botoClient.upload_file(blockPath + '/' + block, 'rtb', 'patchData/blocks/' + block, {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
 
 def updateBucketPatchVersion(data):
     hash = sha256(str(data).encode('utf-8')).hexdigest()
@@ -193,9 +232,10 @@ def getBundleId(bundleList):
 
 def writeBundle(bundleList, bundleData, id):
     outputFilename = os.path.join(bundlePath + '/' + id)
-    if not os.path.exists(outputFilename):
-            with open(outputFilename, 'wb') as outputFile:
-                outputFile.write(bundleData)
+    if os.path.exists(outputFilename):
+        os.remove(outputFilename)
+    with open(outputFilename, 'wb') as outputFile:
+        outputFile.write(bundleData)
 
 def createBundle(bundleList, bundleData, data):
     id = getBundleId(bundleList)
