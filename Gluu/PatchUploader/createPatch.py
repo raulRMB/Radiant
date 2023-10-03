@@ -141,9 +141,10 @@ def buildBlocks(dict_data):
         compressed = c.compress(blockSet[block].data)
         blockSet[block] = compressed
         outputFilename = os.path.join(blockPath, block)
-        if not os.path.exists(outputFilename):
-            with open(outputFilename, 'wb') as outputFile:
-                outputFile.write(compressed)
+        if os.path.exists(outputFilename):
+            os.remove(outputFilename)
+        with open(outputFilename, 'wb') as outputFile:
+            outputFile.write(compressed)
     print("--- block time %s seconds ---" % (time.time() - b_time))
     
 def buildBundles(data):
