@@ -24,6 +24,7 @@ outputPath = "../Backend/data/patchData"
 blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"
 blockSize = 65536
+updateDictionary = True
 blockSet = OrderedDict()
 
 uncompressedBlockData = []
@@ -40,30 +41,47 @@ botoClient = sesh.client(
 def main():
     ensureDirsExist()
     data = processDir(directory)
-    train_time = time.time()
-    dict_data = zstd.train_dictionary(blockSize, random.sample(uncompressedBlockData, 2000))
-    if os.path.exists(outputPath + '/dictionary'):
-        os.remove(outputPath + '/dictionary')
-    with open(outputPath + '/dictionary', 'wb') as outputFile:
-        outputFile.write(dict_data.as_bytes())
-    print("--- train time %s seconds ---" % (time.time() - train_time))
+    if updateDictionary:
+        dict_data = train_dict(uncompressedBlockData, 2000, blockSize)
+    else:
+        dict_data = load_dict()
     buildBlocks(dict_data)
+    data = dict(sorted(data.items()))
     buildBundles(data)
     writePatchData(data)
     validateBlocks(data)
+    # uploadToCDN(data)
+    cleanup(data, blockPath, blockSet)
+    cleanup(data, bundlePath, data["bundles"])
+
+def load_dict():
+    with open(outputPath + '/dictionary', 'rb') as dictFile:
+        return zstd.ZstdCompressionDict(dictFile.read())
+    
+def uploadToCDN(data):
     updateBucketBlocks(data)
     updateBucketBundles(data)
     updatePatchData()
     updateCompressionDictionary()
-    # updateBucketPatchVersion(data)
-    cleanup(data, blockPath, blockSet)
-    cleanup(data, bundlePath, data["bundles"])
-    
+    updateBucketPatchVersion(data)
+
 def updatePatchData():
     botoClient.upload_file(outputPath + '/patchData.json', 'rtb', 'patchData/patchData.json', {'ACL': 'public-read', 'ContentType': 'application/json'})
     purge_req = {"files": ["patchData/patchData.json"]}
     clientDO.cdn.purge_cache("12148a1d-4fdf-4925-a0c7-fad213c75b7b", purge_req)
-    
+
+def train_dict(training_data, samples, dict_size):
+    if len(training_data) > samples:
+        training_sample = random.sample(training_data, samples)
+    else:
+        training_sample = training_data
+    dict_data = zstd.train_dictionary(dict_size, training_sample)
+    if os.path.exists(outputPath + '/dictionary'):
+        os.remove(outputPath + '/dictionary')
+    with open(outputPath + '/dictionary', 'wb') as outputFile:
+        outputFile.write(dict_data.as_bytes())
+    return dict_data
+
 def updateCompressionDictionary():
     botoClient.upload_file(outputPath + '/dictionary', 'rtb', 'patchData/dictionary', {'ACL': 'public-read'})
     purge_req = {"files": ["patchData/dictionary"]}
@@ -133,19 +151,24 @@ def buildBundles(data):
     bundleList = {}
     bundleData = []
     length = 0
-    for block in blockSet:
-        result = blockSet[block]
-        bundleList[blocksProcessed] = {"hash": block, "length": len(result), "blockOffset": length}   
-        length += len(result)
-        bundleData.append(result)
-        if(blocksProcessed == 59):
-            createBundle(bundleList, b''.join(bundleData), data)
-            bundleList = {}
-            bundleData = []
-            blocksProcessed = 0
-            length = 0
-        else:
-            blocksProcessed += 1
+    
+    for file in data:
+        if file == "bundles":
+            continue
+        for block in data[file]["blocks"]:
+            result = blockSet[block]
+            bundleList[blocksProcessed] = {"hash": block, "length": len(result), "blockOffset": length}   
+            length += len(result)
+            bundleData.append(result)
+            if(blocksProcessed == 59):
+                createBundle(bundleList, b''.join(bundleData), data)
+                bundleList = {}
+                bundleData = []
+                blocksProcessed = 0
+                length = 0
+            else:
+                blocksProcessed += 1
+
     createBundle(bundleList, b''.join(bundleData), data)
 
 def validateBlocks(data):
