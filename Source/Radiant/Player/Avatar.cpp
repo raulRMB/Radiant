@@ -302,32 +302,32 @@ void AAvatar::OnUpdateTarget(const FInputActionValue& Value)
 	CastAbility(Tag, true);
 }
 
-void AAvatar::S_SpawnActorAtMouse_Implementation(const FString& PieceName, const uint32 Amount, const FVector& Location)
-{
-	if (HasAuthority())
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		uint32 Dim = UKismetMathLibrary::Sqrt(Amount);
-
-		for (uint32 x = 0; x < Dim; x++)
-		{
-			for (uint32 y = 0; y < Dim; y++)
-			{
-				FVector Offset = FVector(x * 5, y * 5, 100);
-				GetWorld()->SpawnActor<AActor>(DebugSpawnableItems[PieceName], Location + Offset, FRotator::ZeroRotator,
-				                               SpawnParams);
-			}
-		}
-	}
-}
+// void AAvatar::S_SpawnActorAtMouse_Implementation(const FString& PieceName, const uint32 Amount, const FVector& Location)
+// {
+// 	if (HasAuthority())
+// 	{
+// 		FActorSpawnParameters SpawnParams;
+// 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+//
+// 		uint32 Dim = UKismetMathLibrary::Sqrt(Amount);
+//
+// 		for (uint32 x = 0; x < Dim; x++)
+// 		{
+// 			for (uint32 y = 0; y < Dim; y++)
+// 			{
+// 				FVector Offset = FVector(x * 5, y * 5, 100);
+// 				GetWorld()->SpawnActor<AActor>(DebugSpawnableItems[PieceName], Location + Offset, FRotator::ZeroRotator,
+// 				                               SpawnParams);
+// 			}
+// 		}
+// 	}
+// }
 
 void AAvatar::SpawnActorAtMouse(const FString& PieceName, const uint32 Amount)
 {
 	if (DebugSpawnableItems.Contains(PieceName))
 	{
-		S_SpawnActorAtMouse(PieceName, Amount, UUtil::GetMousePosition(this, {}));
+		// S_SpawnActorAtMouse(PieceName, Amount, UUtil::GetMousePosition(this, {}));
 	}
 	else
 	{
@@ -339,7 +339,7 @@ void AAvatar::SpawnActorAtSelf(const FString& PieceName, const uint32 Amount)
 {
 	if (DebugSpawnableItems.Contains(PieceName))
 	{
-		S_SpawnActorAtMouse(PieceName, Amount, GetActorLocation());
+		// S_SpawnActorAtMouse(PieceName, Amount, GetActorLocation());
 	}
 	else
 	{

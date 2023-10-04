@@ -31,7 +31,7 @@ clientAPI(io)
 import patching from './src/clientAPI/patching/patching.js'
 patching(app, __dirname)
 
-//serverManager.addServers(1)
+serverManager.addServers(5)
 
 //nodeCleanup(function (exitCode, signal) {
   // console.log('Stopping servers...')

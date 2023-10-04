@@ -22,7 +22,7 @@ ACCESS_KEY = os.getenv('ACCESS_KEY')
 SECRET_KEY = os.getenv('SECRET_KEY')
 DO_TOKEN = os.getenv('DO_TOKEN')
 
-directory = "test/fakeBuild"
+directory = "C:/Assets/WindowsClient"
 outputPath = "../Backend/data/patchData"
 blockPath = outputPath + "/blocks"
 bundlePath = outputPath + "/bundles"

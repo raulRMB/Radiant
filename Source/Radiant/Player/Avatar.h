@@ -121,8 +121,8 @@ protected:
 	static FVector2D GetMousePosition();
 	FHitResult GetMousePositionInWorld(bool bIgnoreSelf = false) const;
 
-	UFUNCTION(Server, Reliable)
-	void S_SpawnActorAtMouse(const FString& PieceName, const uint32 Amount, const FVector& Location);
+	// UFUNCTION(Server, Reliable)
+	// void S_SpawnActorAtMouse(const FString& PieceName, const uint32 Amount, const FVector& Location);
 
 	UFUNCTION(Exec)
 	void SpawnActorAtMouse(const FString& PieceName, const uint32 Amount);

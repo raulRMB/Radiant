@@ -2,6 +2,7 @@ import sEvent from '../../../../socketEvents.mjs'
 import userManager from '../users/users.js'
 import MatchmakingQueue from './matchmakingQueue.js'
 import lobbies from '../lobbies/lobbies.js'
+import serverManager from '../../servers/serverManager.js'
 import { randomUUID } from 'crypto'
 
 const oneVone = new MatchmakingQueue(1)
@@ -14,26 +15,22 @@ const match = new Map()
 const inMatch = new Map()
 
 function getQueue(queueName) {
-    switch(queueName) {
-      case '1v1':
-        return oneVone;
-      case '2v2':
-        return twoVtwo;
-      case '3v3':
-        return threeVthree;
-      default:
-        return null;
-    }
+  switch(queueName) {
+    case '1v1':
+      return oneVone;
+    case '2v2':
+      return twoVtwo;
+    case '3v3':
+      return threeVthree;
+    default:
+      return null;
+  }
 }
 
 function checkForMatch(queue) {
     const teams = queue.getTeams()
     if(teams != null) {
-      const gameServer = {
-        name: 'server-1',
-        port: 7777,
-        ip: '178.128.233.82'
-      }//serverManager.startMatch()
+      const gameServer = serverManager.startMatch()
       const newMatch = {
         id: randomUUID(),
         teams 

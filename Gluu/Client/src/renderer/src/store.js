@@ -22,9 +22,9 @@ class Store {
 
     constructor() {
         if (import.meta.env.VITE_ENV === 'production') {
-            this.socket = io(`178.128.233.82:3000`, { transports: ['websocket'] });
+            this.socket = io(`ws://localhost:3000`, { transports: ['websocket'] });
         } else {
-            this.socket = io(`178.128.233.82:3000`, { transports: ['websocket'] });
+            this.socket = io(`ws://127.0.0.1:3000`, { transports: ['websocket'] });
         }
         makeObservable(this, {
             inQueue: observable,
@@ -82,6 +82,7 @@ class Store {
         } else {
             console.log('r')
         }
+        console.log(resp)
     }
 
     setupSocketEvents = () => {
@@ -145,7 +146,7 @@ class Store {
         this.inMatch = true
         this.inQueue = false
         console.log('MATCH FOUND!')
-        //window.electron.ipcRenderer.send('matchFound', data);
+        window.electron.ipcRenderer.send('matchFound', data);
     }
 
     onLogoutNotify() {

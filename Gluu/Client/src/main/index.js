@@ -12,7 +12,8 @@ const isElevated = checkElevated();
 
 const { ipcMain } = require('electron')
 ipcMain.on('matchFound', (event, msg) => {
-  exec(`"C:/itch/radiant 2/RadiantClient.exe" ${msg.ip}:${msg.port} -fullscreen`, (error, stdout, stderr) => { 
+  console.log(msg)
+  exec(`"C:/Program Files/RadiantGames/install/RadiantClient.exe" ${msg.ip}:${msg.port} -fullscreen`, (error, stdout, stderr) => { 
     console.log(stdout)
   });
 });
@@ -40,11 +41,12 @@ const getVersionHash = async () => {
   const fileBuffer = fs.readFileSync(path);
   const hashSum = crypto.createHash('sha256');
   hashSum.update(fileBuffer);
+  console.log(hashSum.digest('hex'))
   return {hash: hashSum.digest('hex'), isElevated};
 }
 
 ipcMain.handle('get-version', async () => {
-  const version = getVersionHash();
+  const version = await getVersionHash();
   const res = await fetch('https://rtb.nyc3.cdn.digitaloceanspaces.com/patchData/version.txt')
   const hash = await res.text()
   return {remote : hash, local : version.hash}
