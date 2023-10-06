@@ -278,7 +278,8 @@ def cleanupFile(args):
     elif relName not in newBuild:
         if relName == ".DS_Store":
             return
-        del changeLog[relName]
+        if relName in changeLog:
+            del changeLog[relName]
         os.remove(fileName)
 
 if __name__ == '__main__':
