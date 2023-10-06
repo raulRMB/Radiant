@@ -76,6 +76,7 @@ class Store {
 
     checkForUpdate = async () => {
         const resp = await window.electron.ipcRenderer.invoke('get-version')
+        console.log(`CDN VERSION: ${resp.remote} - LOCAL VERSION: ${resp.local}`)
         if(resp.remote != resp.local) {
             this.patching = true
             window.electron.ipcRenderer.send('update')
