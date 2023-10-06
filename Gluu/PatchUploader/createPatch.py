@@ -90,10 +90,6 @@ def load_dict():
         return zstd.ZstdCompressionDict(dictFile.read())
     
 def uploadToCDN(data):
-    # updatePatchData()
-    # updateBucketBlocks(data)
-    # updateBucketBundles(data)
-    # updateCompressionDictionary()
     updateBucketPatchVersion(data)
     fileList = []
     for root, subdirs, files in os.walk(outputPath):
@@ -159,14 +155,15 @@ def updateBucketBlocks(data):
             botoClient.upload_file(blockPath + '/' + block, 'rtb', 'patchData/blocks/' + block, {'ACL': 'public-read', 'ContentType': 'application/octet-stream'})
 
 def updateBucketPatchVersion(data):
-    hash = sha256(str(data).encode('utf-8')).hexdigest()
+    hash = sha256(json.dumps(data).encode('utf-8')).hexdigest()
+    print(hash)
     bucketFileName = 'patchData/version.txt'
     localFileName = './temp.txt'
     fileData = open(localFileName, 'w')
     fileData.write(hash)
     fileData.close()
     
-    botoClient.upload_file(localFileName, 'rtb', bucketFileName, {'ACL': 'public-read', 'ContentType': 'plain/text'})
+    botoClient.upload_file(localFileName, 'rtb', bucketFileName, {'ACL': 'public-read', 'ContentType': 'plain/text', 'CacheControl': 'max-age=0'})
     
     os.remove(localFileName)
     

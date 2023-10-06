@@ -41,7 +41,6 @@ const getVersionHash = async () => {
   const fileBuffer = fs.readFileSync(path);
   const hashSum = crypto.createHash('sha256');
   hashSum.update(fileBuffer);
-  console.log(hashSum.digest('hex'))
   return {hash: hashSum.digest('hex'), isElevated};
 }
 
