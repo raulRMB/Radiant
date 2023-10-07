@@ -5,6 +5,8 @@
 #include "DrawDebugHelpers.h"
 #include "TeamGridManager.h"
 #include "Building/Building.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/Texture2D.h"
 #include "Enums/VIsionRange.h"
 #include "Structs/GridPiece.h"
 #include "Util/Util.h"

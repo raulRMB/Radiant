@@ -3,6 +3,7 @@
 
 #include "Combat/GameplayCues/GCAMaterialOverride.h"
 #include "Characters/RTCharacter.h"
+#include "Components/SkeletalMeshComponent.h"
 
 bool AGCAOverlayMaterial::OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {

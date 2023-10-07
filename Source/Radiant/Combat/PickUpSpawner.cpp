@@ -4,6 +4,8 @@
 #include "Combat/PickUpSpawner.h"
 
 #include "PickUp.h"
+#include "TimerManager.h"
+#include "Engine/World.h"
 #include "Util/Util.h"
 
 APickUpSpawner::APickUpSpawner()

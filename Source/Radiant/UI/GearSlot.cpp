@@ -1,4 +1,6 @@
 ﻿#include "GearSlot.h"
+
+#include "TimerManager.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Data/GearData.h"

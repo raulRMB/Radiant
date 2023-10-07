@@ -2,6 +2,7 @@
 
 #include "TempGridActor.h"
 #include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 ATempGridActor::ATempGridActor()
 {

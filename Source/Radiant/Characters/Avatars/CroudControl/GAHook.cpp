@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "Hook.h"
 #include "Characters/RTCharacter.h"
+#include "Engine/World.h"
 #include "GAS/Tasks/AbilityTask_DisplaceTarget.h"
 #include "Util/Util.h"
 

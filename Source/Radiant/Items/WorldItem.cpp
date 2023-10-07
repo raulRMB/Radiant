@@ -4,6 +4,7 @@
 #include "Items/WorldItem.h"
 
 #include "NiagaraComponent.h"
+#include "TimerManager.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "ItemInfo/WorldItemInfoWidget.h"

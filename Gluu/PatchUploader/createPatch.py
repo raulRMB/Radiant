@@ -60,6 +60,7 @@ def fast_upload(session, bucketname, s3dir, filelist, workers=20):
     for src in filelist:
         dst = os.path.join(s3dir, src['relPath'])
         dst = dst.replace(os.sep, '/')
+        print(f'Uploading {src["relPath"]}')
         s3t.upload(
             src['filePath'], bucketname, dst,
             extra_args={'ACL': 'public-read'},
@@ -81,27 +82,56 @@ def main():
     buildBundles(data)
     writePatchData(data)
     validateBlocks(data)
-    uploadToCDN(data)
     cleanup(data, blockPath, blockSet)
     cleanup(data, bundlePath, data["bundles"])
+    uploadToCDN(data)
 
 def load_dict():
     with open(outputPath + '/dictionary', 'rb') as dictFile:
         return zstd.ZstdCompressionDict(dictFile.read())
-    
+
+def getBlockList(pathData):
+    blockList = set()
+    for file in pathData:
+        if file == "bundles":
+            continue
+        for block in pathData[file]["blocks"]:
+            blockList.add(block)
+    return blockList
+
 def uploadToCDN(data):
     updateBucketPatchVersion(data)
+    try:
+        obj = botoClient.get_object(Bucket='rtb', Key='patchData/patchData.json')
+        jo = json.loads(obj['Body'].read().decode('utf-8'))
+    except:
+        jo = {'bundles': {}}
+    
     fileList = []
+    blockList = getBlockList(jo)
+    skippedBundles = 0
+    skippedBlocks = 0
     for root, subdirs, files in os.walk(outputPath):
         for filename in files:
+            if filename in jo["bundles"]:
+                skippedBundles += 1
+                continue
+            if filename in blockList:
+                skippedBlocks += 1
+                continue
             filePath = os.path.join(root, filename)
             relPath = getRelPath(filePath, outputPath)
             fileList.append({'relPath':relPath, 'filePath':filePath})
-    
+            
     fast_upload(boto3.Session(), 'rtb', 'patchData', fileList)
+    updatePatchData()
+    
+    print(f'Skipped Bundles: {skippedBundles}')
+    print(f'Skipped Blocks: {skippedBlocks}')
+    print(f'Blocklist size: {len(blockList)}')
+    print(f'Upload block count {len(blockList) - skippedBlocks}')
 
 def updatePatchData():
-    botoClient.upload_file(outputPath + '/patchData.json', 'rtb', 'patchData/patchData.json', {'ACL': 'public-read', 'ContentType': 'application/json'})
     purge_req = {"files": ["patchData/patchData.json"]}
     clientDO.cdn.purge_cache("12148a1d-4fdf-4925-a0c7-fad213c75b7b", purge_req)
 

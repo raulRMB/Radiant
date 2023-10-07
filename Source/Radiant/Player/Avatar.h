@@ -9,6 +9,7 @@
 #include "GAS/AttributeSets/RTAvatarAttributeSet.h"
 #include "Util/Interfaces/Carrier.h"
 #include "Util/Managers/Grid/GridManager.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Avatar.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FGridUpdateSignature, const FIntVector2&, EEnvironmentType);

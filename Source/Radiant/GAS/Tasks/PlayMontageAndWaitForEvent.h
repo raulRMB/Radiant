@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
+#include "Animation/AnimInstance.h"
 #include "PlayMontageAndWaitForEvent.generated.h"
 
 class UGDAbilitySystemComponent;

@@ -113,3 +113,10 @@ void UMeleeBasicAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Task2->EventReceived.AddDynamic(this, &UMeleeBasicAttack::OnUnsetUncancelable);
 	Task2->Activate();
 }
+
+void UMeleeBasicAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	RemoveMovementStoppedEffect();
+}

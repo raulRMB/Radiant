@@ -3,6 +3,7 @@
 
 #include "KingOfTheHillMode.h"
 #include "KingOfTheHillGameState.h"
+#include "Engine/World.h"
 
 bool AKingOfTheHillMode::ReadyToEndMatch_Implementation()
 {

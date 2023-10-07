@@ -4,6 +4,9 @@
 #define SIO_SOCKET_H
 #include "sio_message.h"
 #include <functional>
+
+#include "SocketIOLib.h"
+
 namespace sio
 {
     class event_adapter;

@@ -4,6 +4,7 @@
 #include "ClientGameMode.h"
 
 #include "ClientSubsystem.h"
+#include "Engine/GameInstance.h"
 
 AClientGameMode::AClientGameMode()
 {

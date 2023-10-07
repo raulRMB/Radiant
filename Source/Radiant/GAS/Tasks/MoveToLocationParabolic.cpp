@@ -3,6 +3,7 @@
 
 #include "GAS/Tasks/MoveToLocationParabolic.h"
 
+#include "Curves/CurveFloat.h"
 #include "Curves/CurveVector.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"

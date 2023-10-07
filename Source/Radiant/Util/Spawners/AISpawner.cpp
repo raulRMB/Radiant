@@ -3,7 +3,9 @@
 
 #include "Util/Spawners/AISpawner.h"
 
+#include "TimerManager.h"
 #include "Characters/AI/RTAICharacter.h"
+#include "Engine/World.h"
 
 AAISpawner::AAISpawner()
 {

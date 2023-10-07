@@ -12,6 +12,8 @@
 #include "Chaos/AABB.h"
 #include "Chaos/AABB.h"
 #include "Chaos/AABB.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
 void ASocketActor::OnConnected(FString SocketId, FString SessionId, bool bIsReconnection)

@@ -11,6 +11,7 @@
 #include "Util/Interfaces/Targetable.h"
 #include "Util/Interfaces/TeamMember.h"
 #include "Util/Managers/ActorManager.h"
+#include "Components/StaticMeshComponent.h"
 #include "RTCharacter.generated.h"
 
 UCLASS()

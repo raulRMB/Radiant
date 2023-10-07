@@ -2,10 +2,13 @@
 
 #pragma once
 
+#include <memory>
+
 #include "CoreMinimal.h"
 #include "Building/Building.h"
 #include "Characters/RTCharacter.h"
 #include "GameFramework/Actor.h"
+#include "UI/CaptureAreaBar.h"
 #include "Util/Interfaces/TeamMember.h"
 #include "TeamGridManager.generated.h"
 

@@ -2,6 +2,8 @@
 
 
 #include "Base.h"
+
+#include "Components/StaticMeshComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "GAS/AttributeSets/RTBaseAttributeSet.h"
 #include "Kismet/GameplayStatics.h"

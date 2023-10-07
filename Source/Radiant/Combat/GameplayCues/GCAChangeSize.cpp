@@ -4,6 +4,7 @@
 #include "Combat/GameplayCues/GCAChangeSize.h"
 
 #include "Characters/RTCharacter.h"
+#include "Components/SkeletalMeshComponent.h"
 
 bool AGCAChangeSize::OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {

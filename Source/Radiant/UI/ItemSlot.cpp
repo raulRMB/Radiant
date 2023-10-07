@@ -5,6 +5,7 @@
 
 #include "GearSlot.h"
 #include "RTHUD.h"
+#include "TimerManager.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -12,6 +13,7 @@
 #include "Event/EventBroker.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "InGame/ItemTooltip.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Player/Avatar.h"
 #include "Player/RTPlayerController.h"
 #include "Player/RTPlayerState.h"

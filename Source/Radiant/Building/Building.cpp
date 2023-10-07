@@ -2,6 +2,7 @@
 
 #include "GameplayEffectExtension.h"
 #include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Items/WorldItem.h"

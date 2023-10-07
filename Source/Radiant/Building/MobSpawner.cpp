@@ -3,7 +3,9 @@
 
 #include "Building/MobSpawner.h"
 
+#include "TimerManager.h"
 #include "Characters/AI/RTAICharacter.h"
+#include "Engine/World.h"
 
 AMobSpawner::AMobSpawner()
 {

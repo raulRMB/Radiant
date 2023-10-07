@@ -7,13 +7,12 @@ public class RadiantEditorTarget : TargetRules
 {
 	public RadiantEditorTarget( TargetInfo Target) : base(Target)
 	{
-		bUseUnityBuild = true;
-		bUsePCHFiles = true;
-		bUseAdaptiveUnityBuild = true;
-		
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
+		bUseUnityBuild = false;
+		bUsePCHFiles = false;
+		bUseAdaptiveUnityBuild = false;
 		ExtraModuleNames.Add("Radiant");
 	}
 }

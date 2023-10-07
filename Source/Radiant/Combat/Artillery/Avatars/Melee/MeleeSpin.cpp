@@ -3,6 +3,8 @@
 
 #include "MeleeSpin.h"
 
+#include "Components/StaticMeshComponent.h"
+
 
 // Sets default values
 AMeleeSpin::AMeleeSpin()

@@ -15,7 +15,7 @@ class RADIANT_API AWidgetManager : public AActor
 	FName DefaultWidget;
 
 	UPROPERTY(EditAnywhere, Category = "Widgets")
-	TMap<FName, TSubclassOf<UUserWidget>> Widgets;
+	TMap<FName, TSubclassOf<class UUserWidget>> Widgets;
 
 public:
 	AWidgetManager();

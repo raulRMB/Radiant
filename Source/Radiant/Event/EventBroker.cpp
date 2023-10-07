@@ -3,6 +3,7 @@
 
 #include "Event/EventBroker.h"
 
+#include "Engine/GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 

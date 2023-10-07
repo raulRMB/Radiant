@@ -8,6 +8,7 @@
 #include "Player/Avatar.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/RTPlayerState.h"
@@ -97,7 +98,7 @@ void ALinearSkillshot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 		CueParameters.Location = OtherActor->GetActorLocation();
 		if(ARTCharacter* OtherCharacter = Cast<ARTCharacter>(GetInstigator()))
 		{
-			CueParameters.TargetAttachComponent = OtherCharacter->GetMesh();
+			CueParameters.TargetAttachComponent = Cast<USceneComponent>(OtherCharacter->GetMesh());
 		}
 		CueParameters.Instigator = this;
 		ASCInterface->GetAbilitySystemComponent()->ExecuteGameplayCue(HitCueTag, CueParameters);

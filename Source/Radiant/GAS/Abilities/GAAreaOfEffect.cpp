@@ -5,6 +5,7 @@
 
 #include "Player/Avatar.h"
 #include "Combat/Artillery/AreaOfEffect.h"
+#include "Engine/World.h"
 
 UGAAreaOfEffect::UGAAreaOfEffect()
 {

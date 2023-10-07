@@ -3,9 +3,8 @@
 
 #pragma once
 
-
-DECLARE_LOG_CATEGORY_EXTERN(CoreUtilityLog, Log, All);
 #include "Modules/ModuleManager.h"
+DECLARE_LOG_CATEGORY_EXTERN(CoreUtilityLog, Log, All);
 
 
 /**

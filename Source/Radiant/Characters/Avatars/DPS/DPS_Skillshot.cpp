@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/StaticMeshComponent.h"
 #include "Player/Avatar.h"
 
 void UDPS_Skillshot::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

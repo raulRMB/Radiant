@@ -3,6 +3,7 @@
 
 #include "Modes/TeamDeathMatchMode.h"
 #include "Base/RTGameState.h"
+#include "Engine/World.h"
 
 bool ATeamDeathMatchMode::ReadyToEndMatch_Implementation()
 {

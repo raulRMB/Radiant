@@ -2,6 +2,7 @@
 #include "GAS/AttributeSets/RTBaseAttributeSet.h"
 #include "Items/WorldItem.h"
 #include "Net/UnrealNetwork.h"
+#include "Util/TempGridActor.h"
 
 AExtractor::AExtractor()
 {

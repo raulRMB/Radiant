@@ -4,6 +4,7 @@
 #include "Characters/RTCharacter.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Items/WorldItem.h"
 #include "Kismet/GameplayStatics.h"

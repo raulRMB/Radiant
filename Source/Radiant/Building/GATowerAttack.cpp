@@ -5,6 +5,7 @@
 
 #include "Tower.h"
 #include "Combat/Artillery/HeatSeeking.h"
+#include "Util/TempGridActor.h"
 #include "Util/Util.h"
 
 void UGATowerAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

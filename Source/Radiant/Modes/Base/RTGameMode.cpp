@@ -5,12 +5,16 @@
 
 #include "RTGameState.h"
 #include "RTPlayerStart.h"
+#include "TimerManager.h"
+#include "Engine/Engine.h"
 #include "Player/Avatar.h"
 #include "GameFramework/GameSession.h"
+#include "GameFramework/WorldSettings.h"
 #include "GAS/AbilitySystemComponent/RTAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/InventoryComponent.h"
 #include "Player/RTPlayerState.h"
+#include "Util/Util.h"
 #include "Util/Managers/ActorManager.h"
 #include "Util/Spawners/AISpawner.h"
 
@@ -77,6 +81,7 @@ void ARTGameMode::HandleMatchHasEnded()
 void ARTGameMode::EndGame()
 {
 	FGenericPlatformMisc::RequestExit(false);
+	RTLOG("EXITING GAME")
 }
 
 void ARTGameMode::PlayerLoaded()
@@ -168,6 +173,7 @@ void ARTGameMode::DisableAllAbilities()
 void ARTGameMode::StartGame()
 {
 	StartMatch();
+	RTLOG("StartMatch1");
 }
 
 bool ARTGameMode::ReadyToStartMatch_Implementation()

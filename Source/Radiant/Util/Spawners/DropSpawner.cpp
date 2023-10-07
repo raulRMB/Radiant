@@ -3,7 +3,9 @@
 
 #include "Util/Spawners/DropSpawner.h"
 
+#include "TimerManager.h"
 #include "Combat/PickUp.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Util/Util.h"
 

@@ -7,6 +7,7 @@
 #include "ThirdParty/libOpus/opus-1.1/include/opus.h"
 //#include "ogg/ogg.h"
 #endif
+#include "Containers/Array.h"
 
 //Bare minimum struct for transferring opus bytes.
 struct FCUOpusMinimalStream
