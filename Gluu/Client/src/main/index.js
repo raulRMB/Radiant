@@ -13,7 +13,9 @@ const isElevated = checkElevated();
 const { ipcMain } = require('electron')
 ipcMain.on('matchFound', (event, msg) => {
   console.log(msg)
+  mainWindow.hide()
   exec(`"C:/Users/Mike/Documents/GitHub/platformer/platformer.exe" ip=${msg.ip} port=${msg.port} -fullscreen`, (error, stdout, stderr) => { 
+    mainWindow.show()
     console.log(stdout)
   });
 });
