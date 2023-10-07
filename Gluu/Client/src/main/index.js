@@ -9,29 +9,49 @@ import { homedir } from 'os'
 import crypto from 'crypto'
 import checkElevated from 'native-is-elevated'
 const isElevated = checkElevated();
-
 const { ipcMain } = require('electron')
-ipcMain.on('matchFound', (event, msg) => {
-  console.log(msg)
-  mainWindow.hide()
-  exec(`"C:/Users/Mike/Documents/GitHub/platformer/platformer.exe" ip=${msg.ip} port=${msg.port} -fullscreen`, (error, stdout, stderr) => { 
-    mainWindow.show()
-    console.log(stdout)
-  });
-});
 
 let mainWindow
 const folderName = "/RadiantGames"
+const executableName = "platformer"
 let installDirectory
 let appDataPath
+let extension = ""
+let prefix = ""
 if(process.platform == 'win32') {
   installDirectory = "C:/Program Files" + folderName + '/install'
   appDataPath = "C:/Program Files" + folderName + '/data'
+  extension = ".exe"
 }
 else if(process.platform == 'darwin') {
   installDirectory = '/Applications' + folderName
   appDataPath =  homedir() + '/Library/Application Support' + folderName
+  extension = ".app"
+  prefix="open -n "
 }
+
+ipcMain.on('matchEnded', (event, msg) => {
+  mainWindow.show()
+});
+
+ipcMain.on('matchFound', (event, msg) => {
+  mainWindow.hide()
+  let cmd
+  if(process.platform == 'win32') {
+    cmd = `${installDirectory}/${executableName}${extension} ip=${msg.ip} port=${msg.port}`
+  } 
+  else if(process.platform == 'darwin') {
+    cmd = `${prefix}"${installDirectory}/${executableName}${extension}" --args ip=${msg.ip} port=${msg.port}`
+  }
+  exec(cmd, (error, stdout, stderr) => { 
+    console.log(stdout)
+    if(error)
+      console.log(stderr)
+      if(process.platform == 'win32') {
+        mainWindow.show()
+      }
+  });
+});
 
 const getVersionHash = async () => {
   const path = `${appDataPath}/patchData.json`

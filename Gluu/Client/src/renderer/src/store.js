@@ -2,6 +2,8 @@ import {observable, makeObservable, action} from 'mobx'
 import io from 'socket.io-client'
 import sEvents from '../../../../socketEvents.mjs'
 
+const ignorePatching = false
+
 class Store {
 
     socket = null
@@ -55,15 +57,17 @@ class Store {
             onLobbyInvite: action,
             Logout: action
         })
-        this.checkForUpdate()
-        window.electron.ipcRenderer.on('patching-update', (event, data) => {
-            if(data != 'DONE') {
-                this.updatePatchingPercent(data)
-            } else {
-                this.patchingPercent = 100
-                this.patching = false
-            }
-        });     
+        if(!ignorePatching) {
+            this.checkForUpdate()
+            window.electron.ipcRenderer.on('patching-update', (event, data) => {
+                if(data != 'DONE') {
+                    this.updatePatchingPercent(data)
+                } else {
+                    this.patchingPercent = 100
+                    this.patching = false
+                }
+            });    
+        } 
         this.setupSocketEvents()
     }
 
@@ -106,6 +110,8 @@ class Store {
 
     matchEnded() {
         this.inMatch = false
+        console.log('match finished!')
+        window.electron.ipcRenderer.send('matchEnded')
     }
 
     onConnected() {
