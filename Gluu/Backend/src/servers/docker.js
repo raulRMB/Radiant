@@ -24,7 +24,7 @@ const api = {
     },
       
     runServer: async (name, port) => {
-        const { err, stdout, stderr } = await cmd(`docker run --name="${name}" --restart=always -p ${port}:7777/udp -td radiant:01`)
+        const { err, stdout, stderr } = await cmd(`docker run --name="${name}" --restart=always -p ${port}:7777/udp -td platformerserver:01`)
         if (err) {
           console.error(`Failed to start ${name} on port ${port}. ${err}`);
         }

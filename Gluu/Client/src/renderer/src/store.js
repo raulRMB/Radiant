@@ -22,9 +22,9 @@ class Store {
 
     constructor() {
         if (import.meta.env.VITE_ENV === 'production') {
-            this.socket = io(`ws://178.128.233.82:3000`, { transports: ['websocket'] });
+            this.socket = io(`ws://localhost:3000`, { transports: ['websocket'] });
         } else {
-            this.socket = io(`ws://178.128.233.82:3000`, { transports: ['websocket'] });
+            this.socket = io(`ws://localhost:3000`, { transports: ['websocket'] });
         }
         makeObservable(this, {
             inQueue: observable,
@@ -47,6 +47,7 @@ class Store {
             onLogoutNotify: action,
             newFriendAdded: action,
             onFriendRemoved: action,
+            matchEnded: action,
             AcceptFriendRequest: action,
             onCancelQueueResponse: action,
             onFriendRequestReceived: action,
@@ -100,6 +101,11 @@ class Store {
         this.socket.on(sEvents.notify.friendsStatusChanged, (msg) => this.friendsStatusChanged(msg))
         this.socket.on(sEvents.notify.lobbyInfo, msg => this.onLobbyInfo(msg))
         this.socket.on(sEvents.notify.lobbyInviteReceived, msg => this.onLobbyInvite(msg))
+        this.socket.on(sEvents.notify.matchEnded, () => this.matchEnded())
+    }
+
+    matchEnded() {
+        this.inMatch = false
     }
 
     onConnected() {

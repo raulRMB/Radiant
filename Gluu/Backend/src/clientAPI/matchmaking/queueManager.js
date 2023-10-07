@@ -30,17 +30,19 @@ function getQueue(queueName) {
 function checkForMatch(queue) {
     const teams = queue.getTeams()
     if(teams != null) {
-      const gameServer = serverManager.startMatch()
       const newMatch = {
         id: randomUUID(),
         teams 
       }
-      // check for valid game server
-      if(true) {
+      const gameServer = serverManager.startMatch(newMatch)
+      if(gameServer) {
         teams.forEach(team => {
-          console.log(team)
           team.lobbies.forEach(lobby => {
             lobby.players.forEach(player => {
+              inQueue.delete(lobby.id)
+              inMatch.set(lobby.id, newMatch)
+              lobby.matchId = newMatch.id
+              match.set(match.id, match)
               const playerSocket = userManager.getSocketFromUsername(player.username)
               notifyPlayerOfMatch(playerSocket, gameServer)
             })
@@ -103,4 +105,7 @@ export default {
         socket.emit(sEvent.notify.cancelQueueResponse, {success: true})
       }
     },
+    matchEnded(matchId) {
+      match.delete(matchId)
+    }
 }

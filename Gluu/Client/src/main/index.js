@@ -13,7 +13,7 @@ const isElevated = checkElevated();
 const { ipcMain } = require('electron')
 ipcMain.on('matchFound', (event, msg) => {
   console.log(msg)
-  exec(`"C:/Program Files/RadiantGames/install/RadiantClient.exe" ${msg.ip}:${msg.port} -fullscreen`, (error, stdout, stderr) => { 
+  exec(`"C:/Users/Mike/Documents/GitHub/platformer/platformer.exe" ip=${msg.ip} port=${msg.port} -fullscreen`, (error, stdout, stderr) => { 
     console.log(stdout)
   });
 });

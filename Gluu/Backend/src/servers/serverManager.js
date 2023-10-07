@@ -1,4 +1,7 @@
 import docker from './docker.js'
+import queueManager from '../clientAPI/matchmaking/queueManager.js'
+import userManager from '../clientAPI/users/users.js'
+import sEvents from '../../../socketEvents.mjs'
 import { networkInterfaces } from 'os'
 const startPort = 8080
 const servers = []
@@ -111,7 +114,7 @@ const api = {
         servers.forEach(server => exitServer(server.name, signal))
     },
 
-    startMatch: () => {
+    startMatch: (match) => {
         let server
         while(!server) {
             console.log('Match found, finding server.')
@@ -120,6 +123,15 @@ const api = {
         server.status = "playing"
         docker.onStopped(server.name, () => {
             server.status = "standby"
+            match.teams.forEach(team => {
+              team.lobbies.forEach(lobby => {
+                lobby.players.forEach(player => {
+                  const playerSocket = userManager.getSocketFromUsername(player.username)
+                  playerSocket.emit(sEvents.notify.matchEnded)
+                })
+              })
+            })
+            queueManager.matchEnded(match.id)
         })
         return server
     },

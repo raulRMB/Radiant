@@ -22,6 +22,7 @@ export default {
         newFriendAdded: 'newFriendAdded',
         friendRemoved: 'friendRemoved',
         lobbyInfo: 'lobbyInfo',
+        matchEnded: 'matchEnded',
         joinQueueResponse: 'joinQueueResponse',
         friendsStatusChanged: 'friendsStatusChanged',
         friendRequestReceived: 'friendRequestReceived',
