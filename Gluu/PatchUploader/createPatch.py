@@ -99,15 +99,17 @@ def getBlockList(pathData):
             blockList.add(block)
     return blockList
 
-def uploadToCDN(data):
-    updateBucketPatchVersion(data)
+def getOldPatchData():
     try:
         obj = botoClient.get_object(Bucket='rtb', Key='patchData/patchData.json')
-        jo = json.loads(obj['Body'].read().decode('utf-8'))
+        return json.loads(obj['Body'].read().decode('utf-8'))
     except:
-        jo = {'bundles': {}}
-    
+        return {'bundles': {}}
+
+def uploadToCDN(data):
+    updateBucketPatchVersion(data)
     fileList = []
+    jo = getOldPatchData()
     blockList = getBlockList(jo)
     skippedBundles = 0
     skippedBlocks = 0
@@ -212,13 +214,35 @@ def buildBlocks(dict_data):
         with open(outputFilename, 'wb') as outputFile:
             outputFile.write(compressed)
     print("--- block time %s seconds ---" % (time.time() - b_time))
-    
+
+def canMakeBundle(bundle):
+    for block in bundle:
+        if block not in blockSet:
+            return False
+    return True
+
+def makeBundle(bundle):
+    bundleList = {}
+    bundleData = []
+    length = 0
+    for block in bundle:
+        result = blockSet[block]
+        bundleList[blocksProcessed] = {"hash": block, "length": len(result), "blockOffset": length}   
+        length += len(result)
+        bundleData.append(result)
+        blockSet.remove(block)
+    createBundle(bundleList, b''.join(bundleData), data)
+
 def buildBundles(data):
     blocksProcessed = 0
     bundleList = {}
     bundleData = []
     length = 0
-    
+    jo = getOldPatchData()
+    for bundle in jo["bundles"]:
+        if canMakeBundle(bundle):
+            makeBundle(bundle)
+
     for file in data:
         if file == "bundles":
             continue
