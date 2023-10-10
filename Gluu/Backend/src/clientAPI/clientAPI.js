@@ -1,4 +1,4 @@
-import sEvent from '../../../socketEvents.mjs'
+import sEvent from '../../socketEvents.mjs'
 import userManager from './users/users.js'
 import queueManager from './matchmaking/queueManager.js'
 import lobbies from './lobbies/lobbies.js'

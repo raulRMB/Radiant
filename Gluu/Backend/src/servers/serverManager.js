@@ -1,7 +1,7 @@
 import docker from './docker.js'
 import queueManager from '../clientAPI/matchmaking/queueManager.js'
 import userManager from '../clientAPI/users/users.js'
-import sEvents from '../../../socketEvents.mjs'
+import sEvents from '../../socketEvents.mjs'
 import { networkInterfaces } from 'os'
 const startPort = 8080
 const servers = []

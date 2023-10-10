@@ -2,7 +2,7 @@ import Database from 'better-sqlite3'
 import { randomBytes, scrypt } from 'crypto'
 import queueManager from '../matchmaking/queueManager.js'
 import lobbies from '../lobbies/lobbies.js'
-import sEvents from '../../../../socketEvents.mjs'
+import sEvents from '../../../socketEvents.mjs'
 const db = new Database('./data/database.db')
 db.pragma('journal_mode = WAL')
 

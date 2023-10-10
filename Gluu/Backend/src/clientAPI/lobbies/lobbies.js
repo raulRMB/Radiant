@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import sEvents from '../../../../socketEvents.mjs'
+import sEvents from '../../../socketEvents.mjs'
 import userManager from '../users/users.js'
 
 let lobbies = {}
