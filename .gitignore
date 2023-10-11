@@ -49,9 +49,6 @@ Platforms/HoloLens/Config/HoloLensEngine.ini
 *.sdf
 *.VC.db
 *.VC.opendb
-Gluu/Backend/data/patchData/**/*
-Gluu/dist/*
-**/node_modules/*
 
 # Precompiled Assets
 SourceArt/**/*.png
@@ -86,5 +83,3 @@ Plugins/*/Intermediate/*
 # Cache files for the editor to use
 DerivedDataCache/*
 pushClient.bat
-
-ServerManager/node_modules/*
